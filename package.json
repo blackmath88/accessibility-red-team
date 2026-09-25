@@ -11,7 +11,8 @@
     "check": "npm run build && npm test",
     "playwright:install": "playwright install chromium",
     "scout": "tsx src/cli.ts scout",
-    "report": "tsx src/cli.ts report"
+    "report": "tsx src/cli.ts report",
+    "audit": "tsx src/cli.ts audit"
   },
   "dependencies": {
     "@axe-core/playwright": "4.13.0",
