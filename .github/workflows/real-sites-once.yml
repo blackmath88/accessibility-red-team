@@ -1,4 +1,5 @@
 name: real-sites-once
+# rerun after classifier hardening
 
 on:
   push:
