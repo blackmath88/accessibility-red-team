@@ -66,3 +66,26 @@ page.png
 The manifest records `aiCalls: 0`. Accessibility results retain axe's separate violation / incomplete / pass / inapplicable states and normalize WCAG criterion tags without claiming full WCAG conformance.
 
 See [docs/BUILD_PLAN.md](docs/BUILD_PLAN.md) for the staged implementation plan.
+
+
+## Provenance-aware report
+
+After a scan, build a deterministic report using an explicit jurisdiction profile:
+
+```bash
+npm run report -- runs/example \
+  --profile requirements/profiles/ch.federal.yml
+```
+
+This writes `report.json` and `report.html`. For mapped findings the report exposes:
+
+```text
+observed evidence
+→ WCAG criterion
+→ applicable jurisdiction profile
+→ incorporating/adopting source
+→ authority class
+→ requirement strength
+```
+
+The report generator makes no LLM calls. Cantonal profiles currently exist for Zürich, Bern and Basel-Stadt administrations; they must not be used to claim municipality-level applicability without a municipal/cantonal source establishing that scope.
