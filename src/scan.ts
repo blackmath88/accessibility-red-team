@@ -2,6 +2,7 @@ import { createHash, randomUUID } from "node:crypto";
 import { mkdir, writeFile } from "node:fs/promises";
 import { join } from "node:path";
 import AxeBuilder from "@axe-core/playwright";
+import type { Result as AxeRuleResult } from "axe-core";
 import { chromium, type Page } from "playwright";
 
 import {
@@ -22,15 +23,12 @@ function impact(value: string | null | undefined) {
   return "unknown" as const;
 }
 
+function normalizeTarget(target: AxeRuleResult["nodes"][number]["target"]): string[] {
+  return target.map((part) => Array.isArray(part) ? part.join(" >>iframe>> ") : String(part));
+}
+
 function normalizeRule(
-  rule: {
-    id: string;
-    impact?: string | null;
-    help: string;
-    helpUrl: string;
-    tags: string[];
-    nodes: Array<{ target: string[]; html: string; failureSummary?: string | null }>;
-  },
+  rule: AxeRuleResult,
   outcome: "violation" | "incomplete" | "pass" | "inapplicable",
   surfaceId: string,
 ): ProbeResult {
@@ -47,7 +45,7 @@ function normalizeRule(
     tags: rule.tags,
     requirements: requirementsFromAxeTags(rule.tags),
     nodes: rule.nodes.map((node) => ({
-      target: node.target,
+      target: normalizeTarget(node.target),
       html: node.html,
       failureSummary: node.failureSummary ?? null,
     })),
@@ -147,6 +145,7 @@ export async function scanUrl(input: string, outDir: string): Promise<void> {
       engines: {
         playwright: "1.63.0",
         axePlaywright: "4.13.0",
+        axeCore: "4.13.0",
       },
       profile: null,
       aiCalls: 0,
