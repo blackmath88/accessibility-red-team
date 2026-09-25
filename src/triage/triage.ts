@@ -69,6 +69,7 @@ export async function triageSurfaceRuns(surfaceRuns: SurfaceRun[], outPath: stri
       schema: "art/evidence-finding/v1" as const,
       findingId: findingId(probe.probeId, probe.outcome),
       probeId: probe.probeId,
+      probeVersion: probe.probeVersion,
       outcome: probe.outcome as "violation" | "incomplete",
       impact: probe.impact,
       help: probe.help,
