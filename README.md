@@ -31,3 +31,12 @@ WATCH      compare runs and track change over time
 ```
 
 See [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) for the architecture plan and the open-source systems it borrows from.
+
+
+## Engineering principle: minimum AI
+
+The core scanner is designed to work **without an LLM**. Deterministic code owns discovery policy, capture, accessibility probes, provenance, verification and longitudinal comparison.
+
+AI is added only at unresolved semantic boundaries as a **typed semantic compiler**: bounded evidence in, a small legal decision space out. Open-ended agentic planning is an exceptional escalation path, not the default architecture.
+
+See [docs/SEMANTIC_COMPILER.md](docs/SEMANTIC_COMPILER.md) and [ADR-0011](docs/adr/0011-minimum-ai-semantic-compiler.md).
