@@ -5,6 +5,7 @@ import { AccessibilitySurfaceSchema, type DiscoveredPage } from "./contracts.js"
 import { inspectPage } from "./classify.js";
 import { candidateScore, eligibleInternalLink, normalizeUrl } from "./links.js";
 import { selectRepresentativeSurfaces } from "./sample.js";
+import { discoverSeedUrls } from "./seeds.js";
 import { validatePublicTarget } from "../scope.js";
 
 export type ScoutOptions = {
@@ -28,6 +29,18 @@ export async function scoutSite(input: string, options: ScoutOptions = {}) {
   const queue: QueueItem[] = [{ url: normalizeUrl(start.toString()), depth: 0, score: 1000, order: 0 }];
   queued.add(queue[0]!.url);
   let order = 1;
+
+  const seedDiscovery = await discoverSeedUrls(start, Math.max(maxPages * 8, 50));
+  for (const seed of seedDiscovery.seeds) {
+    if (queued.has(seed.url)) continue;
+    queued.add(seed.url);
+    queue.push({
+      url: seed.url,
+      depth: 1,
+      score: seed.score,
+      order: order++,
+    });
+  }
   let finalEntrypoint = start.toString();
 
   try {
@@ -102,8 +115,8 @@ export async function scoutSite(input: string, options: ScoutOptions = {}) {
     maxPages,
     maxDepth,
     reason: discovered[0]?.internalLinks && discovered[0].internalLinks <= 80
-      ? "Small/shallow entrypoint: broad bounded discovery."
-      : "Larger entrypoint: priority queue favors service and interactive surfaces.",
+      ? `Small/shallow entrypoint: broad bounded discovery with ${seedDiscovery.seeds.length} sitemap seeds available.`
+      : `Larger entrypoint: priority queue favors service and interactive surfaces; ${seedDiscovery.seeds.length} sitemap seeds available.`,
   };
 
   const representatives = selectRepresentativeSurfaces(discovered);
