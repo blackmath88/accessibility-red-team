@@ -12,7 +12,8 @@
     "playwright:install": "playwright install chromium",
     "scout": "tsx src/cli.ts scout",
     "report": "tsx src/cli.ts report",
-    "audit": "tsx src/cli.ts audit"
+    "audit": "tsx src/cli.ts audit",
+    "benchmark:scout": "tsx src/benchmark/cli.ts"
   },
   "dependencies": {
     "@axe-core/playwright": "4.13.0",
