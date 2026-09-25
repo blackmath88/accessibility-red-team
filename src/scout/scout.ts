@@ -70,8 +70,8 @@ export async function scoutSite(input: string, options: ScoutOptions = {}) {
         discovered.push({
           url: finalUrl,
           title: inspected.title,
-          kind: inspected.kind,
-          reason: inspected.reason,
+          kind: next.depth === 0 ? "home" : inspected.kind,
+          reason: next.depth === 0 ? "site entrypoint" : inspected.reason,
           depth: next.depth,
           structuralFingerprint: inspected.structuralFingerprint,
           hasForm: inspected.hasForm,
