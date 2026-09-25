@@ -3,11 +3,13 @@ import { join, resolve } from "node:path";
 import { scoutSite } from "../scout/scout.js";
 import { scanUrl } from "../scan.js";
 import { triageSurfaceRuns } from "../triage/triage.js";
+import { buildSiteReport } from "../report/site.js";
 
 export async function auditSite(input: string, options: {
   outDir?: string;
   maxPages?: number;
   maxDepth?: number;
+  profilePath?: string;
 } = {}) {
   const host = new URL(input).hostname.replace(/[^a-z0-9.-]/gi, "_");
   const outDir = resolve(options.outDir ?? join("runs", host));
@@ -52,5 +54,13 @@ export async function auditSite(input: string, options: {
   };
 
   await writeFile(join(outDir, "audit-manifest.json"), JSON.stringify(manifest, null, 2));
-  return { surface, triage, manifest };
+
+  const report = options.profilePath
+    ? await buildSiteReport({
+        auditDir: outDir,
+        profilePath: resolve(options.profilePath),
+      })
+    : null;
+
+  return { surface, triage, manifest, report };
 }
