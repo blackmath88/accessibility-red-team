@@ -89,3 +89,37 @@ observed evidence
 ```
 
 The report generator makes no LLM calls. Cantonal profiles currently exist for Zürich, Bern and Basel-Stadt administrations; they must not be used to claim municipality-level applicability without a municipal/cantonal source establishing that scope.
+
+
+## Longitudinal comparison
+
+Compare two site reports without an LLM:
+
+```bash
+npm run watch -- \
+  runs/previous/report.json \
+  runs/current/report.json \
+  --out runs/watch.json
+```
+
+Finding lifecycle states:
+
+```text
+NEW
+PERSISTING
+RESOLVED
+RULE_CHANGED
+NOT_COMPARABLE
+```
+
+Profile changes fail comparability closed. Probe versions are retained in triaged findings so a scanner upgrade is not silently presented as a change in the website.
+
+## Real-site Scout corpus
+
+`benchmarks/sites.yml` contains the initial Swiss discovery corpus (Ausserberg, Kanton Zürich, Stadt Zürich). Run it manually with:
+
+```bash
+npm run benchmark:scout
+```
+
+The first recorded baseline is stored in `benchmarks/baselines/scout-2026-09-25.json`. The GitHub real-site workflow is manual-only to avoid repeatedly crawling public sites on normal development pushes.
