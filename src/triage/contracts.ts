@@ -12,6 +12,7 @@ export const EvidenceFindingSchema = z.object({
   schema: z.literal("art/evidence-finding/v1"),
   findingId: z.string(),
   probeId: z.string(),
+  probeVersion: z.string(),
   outcome: z.enum(["violation", "incomplete"]),
   impact: z.enum(["minor", "moderate", "serious", "critical", "unknown"]),
   help: z.string(),
