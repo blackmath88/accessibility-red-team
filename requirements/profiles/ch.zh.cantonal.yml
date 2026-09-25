@@ -1,0 +1,22 @@
+schema: art/jurisdiction-profile/v1
+id: ch.zh.cantonal-public-web
+jurisdiction: CH-ZH
+target_type: cantonal_administration
+as_of: 2026-09-25
+
+baseline:
+  wcag:
+    version: "2.2"
+    level: AA
+    strength: MANDATORY
+    incorporation_source_ref: ch.zh.accessibility-requirements
+
+best_practice:
+  wcag:
+    version: "2.2"
+    level: AA
+    strength: BEST_PRACTICE
+
+reporting:
+  allow_legal_violation_wording: false
+  preferred_requirement_wording: "does not meet the applicable cantonal accessibility requirement"
