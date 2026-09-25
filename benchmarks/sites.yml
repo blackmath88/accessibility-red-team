@@ -1,0 +1,30 @@
+schema: art/scout-corpus/v1
+as_of: 2026-09-25
+
+sites:
+  - id: ch-vs-ausserberg
+    name: Gemeinde Ausserberg
+    url: https://www.ausserberg.ch/
+    shape: small_municipality
+    rationale: Small municipality; useful for broad/shallow discovery and document/form links.
+    expectations:
+      min_discovered_pages: 1
+      should_include_kinds: [home]
+
+  - id: ch-zh-canton
+    name: Kanton Zürich
+    url: https://www.zh.ch/de.html
+    shape: large_cantonal_portal
+    rationale: Large structured portal with topic hubs, search, services and repeated templates.
+    expectations:
+      min_discovered_pages: 3
+      should_include_kinds: [home]
+
+  - id: ch-zh-city
+    name: Stadt Zürich
+    url: https://www.stadt-zuerich.ch/
+    shape: large_city_portal
+    rationale: Large municipal portal with topic-oriented IA, services, account handoffs and news.
+    expectations:
+      min_discovered_pages: 3
+      should_include_kinds: [home]
