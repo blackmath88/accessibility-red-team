@@ -40,3 +40,29 @@ The core scanner is designed to work **without an LLM**. Deterministic code owns
 AI is added only at unresolved semantic boundaries as a **typed semantic compiler**: bounded evidence in, a small legal decision space out. Open-ended agentic planning is an exceptional escalation path, not the default architecture.
 
 See [docs/SEMANTIC_COMPILER.md](docs/SEMANTIC_COMPILER.md) and [ADR-0011](docs/adr/0011-minimum-ai-semantic-compiler.md).
+
+
+## First executable slice
+
+Slice 0 is scaffolded as a deterministic single-page probe.
+
+```bash
+npm install
+npm run playwright:install
+npm run check
+npm run scan -- https://example.com --out runs/example
+```
+
+A run writes:
+
+```text
+manifest.json
+snapshot.json
+probe-results.json
+summary.json
+page.png
+```
+
+The manifest records `aiCalls: 0`. Accessibility results retain axe's separate violation / incomplete / pass / inapplicable states and normalize WCAG criterion tags without claiming full WCAG conformance.
+
+See [docs/BUILD_PLAN.md](docs/BUILD_PLAN.md) for the staged implementation plan.
