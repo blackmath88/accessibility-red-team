@@ -13,7 +13,8 @@
     "scout": "tsx src/cli.ts scout",
     "report": "tsx src/cli.ts report",
     "audit": "tsx src/cli.ts audit",
-    "benchmark:scout": "tsx src/benchmark/cli.ts"
+    "benchmark:scout": "tsx src/benchmark/cli.ts",
+    "watch": "tsx src/cli.ts watch"
   },
   "dependencies": {
     "@axe-core/playwright": "4.13.0",
