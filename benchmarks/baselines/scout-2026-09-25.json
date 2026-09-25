@@ -1,0 +1,38 @@
+{
+  "schema": "art/scout-corpus-baseline/v1",
+  "capturedAt": "2026-09-25T20:28:41.891Z",
+  "corpusAsOf": "2026-09-25",
+  "aiCalls": 0,
+  "sourceRun": 36185888142,
+  "results": [
+    {
+      "id": "ch-vs-ausserberg",
+      "status": "PASS",
+      "discoveredPages": 12,
+      "selectedSurfaces": 6,
+      "kinds": ["home", "form", "directory", "service"],
+      "strategy": "targeted"
+    },
+    {
+      "id": "ch-zh-canton",
+      "status": "PASS",
+      "discoveredPages": 12,
+      "selectedSurfaces": 5,
+      "kinds": ["home", "form", "service"],
+      "strategy": "broad"
+    },
+    {
+      "id": "ch-zh-city",
+      "status": "PASS",
+      "discoveredPages": 12,
+      "selectedSurfaces": 4,
+      "kinds": ["home", "form", "service"],
+      "strategy": "broad"
+    }
+  ],
+  "notes": [
+    "Baseline captured after fixing entrypoint classification for non-root home URLs.",
+    "Global search/contact chrome no longer forces whole pages into form/search archetypes.",
+    "Broad/targeted strategy label remains provisional; crawl execution currently uses one deterministic priority queue."
+  ]
+}
