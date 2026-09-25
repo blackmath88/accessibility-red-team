@@ -65,10 +65,12 @@ export function resolveRequirement(
 ): RequirementResolution {
   const observedLevel = levelFromAxeTags(tags);
   const baseline = profile.baseline.wcag;
+  const isExplicitly22 = tags.some((tag) => tag.toLowerCase().startsWith("wcag22"));
+  const versionCompatible = baseline.version === "2.2" || !isExplicitly22;
   const baselineApplies =
     observedLevel !== null &&
     levelRank(observedLevel) <= levelRank(baseline.level) &&
-    !tags.some((tag) => tag.toLowerCase().startsWith("wcag22")) || baseline.version === "2.2";
+    versionCompatible;
 
   if (baselineApplies) {
     const chain = [];
