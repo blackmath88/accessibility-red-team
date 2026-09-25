@@ -10,7 +10,7 @@ function usage(): never {
     "  npm run scan -- <url> [--out runs/<name>]",
     "  npm run scout -- <url> [--out runs/<name>/surface.json] [--max-pages 20] [--max-depth 2]",
     "  npm run report -- <run-dir> --profile requirements/profiles/ch.federal.yml",
-    "  npm run audit -- <url> [--out runs/<name>] [--max-pages 20] [--max-depth 2]",
+    "  npm run audit -- <url> [--out runs/<name>] [--max-pages 20] [--max-depth 2] [--profile requirements/profiles/ch.federal.yml]",
   ].join("\n"));
   process.exit(2);
 }
@@ -69,8 +69,9 @@ if (command === "scan") {
   const maxPages = Number(valueAfter(args, "--max-pages") ?? "20");
   const maxDepth = Number(valueAfter(args, "--max-depth") ?? "2");
   const outDir = valueAfter(args, "--out") ? resolve(valueAfter(args, "--out")!) : undefined;
+  const profilePath = valueAfter(args, "--profile");
 
-  auditSite(url, { outDir, maxPages, maxDepth })
+  auditSite(url, { outDir, maxPages, maxDepth, profilePath })
     .then((result) => console.log(JSON.stringify(result.manifest, null, 2)))
     .catch((error) => {
       console.error(error instanceof Error ? error.message : String(error));
