@@ -47,42 +47,36 @@ export async function discoverSeedUrls(root: URL, maxSeeds = 200): Promise<{
   seeds: Array<{ url: string; score: number; source: "robots" | "sitemap" }>;
   sitemapUrls: string[];
 }> {
-  const robotsUrl = new URL("/robots.txt", root);
-  const robots = await fetchText(robotsUrl);
-
+  const robots = await fetchText(new URL("/robots.txt", root));
   const advertised = robots ? parseRobotsSitemaps(robots.text) : [];
-  const sitemapCandidates = [
+
+  const pending = Array.from(new Set([
     ...advertised,
     new URL("/sitemap.xml", root).toString(),
     new URL("/sitemap_index.xml", root).toString(),
-  ];
-
-  const sitemapUrls = Array.from(new Set(sitemapCandidates))
-    .filter((url) => eligibleInternalLink(url, root));
+  ].filter((url) => eligibleInternalLink(url, root))));
 
   const found = new Map<string, { url: string; score: number; source: "robots" | "sitemap" }>();
   const visitedSitemaps = new Set<string>();
 
-  for (const candidate of sitemapUrls.slice(0, 10)) {
-    const normalizedCandidate = normalizeUrl(candidate);
-    if (visitedSitemaps.has(normalizedCandidate)) continue;
-    visitedSitemaps.add(normalizedCandidate);
+  while (pending.length && visitedSitemaps.size < 12 && found.size < maxSeeds) {
+    const candidate = normalizeUrl(pending.shift()!);
+    if (visitedSitemaps.has(candidate)) continue;
+    visitedSitemaps.add(candidate);
 
-    const sitemap = await fetchText(new URL(normalizedCandidate));
+    const sitemap = await fetchText(new URL(candidate));
     if (!sitemap) continue;
 
     for (const raw of parseSitemapLocations(sitemap.text)) {
-      if (found.size >= maxSeeds) break;
       if (!eligibleInternalLink(raw, root)) continue;
-
       const normalized = normalizeUrl(raw);
+
       if (/\.xml(?:$|\?)/i.test(normalized)) {
-        if (!visitedSitemaps.has(normalized) && visitedSitemaps.size < 10) {
-          sitemapUrls.push(normalized);
-        }
+        if (!visitedSitemaps.has(normalized) && !pending.includes(normalized)) pending.push(normalized);
         continue;
       }
       if (/\.pdf(?:$|\?)/i.test(normalized)) continue;
+      if (found.size >= maxSeeds) break;
 
       found.set(normalized, {
         url: normalized,
