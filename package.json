@@ -13,6 +13,7 @@
   },
   "dependencies": {
     "@axe-core/playwright": "4.13.0",
+    "axe-core": "4.13.0",
     "playwright": "1.63.0",
     "yaml": "^2.8.1",
     "zod": "4.6.5"
