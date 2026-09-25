@@ -3,6 +3,7 @@ import { scanUrl } from "./scan.js";
 import { scoutSite } from "./scout/scout.js";
 import { buildReport } from "./report/build.js";
 import { auditSite } from "./site/audit.js";
+import { compareSiteReports } from "./watch/compare.js";
 
 function usage(): never {
   console.error([
@@ -11,6 +12,7 @@ function usage(): never {
     "  npm run scout -- <url> [--out runs/<name>/surface.json] [--max-pages 20] [--max-depth 2]",
     "  npm run report -- <run-dir> --profile requirements/profiles/ch.federal.yml",
     "  npm run audit -- <url> [--out runs/<name>] [--max-pages 20] [--max-depth 2] [--profile requirements/profiles/ch.federal.yml]",
+    "  npm run watch -- <previous-report.json> <current-report.json> [--out watch.json]",
   ].join("\n"));
   process.exit(2);
 }
@@ -73,6 +75,26 @@ if (command === "scan") {
 
   auditSite(url, { outDir, maxPages, maxDepth, profilePath })
     .then((result) => console.log(JSON.stringify(result.manifest, null, 2)))
+    .catch((error) => {
+      console.error(error instanceof Error ? error.message : String(error));
+      process.exit(1);
+    });
+} else if (command === "watch") {
+  const positional = args.filter((arg) => !arg.startsWith("--"));
+  const previousPath = positional[0];
+  const currentPath = positional[1];
+  if (!previousPath || !currentPath) usage();
+
+  const outPath = valueAfter(args, "--out")
+    ? resolve(valueAfter(args, "--out")!)
+    : resolve("watch.json");
+
+  compareSiteReports({
+    previousPath: resolve(previousPath),
+    currentPath: resolve(currentPath),
+    outPath,
+  })
+    .then((result) => console.log(JSON.stringify(result.summary, null, 2)))
     .catch((error) => {
       console.error(error instanceof Error ? error.message : String(error));
       process.exit(1);
