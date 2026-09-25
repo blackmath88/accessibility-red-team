@@ -1,0 +1,82 @@
+schema: art/requirement-sources/v1
+as_of: 2026-09-25
+
+sources:
+  - id: ch.federal.ebgb.eaccessibility
+    title: Hilfsmittel für eine barrierefreie digitale Kommunikation
+    issuer: Eidgenössisches Büro für die Gleichstellung von Menschen mit Behinderungen
+    jurisdiction: CH
+    authority_class: OFFICIAL_GUIDANCE
+    url: https://www.ebgb.admin.ch/de/hilfsmittel-barrierefreie-digitale-kommunikation
+    assertions:
+      - id: ech0059-binding-federal
+        strength: MANDATORY
+        statement: eCH-0059 Accessibility Standard v3 is a binding requirement in the Federal Administration.
+      - id: ech0059-wcag21
+        strength: MANDATORY
+        statement: eCH-0059 v3 is based on WCAG 2.1.
+
+  - id: ch.ech.0059.v3
+    title: eCH-0059 Accessibility Standard v3.0
+    issuer: Verein eCH
+    jurisdiction: CH
+    authority_class: TECHNICAL_STANDARD
+    url: https://www.ech.ch/de/ech/ech-0059/3.0
+    assertions:
+      - id: web-wcag21-aa
+        strength: MANDATORY
+        statement: Websites and mobile applications must meet WCAG 2.1 Level AA.
+      - id: documents-accessible
+        strength: MANDATORY
+        statement: Published documents must be accessible according to WCAG 2.1.
+      - id: pdfua
+        strength: RECOMMENDED
+        statement: PDF/UA is recommended for PDF documents.
+      - id: accessibility-statement
+        strength: MANDATORY
+        statement: Websites and mobile applications must have a regularly updated, easily findable accessibility statement in accessible and machine-readable form.
+      - id: feedback-mechanism
+        strength: MANDATORY
+        statement: Websites and mobile applications must provide an accessibility feedback mechanism.
+
+  - id: ch.zh.accessibility-requirements
+    title: Vorgaben zur Barrierefreiheit
+    issuer: Kanton Zürich
+    jurisdiction: CH-ZH
+    authority_class: ADOPTED_POLICY
+    url: https://www.zh.ch/de/webangebote-entwickeln-und-gestalten/inhalt/barrierefreiheit/vorgaben-zur-barrierefreiheit.html
+    assertions:
+      - id: wcag22-aa
+        strength: MANDATORY
+        statement: Cantonal web accessibility requirements are based on WCAG 2.2 Level AA.
+      - id: ech0059
+        strength: RECOMMENDED
+        statement: The Canton also orients itself to eCH-0059.
+
+  - id: ch.be.accessibility-requirements
+    title: Barrierefreiheit
+    issuer: Kanton Bern
+    jurisdiction: CH-BE
+    authority_class: ADOPTED_POLICY
+    url: https://www.sta.be.ch/de/start/themen/kommunikation-und-aussenbeziehungen/barrierefreiheit.html
+    assertions:
+      - id: wcag22-aa
+        strength: MANDATORY
+        statement: Cantonal websites, web applications, forms, newsletters and electronic documents must meet at least WCAG 2.2 Level AA.
+
+  - id: ch.bs.accessibility-statement
+    title: Erklärung zur Barrierefreiheit
+    issuer: Kanton Basel-Stadt
+    jurisdiction: CH-BS
+    authority_class: ADOPTED_POLICY
+    url: https://www.bs.ch/erklaerung-zur-barrierefreiheit
+    assertions:
+      - id: wcag21-aa
+        strength: MANDATORY
+        statement: Cantonal information, communication and transaction services use WCAG 2.1 Level AA.
+      - id: ech0059-v3
+        strength: MANDATORY
+        statement: Cantonal web services use eCH-0059 v3.
+      - id: pdfua
+        strength: MANDATORY
+        statement: Generated documents use PDF/UA.
