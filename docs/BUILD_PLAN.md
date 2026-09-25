@@ -45,7 +45,7 @@ Dependencies are consumed as packages under their own licenses; project code sho
 
 ## Vertical slices
 
-### Slice 0 — single-page evidence probe — IN BUILD
+### Slice 0 — single-page evidence probe — IMPLEMENTED
 
 Input:
 
@@ -86,7 +86,7 @@ Acceptance:
 - run metadata pins scanner/browser/axe versions;
 - no LLM/API key required.
 
-### Slice 1 — deterministic Scout
+### Slice 1 — deterministic Scout — IMPLEMENTED
 
 Input: municipality entrypoint.
 
@@ -106,7 +106,7 @@ AI budget: zero initially.
 
 Acceptance: representative sample selected with explicit reasons and crawl budget.
 
-### Slice 2 — provenance resolver + deterministic report
+### Slice 2 — provenance resolver + deterministic report — IN BUILD
 
 - load jurisdiction profile;
 - map technical findings to WCAG criteria;
@@ -185,3 +185,22 @@ Each call requires a typed schema, UNKNOWN, deterministic fallback and an eval s
 - no hidden model dependency;
 - documentation updated;
 - longitudinal compatibility considered.
+
+
+## Current implementation status — 2026-09-25
+
+```text
+Slice 0  single-page evidence probe       IMPLEMENTED
+Slice 1  deterministic Scout              IMPLEMENTED
+Slice 2  provenance + deterministic report IN BUILD
+Slice 3  triage / deduplication            NEXT
+```
+
+Current jurisdiction profiles:
+
+- Federal Administration — eCH-0059 v3 / WCAG 2.1 AA
+- Canton Zürich administration — WCAG 2.2 AA
+- Canton Bern administration — WCAG 2.2 AA
+- Canton Basel-Stadt administration — WCAG 2.1 AA / eCH-0059 v3
+
+These cantonal profiles do **not** imply municipal applicability. Municipality-specific applicability remains a research/data task.
