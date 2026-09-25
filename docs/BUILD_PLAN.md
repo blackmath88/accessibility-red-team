@@ -115,7 +115,7 @@ Acceptance: representative sample selected with explicit reasons and crawl budge
 - deterministic HTML report;
 - expose “Why is this a requirement?” chain.
 
-### Slice 3 — triage / deduplication
+### Slice 3 — triage / deduplication — IMPLEMENTED
 
 - occurrence fingerprint;
 - page-template fingerprint;
@@ -136,7 +136,7 @@ Initial journeys:
 
 No form submission or actions with unclear server-side effects.
 
-### Slice 5 — WATCH
+### Slice 5 — WATCH — IMPLEMENTED
 
 - immutable benchmark run;
 - second-run diff;
@@ -204,3 +204,29 @@ Current jurisdiction profiles:
 - Canton Basel-Stadt administration — WCAG 2.1 AA / eCH-0059 v3
 
 These cantonal profiles do **not** imply municipal applicability. Municipality-specific applicability remains a research/data task.
+
+
+## Real-site Scout baseline
+
+A manual corpus run on 2026-09-25 validated the deterministic Scout against:
+
+- Gemeinde Ausserberg
+- Kanton Zürich
+- Stadt Zürich
+
+After fixing shared global form/search chrome contaminating page classification, all three corpus targets passed the baseline expectations.
+
+Baseline artifact: `benchmarks/baselines/scout-2026-09-25.json`.
+
+The permanent `real-sites-scout` workflow is manual-only; normal pushes do not crawl these public sites.
+
+## WATCH usage
+
+```bash
+npm run watch -- \
+  runs/2026-03/report.json \
+  runs/2026-09/report.json \
+  --out runs/change-2026-09.json
+```
+
+WATCH fails comparability closed when jurisdiction profiles differ and detects probe-version changes separately from website changes.
