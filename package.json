@@ -9,7 +9,8 @@
     "scan": "tsx src/cli.ts scan",
     "test": "node --import tsx --test test/**/*.test.ts",
     "check": "npm run build && npm test",
-    "playwright:install": "playwright install chromium"
+    "playwright:install": "playwright install chromium",
+    "scout": "tsx src/cli.ts scout"
   },
   "dependencies": {
     "@axe-core/playwright": "4.13.0",
