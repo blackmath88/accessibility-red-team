@@ -25,4 +25,5 @@ jobs:
       - run: npm install
       - run: npx playwright install --with-deps chromium
       - run: npm run scan -- https://example.com --out runs/smoke
-      - run: test -f runs/smoke/manifest.json && test -f runs/smoke/probe-results.json && test -f runs/smoke/summary.json
+      - run: npm run scout -- https://example.com --out runs/scout/surface.json --max-pages 3 --max-depth 1
+      - run: test -f runs/smoke/manifest.json && test -f runs/smoke/probe-results.json && test -f runs/smoke/summary.json && test -f runs/scout/surface.json
