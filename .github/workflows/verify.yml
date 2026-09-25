@@ -26,4 +26,5 @@ jobs:
       - run: npx playwright install --with-deps chromium
       - run: npm run scan -- https://example.com --out runs/smoke
       - run: npm run scout -- https://example.com --out runs/scout/surface.json --max-pages 3 --max-depth 1
-      - run: test -f runs/smoke/manifest.json && test -f runs/smoke/probe-results.json && test -f runs/smoke/summary.json && test -f runs/scout/surface.json
+      - run: npm run report -- runs/smoke --profile requirements/profiles/ch.federal.yml
+      - run: test -f runs/smoke/manifest.json && test -f runs/smoke/probe-results.json && test -f runs/smoke/summary.json && test -f runs/smoke/report.json && test -f runs/smoke/report.html && test -f runs/scout/surface.json
