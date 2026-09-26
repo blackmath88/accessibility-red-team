@@ -69,3 +69,64 @@ and open:
 ## Why artifact-first
 
 The repository is public, so GitHub Pages is possible later. For the first framework test we keep the observatory as a workflow artifact until we have inspected the real output and decided whether a permanently hosted project map is useful.
+
+
+## First live run
+
+First successful external-repo run:
+
+- GitHub Actions run: https://github.com/blackmath88/accessibility-red-team/actions/runs/36235833257
+- refined run: https://github.com/blackmath88/accessibility-red-team/actions/runs/36235923780
+- artifact: `accessibility-red-team-observatory`
+
+Observed state:
+
+```text
+in_flight         0
+active areas      23
+commits/window    100
+overlap           0
+stale             0
+waiting           0
+burst             1
+degraded          0
+```
+
+The burst signal correctly identified the rapid direct-to-main build stream.
+
+The refined project map now places work into:
+
+```text
+Intent & Governance
+Scout & Capture
+Probe & Journey
+Evidence & Report
+Validate & Learn
+Automation
+```
+
+with only the mixed root `src` area remaining in the fallback `Other` lane.
+
+Current declared commitments reconcile as `not_started`:
+
+1. candidate promotion + regression-fixture harness;
+2. journey-gap fixtures before outreach use;
+3. canton-scale shadow cohort only after promotion gates work.
+
+## Observstory dogfood feedback
+
+This integration is also a framework test for Observstory.
+
+Feedback from the first external-repository run is tracked upstream:
+
+https://github.com/blackmath88/observstory/issues/13
+
+Key findings:
+
+- strong typed snapshot / UI separation;
+- useful custom lane model;
+- declared + observed coordination is valuable;
+- direct-to-main activity can look contradictory with `summary.in_flight = 0`;
+- custom-lane fallback would benefit from better explainability;
+- long-running builds could use a lightweight current-focus primitive without inventing a deadline;
+- API cost is visible when `max_commits` is high.
