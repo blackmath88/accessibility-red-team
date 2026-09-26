@@ -1,0 +1,56 @@
+{
+  "title": "Accessibility Red Team · Build Observatory",
+  "window_hours": 72,
+  "lanes": [
+    {
+      "id": "intent",
+      "label": "Intent & Governance",
+      "description": "Architecture, product boundaries, safety, requirements and design decisions",
+      "paths": ["README.md", "docs/", "requirements/"]
+    },
+    {
+      "id": "discover",
+      "label": "Scout & Capture",
+      "description": "Target safety, recon, sitemap discovery, surface selection and browser capture",
+      "paths": ["src/scope.ts", "src/scout/", "src/benchmark/"]
+    },
+    {
+      "id": "probe",
+      "label": "Probe & Journey",
+      "description": "Deterministic axe probes and bounded behavioral accessibility journeys",
+      "paths": ["src/scan.ts", "src/wcag.ts", "src/journeys/"]
+    },
+    {
+      "id": "evidence",
+      "label": "Evidence & Report",
+      "description": "Triage, provenance, reporting and longitudinal comparison",
+      "paths": ["src/triage/", "src/provenance/", "src/report/", "src/watch/"]
+    },
+    {
+      "id": "learn",
+      "label": "Validate & Learn",
+      "description": "Controlled cohorts, baselines, candidate catalogue and validation gates",
+      "paths": ["src/learning/", "src/cohort/", "cohorts/", "benchmarks/", "validation/", "test/"]
+    },
+    {
+      "id": "ship",
+      "label": "Automation",
+      "description": "CI, manual field workflows and repository runtime configuration",
+      "paths": [".github/", "package.json", "tsconfig.json"]
+    }
+  ],
+  "signals": {
+    "overlap_min_work_items": 2,
+    "stale_hours": 48,
+    "burst_min_commits": 8,
+    "burst_window_minutes": 30
+  },
+  "ignore": ["/observstory/", "/runs/", "/node_modules/", "/dist/", "*.png"],
+  "containers": ["src", "requirements", "cohorts", "benchmarks", "validation", "test", "docs"],
+  "area_depth": 2,
+  "max_commits": 100,
+  "max_pull_requests": 40,
+  "max_open_pull_requests": 30,
+  "max_branches": 30,
+  "max_issues": 60
+}
