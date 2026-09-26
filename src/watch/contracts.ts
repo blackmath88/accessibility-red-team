@@ -26,6 +26,29 @@ export const FindingChangeSchema = z.object({
   }).nullable(),
 });
 
+export const JourneyChangeStateSchema = z.enum([
+  "NEW",
+  "REMOVED",
+  "UNCHANGED",
+  "OUTCOME_CHANGED",
+  "RULE_CHANGED",
+  "NOT_COMPARABLE",
+]);
+
+export const JourneyStateSchema = z.object({
+  outcomes: z.array(z.string()),
+  versions: z.array(z.string()),
+  affectedSurfaces: z.number().int().nonnegative(),
+  resultCount: z.number().int().nonnegative(),
+});
+
+export const JourneyChangeSchema = z.object({
+  journeyId: z.string(),
+  state: JourneyChangeStateSchema,
+  previous: JourneyStateSchema.nullable(),
+  current: JourneyStateSchema.nullable(),
+});
+
 export const WatchResultSchema = z.object({
   schema: z.literal("art/watch-result/v1"),
   generatedAt: z.string().datetime(),
@@ -39,8 +62,15 @@ export const WatchResultSchema = z.object({
     resolved: z.number().int().nonnegative(),
     ruleChanged: z.number().int().nonnegative(),
     notComparable: z.number().int().nonnegative(),
+    journeyNew: z.number().int().nonnegative().default(0),
+    journeyRemoved: z.number().int().nonnegative().default(0),
+    journeyChanged: z.number().int().nonnegative().default(0),
+    journeyUnchanged: z.number().int().nonnegative().default(0),
+    journeyRuleChanged: z.number().int().nonnegative().default(0),
+    journeyNotComparable: z.number().int().nonnegative().default(0),
   }),
   changes: z.array(FindingChangeSchema),
+  journeys: z.array(JourneyChangeSchema).default([]),
   aiCalls: z.literal(0),
 });
 
