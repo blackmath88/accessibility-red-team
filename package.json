@@ -15,7 +15,8 @@
     "audit": "tsx src/cli.ts audit",
     "benchmark:scout": "tsx src/benchmark/cli.ts",
     "watch": "tsx src/cli.ts watch",
-    "cohort": "tsx src/cli.ts cohort"
+    "cohort": "tsx src/cli.ts cohort",
+    "learn": "tsx src/cli.ts learn"
   },
   "dependencies": {
     "@axe-core/playwright": "4.13.0",
