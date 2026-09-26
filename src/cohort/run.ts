@@ -29,6 +29,7 @@ export async function runCohort(options: {
         maxPages: cohort.settings.max_pages,
         maxDepth: cohort.settings.max_depth,
         profilePath: resolvedProfile,
+        maxSurfaces: cohort.settings.max_surfaces,
       });
 
       if (result.report) {
