@@ -27,6 +27,7 @@ export const CohortResultSchema = z.object({
   aiCalls: z.literal(0),
   issueFamilies: z.array(z.object({
     probeId: z.string(),
+    outcome: z.enum(["violation", "incomplete"]),
     municipalityCount: z.number().int().nonnegative(),
     occurrenceCount: z.number().int().nonnegative(),
     municipalities: z.array(z.string()),
