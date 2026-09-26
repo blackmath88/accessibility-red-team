@@ -27,5 +27,6 @@ jobs:
       - run: npm run scan -- https://example.com --out runs/smoke
       - run: npm run scout -- https://example.com --out runs/scout/surface.json --max-pages 3 --max-depth 1
       - run: npm run report -- runs/smoke --profile requirements/profiles/ch.federal.yml
+      - run: npm run journey -- https://example.com --out runs/journey
       - run: npm run audit -- https://example.com --out runs/audit --max-pages 2 --max-depth 1 --profile requirements/profiles/ch.federal.yml
-      - run: test -f runs/smoke/manifest.json && test -f runs/smoke/probe-results.json && test -f runs/smoke/summary.json && test -f runs/smoke/report.json && test -f runs/smoke/report.html && test -f runs/scout/surface.json && test -f runs/audit/audit-manifest.json && test -f runs/audit/findings.json && test -f runs/audit/report.json && test -f runs/audit/report.html
+      - run: test -f runs/smoke/manifest.json && test -f runs/smoke/probe-results.json && test -f runs/smoke/summary.json && test -f runs/smoke/report.json && test -f runs/smoke/report.html && test -f runs/scout/surface.json && test -f runs/audit/audit-manifest.json && test -f runs/audit/findings.json && test -f runs/audit/report.json && test -f runs/audit/report.html && test -f runs/journey/journey-results.json
