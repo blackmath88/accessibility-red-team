@@ -5,6 +5,7 @@ import { buildReport } from "./report/build.js";
 import { auditSite } from "./site/audit.js";
 import { compareSiteReports } from "./watch/compare.js";
 import { runCohort } from "./cohort/run.js";
+import { mineCandidates } from "./learning/mine.js";
 
 function usage(): never {
   console.error([
@@ -15,6 +16,7 @@ function usage(): never {
     "  npm run audit -- <url> [--out runs/<name>] [--max-pages 20] [--max-depth 2] [--profile requirements/profiles/ch.federal.yml]",
     "  npm run watch -- <previous-report.json> <current-report.json> [--out watch.json]",
     "  npm run cohort -- cohorts/zh-small-pilot.yml [--out runs/cohorts/zh-small-pilot]",
+    "  npm run learn -- <cohort-summary.json> [--out candidates.json] [--min-municipalities 2] [--min-occurrences 3]",
   ].join("\n"));
   process.exit(2);
 }
@@ -109,6 +111,27 @@ if (command === "scan") {
   runCohort({
     cohortPath: resolve(cohortPath),
     outDir: outDir ? resolve(outDir) : undefined,
+  })
+    .then((result) => console.log(JSON.stringify(result, null, 2)))
+    .catch((error) => {
+      console.error(error instanceof Error ? error.message : String(error));
+      process.exit(1);
+    });
+} else if (command === "learn") {
+  const summaryPath = args.find((arg) => !arg.startsWith("--"));
+  if (!summaryPath) usage();
+
+  const outPath = valueAfter(args, "--out")
+    ? resolve(valueAfter(args, "--out")!)
+    : resolve("candidates.json");
+  const minMunicipalities = Number(valueAfter(args, "--min-municipalities") ?? "2");
+  const minOccurrences = Number(valueAfter(args, "--min-occurrences") ?? "3");
+
+  mineCandidates({
+    cohortSummaryPath: resolve(summaryPath),
+    outPath,
+    minMunicipalities,
+    minOccurrences,
   })
     .then((result) => console.log(JSON.stringify(result, null, 2)))
     .catch((error) => {
