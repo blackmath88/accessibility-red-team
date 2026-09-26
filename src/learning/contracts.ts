@@ -16,6 +16,7 @@ export const CandidateCheckSchema = z.object({
   sourceType: z.enum([
     "repeated_incomplete",
     "repeated_violation_pattern",
+    "remediation_pattern",
     "unknown_archetype",
     "journey_gap",
     "manual_observation",
