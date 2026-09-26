@@ -1,0 +1,28 @@
+{
+  "schema": "art/journey-cohort-baseline/v1",
+  "capturedAt": "2026-09-26T09:48:43.084Z",
+  "cohortId": "ch.zh.small-pilot-journeys",
+  "sourceRun": 36233756867,
+  "aiCalls": 0,
+  "scope": {
+    "municipalities": ["Volken", "Maschwanden", "Truttikon", "Ossingen", "Bachs"],
+    "maxSurfacesPerSite": 2
+  },
+  "journeyFamilies": [
+    {"journeyId":"dialog.focus-behavior","outcome":"inapplicable","municipalityCount":3,"resultCount":5},
+    {"journeyId":"dialog.focus-behavior","outcome":"incomplete","municipalityCount":3,"resultCount":5},
+    {"journeyId":"expandable.aria-expanded","outcome":"inapplicable","municipalityCount":3,"resultCount":5},
+    {"journeyId":"expandable.aria-expanded","outcome":"incomplete","municipalityCount":3,"resultCount":5},
+    {"journeyId":"keyboard.focus-trace","outcome":"incomplete","municipalityCount":3,"resultCount":5},
+    {"journeyId":"keyboard.focus-trace","outcome":"pass","municipalityCount":3,"resultCount":5},
+    {"journeyId":"skip-link.same-page","outcome":"inapplicable","municipalityCount":2,"resultCount":4},
+    {"journeyId":"skip-link.same-page","outcome":"incomplete","municipalityCount":2,"resultCount":3},
+    {"journeyId":"skip-link.same-page","outcome":"violation","municipalityCount":2,"resultCount":3}
+  ],
+  "interpretation": [
+    "Journey outcomes are behavioral evidence, not automatically legal/WCAG findings.",
+    "Repeated incomplete outcomes should enter the candidate catalogue for detector refinement.",
+    "Skip-link violation results require fixture/manual validation before outreach use.",
+    "No journey rule is promoted based solely on this cohort."
+  ]
+}
