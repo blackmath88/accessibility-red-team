@@ -1,4 +1,5 @@
 name: zh-small-pilot-once
+# optimized rerun
 
 on:
   push:
