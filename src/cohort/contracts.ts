@@ -9,6 +9,7 @@ export const CohortSchema = z.object({
   settings: z.object({
     max_pages: z.number().int().positive(),
     max_depth: z.number().int().nonnegative(),
+    max_surfaces: z.number().int().positive().optional(),
   }),
   issueFamilies: z.array(z.object({
     probeId: z.string(),
