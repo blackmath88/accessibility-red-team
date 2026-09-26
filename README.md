@@ -123,3 +123,18 @@ npm run benchmark:scout
 ```
 
 The first recorded baseline is stored in `benchmarks/baselines/scout-2026-09-25.json`. The GitHub real-site workflow is manual-only to avoid repeatedly crawling public sites on normal development pushes.
+
+
+## Safe journeys
+
+Behavioral accessibility probes are opt-in:
+
+```bash
+npm run journey -- https://example.ch --out runs/example-journey
+```
+
+or add `--journeys` to an audit.
+
+The first bounded journeys cover keyboard focus traces, skip links, aria-expanded controls and dialog focus behavior. They do not submit forms, follow external links or intentionally write server state.
+
+See [docs/SAFE_JOURNEYS.md](docs/SAFE_JOURNEYS.md).
