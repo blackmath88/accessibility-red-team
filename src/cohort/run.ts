@@ -15,6 +15,14 @@ export async function runCohort(options: {
 
   const resolvedProfile = resolve(cohort.profile);
   const sites = [];
+  const journeyFamilies = new Map<string, {
+    journeyId: string;
+    kind: string;
+    outcome: "pass" | "violation" | "incomplete" | "inapplicable" | "error";
+    municipalities: Set<string>;
+    resultCount: number;
+  }>();
+
   const issueFamilies = new Map<string, {
     probeId: string;
     outcome: "violation" | "incomplete";
@@ -31,7 +39,24 @@ export async function runCohort(options: {
         maxDepth: cohort.settings.max_depth,
         profilePath: resolvedProfile,
         maxSurfaces: cohort.settings.max_surfaces,
+        journeys: cohort.settings.journeys ?? false,
       });
+
+      for (const journeyRun of result.journeyRuns) {
+        for (const journey of journeyRun.results) {
+          const journeyKey = `${journey.journeyId}:${journey.outcome}`;
+          const currentJourney = journeyFamilies.get(journeyKey) ?? {
+            journeyId: journey.journeyId,
+            kind: journey.kind,
+            outcome: journey.outcome,
+            municipalities: new Set<string>(),
+            resultCount: 0,
+          };
+          currentJourney.municipalities.add(site.name);
+          currentJourney.resultCount += 1;
+          journeyFamilies.set(journeyKey, currentJourney);
+        }
+      }
 
       if (result.report) {
         for (const { finding } of result.report.findings) {
@@ -86,12 +111,29 @@ export async function runCohort(options: {
       a.outcome.localeCompare(b.outcome)
     );
 
+  const aggregatedJourneys = Array.from(journeyFamilies.values())
+    .map((family) => ({
+      journeyId: family.journeyId,
+      kind: family.kind,
+      outcome: family.outcome,
+      municipalityCount: family.municipalities.size,
+      resultCount: family.resultCount,
+      municipalities: Array.from(family.municipalities).sort(),
+    }))
+    .sort((a, b) =>
+      b.municipalityCount - a.municipalityCount ||
+      b.resultCount - a.resultCount ||
+      a.journeyId.localeCompare(b.journeyId) ||
+      a.outcome.localeCompare(b.outcome)
+    );
+
   const result = CohortResultSchema.parse({
     schema: "art/cohort-result/v1",
     cohortId: cohort.id,
     generatedAt: new Date().toISOString(),
     profileId: cohort.profile,
     aiCalls: 0,
+    journeyFamilies: aggregatedJourneys,
     issueFamilies: aggregated,
     sites,
   });
