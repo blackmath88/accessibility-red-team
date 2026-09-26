@@ -1,0 +1,22 @@
+schema: art/field-validation-cohort/v1
+id: ch.basel-region.municipality-field
+as_of: 2026-09-26
+purpose: >
+  Non-conformance field validation of scanner and journey behavior across
+  different municipal websites. No jurisdiction profile is applied and no
+  legal applicability claim is made.
+
+settings:
+  scan_root_only: true
+  journeys: true
+
+sites:
+  - id: ch-bs-riehen
+    name: Riehen
+    url: https://www.riehen.ch/
+  - id: ch-bl-allschwil
+    name: Allschwil
+    url: https://www.allschwil.ch/
+  - id: ch-bl-binningen
+    name: Binningen
+    url: https://www.binningen.ch/
