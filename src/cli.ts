@@ -4,6 +4,7 @@ import { scoutSite } from "./scout/scout.js";
 import { buildReport } from "./report/build.js";
 import { auditSite } from "./site/audit.js";
 import { compareSiteReports } from "./watch/compare.js";
+import { runCohort } from "./cohort/run.js";
 
 function usage(): never {
   console.error([
@@ -13,6 +14,7 @@ function usage(): never {
     "  npm run report -- <run-dir> --profile requirements/profiles/ch.federal.yml",
     "  npm run audit -- <url> [--out runs/<name>] [--max-pages 20] [--max-depth 2] [--profile requirements/profiles/ch.federal.yml]",
     "  npm run watch -- <previous-report.json> <current-report.json> [--out watch.json]",
+    "  npm run cohort -- cohorts/zh-small-pilot.yml [--out runs/cohorts/zh-small-pilot]",
   ].join("\n"));
   process.exit(2);
 }
@@ -95,6 +97,20 @@ if (command === "scan") {
     outPath,
   })
     .then((result) => console.log(JSON.stringify(result.summary, null, 2)))
+    .catch((error) => {
+      console.error(error instanceof Error ? error.message : String(error));
+      process.exit(1);
+    });
+} else if (command === "cohort") {
+  const cohortPath = args.find((arg) => !arg.startsWith("--"));
+  if (!cohortPath) usage();
+  const outDir = valueAfter(args, "--out");
+
+  runCohort({
+    cohortPath: resolve(cohortPath),
+    outDir: outDir ? resolve(outDir) : undefined,
+  })
+    .then((result) => console.log(JSON.stringify(result, null, 2)))
     .catch((error) => {
       console.error(error instanceof Error ? error.message : String(error));
       process.exit(1);
