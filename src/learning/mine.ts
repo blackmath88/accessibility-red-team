@@ -42,7 +42,7 @@ export async function mineCandidates(options: {
         status: "CANDIDATE" as const,
         sourceType: repeatedIncomplete
           ? "repeated_incomplete" as const
-          : "repeated_violation_pattern" as const,
+          : "remediation_pattern" as const,
         probeId: family.probeId,
         outcome: family.outcome,
         title: titleFor(family.probeId, family.outcome),
