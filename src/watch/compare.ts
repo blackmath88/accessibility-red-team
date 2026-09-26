@@ -1,8 +1,8 @@
 import { readFile, writeFile } from "node:fs/promises";
+import type { z } from "zod";
 import { createHash } from "node:crypto";
 import {
   SiteAccessibilityReportSchema,
-  type SiteAccessibilityReport,
 } from "../report/site-contracts.js";
 import { WatchResultSchema } from "./contracts.js";
 
