@@ -5,6 +5,7 @@ import { scoutSite } from "../scout/scout.js";
 import { scanUrl } from "../scan.js";
 import { triageSurfaceRuns } from "../triage/triage.js";
 import { buildSiteReport } from "../report/site.js";
+import { runSafeJourneys } from "../journeys/engine.js";
 
 export async function auditSite(input: string, options: {
   outDir?: string;
@@ -12,6 +13,7 @@ export async function auditSite(input: string, options: {
   maxDepth?: number;
   profilePath?: string;
   maxSurfaces?: number;
+  journeys?: boolean;
 } = {}) {
   const host = new URL(input).hostname.replace(/[^a-z0-9.-]/gi, "_");
   const outDir = resolve(options.outDir ?? join("runs", host));
@@ -31,6 +33,12 @@ export async function auditSite(input: string, options: {
     for (const selected of selectedSurfaces) {
       const runDir = join(outDir, "surfaces", selected.surfaceId);
       await scanUrl(selected.url, runDir, { browser });
+      if (options.journeys) {
+        await runSafeJourneys(selected.url, runDir, {
+          browser,
+          surfaceId: selected.surfaceId,
+        });
+      }
       runs.push({
         surfaceId: selected.surfaceId,
         url: selected.url,
@@ -57,6 +65,7 @@ export async function auditSite(input: string, options: {
       surfaceRuns: runs.map((run) => ({
         surfaceId: run.surfaceId,
         path: `surfaces/${run.surfaceId}`,
+        journeys: options.journeys ? "journey-results.json" : null,
       })),
     },
   };
