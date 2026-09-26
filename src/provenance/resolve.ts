@@ -72,7 +72,7 @@ export function resolveRequirement(
     levelRank(observedLevel) <= levelRank(baseline.level) &&
     versionCompatible;
 
-  if (baselineApplies) {
+  if (baselineApplies && baseline.strength !== "UNKNOWN") {
     const chain = [];
 
     const ech = profile.baseline.ech;
