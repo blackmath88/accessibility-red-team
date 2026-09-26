@@ -6,7 +6,7 @@ import { tmpdir } from "node:os";
 import { randomUUID } from "node:crypto";
 import { mineCandidates } from "../src/learning/mine.js";
 
-test("mines repeated cohort patterns into candidates without promoting them", async () => {
+test("mines repeated cohort patterns and journey gaps without promoting them", async () => {
   const dir = join(tmpdir(), "art-learn-" + randomUUID());
   await mkdir(dir, { recursive: true });
   const source = join(dir, "summary.json");
@@ -34,6 +34,16 @@ test("mines repeated cohort patterns into candidates without promoting them", as
         municipalities: ["A"],
       },
     ],
+    journeyFamilies: [
+      {
+        journeyId: "keyboard.focus-trace",
+        kind: "keyboard_focus",
+        outcome: "incomplete",
+        municipalityCount: 4,
+        resultCount: 8,
+        municipalities: ["A", "B", "C", "D"],
+      }
+    ],
     sites: [],
   }));
 
@@ -44,8 +54,10 @@ test("mines repeated cohort patterns into candidates without promoting them", as
     minOccurrences: 3,
   });
 
-  assert.equal(result.candidates.length, 1);
+  assert.equal(result.candidates.length, 2);
   assert.equal(result.candidates[0]!.status, "CANDIDATE");
   assert.equal(result.candidates[0]!.sourceType, "repeated_incomplete");
-  assert.equal(result.candidates[0]!.aiCalls, 0);
+  assert.equal(result.candidates[1]!.sourceType, "journey_gap");
+  assert.equal(result.candidates[1]!.proposedDetector, "safe_journey");
+  assert.equal(result.candidates.every((candidate) => candidate.aiCalls === 0), true);
 });
