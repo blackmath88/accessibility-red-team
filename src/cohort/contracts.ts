@@ -10,6 +10,7 @@ export const CohortSchema = z.object({
     max_pages: z.number().int().positive(),
     max_depth: z.number().int().nonnegative(),
     max_surfaces: z.number().int().positive().optional(),
+    journeys: z.boolean().optional(),
   }),
   sites: z.array(z.object({
     id: z.string(),
@@ -25,6 +26,14 @@ export const CohortResultSchema = z.object({
   generatedAt: z.string().datetime(),
   profileId: z.string(),
   aiCalls: z.literal(0),
+  journeyFamilies: z.array(z.object({
+    journeyId: z.string(),
+    kind: z.string(),
+    outcome: z.enum(["pass", "violation", "incomplete", "inapplicable", "error"]),
+    municipalityCount: z.number().int().nonnegative(),
+    resultCount: z.number().int().nonnegative(),
+    municipalities: z.array(z.string()),
+  })).default([]),
   issueFamilies: z.array(z.object({
     probeId: z.string(),
     outcome: z.enum(["violation", "incomplete"]),
