@@ -23,4 +23,6 @@ test("coverage manifest refuses a fake aggregate automation percentage", () => {
   assert.equal("automationCeiling" in manifest, false);
   assert.ok(manifest.limitations.some((item) => item.includes("not a conformance percentage")));
   assert.equal(manifest.engine.configuration, "default");
+  assert.deepEqual(manifest.engine.enabledRules, []);
+  assert.deepEqual(manifest.engine.explicitlyDisabledByDefault, ["target-size"]);
 });
