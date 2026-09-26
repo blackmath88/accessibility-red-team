@@ -68,7 +68,8 @@
         "package.json",
         "tsconfig.json",
         "src/cli.ts",
-        "src/contracts.ts"
+        "src/contracts.ts",
+        "scripts/"
       ]
     }
   ],
