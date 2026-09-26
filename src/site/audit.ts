@@ -28,16 +28,18 @@ export async function auditSite(input: string, options: {
 
   const selectedSurfaces = surface.surfaces.slice(0, options.maxSurfaces ?? surface.surfaces.length);
   const runs = [];
+  const journeyRuns = [];
   const browser = await chromium.launch({ headless: true });
   try {
     for (const selected of selectedSurfaces) {
       const runDir = join(outDir, "surfaces", selected.surfaceId);
       await scanUrl(selected.url, runDir, { browser });
       if (options.journeys) {
-        await runSafeJourneys(selected.url, runDir, {
+        const journeyRun = await runSafeJourneys(selected.url, runDir, {
           browser,
           surfaceId: selected.surfaceId,
         });
+        journeyRuns.push(journeyRun);
       }
       runs.push({
         surfaceId: selected.surfaceId,
@@ -79,5 +81,5 @@ export async function auditSite(input: string, options: {
       })
     : null;
 
-  return { surface, triage, manifest, report };
+  return { surface, triage, manifest, report, journeyRuns };
 }
