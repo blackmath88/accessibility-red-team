@@ -10,6 +10,12 @@ export const CohortSchema = z.object({
     max_pages: z.number().int().positive(),
     max_depth: z.number().int().nonnegative(),
   }),
+  issueFamilies: z.array(z.object({
+    probeId: z.string(),
+    municipalityCount: z.number().int().nonnegative(),
+    occurrenceCount: z.number().int().nonnegative(),
+    municipalities: z.array(z.string()),
+  })),
   sites: z.array(z.object({
     id: z.string(),
     name: z.string(),
