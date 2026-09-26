@@ -12,6 +12,7 @@ import {
   type ProbeResult,
 } from "./contracts.js";
 import { validatePublicTarget } from "./scope.js";
+import { buildCoverageManifest } from "./capability.js";
 import { requirementsFromAxeTags } from "./wcag.js";
 
 const VIEWPORT = { width: 1440, height: 900 };
@@ -139,6 +140,8 @@ export async function scanUrl(
       wcagCriteriaObserved: criteria,
     });
 
+    const coverage = buildCoverageManifest();
+
     const manifest = {
       schema: "art/run-manifest/v1",
       runId,
@@ -154,7 +157,7 @@ export async function scanUrl(
       },
       profile: null,
       aiCalls: 0,
-      artifacts: ["snapshot.json", "probe-results.json", "summary.json", screenshotName],
+      artifacts: ["snapshot.json", "probe-results.json", "summary.json", "coverage.json", screenshotName],
     };
 
     await Promise.all([
@@ -162,6 +165,7 @@ export async function scanUrl(
       writeFile(join(outDir, "snapshot.json"), JSON.stringify(snapshot, null, 2)),
       writeFile(join(outDir, "probe-results.json"), JSON.stringify(results, null, 2)),
       writeFile(join(outDir, "summary.json"), JSON.stringify(summary, null, 2)),
+      writeFile(join(outDir, "coverage.json"), JSON.stringify(coverage, null, 2)),
     ]);
 
     console.log(JSON.stringify(summary, null, 2));

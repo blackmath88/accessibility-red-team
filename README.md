@@ -60,10 +60,13 @@ manifest.json
 snapshot.json
 probe-results.json
 summary.json
+coverage.json
 page.png
 ```
 
 The manifest records `aiCalls: 0`. Accessibility results retain axe's separate violation / incomplete / pass / inapplicable states and normalize WCAG criterion tags without claiming full WCAG conformance.
+
+`coverage.json` records the scanner's own epistemic boundary: per-criterion deterministic, behavioral, semantic and human-review capability. It intentionally does not publish a fake aggregate “percent of accessibility automated” score. See [docs/REQUIREMENT_CAPABILITY_EVIDENCE.md](docs/REQUIREMENT_CAPABILITY_EVIDENCE.md).
 
 See [docs/BUILD_PLAN.md](docs/BUILD_PLAN.md) for the staged implementation plan.
 
