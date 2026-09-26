@@ -8,6 +8,7 @@ import {
   type JourneyRun,
 } from "./contracts.js";
 import { isSafeActivationTarget } from "./safety.js";
+import { hasUsableFocusEvidence } from "./focus-evidence.js";
 import { validatePublicTarget } from "../scope.js";
 
 const VERSION = "journeys/0.1";
@@ -68,7 +69,7 @@ async function keyboardFocusJourney(page: Page, surfaceId: string, url: string):
     return JourneyResultSchema.parse({
       schema: "art/journey-result/v1",
       journeyId: "keyboard.focus-trace",
-      journeyVersion: VERSION,
+      journeyVersion: "journeys/0.2",
       kind: "keyboard_focus",
       surfaceId,
       url,
@@ -81,16 +82,13 @@ async function keyboardFocusJourney(page: Page, surfaceId: string, url: string):
     });
   }
 
-  const clearlyVisible = steps.filter((step) => {
-    const outline = step.outlineStyle !== "none" && step.outlineWidth !== "0px";
-    const shadow = step.boxShadow !== "none";
-    return step.focusVisible && (outline || shadow);
-  }).length;
+  const viewport = page.viewportSize() ?? { width: 0, height: 0 };
+  const clearlyVisible = steps.filter((step) => hasUsableFocusEvidence(step, viewport)).length;
 
   return JourneyResultSchema.parse({
     schema: "art/journey-result/v1",
     journeyId: "keyboard.focus-trace",
-    journeyVersion: VERSION,
+    journeyVersion: "journeys/0.2",
     kind: "keyboard_focus",
     surfaceId,
     url,
