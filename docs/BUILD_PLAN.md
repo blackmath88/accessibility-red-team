@@ -106,7 +106,7 @@ AI budget: zero initially.
 
 Acceptance: representative sample selected with explicit reasons and crawl budget.
 
-### Slice 2 — provenance resolver + deterministic report — IN BUILD
+### Slice 2 — provenance resolver + deterministic report — IMPLEMENTED
 
 - load jurisdiction profile;
 - map technical findings to WCAG criteria;
@@ -250,3 +250,30 @@ A separate controlled cohort exists at:
 It uses the same five Zürich municipalities as the passive baseline, at most two representative surfaces per site, and is manual-only.
 
 Repeated journey gaps feed the candidate catalogue rather than being promoted automatically.
+
+
+## Journey → Report → WATCH integration
+
+Site reports are now versioned:
+
+- `art/site-accessibility-report/v1` — static findings only;
+- `art/site-accessibility-report/v2` — static findings + behavioral journey evidence.
+
+WATCH reads both versions.
+
+Journey changes are tracked independently from static findings:
+
+```text
+NEW
+REMOVED
+UNCHANGED
+OUTCOME_CHANGED
+RULE_CHANGED
+NOT_COMPARABLE
+```
+
+This prevents a journey changing from `INCOMPLETE` to `PASS` from being described as a resolved WCAG violation.
+
+First field baseline:
+
+`benchmarks/baselines/zh-small-pilot-journeys-2026-09-26.json`
