@@ -138,3 +138,19 @@ or add `--journeys` to an audit.
 The first bounded journeys cover keyboard focus traces, skip links, aria-expanded controls and dialog focus behavior. They do not submit forms, follow external links or intentionally write server state.
 
 See [docs/SAFE_JOURNEYS.md](docs/SAFE_JOURNEYS.md).
+
+
+## Journey-aware reports and WATCH
+
+New audits write site report v2. Behavioral journey evidence is displayed separately from deterministic WCAG/provenance findings.
+
+WATCH supports legacy report v1 and report v2. Journey outcome changes are tracked independently:
+
+```text
+INCOMPLETE → PASS
+= OUTCOME_CHANGED
+```
+
+rather than being presented as a resolved standards violation.
+
+The first controlled journey baseline is documented in [docs/ZH_JOURNEY_PILOT.md](docs/ZH_JOURNEY_PILOT.md).
