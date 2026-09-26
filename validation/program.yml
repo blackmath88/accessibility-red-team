@@ -1,0 +1,43 @@
+schema: art/validation-program/v1
+status: active
+
+stages:
+  - id: local-fixtures
+    outreach: false
+    scale: local
+    gate: deterministic expectations pass
+
+  - id: public-smoke
+    outreach: false
+    scale: individual-sites
+    gate: browser/network paths stable
+
+  - id: controlled-cohorts
+    outreach: false
+    scale: 5-10-sites
+    gate: candidate and false-positive review
+
+  - id: regional-diversity
+    outreach: false
+    scale: multiple-cohorts
+    gate: stable discovery across site shapes
+
+  - id: canton-shadow
+    outreach: false
+    scale: canton
+    gate: operations and report quality
+
+  - id: outreach-dry-run
+    outreach: false
+    scale: 20-30-reviewed-reports
+    gate: manual report approval
+
+  - id: limited-outreach
+    outreach: true
+    scale: 3-5-sites
+    gate: feedback and correction review
+
+  - id: deployment
+    outreach: true
+    scale: incremental
+    gate: stable catalogue and governance
