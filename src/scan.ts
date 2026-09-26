@@ -3,7 +3,7 @@ import { mkdir, writeFile } from "node:fs/promises";
 import { join } from "node:path";
 import { AxeBuilder } from "@axe-core/playwright";
 import type { Result as AxeRuleResult } from "axe-core";
-import { chromium, type Page } from "playwright";
+import { chromium, type Browser, type Page } from "playwright";
 
 import {
   ProbeResultSchema,
@@ -57,14 +57,19 @@ async function settle(page: Page): Promise<void> {
   await page.waitForTimeout(750);
 }
 
-export async function scanUrl(input: string, outDir: string): Promise<void> {
+export async function scanUrl(
+  input: string,
+  outDir: string,
+  options: { browser?: Browser } = {},
+): Promise<void> {
   const target = await validatePublicTarget(input);
   const runId = randomUUID();
   const surfaceId = "surface_root";
 
   await mkdir(outDir, { recursive: true });
 
-  const browser = await chromium.launch({ headless: true });
+  const ownsBrowser = !options.browser;
+  const browser = options.browser ?? await chromium.launch({ headless: true });
   try {
     const context = await browser.newContext({
       viewport: VIEWPORT,
@@ -161,6 +166,6 @@ export async function scanUrl(input: string, outDir: string): Promise<void> {
 
     console.log(JSON.stringify(summary, null, 2));
   } finally {
-    await browser.close();
+    if (ownsBrowser) await browser.close();
   }
 }
