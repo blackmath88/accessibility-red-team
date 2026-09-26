@@ -1,5 +1,5 @@
 name: zh-small-pilot-once
-# optimized rerun
+# optimized rerun after schema fix
 
 on:
   push:
