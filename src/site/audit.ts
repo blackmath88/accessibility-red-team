@@ -1,5 +1,6 @@
 import { mkdir, writeFile } from "node:fs/promises";
 import { join, resolve } from "node:path";
+import { chromium } from "playwright";
 import { scoutSite } from "../scout/scout.js";
 import { scanUrl } from "../scan.js";
 import { triageSurfaceRuns } from "../triage/triage.js";
@@ -10,6 +11,7 @@ export async function auditSite(input: string, options: {
   maxPages?: number;
   maxDepth?: number;
   profilePath?: string;
+  maxSurfaces?: number;
 } = {}) {
   const host = new URL(input).hostname.replace(/[^a-z0-9.-]/gi, "_");
   const outDir = resolve(options.outDir ?? join("runs", host));
@@ -22,15 +24,21 @@ export async function auditSite(input: string, options: {
     out: surfacePath,
   });
 
+  const selectedSurfaces = surface.surfaces.slice(0, options.maxSurfaces ?? surface.surfaces.length);
   const runs = [];
-  for (const selected of surface.surfaces) {
-    const runDir = join(outDir, "surfaces", selected.surfaceId);
-    await scanUrl(selected.url, runDir);
-    runs.push({
-      surfaceId: selected.surfaceId,
-      url: selected.url,
-      runDir,
-    });
+  const browser = await chromium.launch({ headless: true });
+  try {
+    for (const selected of selectedSurfaces) {
+      const runDir = join(outDir, "surfaces", selected.surfaceId);
+      await scanUrl(selected.url, runDir, { browser });
+      runs.push({
+        surfaceId: selected.surfaceId,
+        url: selected.url,
+        runDir,
+      });
+    }
+  } finally {
+    await browser.close();
   }
 
   const triage = await triageSurfaceRuns(runs, join(outDir, "findings.json"));
@@ -40,7 +48,7 @@ export async function auditSite(input: string, options: {
     generatedAt: new Date().toISOString(),
     entrypoint: surface.entrypoint,
     finalEntrypoint: surface.finalEntrypoint,
-    selectedSurfaces: surface.surfaces.length,
+    selectedSurfaces: runs.length,
     findings: triage.findings.length,
     aiCalls: 0,
     artifacts: {
