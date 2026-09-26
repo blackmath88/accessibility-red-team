@@ -17,41 +17,52 @@
   "gates": [],
   "commitments": [
     {
-      "id": "C1",
+      "id": "C4",
       "status": "declared",
       "confirmed_by": "project owner",
       "confirmed_at": "2026-09-26T11:27:00+02:00",
-      "text": "Validate safe-journey detectors on the controlled Zürich municipality cohort before expanding geography.",
+      "text": "Build the candidate promotion and regression-fixture harness before expanding the trusted catalogue.",
       "owner": null,
       "due": null,
       "links": [
-        {"kind": "path", "ref": "src/journeys/"},
-        {"kind": "path", "ref": "cohorts/zh-small-pilot-journeys.yml"}
+        {
+          "kind": "path",
+          "ref": "fixtures/accessibility/"
+        },
+        {
+          "kind": "path",
+          "ref": "catalogue/"
+        }
       ]
     },
     {
-      "id": "C2",
+      "id": "C5",
       "status": "declared",
       "confirmed_by": "project owner",
       "confirmed_at": "2026-09-26T11:27:00+02:00",
-      "text": "Close the self-expanding catalogue loop with fixtures and explicit promote/reject gates.",
+      "text": "Validate the skip-link and other repeated journey gaps with deterministic fixtures before any journey result is used in outreach.",
       "owner": null,
       "due": null,
       "links": [
-        {"kind": "path", "ref": "src/learning/"},
-        {"kind": "path", "ref": "validation/"}
+        {
+          "kind": "path",
+          "ref": "fixtures/journeys/"
+        }
       ]
     },
     {
-      "id": "C3",
+      "id": "C6",
       "status": "declared",
       "confirmed_by": "project owner",
       "confirmed_at": "2026-09-26T11:27:00+02:00",
-      "text": "Keep public outreach disabled until controlled cohorts, shadow scans and dry-run report review meet the validation program.",
+      "text": "Prepare a canton-scale shadow-run cohort only after fixture promotion gates are working.",
       "owner": null,
       "due": null,
       "links": [
-        {"kind": "path", "ref": "docs/VALIDATION_PROGRAM.md"}
+        {
+          "kind": "path",
+          "ref": "cohorts/zh-shadow.yml"
+        }
       ]
     }
   ],
@@ -62,7 +73,10 @@
       "confirmed_by": "project owner",
       "confirmed_at": "2026-09-26T11:27:00+02:00",
       "text": "Deterministic software owns control flow; AI remains optional and bounded at unresolved semantic edges.",
-      "areas": ["src/", "docs/SEMANTIC_COMPILER.md"]
+      "areas": [
+        "src/",
+        "docs/SEMANTIC_COMPILER.md"
+      ]
     },
     {
       "id": "D2",
@@ -70,7 +84,10 @@
       "confirmed_by": "project owner",
       "confirmed_at": "2026-09-26T11:27:00+02:00",
       "text": "Municipality cohorts use a research benchmark profile until binding municipal applicability is explicitly sourced.",
-      "areas": ["requirements/", "cohorts/"]
+      "areas": [
+        "requirements/",
+        "cohorts/"
+      ]
     },
     {
       "id": "D3",
@@ -78,7 +95,9 @@
       "confirmed_by": "project owner",
       "confirmed_at": "2026-09-26T11:27:00+02:00",
       "text": "Safe journeys must not submit forms, follow external links, authenticate, upload, pay or intentionally write server state.",
-      "areas": ["src/journeys/"]
+      "areas": [
+        "src/journeys/"
+      ]
     },
     {
       "id": "D4",
@@ -86,7 +105,10 @@
       "confirmed_by": "project owner",
       "confirmed_at": "2026-09-26T11:27:00+02:00",
       "text": "The catalogue may expand through observed candidates, but candidate checks require validation and promotion before becoming trusted production checks.",
-      "areas": ["src/learning/", "validation/"]
+      "areas": [
+        "src/learning/",
+        "validation/"
+      ]
     }
   ]
 }
