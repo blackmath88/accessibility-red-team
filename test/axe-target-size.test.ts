@@ -58,22 +58,15 @@ test("axe 4.13 target-size is absent by default and observable when explicitly e
 });
 
 
-test("target-size fixture matrix distinguishes clear fail and clear pass", async (t) => {
+test("target-size fixture matrix captures spacing-sensitive fail and clear pass", async (t) => {
   const browser = await chromium.launch({ headless: true });
   t.after(async () => browser.close());
   const context = await browser.newContext({ viewport: { width: 800, height: 600 } });
   t.after(async () => context.close());
 
-  async function outcomeFor(size: number) {
+  async function outcomeFor(html: string) {
     const page = await context.newPage();
-    await page.setContent(`
-      <!doctype html><html lang="en"><head><style>
-        a.target { display:inline-block; width:${size}px; height:${size}px; line-height:${size}px; }
-      </style></head><body>
-        <a class="target" href="#destination" aria-label="Target">x</a>
-        <div id="destination">Destination</div>
-      </body></html>
-    `);
+    await page.setContent(html);
     const run = await new AxeBuilder({ page }).withRules(["target-size"]).analyze();
     await page.close();
     if (run.violations.some((r) => r.id === "target-size")) return "violation";
@@ -83,6 +76,23 @@ test("target-size fixture matrix distinguishes clear fail and clear pass", async
     return "missing";
   }
 
-  assert.equal(await outcomeFor(10), "violation");
-  assert.equal(await outcomeFor(44), "pass");
+  const crowdedTinyTargets = `
+    <!doctype html><html lang="en"><head><style>
+      a.target { display:inline-block; width:10px; height:10px; line-height:10px; margin:0; padding:0; }
+    </style></head><body>
+      <a class="target" href="#a" aria-label="Target A">a</a><a class="target" href="#b" aria-label="Target B">b</a>
+      <div id="a">A</div><div id="b">B</div>
+    </body></html>
+  `;
+
+  const largeTarget = `
+    <!doctype html><html lang="en"><head><style>
+      a.target { display:inline-block; width:44px; height:44px; line-height:44px; }
+    </style></head><body>
+      <a class="target" href="#a" aria-label="Target A">a</a><div id="a">A</div>
+    </body></html>
+  `;
+
+  assert.equal(await outcomeFor(crowdedTinyTargets), "violation");
+  assert.equal(await outcomeFor(largeTarget), "pass");
 });
