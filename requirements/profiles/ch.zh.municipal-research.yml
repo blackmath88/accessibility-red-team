@@ -1,0 +1,23 @@
+schema: art/jurisdiction-profile/v1
+id: ch.zh.municipal-research
+jurisdiction: CH-ZH
+target_type: municipality
+as_of: 2026-09-26
+
+baseline:
+  wcag:
+    version: "2.2"
+    level: AA
+    strength: UNKNOWN
+    incorporation_source_ref: ch.zh.accessibility-requirements
+
+best_practice:
+  wcag:
+    version: "2.2"
+    level: AA
+    strength: BEST_PRACTICE
+
+reporting:
+  allow_legal_violation_wording: false
+  preferred_requirement_wording: "does not meet the selected accessibility benchmark"
+  note: "Municipal binding applicability has not yet been established for this profile. Use for benchmarking/research only."
