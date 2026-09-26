@@ -123,7 +123,7 @@ Acceptance: representative sample selected with explicit reasons and crawl budge
 - prevalence;
 - explicit dimensions: impact, confidence, prevalence, template leverage.
 
-### Slice 4 — safe journeys
+### Slice 4 — safe journeys — IMPLEMENTED / FIELD VALIDATION
 
 Initial journeys:
 
@@ -230,3 +230,23 @@ npm run watch -- \
 ```
 
 WATCH fails comparability closed when jurisdiction profiles differ and detects probe-version changes separately from website changes.
+
+
+## Safe journey field validation
+
+The first journey engine is implemented with a strict no-side-effects invariant.
+
+Current journeys:
+
+- keyboard focus trace;
+- skip-link target;
+- aria-expanded keyboard activation;
+- dialog focus enter/return.
+
+A separate controlled cohort exists at:
+
+`cohorts/zh-small-pilot-journeys.yml`
+
+It uses the same five Zürich municipalities as the passive baseline, at most two representative surfaces per site, and is manual-only.
+
+Repeated journey gaps feed the candidate catalogue rather than being promoted automatically.
