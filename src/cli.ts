@@ -6,6 +6,7 @@ import { auditSite } from "./site/audit.js";
 import { compareSiteReports } from "./watch/compare.js";
 import { runCohort } from "./cohort/run.js";
 import { mineCandidates } from "./learning/mine.js";
+import { runSafeJourneys } from "./journeys/engine.js";
 
 function usage(): never {
   console.error([
@@ -13,7 +14,8 @@ function usage(): never {
     "  npm run scan -- <url> [--out runs/<name>]",
     "  npm run scout -- <url> [--out runs/<name>/surface.json] [--max-pages 20] [--max-depth 2]",
     "  npm run report -- <run-dir> --profile requirements/profiles/ch.federal.yml",
-    "  npm run audit -- <url> [--out runs/<name>] [--max-pages 20] [--max-depth 2] [--profile requirements/profiles/ch.federal.yml]",
+    "  npm run audit -- <url> [--out runs/<name>] [--max-pages 20] [--max-depth 2] [--profile requirements/profiles/ch.federal.yml] [--journeys]",
+    "  npm run journey -- <url> [--out runs/<name>]",
     "  npm run watch -- <previous-report.json> <current-report.json> [--out watch.json]",
     "  npm run cohort -- cohorts/zh-small-pilot.yml [--out runs/cohorts/zh-small-pilot]",
     "  npm run learn -- <cohort-summary.json> [--out candidates.json] [--min-municipalities 2] [--min-occurrences 3]",
@@ -77,8 +79,23 @@ if (command === "scan") {
   const outDir = valueAfter(args, "--out") ? resolve(valueAfter(args, "--out")!) : undefined;
   const profilePath = valueAfter(args, "--profile");
 
-  auditSite(url, { outDir, maxPages, maxDepth, profilePath })
+  const journeys = args.includes("--journeys");
+
+  auditSite(url, { outDir, maxPages, maxDepth, profilePath, journeys })
     .then((result) => console.log(JSON.stringify(result.manifest, null, 2)))
+    .catch((error) => {
+      console.error(error instanceof Error ? error.message : String(error));
+      process.exit(1);
+    });
+} else if (command === "journey") {
+  const url = args.find((arg) => !arg.startsWith("--"));
+  if (!url) usage();
+  const outDir = valueAfter(args, "--out")
+    ? resolve(valueAfter(args, "--out")!)
+    : resolve("runs", new URL(url).hostname.replace(/[^a-z0-9.-]/gi, "_"), "journey");
+
+  runSafeJourneys(url, outDir)
+    .then((result) => console.log(JSON.stringify(result, null, 2)))
     .catch((error) => {
       console.error(error instanceof Error ? error.message : String(error));
       process.exit(1);
