@@ -4,7 +4,9 @@ import { loadJurisdictionProfile, loadSourceRegistry } from "../provenance/load.
 import { resolveRequirement } from "../provenance/resolve.js";
 import { AccessibilitySurfaceSchema } from "../scout/contracts.js";
 import { TriageResultSchema } from "../triage/contracts.js";
-import { SiteAccessibilityReportSchema, type SiteAccessibilityReport } from "./site-contracts.js";
+import type { JourneyRun } from "../journeys/contracts.js";
+import { summarizeJourneys } from "./journeys.js";
+import { SiteAccessibilityReportV2Schema, type SiteAccessibilityReport } from "./site-contracts.js";
 
 function esc(value: string): string {
   return value.replace(/[&<>"']/g, (char) => ({
@@ -61,6 +63,25 @@ function render(report: SiteAccessibilityReport): string {
     </article>`;
   }).join("");
 
+  const journeys = report.journeys.map((journey) => `
+    <article class="finding journey">
+      <div class="top">
+        <div>
+          <div class="kicker">${esc(journey.journeyId)} · ${esc(journey.kind)}</div>
+          <h2>${esc(journey.outcome.toUpperCase())}</h2>
+        </div>
+        <div class="count">${journey.affectedSurfaces}/${report.totalSurfaces}<small>surfaces</small></div>
+      </div>
+      <div class="pills"><span class="pill">BEHAVIORAL EVIDENCE</span><span class="pill">${esc(journey.journeyVersion)}</span></div>
+      <p>${journey.summaries.map(esc).join(" · ")}</p>
+      <details>
+        <summary>Journey scope</summary>
+        <p>Observed on: ${journey.surfaceIds.map(esc).join(", ") || "none"}.</p>
+        <p>This section is behavioral test evidence. It is not automatically a WCAG/legal finding unless separately mapped and validated.</p>
+      </details>
+    </article>`
+  ).join("");
+
   return `<!doctype html>
 <html lang="en">
 <head>
@@ -73,9 +94,10 @@ function render(report: SiteAccessibilityReport): string {
 header{padding-bottom:36px;border-bottom:1px solid #aaa;margin-bottom:32px}.kicker{font-size:12px;text-transform:uppercase;letter-spacing:.1em;color:#555}
 h1{font-size:clamp(42px,8vw,84px);line-height:.9;letter-spacing:-.04em;margin:12px 0 18px}h2{font-size:24px;margin:4px 0}
 .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin:28px 0 42px}.metric{background:#fff;border:1px solid #d2cec4;padding:18px}.metric b{font-size:34px;display:block}
-.finding{background:#fff;border:1px solid #d2cec4;padding:24px;margin:16px 0}.top{display:flex;justify-content:space-between;gap:20px}.count{font-size:28px;text-align:right}.count small{display:block;font-size:11px;text-transform:uppercase;letter-spacing:.08em}
+.finding{background:#fff;border:1px solid #d2cec4;padding:24px;margin:16px 0}.journey{border-style:dashed}.top{display:flex;justify-content:space-between;gap:20px}.count{font-size:28px;text-align:right}.count small{display:block;font-size:11px;text-transform:uppercase;letter-spacing:.08em}
 .pill{display:inline-block;border:1px solid #999;border-radius:999px;padding:4px 8px;font-size:11px;margin:4px 4px 4px 0}.pills{margin:12px 0}.muted{color:#666;font-size:12px;margin-bottom:8px}
 details{border-top:1px solid #ddd;padding-top:12px;margin-top:16px}summary{cursor:pointer;font-weight:700}.chain li{margin:12px 0}.evidence{background:#f5f5f5;padding:12px;margin:10px 0;overflow:auto}code{white-space:pre-wrap;word-break:break-word}a{color:inherit}
+section.block{margin-top:50px}section.block>h2{font-size:30px;margin-bottom:14px}
 footer{margin-top:48px;color:#555}
 </style>
 </head>
@@ -89,12 +111,19 @@ footer{margin-top:48px;color:#555}
 <section class="grid">
 <div class="metric"><b>${report.totalSurfaces}</b>surfaces tested</div>
 <div class="metric"><b>${report.summary.findings}</b>grouped findings</div>
-<div class="metric"><b>${report.summary.repeatedFindings}</b>repeated findings</div>
-<div class="metric"><b>${report.summary.applicableFindings}</b>with applicable requirement mapping</div>
+<div class="metric"><b>${report.summary.needsReview}</b>static review items</div>
+<div class="metric"><b>${report.summary.journeyNeedsReview}</b>journey review items</div>
 </section>
+<section class="block">
+<h2>Deterministic findings</h2>
 ${findings || "<p>No reportable automated findings.</p>"}
+</section>
+<section class="block">
+<h2>Behavioral journeys</h2>
+${journeys || "<p>No journey evidence collected for this audit.</p>"}
+</section>
 <footer>
-<p>Automated snapshot, not a certification of WCAG conformance. “Applicable” refers to the selected jurisdiction profile and stored provenance, not an independent legal opinion.</p>
+<p>Automated snapshot, not a certification of WCAG conformance. Behavioral journey evidence is reported separately from standards/provenance findings.</p>
 </footer>
 </main></body></html>`;
 }
@@ -103,6 +132,7 @@ export async function buildSiteReport(options: {
   auditDir: string;
   profilePath: string;
   sourcesPath?: string;
+  journeyRuns?: JourneyRun[];
 }) {
   const [surfaceRaw, triageRaw, profile, registry] = await Promise.all([
     readFile(join(options.auditDir, "surface.json"), "utf8"),
@@ -113,6 +143,7 @@ export async function buildSiteReport(options: {
 
   const surface = AccessibilitySurfaceSchema.parse(JSON.parse(surfaceRaw));
   const triage = TriageResultSchema.parse(JSON.parse(triageRaw));
+  const journeys = summarizeJourneys(options.journeyRuns ?? []);
 
   const findings = triage.findings.map((finding) => ({
     finding,
@@ -121,8 +152,8 @@ export async function buildSiteReport(options: {
     ),
   }));
 
-  const report = SiteAccessibilityReportSchema.parse({
-    schema: "art/site-accessibility-report/v1",
+  const report = SiteAccessibilityReportV2Schema.parse({
+    schema: "art/site-accessibility-report/v2",
     generatedAt: new Date().toISOString(),
     profileId: profile.id,
     entrypoint: surface.entrypoint,
@@ -134,8 +165,12 @@ export async function buildSiteReport(options: {
         requirements.some((requirement) => requirement.status === "APPLICABLE")
       ).length,
       needsReview: findings.filter(({ finding }) => finding.outcome === "incomplete").length,
+      journeyPasses: journeys.filter((journey) => journey.outcome === "pass").length,
+      journeyNeedsReview: journeys.filter((journey) => journey.outcome === "incomplete").length,
+      journeyViolations: journeys.filter((journey) => journey.outcome === "violation").length,
     },
     findings,
+    journeys,
     aiCalls: 0,
   });
 
