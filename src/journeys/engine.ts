@@ -120,7 +120,8 @@ async function skipLinkJourney(page: Page, surfaceId: string, url: string): Prom
 
     const id = decodeURIComponent(data.href.slice(1));
     if (!id) continue;
-    const target = page.locator(`#${CSS.escape(id)}`);
+    const escapedId = id.replace(/\\/g, "\\\\").replace(/"/g, "\\\"");
+    const target = page.locator(`[id="${escapedId}"]`);
     const targetCount = await target.count();
 
     const evidence = [{
