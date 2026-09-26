@@ -1,0 +1,41 @@
+name: Observstory field evaluation once
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - .github/workflows/observstory-eval-once.yml
+
+permissions:
+  contents: read
+  pull-requests: read
+  issues: read
+
+jobs:
+  evaluate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build fresh Observstory snapshot
+        uses: blackmath88/observstory@main
+        with:
+          config: observstory.config.json
+          coordination: .observstory/coordination.json
+          output: observstory
+
+      - name: Evaluate field behavior
+        run: |
+          python3 scripts/eval_observstory.py \
+            --snapshot observstory/data/snapshot.json \
+            --config .observstory/eval.json \
+            --out observstory-eval
+
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: observstory-field-eval-once
+          path: |
+            observstory
+            observstory-eval
+          retention-days: 30
