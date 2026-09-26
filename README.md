@@ -154,3 +154,12 @@ INCOMPLETE → PASS
 rather than being presented as a resolved standards violation.
 
 The first controlled journey baseline is documented in [docs/ZH_JOURNEY_PILOT.md](docs/ZH_JOURNEY_PILOT.md).
+
+
+## Build observatory
+
+Repository-level build state is observed with [Observstory](https://github.com/blackmath88/observstory).
+
+It tracks GitHub activity across six project lanes and reconciles it with a small declared coordination state. This is separate from the accessibility-domain observatory (cohorts, reports, WATCH and candidate catalogue).
+
+See [docs/OBSERVATORY.md](docs/OBSERVATORY.md).
