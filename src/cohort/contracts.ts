@@ -11,12 +11,6 @@ export const CohortSchema = z.object({
     max_depth: z.number().int().nonnegative(),
     max_surfaces: z.number().int().positive().optional(),
   }),
-  issueFamilies: z.array(z.object({
-    probeId: z.string(),
-    municipalityCount: z.number().int().nonnegative(),
-    occurrenceCount: z.number().int().nonnegative(),
-    municipalities: z.array(z.string()),
-  })),
   sites: z.array(z.object({
     id: z.string(),
     name: z.string(),
@@ -31,6 +25,12 @@ export const CohortResultSchema = z.object({
   generatedAt: z.string().datetime(),
   profileId: z.string(),
   aiCalls: z.literal(0),
+  issueFamilies: z.array(z.object({
+    probeId: z.string(),
+    municipalityCount: z.number().int().nonnegative(),
+    occurrenceCount: z.number().int().nonnegative(),
+    municipalities: z.array(z.string()),
+  })),
   sites: z.array(z.object({
     id: z.string(),
     name: z.string(),
