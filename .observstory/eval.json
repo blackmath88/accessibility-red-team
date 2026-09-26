@@ -1,0 +1,26 @@
+{
+  "schema": "art/observstory-field-eval/v1",
+  "title": "Accessibility Red Team · Observstory field evaluation",
+  "expectations": {
+    "required_lanes": [
+      "intent",
+      "discover",
+      "probe",
+      "evidence",
+      "learn",
+      "ship"
+    ],
+    "max_fallback_areas": 1,
+    "max_api_calls": 160,
+    "require_coordination": true,
+    "allow_degraded": false,
+    "require_signal_evidence": true,
+    "require_signal_rule": true
+  },
+  "candidate_rules": {
+    "direct_activity_without_in_flight": true,
+    "fallback_areas": true,
+    "api_cost_high": true,
+    "coordination_retroactive": true
+  }
+}
