@@ -7,7 +7,9 @@ test("axe 4.13 target-size is absent by default and observable when explicitly e
   const browser = await chromium.launch({ headless: true });
   t.after(async () => browser.close());
 
-  const page = await browser.newPage({ viewport: { width: 800, height: 600 } });
+  const context = await browser.newContext({ viewport: { width: 800, height: 600 } });
+  t.after(async () => context.close());
+  const page = await context.newPage();
   await page.setContent(`
     <!doctype html>
     <html lang="en">
