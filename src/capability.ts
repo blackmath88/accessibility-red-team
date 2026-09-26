@@ -27,6 +27,8 @@ export const CoverageManifestSchema = z.object({
     name: z.string(),
     version: z.string(),
     configuration: z.string(),
+    enabledRules: z.array(z.string()),
+    explicitlyDisabledByDefault: z.array(z.string()),
   }),
   capabilities: z.array(RequirementCapabilitySchema),
   limitations: z.array(z.string()),
@@ -86,6 +88,8 @@ export function buildCoverageManifest(): CoverageManifest {
       name: "axe-core",
       version: "4.13.0",
       configuration: "default",
+      enabledRules: [],
+      explicitlyDisabledByDefault: ["target-size"],
     },
     capabilities: INITIAL_REQUIREMENT_CAPABILITIES,
     limitations: [
