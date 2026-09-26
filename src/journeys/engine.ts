@@ -5,6 +5,7 @@ import {
   JourneyResultSchema,
   JourneyRunSchema,
   type JourneyResult,
+  type JourneyRun,
 } from "./contracts.js";
 import { isSafeActivationTarget } from "./safety.js";
 import { validatePublicTarget } from "../scope.js";
@@ -124,7 +125,13 @@ async function skipLinkJourney(page: Page, surfaceId: string, url: string): Prom
     const target = page.locator(`[id="${escapedId}"]`);
     const targetCount = await target.count();
 
-    const evidence = [{
+    const evidence: Array<{
+      action: string;
+      selector: string | null;
+      before?: Record<string, unknown>;
+      after?: Record<string, unknown>;
+      note?: string;
+    }> = [{
       action: "inspect skip link",
       selector: null,
       before: { text: data.text, href: data.href, targetExists: targetCount > 0 },
