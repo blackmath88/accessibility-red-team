@@ -1,0 +1,41 @@
+name: municipality-field-validation
+
+on:
+  workflow_dispatch:
+  pull_request:
+    paths:
+      - "field-validation/basel-region.yml"
+      - "src/field-summary-cli.ts"
+      - "src/field-evidence.ts"
+      - "src/journeys/**"
+      - ".github/workflows/municipality-field-validation.yml"
+
+jobs:
+  field:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - id: ch-bs-riehen
+            url: https://www.riehen.ch/
+          - id: ch-bl-allschwil
+            url: https://www.allschwil.ch/
+          - id: ch-bl-binningen
+            url: https://www.binningen.ch/
+    steps:
+      - uses: actions/checkout@v4
+      - run: npm install
+      - run: npx playwright install --with-deps chromium
+      - name: Deterministic scan
+        run: npm run scan -- "${{ matrix.url }}" --out "runs/field/${{ matrix.id }}/scan"
+      - name: Safe journeys
+        run: npm run journey -- "${{ matrix.url }}" --out "runs/field/${{ matrix.id }}/journey"
+      - name: Build typed field summary
+        run: npx tsx src/field-summary-cli.ts "runs/field/${{ matrix.id }}" "${{ matrix.id }}"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: field-${{ matrix.id }}
+          path: runs/field/${{ matrix.id }}
+          retention-days: 14
