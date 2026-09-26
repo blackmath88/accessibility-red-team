@@ -30,10 +30,12 @@ test("keyboard focus journey produces observed WCAG 2.4.3 capability evidence", 
   const evidence = capabilityEvidenceFromJourneyRuns([run]);
 
   assert.equal(evidence.length, 1);
-  assert.equal(evidence[0].criterion, "2.4.3");
-  assert.equal(evidence[0].mode, "BEHAVIORAL");
-  assert.equal(evidence[0].outcome, "incomplete");
-  assert.equal(evidence[0].evidenceCount, 1);
+  const [observed] = evidence;
+  assert.ok(observed);
+  assert.equal(observed.criterion, "2.4.3");
+  assert.equal(observed.mode, "BEHAVIORAL");
+  assert.equal(observed.outcome, "incomplete");
+  assert.equal(observed.evidenceCount, 1);
 });
 
 test("unmapped journeys do not invent requirement evidence", () => {
