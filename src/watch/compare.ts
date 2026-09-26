@@ -1,6 +1,9 @@
 import { readFile, writeFile } from "node:fs/promises";
 import { createHash } from "node:crypto";
-import { SiteAccessibilityReportSchema } from "../report/site-contracts.js";
+import {
+  SiteAccessibilityReportSchema,
+  type SiteAccessibilityReport,
+} from "../report/site-contracts.js";
 import { WatchResultSchema } from "./contracts.js";
 
 function key(probeId: string, outcome: string): string {
@@ -19,6 +22,51 @@ function snapshot(finding: {
     affectedSurfaces: finding.affectedSurfaces,
     probeVersion: finding.probeVersion,
   };
+}
+
+function journeyMap(report: z.infer<typeof SiteAccessibilityReportSchema>) {
+  const groups = new Map<string, {
+    outcomes: Set<string>;
+    versions: Set<string>;
+    affectedSurfaces: number;
+    resultCount: number;
+  }>();
+
+  if (report.schema !== "art/site-accessibility-report/v2") return groups;
+
+  for (const journey of report.journeys) {
+    const current = groups.get(journey.journeyId) ?? {
+      outcomes: new Set<string>(),
+      versions: new Set<string>(),
+      affectedSurfaces: 0,
+      resultCount: 0,
+    };
+    current.outcomes.add(journey.outcome);
+    current.versions.add(journey.journeyVersion);
+    current.affectedSurfaces += journey.affectedSurfaces;
+    current.resultCount += journey.resultCount;
+    groups.set(journey.journeyId, current);
+  }
+
+  return groups;
+}
+
+function journeySnapshot(value: {
+  outcomes: Set<string>;
+  versions: Set<string>;
+  affectedSurfaces: number;
+  resultCount: number;
+}) {
+  return {
+    outcomes: Array.from(value.outcomes).sort(),
+    versions: Array.from(value.versions).sort(),
+    affectedSurfaces: value.affectedSurfaces,
+    resultCount: value.resultCount,
+  };
+}
+
+function sameStrings(a: string[], b: string[]): boolean {
+  return a.length === b.length && a.every((value, index) => value === b[index]);
 }
 
 export async function compareSiteReports(options: {
@@ -78,6 +126,44 @@ export async function compareSiteReports(options: {
     };
   });
 
+  const previousJourneys = journeyMap(previous);
+  const currentJourneys = journeyMap(current);
+  const journeyIds = Array.from(new Set([
+    ...previousJourneys.keys(),
+    ...currentJourneys.keys(),
+  ])).sort();
+
+  const journeyChanges = journeyIds.map((journeyId) => {
+    const beforeRaw = previousJourneys.get(journeyId) ?? null;
+    const afterRaw = currentJourneys.get(journeyId) ?? null;
+    const before = beforeRaw ? journeySnapshot(beforeRaw) : null;
+    const after = afterRaw ? journeySnapshot(afterRaw) : null;
+
+    let state:
+      | "NEW"
+      | "REMOVED"
+      | "UNCHANGED"
+      | "OUTCOME_CHANGED"
+      | "RULE_CHANGED"
+      | "NOT_COMPARABLE";
+
+    if (!comparable) {
+      state = "NOT_COMPARABLE";
+    } else if (!before && after) {
+      state = "NEW";
+    } else if (before && !after) {
+      state = "REMOVED";
+    } else if (before && after && !sameStrings(before.versions, after.versions)) {
+      state = "RULE_CHANGED";
+    } else if (before && after && !sameStrings(before.outcomes, after.outcomes)) {
+      state = "OUTCOME_CHANGED";
+    } else {
+      state = "UNCHANGED";
+    }
+
+    return { journeyId, state, previous: before, current: after };
+  });
+
   const result = WatchResultSchema.parse({
     schema: "art/watch-result/v1",
     generatedAt: new Date().toISOString(),
@@ -91,8 +177,15 @@ export async function compareSiteReports(options: {
       resolved: changes.filter((change) => change.state === "RESOLVED").length,
       ruleChanged: changes.filter((change) => change.state === "RULE_CHANGED").length,
       notComparable: changes.filter((change) => change.state === "NOT_COMPARABLE").length,
+      journeyNew: journeyChanges.filter((change) => change.state === "NEW").length,
+      journeyRemoved: journeyChanges.filter((change) => change.state === "REMOVED").length,
+      journeyChanged: journeyChanges.filter((change) => change.state === "OUTCOME_CHANGED").length,
+      journeyUnchanged: journeyChanges.filter((change) => change.state === "UNCHANGED").length,
+      journeyRuleChanged: journeyChanges.filter((change) => change.state === "RULE_CHANGED").length,
+      journeyNotComparable: journeyChanges.filter((change) => change.state === "NOT_COMPARABLE").length,
     },
     changes,
+    journeys: journeyChanges,
     aiCalls: 0,
   });
 
