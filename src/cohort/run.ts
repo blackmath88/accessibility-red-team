@@ -17,6 +17,7 @@ export async function runCohort(options: {
   const sites = [];
   const issueFamilies = new Map<string, {
     probeId: string;
+    outcome: "violation" | "incomplete";
     municipalities: Set<string>;
     occurrenceCount: number;
   }>();
@@ -34,14 +35,16 @@ export async function runCohort(options: {
 
       if (result.report) {
         for (const { finding } of result.report.findings) {
-          const current = issueFamilies.get(finding.probeId) ?? {
+          const familyKey = `${finding.probeId}:${finding.outcome}`;
+          const current = issueFamilies.get(familyKey) ?? {
             probeId: finding.probeId,
+            outcome: finding.outcome,
             municipalities: new Set<string>(),
             occurrenceCount: 0,
           };
           current.municipalities.add(site.name);
           current.occurrenceCount += finding.occurrenceCount;
-          issueFamilies.set(finding.probeId, current);
+          issueFamilies.set(familyKey, current);
         }
       }
 
@@ -50,7 +53,7 @@ export async function runCohort(options: {
         name: site.name,
         url: site.url,
         status: "PASS" as const,
-        selectedSurfaces: result.surface.surfaces.length,
+        selectedSurfaces: result.manifest.selectedSurfaces,
         findings: result.report?.summary.findings ?? result.triage.findings.length,
         repeatedFindings: result.report?.summary.repeatedFindings ?? 0,
         needsReview: result.report?.summary.needsReview ?? 0,
@@ -71,6 +74,7 @@ export async function runCohort(options: {
   const aggregated = Array.from(issueFamilies.values())
     .map((family) => ({
       probeId: family.probeId,
+      outcome: family.outcome,
       municipalityCount: family.municipalities.size,
       occurrenceCount: family.occurrenceCount,
       municipalities: Array.from(family.municipalities).sort(),
@@ -78,7 +82,8 @@ export async function runCohort(options: {
     .sort((a, b) =>
       b.municipalityCount - a.municipalityCount ||
       b.occurrenceCount - a.occurrenceCount ||
-      a.probeId.localeCompare(b.probeId)
+      a.probeId.localeCompare(b.probeId) ||
+      a.outcome.localeCompare(b.outcome)
     );
 
   const result = CohortResultSchema.parse({
