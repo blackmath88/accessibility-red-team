@@ -1,5 +1,5 @@
 import { mkdir, readFile, writeFile } from "node:fs/promises";
-import { dirname, join, resolve } from "node:path";
+import { join, resolve } from "node:path";
 import YAML from "yaml";
 import { auditSite } from "../site/audit.js";
 import { CohortResultSchema, CohortSchema } from "./contracts.js";
@@ -13,11 +13,14 @@ export async function runCohort(options: {
   const outDir = resolve(options.outDir ?? join("runs", "cohorts", cohort.id));
   await mkdir(outDir, { recursive: true });
 
-  const profilePath = resolve(dirname(cohortPath), "..", cohort.profile.replace(/^requirements\//, "requirements/"));
-  // Cohort files currently live at repoRoot/cohorts, so profile should resolve from repo root.
   const resolvedProfile = resolve(cohort.profile);
-
   const sites = [];
+  const issueFamilies = new Map<string, {
+    probeId: string;
+    municipalities: Set<string>;
+    occurrenceCount: number;
+  }>();
+
   for (const site of cohort.sites) {
     const siteDir = join(outDir, site.id);
     try {
@@ -27,6 +30,19 @@ export async function runCohort(options: {
         maxDepth: cohort.settings.max_depth,
         profilePath: resolvedProfile,
       });
+
+      if (result.report) {
+        for (const { finding } of result.report.findings) {
+          const current = issueFamilies.get(finding.probeId) ?? {
+            probeId: finding.probeId,
+            municipalities: new Set<string>(),
+            occurrenceCount: 0,
+          };
+          current.municipalities.add(site.name);
+          current.occurrenceCount += finding.occurrenceCount;
+          issueFamilies.set(finding.probeId, current);
+        }
+      }
 
       sites.push({
         id: site.id,
@@ -51,12 +67,26 @@ export async function runCohort(options: {
     }
   }
 
+  const aggregated = Array.from(issueFamilies.values())
+    .map((family) => ({
+      probeId: family.probeId,
+      municipalityCount: family.municipalities.size,
+      occurrenceCount: family.occurrenceCount,
+      municipalities: Array.from(family.municipalities).sort(),
+    }))
+    .sort((a, b) =>
+      b.municipalityCount - a.municipalityCount ||
+      b.occurrenceCount - a.occurrenceCount ||
+      a.probeId.localeCompare(b.probeId)
+    );
+
   const result = CohortResultSchema.parse({
     schema: "art/cohort-result/v1",
     cohortId: cohort.id,
     generatedAt: new Date().toISOString(),
     profileId: cohort.profile,
     aiCalls: 0,
+    issueFamilies: aggregated,
     sites,
   });
 
