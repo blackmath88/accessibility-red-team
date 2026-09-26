@@ -1,0 +1,37 @@
+schema: art/cohort/v1
+id: ch.zh.small-pilot-journeys
+name: Zürich small municipality journey pilot
+as_of: 2026-09-26
+profile: requirements/profiles/ch.zh.municipal-research.yml
+
+settings:
+  max_pages: 6
+  max_depth: 2
+  max_surfaces: 2
+  journeys: true
+
+sites:
+  - id: ch-zh-volken
+    name: Volken
+    url: https://www.volken.ch/
+    note: Very small municipality; service-heavy i-web style site.
+
+  - id: ch-zh-maschwanden
+    name: Maschwanden
+    url: https://www.maschwanden.ch/de/index.php
+    note: Small municipality with online services, administration and document-heavy content.
+
+  - id: ch-zh-truttikon
+    name: Truttikon
+    url: https://www.truttikon.ch/
+    note: Small Weinland municipality.
+
+  - id: ch-zh-ossingen
+    name: Ossingen
+    url: https://www.ossingen.ch/
+    note: Small municipality with services, online counter and external handoffs.
+
+  - id: ch-zh-bachs
+    name: Bachs
+    url: https://www.bachs.ch/
+    note: Small rural municipality and a different site/content pattern.
