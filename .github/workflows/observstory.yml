@@ -1,0 +1,55 @@
+name: Observstory
+
+on:
+  push:
+  pull_request:
+    types: [opened, synchronize, reopened, closed, ready_for_review, converted_to_draft]
+  issues:
+    types: [opened, closed, reopened]
+  workflow_dispatch:
+  schedule:
+    - cron: "17 * * * *"
+
+permissions:
+  contents: read
+  pull-requests: read
+  issues: read
+
+concurrency:
+  group: observstory
+  cancel-in-progress: true
+
+jobs:
+  observatory:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build project observatory
+        id: observstory
+        uses: blackmath88/observstory@main
+        with:
+          config: observstory.config.json
+          coordination: .observstory/coordination.json
+          output: observstory
+
+      - name: Observatory summary
+        run: |
+          python3 - <<'PY'
+          import json
+          p = "observstory/data/snapshot.json"
+          s = json.load(open(p))
+          print("Repository:", s["repository"]["full_name"])
+          print("In flight:", s["summary"]["in_flight"])
+          print("Active areas:", s["summary"]["areas_active"])
+          print("Signals:", s["summary"]["signals"])
+          c = s.get("coordination")
+          if c:
+              print("Declared coordination present")
+          PY
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: accessibility-red-team-observatory
+          path: observstory
+          retention-days: 14
