@@ -1,0 +1,1 @@
+export type Organization={id:string;type:string;name:string;jurisdiction:{country:string;canton?:string|null};properties:{id:string;kind:string;url:string}[];cases:{id:string;kind:string;state:string}[]};export type Probe={id:string;family:string;name:string;status:string;mode:string;description:string};
