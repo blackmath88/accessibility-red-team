@@ -1,0 +1,49 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "art/control-center-organization/v1",
+  "title": "Accessibility Control Center Organization",
+  "type": "object",
+  "required": ["id", "type", "name", "properties", "cases"],
+  "properties": {
+    "id": { "type": "string" },
+    "type": {
+      "enum": ["municipality", "canton", "public_agency", "company", "university", "nonprofit", "other"]
+    },
+    "name": { "type": "string" },
+    "jurisdiction": {
+      "type": "object",
+      "properties": {
+        "country": { "type": "string" },
+        "canton": { "type": ["string", "null"] }
+      },
+      "required": ["country"]
+    },
+    "properties": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "kind", "url"],
+        "properties": {
+          "id": { "type": "string" },
+          "kind": { "enum": ["website", "portal", "application", "other"] },
+          "url": { "type": "string", "format": "uri" }
+        }
+      }
+    },
+    "contacts": { "type": "array" },
+    "cases": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "kind", "state"],
+        "properties": {
+          "id": { "type": "string" },
+          "kind": { "const": "accessibility_assessment" },
+          "state": {
+            "enum": ["DISCOVERED", "READY", "QUEUED", "SCANNING", "REVIEW", "REPORT_READY", "OUTREACH_READY", "CONTACTED", "WAITING", "RESCAN_DUE", "IMPROVED", "ARCHIVED"]
+          }
+        }
+      }
+    }
+  }
+}
