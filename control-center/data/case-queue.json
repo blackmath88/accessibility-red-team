@@ -1,0 +1,8 @@
+{
+  "generatedAt": "2026-09-28T20:00:00.000Z",
+  "items": [
+    {"caseId":"a11y-2026-09-riehen","organizationId":"ch-bs-riehen","organizationName":"Riehen","organizationType":"municipality","canton":"BS","propertyId":"ch-bs-riehen-main-web","propertyUrl":"https://www.riehen.ch/","caseState":"REVIEW","latestRun":null,"artifactCounts":{"field_summary":1,"probe_results":1,"journey_results":1},"needsHumanReview":true,"nextAction":"review"},
+    {"caseId":"a11y-2026-09-allschwil","organizationId":"ch-bl-allschwil","organizationName":"Allschwil","organizationType":"municipality","canton":"BL","propertyId":"ch-bl-allschwil-main-web","propertyUrl":"https://www.allschwil.ch/","caseState":"REVIEW","latestRun":null,"artifactCounts":{"field_summary":1,"probe_results":1,"journey_results":1},"needsHumanReview":true,"nextAction":"review"},
+    {"caseId":"a11y-2026-09-binningen","organizationId":"ch-bl-binningen","organizationName":"Binningen","organizationType":"municipality","canton":"BL","propertyId":"ch-bl-binningen-main-web","propertyUrl":"https://www.binningen.ch/","caseState":"REVIEW","latestRun":null,"artifactCounts":{"field_summary":1,"probe_results":1,"journey_results":1},"needsHumanReview":true,"nextAction":"review"}
+  ]
+}
