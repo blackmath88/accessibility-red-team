@@ -12,12 +12,16 @@ on:
 jobs:
   validate:
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: control-center
     steps:
       - uses: actions/checkout@v4
-      - name: Validate JSON
-        run: |
-          node -e "JSON.parse(require('fs').readFileSync('control-center/data/organizations.json','utf8'))"
-          node -e "JSON.parse(require('fs').readFileSync('control-center/data/probes.json','utf8'))"
-          node -e "JSON.parse(require('fs').readFileSync('control-center/schema/organization.schema.json','utf8'))"
-      - name: Check control center entrypoint
-        run: test -f control-center/index.html
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: control-center/package-lock.json
+      - run: npm install --package-lock-only
+      - run: npm ci
+      - run: npm run build
