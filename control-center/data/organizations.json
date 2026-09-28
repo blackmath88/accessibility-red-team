@@ -1,0 +1,29 @@
+[
+  {
+    "id": "ch-bs-riehen",
+    "type": "municipality",
+    "name": "Riehen",
+    "jurisdiction": { "country": "CH", "canton": "BS" },
+    "properties": [{ "id": "main-web", "kind": "website", "url": "https://www.riehen.ch/" }],
+    "contacts": [],
+    "cases": [{ "id": "a11y-2026-09", "kind": "accessibility_assessment", "state": "REVIEW" }]
+  },
+  {
+    "id": "ch-bl-allschwil",
+    "type": "municipality",
+    "name": "Allschwil",
+    "jurisdiction": { "country": "CH", "canton": "BL" },
+    "properties": [{ "id": "main-web", "kind": "website", "url": "https://www.allschwil.ch/" }],
+    "contacts": [],
+    "cases": [{ "id": "a11y-2026-09", "kind": "accessibility_assessment", "state": "REVIEW" }]
+  },
+  {
+    "id": "ch-bl-binningen",
+    "type": "municipality",
+    "name": "Binningen",
+    "jurisdiction": { "country": "CH", "canton": "BL" },
+    "properties": [{ "id": "main-web", "kind": "website", "url": "https://www.binningen.ch/" }],
+    "contacts": [],
+    "cases": [{ "id": "a11y-2026-09", "kind": "accessibility_assessment", "state": "REVIEW" }]
+  }
+]

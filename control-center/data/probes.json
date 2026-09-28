@@ -1,0 +1,11 @@
+[
+  {"id":"scout","family":"Recon","name":"Surface Scout","status":"AVAILABLE","mode":"DETERMINISTIC","description":"Discovers and classifies bounded representative site surfaces."},
+  {"id":"axe-default","family":"Static","name":"axe-core default rules","status":"AVAILABLE","mode":"DETERMINISTIC","description":"DOM/accessibility rule evidence with violation, incomplete, pass and inapplicable preserved."},
+  {"id":"target-size","family":"Static","name":"WCAG 2.5.8 target-size","status":"EXPERIMENTAL","mode":"DETERMINISTIC","description":"Explicit axe rule; disabled by default and validated with spacing-sensitive fixtures."},
+  {"id":"keyboard-focus","family":"Behavioral","name":"Keyboard focus trace","status":"AVAILABLE","mode":"BEHAVIORAL","description":"Bounded Tab traversal with viewport-aware visible-focus evidence."},
+  {"id":"skip-link","family":"Behavioral","name":"Skip-link journey","status":"AVAILABLE","mode":"BEHAVIORAL","description":"Checks recognizable same-page bypass links and main-content target semantics."},
+  {"id":"expandable","family":"Behavioral","name":"Expandable controls","status":"AVAILABLE","mode":"BEHAVIORAL","description":"Safely activates aria-expanded controls and observes state changes."},
+  {"id":"dialog","family":"Behavioral","name":"Dialog focus behavior","status":"AVAILABLE","mode":"BEHAVIORAL","description":"Safely probes dialog-like triggers and focus behavior."},
+  {"id":"semantic","family":"Semantic","name":"Bounded semantic decisions","status":"DISABLED","mode":"SEMANTIC","description":"Architecture exists; no semantic model is active in production runs."},
+  {"id":"manual","family":"Human","name":"Human review","status":"MANUAL","mode":"HUMAN","description":"Required for contextual meaning, conformance judgment and unresolved evidence."}
+]
