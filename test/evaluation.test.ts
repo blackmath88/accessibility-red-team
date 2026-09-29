@@ -1,0 +1,5 @@
+import assert from "node:assert/strict";import test from "node:test";
+import { EvaluationFindingSchema } from "../src/evaluation/contracts.js";import { addedValue,validationMetrics } from "../src/evaluation/metrics.js";
+const f=(x:Partial<any>)=>EvaluationFindingSchema.parse({id:"x",source:"observatory_static",ruleId:"r",surfaceId:"root",outcome:"violation",nodeCount:1,requirements:[],summary:"x",...x});
+test("precision excludes uncertain judgments",()=>{const m=validationMetrics([f({validation:"confirmed",actionability:"actionable"}),f({id:"b",validation:"false_positive"}),f({id:"c",validation:"uncertain"})]);assert.equal(m.precisionAmongDecided,.5);assert.equal(m.reviewed,3)});
+test("added value keeps behavioral evidence separate from baseline axe",()=>{const a=addedValue([f({source:"baseline_axe",ruleId:"color"}),f({id:"2",source:"observatory_static",ruleId:"color"}),f({id:"3",source:"observatory_behavioral",ruleId:"keyboard.focus"})]);assert.equal(a.behavioral,1);assert.equal(a.staticBeyondBaseline,0)});
