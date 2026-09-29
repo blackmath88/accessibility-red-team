@@ -1,0 +1,137 @@
+schema: art/evaluation-cohort/v1
+id: ch.so.population-2026-3
+as_of: 2026-09-29
+purpose: Canton Solothurn 2026 population shard for idempotent D1 seeding. Independent cases; no coupled execution.
+sites:
+  - id: ch-so-niedergosgen
+    name: "Niedergösgen"
+    canton: SO
+    url: "https://www.niedergoesgen.ch"
+  - id: ch-so-nuglar-st-pantaleon
+    name: "Nuglar-St.Pantaleon"
+    canton: SO
+    url: "https://www.nuglar.ch"
+  - id: ch-so-nunningen
+    name: "Nunningen"
+    canton: SO
+    url: "https://www.nunningen.ch"
+  - id: ch-so-oberbuchsiten
+    name: "Oberbuchsiten"
+    canton: SO
+    url: "https://www.oberbuchsiten.ch"
+  - id: ch-so-oberdorf-so
+    name: "Oberdorf (SO)"
+    canton: SO
+    url: "https://www.oberdorf.ch"
+  - id: ch-so-obergerlafingen
+    name: "Obergerlafingen"
+    canton: SO
+    url: "https://www.obergerlafingen.ch"
+  - id: ch-so-obergosgen
+    name: "Obergösgen"
+    canton: SO
+    url: "https://www.obergoesgen.ch"
+  - id: ch-so-oensingen
+    name: "Oensingen"
+    canton: SO
+    url: "https://www.oensingen.ch"
+  - id: ch-so-olten
+    name: "Olten"
+    canton: SO
+    url: "https://www.olten.ch"
+  - id: ch-so-recherswil
+    name: "Recherswil"
+    canton: SO
+    url: "https://www.recherswil.ch"
+  - id: ch-so-rickenbach-so
+    name: "Rickenbach (SO)"
+    canton: SO
+    url: "https://www.rickenbachso.ch"
+  - id: ch-so-riedholz
+    name: "Riedholz"
+    canton: SO
+    url: "https://www.riedholz.ch"
+  - id: ch-so-rodersdorf
+    name: "Rodersdorf"
+    canton: SO
+    url: "https://www.rodersdorf.ch"
+  - id: ch-so-ruttenen
+    name: "Rüttenen"
+    canton: SO
+    url: "https://www.ruettenen.ch"
+  - id: ch-so-schnottwil
+    name: "Schnottwil"
+    canton: SO
+    url: "https://www.schnottwil.ch"
+  - id: ch-so-schonenwerd
+    name: "Schönenwerd"
+    canton: SO
+    url: "https://www.schoenenwerd.ch"
+  - id: ch-so-seewen
+    name: "Seewen"
+    canton: SO
+    url: "https://www.seewen.ch"
+  - id: ch-so-selzach
+    name: "Selzach"
+    canton: SO
+    url: "https://www.selzach.ch"
+  - id: ch-so-solothurn
+    name: "Solothurn"
+    canton: SO
+    url: "https://www.stadt-solothurn.ch"
+  - id: ch-so-starrkirch-wil
+    name: "Starrkirch-Wil"
+    canton: SO
+    url: "https://www.starrkirch-wil.ch"
+  - id: ch-so-stusslingen
+    name: "Stüsslingen"
+    canton: SO
+    url: "https://www.stuesslingen.ch"
+  - id: ch-so-subingen
+    name: "Subingen"
+    canton: SO
+    url: "https://www.subingen.ch"
+  - id: ch-so-trimbach
+    name: "Trimbach"
+    canton: SO
+    url: "https://www.trimbach.ch"
+  - id: ch-so-unterramsern
+    name: "Unterramsern"
+    canton: SO
+    url: "https://www.unterramsern.ch"
+  - id: ch-so-walterswil
+    name: "Walterswil"
+    canton: SO
+    url: "https://www.walterswil.ch"
+  - id: ch-so-wangen-bei-olten
+    name: "Wangen bei Olten"
+    canton: SO
+    url: "https://www.wangenbo.ch"
+  - id: ch-so-welschenrohr-gansbrunnen
+    name: "Welschenrohr-Gänsbrunnen"
+    canton: SO
+    url: "https://www.welschenrohr.ch"
+  - id: ch-so-winznau
+    name: "Winznau"
+    canton: SO
+    url: "https://www.winznau.ch"
+  - id: ch-so-wisen-so
+    name: "Wisen (SO)"
+    canton: SO
+    url: "https://www.wisen.ch"
+  - id: ch-so-witterswil
+    name: "Witterswil"
+    canton: SO
+    url: "https://www.witterswil.ch"
+  - id: ch-so-wolfwil
+    name: "Wolfwil"
+    canton: SO
+    url: "https://www.wolfwil.ch"
+  - id: ch-so-zuchwil
+    name: "Zuchwil"
+    canton: SO
+    url: "https://www.zuchwil.ch"
+  - id: ch-so-zullwil
+    name: "Zullwil"
+    canton: SO
+    url: "https://www.zullwil.ch"

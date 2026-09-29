@@ -1,0 +1,145 @@
+schema: art/evaluation-cohort/v1
+id: ch.so.population-2026-1
+as_of: 2026-09-29
+purpose: Canton Solothurn 2026 population shard for idempotent D1 seeding. Independent cases; no coupled execution.
+sites:
+  - id: ch-so-aedermannsdorf
+    name: "Aedermannsdorf"
+    canton: SO
+    url: "https://www.aedermannsdorf.ch"
+  - id: ch-so-aeschi
+    name: "Aeschi"
+    canton: SO
+    url: "https://www.aeschi-so.ch"
+  - id: ch-so-balm-bei-gunsberg
+    name: "Balm bei Günsberg"
+    canton: SO
+    url: "https://www.balm-balmberg.ch"
+  - id: ch-so-balsthal
+    name: "Balsthal"
+    canton: SO
+    url: "https://www.balsthal.ch"
+  - id: ch-so-barschwil
+    name: "Bärschwil"
+    canton: SO
+    url: "https://www.baerschwil.ch"
+  - id: ch-so-battwil
+    name: "Bättwil"
+    canton: SO
+    url: "https://www.baettwil.ch"
+  - id: ch-so-beinwil
+    name: "Beinwil"
+    canton: SO
+    url: "https://www.beinwil-so.ch"
+  - id: ch-so-bellach
+    name: "Bellach"
+    canton: SO
+    url: "https://www.bellach.ch"
+  - id: ch-so-bettlach
+    name: "Bettlach"
+    canton: SO
+    url: "https://www.bettlach.ch"
+  - id: ch-so-biberist
+    name: "Biberist"
+    canton: SO
+    url: "https://www.biberist.ch"
+  - id: ch-so-biezwil
+    name: "Biezwil"
+    canton: SO
+    url: "https://www.biezwil.ch"
+  - id: ch-so-bolken
+    name: "Bolken"
+    canton: SO
+    url: "https://www.bolken.ch"
+  - id: ch-so-boningen
+    name: "Boningen"
+    canton: SO
+    url: "https://www.boningen.ch"
+  - id: ch-so-breitenbach
+    name: "Breitenbach"
+    canton: SO
+    url: "https://www.breitenbach.ch"
+  - id: ch-so-buchegg
+    name: "Buchegg"
+    canton: SO
+    url: "https://www.buchegg-so.ch"
+  - id: ch-so-buren-so
+    name: "Büren (SO)"
+    canton: SO
+    url: "https://www.bueren-so.ch"
+  - id: ch-so-busserach
+    name: "Büsserach"
+    canton: SO
+    url: "https://www.buesserach.ch"
+  - id: ch-so-daniken
+    name: "Däniken"
+    canton: SO
+    url: "https://www.daeniken.ch"
+  - id: ch-so-deitingen
+    name: "Deitingen"
+    canton: SO
+    url: "https://www.deitingen.ch"
+  - id: ch-so-derendingen
+    name: "Derendingen"
+    canton: SO
+    url: "https://www.derendingen.ch"
+  - id: ch-so-dornach
+    name: "Dornach"
+    canton: SO
+    url: "https://www.dornach.ch"
+  - id: ch-so-drei-hofe
+    name: "Drei Höfe"
+    canton: SO
+    url: "https://www.dreihoefe.ch"
+  - id: ch-so-dulliken
+    name: "Dulliken"
+    canton: SO
+    url: "https://www.dulliken.ch"
+  - id: ch-so-egerkingen
+    name: "Egerkingen"
+    canton: SO
+    url: "https://www.egerkingen.ch"
+  - id: ch-so-eppenberg-woschnau
+    name: "Eppenberg-Wöschnau"
+    canton: SO
+    url: "https://www.eppenberg-woeschnau.ch"
+  - id: ch-so-erlinsbach
+    name: "Erlinsbach"
+    canton: SO
+    url: "https://www.erlinsbach-so.ch"
+  - id: ch-so-erschwil
+    name: "Erschwil"
+    canton: SO
+    url: "https://www.erschwil.ch"
+  - id: ch-so-etziken
+    name: "Etziken"
+    canton: SO
+    url: "https://www.etziken.ch"
+  - id: ch-so-fehren
+    name: "Fehren"
+    canton: SO
+    url: "https://www.fehren.ch"
+  - id: ch-so-feldbrunnen-st-niklaus
+    name: "Feldbrunnen-St.Niklaus"
+    canton: SO
+    url: "https://www.feldbrunnen.ch"
+  - id: ch-so-flumenthal
+    name: "Flumenthal"
+    canton: SO
+    url: "https://www.flumenthal.ch"
+  - id: ch-so-fulenbach
+    name: "Fulenbach"
+    canton: SO
+    url: "https://www.fulenbach.ch"
+  - id: ch-so-gempen
+    name: "Gempen"
+    canton: SO
+    url: "https://www.gempen.ch"
+  - id: ch-so-gerlafingen
+    name: "Gerlafingen"
+    canton: SO
+    url: "https://www.gerlafingen.ch"
+  - id: ch-so-grenchen
+    name: "Grenchen"
+    canton: SO
+    url: "https://www.grenchen.ch"
