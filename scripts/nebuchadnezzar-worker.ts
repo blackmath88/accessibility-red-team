@@ -17,8 +17,9 @@ const wait = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 async function claim(): Promise<unknown | null> {
   const response = await fetch(`${apiBase}/api/v1/runner/claim`, { method: "POST", headers: {
     "content-type": "application/json", "CF-Access-Client-Id": clientId!, "CF-Access-Client-Secret": clientSecret!,
-  }, body: JSON.stringify({ provider: "nebuchadnezzar_worker", workerId, leaseSeconds: 300, engineRevision }) });
+  }, body: JSON.stringify({ provider: "nebuchadnezzar_worker", workerId, leaseSeconds: 300, engineRevision }), redirect: "manual" });
   if (response.status === 204) return null;
+  if (response.status >= 300 && response.status < 400) throw new Error(`Claim redirected (${response.status}): Access did not accept the service token`);
   if (!response.ok) throw new Error(`Claim failed (${response.status}): ${await response.text()}`);
   return response.json();
 }

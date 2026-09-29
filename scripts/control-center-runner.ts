@@ -43,7 +43,7 @@ async function authHeaders(): Promise<Headers> {
 }
 async function api(path: string, init: RequestInit = {}, allowNoContent = false): Promise<Response> {
   const headers = await authHeaders(); new Headers(init.headers).forEach((value, key) => headers.set(key, value));
-  const response = await fetch(`${apiBase}${path}`, { ...init, headers });
+  const response = await fetch(`${apiBase}${path}`, { ...init, headers, redirect: "manual" });
   if (allowNoContent && response.status === 204) return response;
   if (!response.ok) throw new Error(`${init.method ?? "GET"} ${path} failed (${response.status}): ${await response.text()}`);
   return response;
