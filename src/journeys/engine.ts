@@ -10,6 +10,8 @@ import {
 import { isSafeActivationTarget } from "./safety.js";
 import { hasUsableFocusEvidence } from "./focus-evidence.js";
 import { validatePublicTarget } from "../scope.js";
+import type { ExecutionPolicy } from "../control-center/contracts.js";
+import { gotoWithPolicy, type NetworkPolicyEvent } from "../network-policy.js";
 
 const VERSION = "journeys/0.1";
 
@@ -368,7 +370,7 @@ async function dialogJourney(page: Page, surfaceId: string, url: string): Promis
 export async function runSafeJourneys(
   input: string,
   outDir: string,
-  options: { browser?: Browser; surfaceId?: string } = {},
+  options: { browser?: Browser; surfaceId?: string; executionPolicy?: ExecutionPolicy; policyEvents?: NetworkPolicyEvent[] } = {},
 ): Promise<JourneyRun> {
   const target = await validatePublicTarget(input);
   await mkdir(outDir, { recursive: true });
@@ -384,10 +386,10 @@ export async function runSafeJourneys(
     });
     const page = await context.newPage();
     try {
-      const response = await page.goto(target.toString(), {
+      const response = await gotoWithPolicy(page, target.toString(), {
         waitUntil: "domcontentloaded",
         timeout: 30_000,
-      });
+      }, options.executionPolicy, options.policyEvents);
       if (!response || response.status() >= 400) {
         throw new Error(`Journey target returned HTTP ${response?.status() ?? "unknown"}.`);
       }

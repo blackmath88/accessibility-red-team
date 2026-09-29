@@ -2,8 +2,9 @@ import type { Run } from "./contracts.js";
 
 const allowed: Record<Run["state"], Run["state"][]> = {
   queued: ["running", "cancelled"],
-  running: ["succeeded", "failed", "cancelled"],
+  running: ["succeeded", "partial", "failed", "cancelled"],
   succeeded: [],
+  partial: [],
   failed: [],
   cancelled: [],
 };

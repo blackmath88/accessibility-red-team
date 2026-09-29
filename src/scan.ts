@@ -14,6 +14,8 @@ import {
 import { validatePublicTarget } from "./scope.js";
 import { buildCoverageManifest } from "./capability.js";
 import { requirementsFromAxeTags } from "./wcag.js";
+import type { ExecutionPolicy } from "./control-center/contracts.js";
+import { gotoWithPolicy, type NetworkPolicyEvent } from "./network-policy.js";
 
 const VIEWPORT = { width: 1440, height: 900 };
 
@@ -61,7 +63,7 @@ async function settle(page: Page): Promise<void> {
 export async function scanUrl(
   input: string,
   outDir: string,
-  options: { browser?: Browser } = {},
+  options: { browser?: Browser; executionPolicy?: ExecutionPolicy; policyEvents?: NetworkPolicyEvent[] } = {},
 ): Promise<void> {
   const target = await validatePublicTarget(input);
   const runId = randomUUID();
@@ -78,10 +80,10 @@ export async function scanUrl(
     });
     const page = await context.newPage();
 
-    const response = await page.goto(target.toString(), {
+    const response = await gotoWithPolicy(page, target.toString(), {
       waitUntil: "domcontentloaded",
       timeout: 30_000,
-    });
+    }, options.executionPolicy, options.policyEvents);
 
     if (!response) throw new Error("Navigation returned no HTTP response.");
     if (response.status() >= 400) throw new Error(`Target returned HTTP ${response.status()}.`);

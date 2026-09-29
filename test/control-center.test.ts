@@ -12,11 +12,16 @@ test("run contract requires idempotency and engine revision", () => {
   });
   assert.equal(run.state, "queued");
   assert.equal(run.engineRevision, "git:abc123");
+  assert.equal(run.executionProvider, "nebuchadnezzar_worker");
+  assert.equal(run.executionPolicy.perHostConcurrency, 1);
+  assert.equal(run.executionPolicy.delayMs, 5000);
 });
 
 test("run state machine is terminal after success", () => {
   assert.equal(canTransitionRun("queued", "running"), true);
   assert.equal(canTransitionRun("running", "succeeded"), true);
+  assert.equal(canTransitionRun("running", "partial"), true);
+  assert.equal(canTransitionRun("partial", "running"), false);
   assert.equal(canTransitionRun("succeeded", "running"), false);
   assert.throws(() => assertRunTransition("succeeded", "running"));
 });

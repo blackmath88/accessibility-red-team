@@ -1,0 +1,41 @@
+name: Assessment runner
+
+on:
+  workflow_dispatch:
+    inputs:
+      control_run_id:
+        description: Control-plane run identifier
+        required: true
+        type: string
+      engine_revision:
+        description: Immutable repository commit to execute
+        required: true
+        type: string
+
+permissions:
+  contents: read
+  id-token: write
+
+concurrency:
+  group: assessment-${{ inputs.control_run_id }}
+  cancel-in-progress: false
+
+jobs:
+  assess:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.engine_revision }}
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npx playwright install --with-deps chromium
+      - name: Claim, execute, and upload evidence with freshly minted OIDC tokens
+        run: npx tsx scripts/control-center-runner.ts
+        env:
+          CONTROL_CENTER_API_URL: ${{ vars.CONTROL_CENTER_API_URL }}
+          CONTROL_CENTER_RUN_ID: ${{ inputs.control_run_id }}

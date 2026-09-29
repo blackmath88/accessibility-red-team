@@ -8,7 +8,18 @@ export const CaseStateSchema = z.enum([
   "OUTREACH_READY", "CONTACTED", "WAITING", "RESCAN_DUE", "IMPROVED", "ARCHIVED",
 ]);
 export const RunKindSchema = z.enum(["scan", "journeys", "assessment"]);
-export const RunStateSchema = z.enum(["queued", "running", "succeeded", "failed", "cancelled"]);
+export const RunStateSchema = z.enum(["queued", "running", "succeeded", "partial", "failed", "cancelled"]);
+export const ExecutionProviderSchema = z.enum(["nebuchadnezzar_worker", "github_actions"]);
+export const RunStageSchema = z.enum([
+  "queued", "claimed", "scout", "probes", "journeys", "semantic", "uploading", "finalizing", "completed",
+]);
+export const ExecutionPolicySchema = z.object({
+  perHostConcurrency: z.number().int().min(1).max(2).default(1),
+  delayMs: z.number().int().min(1000).max(60_000).default(5000),
+  maxRetries: z.number().int().min(0).max(5).default(3),
+  baseBackoffMs: z.number().int().min(500).max(30_000).default(2000),
+  maxBackoffMs: z.number().int().min(1000).max(300_000).default(60_000),
+});
 export const ArtifactKindSchema = z.enum([
   "manifest", "coverage", "probe_results", "journey_results", "field_summary",
   "report_json", "report_html", "screenshot", "log",
@@ -57,6 +68,16 @@ export const RunSchema = z.object({
   startedAt: z.string().datetime().nullable(),
   completedAt: z.string().datetime().nullable(),
   engineRevision: z.string().min(1),
+  executionProvider: ExecutionProviderSchema.default("nebuchadnezzar_worker"),
+  stage: RunStageSchema.default("queued"),
+  executionPolicy: ExecutionPolicySchema.default({
+    perHostConcurrency: 1, delayMs: 5000, maxRetries: 3, baseBackoffMs: 2000, maxBackoffMs: 60_000,
+  }),
+  workerId: z.string().nullable().default(null),
+  leaseExpiresAt: z.string().datetime().nullable().default(null),
+  heartbeatAt: z.string().datetime().nullable().default(null),
+  attempt: z.number().int().nonnegative().default(0),
+  progress: z.record(z.string(), z.unknown()).default({}),
   error: z.string().nullable(),
 });
 
@@ -85,3 +106,5 @@ export const AuditEventSchema = z.object({
 
 export type Run = z.infer<typeof RunSchema>;
 export type Artifact = z.infer<typeof ArtifactSchema>;
+export type ExecutionProvider = z.infer<typeof ExecutionProviderSchema>;
+export type ExecutionPolicy = z.infer<typeof ExecutionPolicySchema>;

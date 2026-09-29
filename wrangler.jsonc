@@ -1,0 +1,60 @@
+{
+  "$schema": "./node_modules/wrangler/config-schema.json",
+  "name": "accessibility-observatory-dev",
+  "main": "./cloudflare/src/worker.ts",
+  "compatibility_date": "2026-09-29",
+  "compatibility_flags": ["nodejs_compat"],
+  "workers_dev": true,
+  "preview_urls": false,
+  "build": {
+    "command": "npm --prefix control-center run build"
+  },
+  "assets": {
+    "directory": "./control-center/dist",
+    "binding": "ASSETS",
+    "not_found_handling": "single-page-application",
+    "run_worker_first": true
+  },
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "accessibility-observatory-dev",
+      "database_id": "13fedebf-30c8-4a52-b225-715c91523bb5",
+      "migrations_dir": "./cloudflare/migrations"
+    }
+  ],
+  "r2_buckets": [
+    {
+      "binding": "ARTIFACTS",
+      "bucket_name": "accessibility-observatory-artifacts-dev"
+    }
+  ],
+  "vars": {
+    "APP_ENV": "development",
+    "ENGINE_REVISION": "unset",
+    "ACCESS_TEAM_DOMAIN": "PENDING.cloudflareaccess.com",
+    "ACCESS_AUD": "PENDING",
+    "NEBUCHADNEZZAR_ACCESS_CLIENT_ID": "PENDING.access",
+    "NEBUCHADNEZZAR_WORKER_ID": "nebuchadnezzar",
+    "GITHUB_OWNER": "blackmath88",
+    "GITHUB_REPO": "accessibility-red-team",
+    "GITHUB_WORKFLOW": "assessment-runner.yml",
+    "GITHUB_REF": "main",
+    "GITHUB_APP_ID": "PENDING",
+    "GITHUB_APP_INSTALLATION_ID": "PENDING",
+    "GITHUB_OIDC_AUDIENCE": "accessibility-observatory-control-plane"
+  },
+  "observability": {
+    "enabled": true,
+    "head_sampling_rate": 1,
+    "logs": {
+      "enabled": true,
+      "head_sampling_rate": 1,
+      "invocation_logs": true
+    },
+    "traces": {
+      "enabled": true,
+      "head_sampling_rate": 0.1
+    }
+  }
+}

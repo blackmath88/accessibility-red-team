@@ -1,29 +1,31 @@
 import { validatePublicTarget } from "../scope.js";
 import { candidateScore, eligibleInternalLink, normalizeUrl } from "./links.js";
+import { backoffDecision } from "../control-center/execution-policy.js";
+import type { ExecutionPolicy } from "../control-center/contracts.js";
+import type { NetworkPolicyEvent } from "../network-policy.js";
 
 const MAX_TEXT_BYTES = 2 * 1024 * 1024;
 
-async function fetchText(url: URL): Promise<{ url: string; text: string } | null> {
-  const controller = new AbortController();
-  const timer = setTimeout(() => controller.abort(), 10_000);
-  try {
-    const response = await fetch(url, {
-      headers: { "user-agent": "AccessibilityRedTeam/0.1 (+public accessibility research)" },
-      redirect: "follow",
-      signal: controller.signal,
-    });
-    if (!response.ok) return null;
+const wait = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
-    const finalUrl = await validatePublicTarget(response.url);
-    if (finalUrl.hostname !== url.hostname) return null;
+async function fetchText(url: URL, policy?: ExecutionPolicy, events: NetworkPolicyEvent[] = []): Promise<{ url: string; text: string } | null> {
+  for (let attempt = 0; ; attempt += 1) {
+    const controller = new AbortController(); const timer = setTimeout(() => controller.abort(), 10_000);
+    try {
+      if (policy) await wait(policy.delayMs);
+      const response = await fetch(url, { headers: { "user-agent": "AccessibilityRedTeam/0.1 (+public accessibility research)" }, redirect: "follow", signal: controller.signal });
+      if (policy) {
+        const decision = backoffDecision(response.status, response.headers.get("retry-after"), attempt, policy);
+        if (response.status === 429 || response.status === 503) events.push({ url: url.toString(), status: response.status, attempt, decision: decision.reason, delayMs: decision.delayMs, at: new Date().toISOString() });
+        if (decision.retry) { await response.body?.cancel(); await wait(decision.delayMs); continue; }
+      }
+      if (!response.ok) return null;
 
-    const text = await response.text();
-    if (Buffer.byteLength(text, "utf8") > MAX_TEXT_BYTES) return null;
-    return { url: finalUrl.toString(), text };
-  } catch {
-    return null;
-  } finally {
-    clearTimeout(timer);
+      const finalUrl = await validatePublicTarget(response.url); if (finalUrl.hostname !== url.hostname) return null;
+
+      const text = await response.text(); if (Buffer.byteLength(text, "utf8") > MAX_TEXT_BYTES) return null;
+      return { url: finalUrl.toString(), text };
+    } catch { return null; } finally { clearTimeout(timer); }
   }
 }
 
@@ -43,11 +45,11 @@ export function parseSitemapLocations(xml: string): string[] {
   return locations;
 }
 
-export async function discoverSeedUrls(root: URL, maxSeeds = 200): Promise<{
+export async function discoverSeedUrls(root: URL, maxSeeds = 200, policy?: ExecutionPolicy, events: NetworkPolicyEvent[] = []): Promise<{
   seeds: Array<{ url: string; score: number; source: "robots" | "sitemap" }>;
   sitemapUrls: string[];
 }> {
-  const robots = await fetchText(new URL("/robots.txt", root));
+  const robots = await fetchText(new URL("/robots.txt", root), policy, events);
   const advertised = robots ? parseRobotsSitemaps(robots.text) : [];
 
   const pending = Array.from(new Set([
@@ -64,7 +66,7 @@ export async function discoverSeedUrls(root: URL, maxSeeds = 200): Promise<{
     if (visitedSitemaps.has(candidate)) continue;
     visitedSitemaps.add(candidate);
 
-    const sitemap = await fetchText(new URL(candidate));
+    const sitemap = await fetchText(new URL(candidate), policy, events);
     if (!sitemap) continue;
 
     for (const raw of parseSitemapLocations(sitemap.text)) {

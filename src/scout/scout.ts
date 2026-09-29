@@ -7,11 +7,15 @@ import { candidateScore, eligibleInternalLink, normalizeUrl } from "./links.js";
 import { selectRepresentativeSurfaces } from "./sample.js";
 import { discoverSeedUrls } from "./seeds.js";
 import { validatePublicTarget } from "../scope.js";
+import type { ExecutionPolicy } from "../control-center/contracts.js";
+import { gotoWithPolicy, type NetworkPolicyEvent } from "../network-policy.js";
 
 export type ScoutOptions = {
   maxPages?: number;
   maxDepth?: number;
   out?: string;
+  executionPolicy?: ExecutionPolicy;
+  policyEvents?: NetworkPolicyEvent[];
 };
 
 type QueueItem = { url: string; depth: number; score: number; order: number };
@@ -30,7 +34,7 @@ export async function scoutSite(input: string, options: ScoutOptions = {}) {
   queued.add(queue[0]!.url);
   let order = 1;
 
-  const seedDiscovery = await discoverSeedUrls(start, Math.max(maxPages * 8, 50));
+  const seedDiscovery = await discoverSeedUrls(start, Math.max(maxPages * 8, 50), options.executionPolicy, options.policyEvents);
   for (const seed of seedDiscovery.seeds) {
     if (queued.has(seed.url)) continue;
     queued.add(seed.url);
@@ -57,7 +61,7 @@ export async function scoutSite(input: string, options: ScoutOptions = {}) {
 
       const page = await context.newPage();
       try {
-        const response = await page.goto(next.url, { waitUntil: "domcontentloaded", timeout: 20_000 });
+        const response = await gotoWithPolicy(page, next.url, { waitUntil: "domcontentloaded", timeout: 20_000 }, options.executionPolicy, options.policyEvents);
         if (!response || response.status() >= 400) continue;
         await page.waitForTimeout(250);
 
