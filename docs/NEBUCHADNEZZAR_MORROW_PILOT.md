@@ -10,6 +10,10 @@ Goal: compare deterministic-only evidence with the same evidence plus a bounded 
 - Record Morrow model identity/version and endpoint configuration.
 - Do not expose human validation labels to Morrow.
 
+## Gate (ADR-0012)
+
+This arm is an offline experiment only. Before any Morrow call: run `npm run evaluation:ambiguity-census -- <frozen-run-dir>`, confirm `semanticReentry.frequencyGateMet` for a `text_semantic` rule, obtain human labels for that rule, and measure a deterministic baseline. See `docs/MORROW_EXECUTION_ARCHITECTURE.md`.
+
 ## Sequence
 
 1. Run baseline axe and deterministic observatory for the selected cohort.
