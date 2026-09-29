@@ -1,18 +1,19 @@
 -- Per-host claim exclusion: at most one leased run per canonical host across all providers.
+-- host_key = lowercased authority without a trailing dot (seeded URLs never carry ports or credentials).
 ALTER TABLE digital_properties ADD COLUMN host_key TEXT;
 
-UPDATE digital_properties SET host_key = lower(
+UPDATE digital_properties SET host_key = rtrim(lower(
   CASE WHEN instr(substr(url, instr(url, '://') + 3), '/') > 0
     THEN substr(substr(url, instr(url, '://') + 3), 1, instr(substr(url, instr(url, '://') + 3), '/') - 1)
-    ELSE substr(url, instr(url, '://') + 3) END)
+    ELSE substr(url, instr(url, '://') + 3) END), '.')
 WHERE host_key IS NULL;
 
 CREATE TRIGGER digital_properties_host_key_insert
 AFTER INSERT ON digital_properties WHEN NEW.host_key IS NULL BEGIN
-  UPDATE digital_properties SET host_key = lower(
+  UPDATE digital_properties SET host_key = rtrim(lower(
     CASE WHEN instr(substr(NEW.url, instr(NEW.url, '://') + 3), '/') > 0
       THEN substr(substr(NEW.url, instr(NEW.url, '://') + 3), 1, instr(substr(NEW.url, instr(NEW.url, '://') + 3), '/') - 1)
-      ELSE substr(NEW.url, instr(NEW.url, '://') + 3) END)
+      ELSE substr(NEW.url, instr(NEW.url, '://') + 3) END), '.')
   WHERE id = NEW.id;
 END;
 

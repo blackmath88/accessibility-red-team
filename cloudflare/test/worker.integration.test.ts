@@ -141,6 +141,10 @@ test("per-host concurrency is 1 across properties and providers; retry budget is
     INSERT INTO assessment_cases (id, schema_version, organization_id, property_id, kind, state, created_at, updated_at) VALUES
     ('ch-zh-uster:portal-case', 'art/control-center-case/v1', 'ch-zh-uster', 'ch-zh-uster:portal', 'accessibility_assessment', 'READY', '2026-09-29T00:00:00.000Z', '2026-09-29T00:00:00.000Z');`);
   assert.equal((db.prepare("SELECT host_key FROM digital_properties WHERE id = 'ch-zh-uster:portal'").get() as { host_key: string }).host_key, "www.uster.ch");
+  db.exec(`INSERT INTO digital_properties (id, schema_version, organization_id, kind, url, active) VALUES
+    ('ch-zh-uster:fqdn', 'art/control-center-property/v1', 'ch-zh-uster', 'website', 'https://www.uster.ch./', 0),
+    ('ch-zh-uster:bare', 'art/control-center-property/v1', 'ch-zh-uster', 'website', 'https://Www.Uster.CH', 0);`);
+  assert.deepEqual(db.prepare("SELECT DISTINCT host_key FROM digital_properties WHERE organization_id = 'ch-zh-uster'").all().map((r) => ({ ...r })), [{ host_key: "www.uster.ch" }]);
   assert.throws(() => db.exec("UPDATE digital_properties SET url = 'https://attacker.example/' WHERE id = 'ch-zh-uster:main-web'"), /canonical/);
 
   await call(env, "POST", "/api/v1/runs", { jwt: operatorJwt, body: runRequest("ch-zh-uster:wave1", "k-host-1") });
