@@ -1,0 +1,23 @@
+{
+  "schema": "art/onboarding-bundle/v1",
+  "organization": {
+    "externalIds": { "bfs": "261" },
+    "type": "municipality",
+    "name": "Example Municipality",
+    "jurisdiction": { "country": "CH", "canton": "ZH" }
+  },
+  "properties": [
+    { "kind": "website", "url": "https://example.ch/", "label": "Main website", "active": true }
+  ],
+  "assessment": {
+    "profileId": "ch.zh",
+    "requestedArms": ["baseline_axe", "deterministic", "morrow"],
+    "notes": "Pilot candidate"
+  },
+  "contacts": [],
+  "provenance": {
+    "preparedBy": "llm-offboard",
+    "preparedAt": "2026-09-29T08:00:00.000Z",
+    "sourceNotes": ["Verify canonical URL and BFS ID before approval."]
+  }
+}
