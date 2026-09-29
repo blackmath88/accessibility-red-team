@@ -1,0 +1,193 @@
+schema: art/research-pilot-cohort/v1
+id: ch.zh-so.pilot-v1
+as_of: 2026-09-29
+purpose: >
+  Stratified research pilot for evaluating observatory accuracy, actionability,
+  operational robustness, and bounded Morrow added value across heterogeneous
+  municipal digital services. Not a municipality ranking or conformance study.
+
+sampling:
+  cantons: [ZH, SO]
+  target_per_canton: 12
+  dimensions:
+    - municipality_scale
+    - urbanity_and_regional_role
+    - civic_service_complexity
+    - observed_web_implementation
+  notes:
+    - Technology/provider classification is observational and must be verified from captured evidence.
+    - Selection intentionally includes very small municipalities and major cities.
+    - Canonical URLs below were verified reachable during pilot research on 2026-09-29.
+
+sites:
+  # Zürich — 12
+  - id: ch-zh-zuerich
+    canton: ZH
+    name: Zürich
+    url: https://www.stadt-zuerich.ch/
+    stratum: major_city
+    wave: 1
+    rationale: extreme scale and service complexity; distinct city platform
+  - id: ch-zh-winterthur
+    canton: ZH
+    name: Winterthur
+    url: https://stadt.winterthur.ch/
+    stratum: major_city
+    wave: 2
+    rationale: second major city; complex civic-service surface
+  - id: ch-zh-uster
+    canton: ZH
+    name: Uster
+    url: https://www.uster.ch/
+    stratum: regional_city
+    wave: 1
+    rationale: regional centre; rich online-service and political content
+  - id: ch-zh-dietikon
+    canton: ZH
+    name: Dietikon
+    url: https://www.dietikon.ch/
+    stratum: regional_city
+    wave: 2
+    rationale: Limmattal regional centre; transactional online services
+  - id: ch-zh-waedenswil
+    canton: ZH
+    name: Wädenswil
+    url: https://www.waedenswil.ch/
+    stratum: medium_city
+    wave: 2
+    rationale: medium city with broad administration and online services
+  - id: ch-zh-kloten
+    canton: ZH
+    name: Kloten
+    url: https://www.kloten.ch/
+    stratum: suburban_city
+    wave: 2
+    rationale: airport-region suburban context
+  - id: ch-zh-affoltern
+    canton: ZH
+    name: Affoltern am Albis
+    url: https://www.stadtaffoltern.ch/
+    stratum: regional_centre
+    wave: 2
+    rationale: district centre outside Zürich/Winterthur core
+  - id: ch-zh-hinwil
+    canton: ZH
+    name: Hinwil
+    url: https://www.hinwil.ch/
+    stratum: medium_municipality
+    wave: 2
+    rationale: medium Zürcher Oberland municipality
+  - id: ch-zh-andelfingen
+    canton: ZH
+    name: Andelfingen
+    url: https://www.andelfingen.ch/
+    stratum: small_regional_centre
+    wave: 2
+    rationale: small district-centre context in Weinland
+  - id: ch-zh-bauma
+    canton: ZH
+    name: Bauma
+    url: https://www.bauma.ch/
+    stratum: rural_municipality
+    wave: 1
+    rationale: rural Zürcher Oberland context
+  - id: ch-zh-volken
+    canton: ZH
+    name: Volken
+    url: https://www.volken.ch/
+    stratum: very_small_rural
+    wave: 1
+    rationale: very small municipality; already exercised by engineering pilot
+  - id: ch-zh-maschwanden
+    canton: ZH
+    name: Maschwanden
+    url: https://www.maschwanden.ch/
+    stratum: very_small_rural
+    wave: 2
+    rationale: very small municipality; known deterministic baseline
+
+  # Solothurn — 12
+  - id: ch-so-solothurn
+    canton: SO
+    name: Solothurn
+    url: https://www.stadt-solothurn.ch/
+    stratum: cantonal_capital
+    wave: 1
+    rationale: cantonal capital; broad civic services and transactions
+  - id: ch-so-olten
+    canton: SO
+    name: Olten
+    url: https://www.olten.ch/
+    stratum: regional_city
+    wave: 2
+    rationale: major regional centre and transport hub
+  - id: ch-so-grenchen
+    canton: SO
+    name: Grenchen
+    url: https://www.grenchen.ch/
+    stratum: regional_city
+    wave: 2
+    rationale: major city in northern canton; distinct regional context
+  - id: ch-so-zuchwil
+    canton: SO
+    name: Zuchwil
+    url: https://www.zuchwil.ch/
+    stratum: agglomeration_municipality
+    wave: 1
+    rationale: large agglomeration municipality with broad service catalogue
+  - id: ch-so-dornach
+    canton: SO
+    name: Dornach
+    url: https://www.dornach.ch/
+    stratum: agglomeration_municipality
+    wave: 2
+    rationale: Basel-oriented Dorneck municipality; cross-regional context
+  - id: ch-so-oensingen
+    canton: SO
+    name: Oensingen
+    url: https://www.oensingen.ch/
+    stratum: regional_centre
+    wave: 2
+    rationale: Gäu district centre with online shop/services
+  - id: ch-so-balsthal
+    canton: SO
+    name: Balsthal
+    url: https://www.balsthal.ch/
+    stratum: regional_centre
+    wave: 2
+    rationale: Thal regional centre
+  - id: ch-so-egerkingen
+    canton: SO
+    name: Egerkingen
+    url: https://www.egerkingen.ch/
+    stratum: medium_municipality
+    wave: 2
+    rationale: Gäu municipality with motorway/commercial context
+  - id: ch-so-buchegg
+    canton: SO
+    name: Buchegg
+    url: https://www.buchegg-so.ch/
+    stratum: rural_merged_municipality
+    wave: 2
+    rationale: merged rural municipality; unusual administrative geography
+  - id: ch-so-messen
+    canton: SO
+    name: Messen
+    url: https://www.messen.ch/
+    stratum: rural_municipality
+    wave: 1
+    rationale: Bucheggberg rural municipality; compact web surface
+  - id: ch-so-rodersdorf
+    canton: SO
+    name: Rodersdorf
+    url: https://www.rodersdorf.ch/
+    stratum: peripheral_municipality
+    wave: 2
+    rationale: Dorneck border/peripheral context
+  - id: ch-so-welschenrohr
+    canton: SO
+    name: Welschenrohr-Gänsbrunnen
+    url: https://www.welschenrohr.ch/
+    stratum: small_rural
+    wave: 1
+    rationale: small Thal municipality and contrasting site implementation
