@@ -1,0 +1,145 @@
+schema: art/evaluation-cohort/v1
+id: ch.so.population-2026-2
+as_of: 2026-09-29
+purpose: Canton Solothurn 2026 population shard for idempotent D1 seeding. Independent cases; no coupled execution.
+sites:
+  - id: ch-so-gretzenbach
+    name: "Gretzenbach"
+    canton: SO
+    url: "https://www.gretzenbach.ch"
+  - id: ch-so-grindel
+    name: "Grindel"
+    canton: SO
+    url: "https://www.grindel.ch"
+  - id: ch-so-gunsberg
+    name: "Günsberg"
+    canton: SO
+    url: "https://www.guensberg.ch"
+  - id: ch-so-gunzgen
+    name: "Gunzgen"
+    canton: SO
+    url: "https://www.gunzgen.ch"
+  - id: ch-so-hagendorf
+    name: "Hägendorf"
+    canton: SO
+    url: "https://www.haegendorf.ch"
+  - id: ch-so-harkingen
+    name: "Härkingen"
+    canton: SO
+    url: "https://www.haerkingen.ch"
+  - id: ch-so-hauenstein-ifenthal
+    name: "Hauenstein-Ifenthal"
+    canton: SO
+    url: "https://www.hauenstein-ifenthal.ch"
+  - id: ch-so-herbetswil
+    name: "Herbetswil"
+    canton: SO
+    url: "https://www.herbetswil.ch"
+  - id: ch-so-himmelried
+    name: "Himmelried"
+    canton: SO
+    url: "https://www.himmelried.ch"
+  - id: ch-so-hochwald
+    name: "Hochwald"
+    canton: SO
+    url: "https://www.hochwald.ch"
+  - id: ch-so-hofstetten-fluh
+    name: "Hofstetten-Flüh"
+    canton: SO
+    url: "https://www.hofstetten-flueh.ch"
+  - id: ch-so-holderbank-so
+    name: "Holderbank (SO)"
+    canton: SO
+    url: "https://www.holderbank-so.ch"
+  - id: ch-so-horriwil
+    name: "Horriwil"
+    canton: SO
+    url: "https://www.horriwil.ch"
+  - id: ch-so-hubersdorf
+    name: "Hubersdorf"
+    canton: SO
+    url: "https://www.hubersdorf.ch"
+  - id: ch-so-huniken
+    name: "Hüniken"
+    canton: SO
+    url: "https://www.hueniken.ch"
+  - id: ch-so-kappel
+    name: "Kappel"
+    canton: SO
+    url: "https://www.kappel.ch"
+  - id: ch-so-kestenholz
+    name: "Kestenholz"
+    canton: SO
+    url: "https://www.kestenholz.ch"
+  - id: ch-so-kienberg
+    name: "Kienberg"
+    canton: SO
+    url: "https://www.kienberg.ch"
+  - id: ch-so-kleinlutzel
+    name: "Kleinlützel"
+    canton: SO
+    url: "https://www.kleinluetzel.ch"
+  - id: ch-so-kriegstetten
+    name: "Kriegstetten"
+    canton: SO
+    url: "https://www.kriegstetten.ch"
+  - id: ch-so-langendorf
+    name: "Langendorf"
+    canton: SO
+    url: "https://www.langendorf-so.ch"
+  - id: ch-so-laupersdorf
+    name: "Laupersdorf"
+    canton: SO
+    url: "https://www.laupersdorf.ch"
+  - id: ch-so-lohn-ammannsegg
+    name: "Lohn-Ammannsegg"
+    canton: SO
+    url: "https://www.lohn-ammannsegg.ch"
+  - id: ch-so-lommiswil
+    name: "Lommiswil"
+    canton: SO
+    url: "https://www.lommiswil.ch"
+  - id: ch-so-lostorf
+    name: "Lostorf"
+    canton: SO
+    url: "https://www.lostorf.ch"
+  - id: ch-so-lusslingen-nennigkofen
+    name: "Lüsslingen-Nennigkofen"
+    canton: SO
+    url: "https://www.luesslingen-nennigkofen.ch"
+  - id: ch-so-luterbach
+    name: "Luterbach"
+    canton: SO
+    url: "https://www.luterbach.ch"
+  - id: ch-so-luterkofen-ichertswil
+    name: "Lüterkofen-Ichertswil"
+    canton: SO
+    url: "https://www.lueterkofen-ichertswil.ch"
+  - id: ch-so-matzendorf
+    name: "Matzendorf"
+    canton: SO
+    url: "https://www.matzendorf.ch"
+  - id: ch-so-meltingen
+    name: "Meltingen"
+    canton: SO
+    url: "https://www.meltingen.ch"
+  - id: ch-so-messen
+    name: "Messen"
+    canton: SO
+    url: "https://www.messen.ch"
+  - id: ch-so-metzerlen-mariastein
+    name: "Metzerlen-Mariastein"
+    canton: SO
+    url: "https://www.metzerlen.ch"
+  - id: ch-so-mumliswil-ramiswil
+    name: "Mümliswil-Ramiswil"
+    canton: SO
+    url: "https://www.muemliswil-ramiswil.ch"
+  - id: ch-so-neuendorf
+    name: "Neuendorf"
+    canton: SO
+    url: "https://www.neuendorf.ch"
+  - id: ch-so-niederbuchsiten
+    name: "Niederbuchsiten"
+    canton: SO
+    url: "https://www.niederbuchsiten.ch"
