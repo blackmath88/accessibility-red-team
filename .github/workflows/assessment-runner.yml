@@ -34,17 +34,8 @@ jobs:
           cache: npm
       - run: npm ci
       - run: npx playwright install --with-deps chromium
-      - id: oidc
-        name: Mint workflow-scoped OIDC token
-        uses: actions/github-script@v8
-        with:
-          script: |
-            const token = await core.getIDToken('accessibility-observatory-control-plane')
-            core.setSecret(token)
-            core.setOutput('token', token)
-      - name: Claim, execute, and upload evidence
+      - name: Claim, execute, and upload evidence with freshly minted OIDC tokens
         run: npx tsx scripts/control-center-runner.ts
         env:
           CONTROL_CENTER_API_URL: ${{ vars.CONTROL_CENTER_API_URL }}
-          CONTROL_CENTER_OIDC_TOKEN: ${{ steps.oidc.outputs.token }}
           CONTROL_CENTER_RUN_ID: ${{ inputs.control_run_id }}

@@ -18,3 +18,10 @@ test("idempotency collision fails closed when intent differs", async () => {
   await requestRun(store, { caseId: "case_1", propertyId: "prop_1", kind: "scan", requestedBy: "operator:a", engineRevision: "git:abc", idempotencyKey: "collision" });
   await assert.rejects(() => requestRun(store, { caseId: "case_1", propertyId: "prop_1", kind: "journeys", requestedBy: "operator:a", engineRevision: "git:abc", idempotencyKey: "collision" }));
 });
+
+test("idempotency collision includes engine revision and provider", async () => {
+  const store = new MemoryControlCenterStore();
+  await requestRun(store, { caseId: "case_1", propertyId: "prop_1", kind: "assessment", requestedBy: "operator:a", engineRevision: "abc1234", idempotencyKey: "intent-key", executionProvider: "nebuchadnezzar_worker" });
+  await assert.rejects(() => requestRun(store, { caseId: "case_1", propertyId: "prop_1", kind: "assessment", requestedBy: "operator:a", engineRevision: "def5678", idempotencyKey: "intent-key", executionProvider: "nebuchadnezzar_worker" }));
+  await assert.rejects(() => requestRun(store, { caseId: "case_1", propertyId: "prop_1", kind: "assessment", requestedBy: "operator:a", engineRevision: "abc1234", idempotencyKey: "intent-key", executionProvider: "github_actions" }));
+});

@@ -1,11 +1,14 @@
-import { ArtifactSchema, RunSchema, type Artifact, type Run } from "../../src/control-center/contracts.js";
+import { ArtifactSchema, RunSchema, type Artifact, type ExecutionProvider, type Run } from "../../src/control-center/contracts.js";
 import type { ControlCenterStore } from "../../src/control-center/store.js";
 import { assertRunTransition } from "../../src/control-center/state.js";
 
 type RunRow = {
   id: string; case_id: string; property_id: string; kind: Run["kind"]; state: Run["state"];
   idempotency_key: string; requested_by: string; requested_at: string; started_at: string | null;
-  completed_at: string | null; engine_revision: string; error: string | null;
+  completed_at: string | null; engine_revision: string; execution_provider: Run["executionProvider"];
+  stage: Run["stage"]; execution_policy_json: string; worker_id: string | null;
+  lease_token_sha256: string | null; lease_expires_at: string | null; heartbeat_at: string | null;
+  attempt: number; progress_json: string; error: string | null;
 };
 
 type ArtifactRow = {
@@ -19,7 +22,11 @@ function runFromRow(row: RunRow): Run {
     propertyId: row.property_id, kind: row.kind, state: row.state,
     idempotencyKey: row.idempotency_key, requestedBy: row.requested_by,
     requestedAt: row.requested_at, startedAt: row.started_at,
-    completedAt: row.completed_at, engineRevision: row.engine_revision, error: row.error,
+    completedAt: row.completed_at, engineRevision: row.engine_revision,
+    executionProvider: row.execution_provider, stage: row.stage,
+    executionPolicy: JSON.parse(row.execution_policy_json), workerId: row.worker_id,
+    leaseExpiresAt: row.lease_expires_at, heartbeatAt: row.heartbeat_at,
+    attempt: row.attempt, progress: JSON.parse(row.progress_json), error: row.error,
   });
 }
 
@@ -47,20 +54,26 @@ export class D1ControlCenterStore implements ControlCenterStore {
   async createRun(run: Run): Promise<void> {
     await this.db.prepare(`INSERT INTO runs
       (id, schema_version, case_id, property_id, kind, state, idempotency_key, requested_by,
-       requested_at, started_at, completed_at, engine_revision, error)
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`)
+       requested_at, started_at, completed_at, engine_revision, execution_provider, stage,
+       execution_policy_json, worker_id, lease_expires_at, heartbeat_at, attempt, progress_json, error)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`)
       .bind(run.id, run.schema, run.caseId, run.propertyId, run.kind, run.state,
         run.idempotencyKey, run.requestedBy, run.requestedAt, run.startedAt,
-        run.completedAt, run.engineRevision, run.error).run();
+        run.completedAt, run.engineRevision, run.executionProvider, run.stage,
+        JSON.stringify(run.executionPolicy), run.workerId, run.leaseExpiresAt, run.heartbeatAt,
+        run.attempt, JSON.stringify(run.progress), run.error).run();
   }
 
   async updateRun(run: Run): Promise<void> {
     const current = await this.getRun(run.id);
     if (!current) throw new Error(`Unknown run: ${run.id}`);
     if (current.state !== run.state) assertRunTransition(current.state, run.state);
-    const result = await this.db.prepare(`UPDATE runs SET state = ?, started_at = ?, completed_at = ?, error = ?
-      WHERE id = ? AND state = ?`)
-      .bind(run.state, run.startedAt, run.completedAt, run.error, run.id, current.state).run();
+    const result = await this.db.prepare(`UPDATE runs SET state = ?, stage = ?, started_at = ?,
+      completed_at = ?, worker_id = ?, lease_expires_at = ?, heartbeat_at = ?, attempt = ?,
+      progress_json = ?, error = ? WHERE id = ? AND state = ?`)
+      .bind(run.state, run.stage, run.startedAt, run.completedAt, run.workerId,
+        run.leaseExpiresAt, run.heartbeatAt, run.attempt, JSON.stringify(run.progress), run.error,
+        run.id, current.state).run();
     if (result.meta.changes !== 1) throw new Error(`Concurrent update rejected for run: ${run.id}`);
   }
 
@@ -90,10 +103,95 @@ export class D1ControlCenterStore implements ControlCenterStore {
     return row ? artifactFromRow(row) : null;
   }
 
-  async claimRun(id: string, at: string): Promise<Run | null> {
-    const result = await this.db.prepare(`UPDATE runs SET state = 'running', started_at = ?
-      WHERE id = ? AND state = 'queued'`).bind(at, id).run();
-    return result.meta.changes === 1 ? this.getRun(id) : null;
+  async claimNextRun(input: {
+    provider: ExecutionProvider; workerId: string; now: string; leaseExpiresAt: string; leaseTokenSha256: string;
+  }): Promise<Run | null> {
+    const row = await this.db.prepare(`UPDATE runs SET state = 'running', stage = 'claimed',
+      started_at = COALESCE(started_at, ?), worker_id = ?, lease_token_sha256 = ?,
+      lease_expires_at = ?, heartbeat_at = ?, attempt = attempt + 1
+      WHERE id = (SELECT id FROM runs WHERE execution_provider = ? AND
+        (state = 'queued' OR (state = 'running' AND lease_expires_at IS NOT NULL AND lease_expires_at <= ?))
+        ORDER BY requested_at LIMIT 1)
+      AND (state = 'queued' OR (state = 'running' AND lease_expires_at IS NOT NULL AND lease_expires_at <= ?))
+      RETURNING *`)
+      .bind(input.now, input.workerId, input.leaseTokenSha256, input.leaseExpiresAt, input.now,
+        input.provider, input.now, input.now).first<RunRow>();
+    return row ? runFromRow(row) : null;
+  }
+
+  async claimRunById(input: {
+    id: string; provider: ExecutionProvider; workerId: string; now: string;
+    leaseExpiresAt: string; leaseTokenSha256: string;
+  }): Promise<Run | null> {
+    const row = await this.db.prepare(`UPDATE runs SET state = 'running', stage = 'claimed',
+      started_at = COALESCE(started_at, ?), worker_id = ?, lease_token_sha256 = ?,
+      lease_expires_at = ?, heartbeat_at = ?, attempt = attempt + 1
+      WHERE id = ? AND execution_provider = ? AND
+        (state = 'queued' OR (state = 'running' AND lease_expires_at IS NOT NULL AND lease_expires_at <= ?))
+      RETURNING *`)
+      .bind(input.now, input.workerId, input.leaseTokenSha256, input.leaseExpiresAt, input.now,
+        input.id, input.provider, input.now).first<RunRow>();
+    return row ? runFromRow(row) : null;
+  }
+
+  async renewLease(input: {
+    id: string; workerId: string; leaseTokenSha256: string; now: string; leaseExpiresAt: string;
+    stage: Run["stage"]; progress: Record<string, unknown>;
+  }): Promise<Run | null> {
+    const row = await this.db.prepare(`UPDATE runs SET lease_expires_at = ?, heartbeat_at = ?,
+      stage = ?, progress_json = ? WHERE id = ? AND state = 'running' AND worker_id = ?
+      AND lease_token_sha256 = ? AND lease_expires_at > ? RETURNING *`)
+      .bind(input.leaseExpiresAt, input.now, input.stage, JSON.stringify(input.progress), input.id,
+        input.workerId, input.leaseTokenSha256, input.now).first<RunRow>();
+    return row ? runFromRow(row) : null;
+  }
+
+  async validLease(id: string, workerId: string, leaseTokenSha256: string, now: string): Promise<boolean> {
+    const row = await this.db.prepare(`SELECT id FROM runs WHERE id = ? AND state = 'running'
+      AND worker_id = ? AND lease_token_sha256 = ? AND lease_expires_at > ?`)
+      .bind(id, workerId, leaseTokenSha256, now).first<{ id: string }>();
+    return Boolean(row);
+  }
+
+  async finishLeasedRun(input: {
+    id: string; workerId: string; leaseTokenSha256: string; now: string;
+    state: "succeeded" | "partial" | "failed"; error: string | null; progress: Record<string, unknown>;
+  }): Promise<Run | null> {
+    const row = await this.db.prepare(`UPDATE runs SET state = ?, stage = 'completed', completed_at = ?,
+      heartbeat_at = ?, lease_token_sha256 = NULL, lease_expires_at = NULL,
+      progress_json = ?, error = ? WHERE id = ? AND state = 'running' AND worker_id = ?
+      AND lease_token_sha256 = ? AND lease_expires_at > ? RETURNING *`)
+      .bind(input.state, input.now, input.now, JSON.stringify(input.progress), input.error,
+        input.id, input.workerId, input.leaseTokenSha256, input.now).first<RunRow>();
+    return row ? runFromRow(row) : null;
+  }
+
+  async cancelRun(id: string, now: string): Promise<Run | null> {
+    const row = await this.db.prepare(`UPDATE runs SET state = 'cancelled', stage = 'completed',
+      completed_at = ?, lease_token_sha256 = NULL, lease_expires_at = NULL
+      WHERE id = ? AND state IN ('queued', 'running') RETURNING *`)
+      .bind(now, id).first<RunRow>();
+    return row ? runFromRow(row) : null;
+  }
+
+  async authorizeOperator(email: string, permission: "read" | "execute" | "outreach"): Promise<boolean> {
+    const column = { read: "can_read", execute: "can_execute", outreach: "can_outreach" }[permission];
+    const row = await this.db.prepare(`SELECT id FROM operators WHERE lower(email) = lower(?)
+      AND active = 1 AND ${column} = 1`).bind(email).first<{ id: string }>();
+    return Boolean(row);
+  }
+
+  async touchRunner(id: string, provider: ExecutionProvider, at: string): Promise<boolean> {
+    const result = await this.db.prepare(`UPDATE runner_agents SET last_seen_at = ?, updated_at = ?
+      WHERE id = ? AND provider = ? AND enabled = 1`).bind(at, at, id, provider).run();
+    return result.meta.changes === 1;
+  }
+
+  async appendRunEvent(runId: string, workerId: string | null, eventType: string, metadata: unknown): Promise<void> {
+    await this.db.prepare(`INSERT INTO run_events
+      (id, run_id, worker_id, event_type, occurred_at, metadata_json) VALUES (?, ?, ?, ?, ?, ?)`)
+      .bind(`event_${crypto.randomUUID()}`, runId, workerId, eventType,
+        new Date().toISOString(), JSON.stringify(metadata)).run();
   }
 
   async appendAudit(actor: string, action: string, objectType: string, objectId: string, metadata: unknown): Promise<void> {

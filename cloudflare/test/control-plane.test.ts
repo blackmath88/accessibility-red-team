@@ -4,17 +4,29 @@ import { readFile } from "node:fs/promises";
 import test from "node:test";
 import { decodeJwt } from "jose";
 import { dispatchAssessmentRun } from "../src/github.js";
+import { createLeaseToken, hashLeaseToken, leaseExpiry } from "../src/leases.js";
 import { artifactStorageKey } from "../src/r2-artifacts.js";
 
 test("migration makes evidence and audit metadata append-only", async () => {
   const migration = await readFile(new URL("../migrations/0001_control_center.sql", import.meta.url), "utf8");
-  for (const table of ["organizations", "digital_properties", "assessment_cases", "runs", "artifacts", "contacts", "outreach", "audit_events"]) {
+  for (const table of ["organizations", "digital_properties", "assessment_cases", "runs", "artifacts", "contacts", "outreach", "audit_events", "operators", "runner_agents", "run_events"]) {
     assert.match(migration, new RegExp(`CREATE TABLE ${table} \\(`));
   }
   assert.match(migration, /CREATE TRIGGER artifacts_no_update/);
   assert.match(migration, /CREATE TRIGGER artifacts_no_delete/);
   assert.match(migration, /CREATE TRIGGER audit_events_no_update/);
   assert.match(migration, /CREATE TRIGGER audit_events_no_delete/);
+  assert.match(migration, /CREATE TRIGGER run_events_no_update/);
+  assert.match(migration, /execution_provider TEXT NOT NULL/);
+  assert.match(migration, /lease_token_sha256 TEXT/);
+  assert.match(migration, /achim\.imboden@bridge-work\.ai/);
+});
+
+test("lease tokens are random, hash-only at rest, and bounded", async () => {
+  const first = createLeaseToken(); const second = createLeaseToken();
+  assert.match(first, /^[A-Za-z0-9_-]{43}$/); assert.notEqual(first, second);
+  assert.match(await hashLeaseToken(first), /^[a-f0-9]{64}$/);
+  assert.equal(leaseExpiry(new Date("2026-09-29T00:00:00.000Z"), 300), "2026-09-29T00:05:00.000Z");
 });
 
 test("artifact keys are deterministic and content-addressed", () => {

@@ -7,6 +7,7 @@ import { compareSiteReports } from "./watch/compare.js";
 import { runCohort } from "./cohort/run.js";
 import { mineCandidates } from "./learning/mine.js";
 import { runSafeJourneys } from "./journeys/engine.js";
+import { ExecutionPolicySchema } from "./control-center/contracts.js";
 
 function usage(): never {
   console.error([
@@ -80,8 +81,15 @@ if (command === "scan") {
   const profilePath = valueAfter(args, "--profile");
 
   const journeys = args.includes("--journeys");
+  const executionPolicy = args.includes("--host-safe") ? ExecutionPolicySchema.parse({
+    perHostConcurrency: 1,
+    delayMs: Number(valueAfter(args, "--delay-ms") ?? "5000"),
+    maxRetries: Number(valueAfter(args, "--max-retries") ?? "3"),
+    baseBackoffMs: Number(valueAfter(args, "--base-backoff-ms") ?? "2000"),
+    maxBackoffMs: Number(valueAfter(args, "--max-backoff-ms") ?? "60000"),
+  }) : undefined;
 
-  auditSite(url, { outDir, maxPages, maxDepth, profilePath, journeys })
+  auditSite(url, { outDir, maxPages, maxDepth, profilePath, journeys, executionPolicy })
     .then((result) => console.log(JSON.stringify(result.manifest, null, 2)))
     .catch((error) => {
       console.error(error instanceof Error ? error.message : String(error));

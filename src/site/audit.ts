@@ -6,6 +6,8 @@ import { scanUrl } from "../scan.js";
 import { triageSurfaceRuns } from "../triage/triage.js";
 import { buildSiteReport } from "../report/site.js";
 import { runSafeJourneys } from "../journeys/engine.js";
+import type { ExecutionPolicy } from "../control-center/contracts.js";
+import type { NetworkPolicyEvent } from "../network-policy.js";
 
 export async function auditSite(input: string, options: {
   outDir?: string;
@@ -14,16 +16,20 @@ export async function auditSite(input: string, options: {
   profilePath?: string;
   maxSurfaces?: number;
   journeys?: boolean;
+  executionPolicy?: ExecutionPolicy;
 } = {}) {
   const host = new URL(input).hostname.replace(/[^a-z0-9.-]/gi, "_");
   const outDir = resolve(options.outDir ?? join("runs", host));
   await mkdir(outDir, { recursive: true });
 
   const surfacePath = join(outDir, "surface.json");
+  const policyEvents: NetworkPolicyEvent[] = [];
   const surface = await scoutSite(input, {
     maxPages: options.maxPages ?? 20,
     maxDepth: options.maxDepth ?? 2,
     out: surfacePath,
+    executionPolicy: options.executionPolicy,
+    policyEvents,
   });
 
   const selectedSurfaces = surface.surfaces.slice(0, options.maxSurfaces ?? surface.surfaces.length);
@@ -33,11 +39,13 @@ export async function auditSite(input: string, options: {
   try {
     for (const selected of selectedSurfaces) {
       const runDir = join(outDir, "surfaces", selected.surfaceId);
-      await scanUrl(selected.url, runDir, { browser });
+      await scanUrl(selected.url, runDir, { browser, executionPolicy: options.executionPolicy, policyEvents });
       if (options.journeys) {
         const journeyRun = await runSafeJourneys(selected.url, runDir, {
           browser,
           surfaceId: selected.surfaceId,
+          executionPolicy: options.executionPolicy,
+          policyEvents,
         });
         journeyRuns.push(journeyRun);
       }
@@ -64,6 +72,7 @@ export async function auditSite(input: string, options: {
     artifacts: {
       surface: "surface.json",
       findings: "findings.json",
+      executionPolicy: "execution-policy.json",
       surfaceRuns: runs.map((run) => ({
         surfaceId: run.surfaceId,
         path: `surfaces/${run.surfaceId}`,
@@ -73,6 +82,9 @@ export async function auditSite(input: string, options: {
   };
 
   await writeFile(join(outDir, "audit-manifest.json"), JSON.stringify(manifest, null, 2));
+  await writeFile(join(outDir, "execution-policy.json"), JSON.stringify({
+    schema: "art/execution-policy-log/v1", policy: options.executionPolicy ?? null, events: policyEvents,
+  }, null, 2));
 
   const report = options.profilePath
     ? await buildSiteReport({
