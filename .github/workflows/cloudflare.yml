@@ -77,6 +77,9 @@ jobs:
     environment: cloudflare-development
     runs-on: ubuntu-latest
     timeout-minutes: 15
+    defaults:
+      run:
+        shell: bash  # explicit bash runs with -eo pipefail, so `deploy | tee` cannot hide a failure
     env:
       CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
       CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
@@ -106,6 +109,20 @@ jobs:
           [[ "$ACCESS_AUD" =~ ^[a-f0-9]{64}$ ]] || { echo "ACCESS_AUD variable must be the 64-hex Access application audience tag"; exit 1; }
           [[ "$NEBUCHADNEZZAR_ACCESS_CLIENT_ID" =~ ^[a-f0-9]{32}\.access$ ]] || { echo "NEBUCHADNEZZAR_ACCESS_CLIENT_ID variable invalid"; exit 1; }
           [[ "$CONTROL_CENTER_API_URL" =~ ^https://accessibility-observatory-dev\.[a-z0-9-]+\.workers\.dev$ ]] || { echo "CONTROL_CENTER_API_URL variable invalid"; exit 1; }
+      - name: Verify D1 exists and ensure the private R2 bucket
+        run: |
+          set -euo pipefail
+          npx wrangler d1 info accessibility-observatory-dev \
+            || { echo "::error::D1 accessibility-observatory-dev (database_id in wrangler.jsonc) is not in this account"; exit 1; }
+          if ! npx wrangler r2 bucket info accessibility-observatory-artifacts-dev; then
+            npx wrangler r2 bucket create accessibility-observatory-artifacts-dev
+          fi
+          # Evidence must never be publicly served: refuse if the r2.dev public URL is enabled.
+          devurl=$(npx wrangler r2 bucket dev-url get accessibility-observatory-artifacts-dev 2>&1 || true)
+          echo "$devurl"
+          if grep -qi 'enabled' <<<"$devurl" && ! grep -qi 'disabled\|not enabled' <<<"$devurl"; then
+            echo "::error::r2.dev public access is enabled on the evidence bucket"; exit 1
+          fi
       - name: Apply D1 migrations
         run: npx wrangler d1 migrations apply accessibility-observatory-dev --remote
       - name: Seed operator from environment secret (never committed)
@@ -118,15 +135,15 @@ jobs:
           npx tsx scripts/cloudflare/seed-sql.ts operator "$RUNNER_TEMP/operator.sql"
           npx wrangler d1 execute accessibility-observatory-dev --remote --file "$RUNNER_TEMP/operator.sql" > /dev/null
           rm -f "$RUNNER_TEMP/operator.sql"
-      - name: Seed ZH/SO Wave 1 (organizations, properties, cases only)
-        if: inputs.seed_wave1 && !inputs.first_deploy
+      - name: Seed ZH/SO Wave 1 (organizations, properties, cases only; no runs)
+        if: inputs.seed_wave1
         run: |
           set -euo pipefail
           npx tsx scripts/cloudflare/seed-sql.ts cohort evaluation/cohorts/zh-so-pilot-v1-wave1.yml wave1 "$RUNNER_TEMP/wave1.sql"
-          npx wrangler d1 execute accessibility-observatory-dev --remote --file "$RUNNER_TEMP/wave1.sql"
+          npx wrangler d1 execute accessibility-observatory-dev --remote --file "$RUNNER_TEMP/wave1.sql" > /dev/null
       - name: Deploy Worker fail-closed (first deploy, no Access values)
         if: inputs.first_deploy
-        run: npx wrangler deploy --var "ENGINE_REVISION:${GITHUB_SHA}"
+        run: npx wrangler deploy --var "ENGINE_REVISION:${GITHUB_SHA}" | tee "$RUNNER_TEMP/deploy.log"
       - name: Deploy Worker pinned to this commit
         if: ${{ !inputs.first_deploy }}
         env:
@@ -139,14 +156,38 @@ jobs:
           --var "ACCESS_TEAM_DOMAIN:${ACCESS_TEAM_DOMAIN}"
           --var "ACCESS_AUD:${ACCESS_AUD}"
           --var "NEBUCHADNEZZAR_ACCESS_CLIENT_ID:${NEBUCHADNEZZAR_ACCESS_CLIENT_ID}"
-      - name: Verify the dashboard and API are not publicly reachable
-        if: ${{ !inputs.first_deploy }}
+          | tee "$RUNNER_TEMP/deploy.log"
+      - name: Verify the dashboard and API refuse unauthenticated requests
         env:
           CONTROL_CENTER_API_URL: ${{ vars.CONTROL_CENTER_API_URL }}
+          FIRST_DEPLOY: ${{ inputs.first_deploy }}
         run: |
           set -euo pipefail
-          for path in / /api/v1/cases /api/v1/runtime; do
-            code=$(curl -sS -o /dev/null -w '%{http_code}' --max-redirs 0 "${CONTROL_CENTER_API_URL}${path}" || true)
-            echo "${path} -> ${code}"
-            case "$code" in 302|401|403) ;; *) echo "::error::${path} answered ${code} without authentication"; exit 1 ;; esac
+          url=$(grep -oE 'https://accessibility-observatory-dev\.[a-z0-9-]+\.workers\.dev' "$RUNNER_TEMP/deploy.log" | head -n 1 || true)
+          test -n "$url" || { echo "::error::could not find the workers.dev URL in the deploy output"; exit 1; }
+          if [ "$FIRST_DEPLOY" != "true" ] && [ "$url" != "$CONTROL_CENTER_API_URL" ]; then
+            echo "::error::deployed URL $url differs from CONTROL_CENTER_API_URL"; exit 1
+          fi
+          # First deploy: no Access yet, so the Worker itself must answer 503 (or Access 302 if already enabled).
+          # Later deploys: Access must intercept (302) or the Worker must reject (401/403).
+          allowed="302 401 403"; [ "$FIRST_DEPLOY" = "true" ] && allowed="302 401 403 503"
+          {
+            echo "### Development control plane"
+            echo "Dashboard: $url"
+            echo "Engine revision: \`$GITHUB_SHA\`"
+            echo "| Unauthenticated request | HTTP |"
+            echo "| --- | --- |"
+          } >> "$GITHUB_STEP_SUMMARY"
+          for path in / /api/v1/cases /api/v1/runtime /api/v1/runner/claim; do
+            method=GET; [ "$path" = /api/v1/runner/claim ] && method=POST
+            code=$(curl -sS -X "$method" -o /dev/null -w '%{http_code}' --max-redirs 0 "${url}${path}" || true)
+            echo "${method} ${path} -> ${code}"; echo "| \`${method} ${path}\` | ${code} |" >> "$GITHUB_STEP_SUMMARY"
+            grep -qw "$code" <<<"$allowed" || { echo "::error::${path} answered ${code} without authentication"; exit 1; }
           done
+      - name: Record D1 state (counts only)
+        run: |
+          set -euo pipefail
+          npx wrangler d1 execute accessibility-observatory-dev --remote --json --command \
+            "SELECT (SELECT count(*) FROM d1_migrations) AS migrations, (SELECT count(*) FROM operators WHERE active = 1) AS operators, (SELECT count(*) FROM assessment_cases) AS cases, (SELECT count(*) FROM runs) AS runs, (SELECT count(*) FROM runner_agents WHERE enabled = 1) AS runners" \
+            | tee "$RUNNER_TEMP/d1.json"
+          echo "D1: \`$(tr -d '\n ' < "$RUNNER_TEMP/d1.json" | grep -oE '"migrations":[0-9]+,"operators":[0-9]+,"cases":[0-9]+,"runs":[0-9]+,"runners":[0-9]+' || echo unparsed)\`" >> "$GITHUB_STEP_SUMMARY"

@@ -61,40 +61,35 @@ the `OPERATOR_EMAIL` / `OPERATOR_NAME` **secrets** of the `cloudflare-developmen
 
 ## Development deployment (from a phone, no workstation)
 
-All steps are Cloudflare dashboard or GitHub web actions.
+Five steps, all in the Cloudflare dashboard or GitHub web UI. The deploy job does the rest: it verifies the
+account, checks D1 exists, creates the private R2 bucket if missing and refuses a public `r2.dev` URL, applies
+migrations, seeds the operator (and optionally Wave 1 cases — never runs), deploys pinned to the commit, and
+fails unless every unauthenticated request is refused. Its job summary shows the dashboard URL, the HTTP codes
+of those unauthenticated probes, and D1 counts.
 
-1. **Cloudflare API token** (dashboard → My Profile → API Tokens → Create custom token), scoped to the
-   development account only: *Account → Workers Scripts: Edit*, *Account → D1: Edit*,
-   *Account → Workers R2 Storage: Edit* (only needed if the bucket must be created via API; otherwise omit).
-   Set a short expiry.
-2. **R2 bucket** `accessibility-observatory-artifacts-dev` (dashboard → R2) if it does not exist. Leave public
-   access disabled. Do not add an object lock.
-3. **GitHub** → Settings → Environments → `cloudflare-development`: restrict deployment branches to `main` and
-   require yourself as reviewer. Add
-   - secrets: `CLOUDFLARE_API_TOKEN`, `CLOUDFLARE_ACCOUNT_ID`, `OPERATOR_EMAIL`, `OPERATOR_NAME`;
-   - variables: `CLOUDFLARE_EXPECTED_ACCOUNT_ID`, `ACCESS_TEAM_DOMAIN`, `ACCESS_AUD`,
-     `NEBUCHADNEZZAR_ACCESS_CLIENT_ID`, `CONTROL_CENTER_API_URL` (`https://accessibility-observatory-dev.<subdomain>.workers.dev`);
+1. **Cloudflare API token** (My Profile → API Tokens → *Edit Cloudflare Workers* template), limited to the
+   development account, with *Account → D1: Edit* and *Account → Workers R2 Storage: Edit* added and no zone
+   resources; short expiry. R2 must be enabled on the account (free tier; no paid plan or object lock).
+2. **GitHub** → Settings → Environments → `cloudflare-development` (deployment branches: `main`; required
+   reviewer: you):
+   - secrets `CLOUDFLARE_API_TOKEN`, `CLOUDFLARE_ACCOUNT_ID`, `OPERATOR_EMAIL` (the email Access will
+     authenticate), `OPERATOR_NAME`;
+   - variable `CLOUDFLARE_EXPECTED_ACCOUNT_ID` (same account ID);
    - repository variable `CLOUDFLARE_DEPLOY_ENABLED=true`.
-4. **Access for this Worker only.** Workers & Pages → `accessibility-observatory-dev` → Settings → Domains &
-   Routes → `workers.dev` → *Enable Cloudflare Access*. This creates an Access application for that one
-   hostname; do not enable account-wide Access for all Workers. Rename it `Accessibility Observatory Dev`. Keep
-   *preview URLs* disabled (they are disabled in `wrangler.jsonc`). Policies on that application:
-   - *Allow* — Include: Emails → your operator email.
-   - *Service Auth* — Include: Service Token → `Nebuchadnezzar Observatory Dev`.
-   Copy the application's **Audience (AUD) tag** into `ACCESS_AUD`.
-5. **Service token** (Zero Trust → Access → Service credentials → Service tokens) named
-   `Nebuchadnezzar Observatory Dev`. Copy the **Client ID** into `NEBUCHADNEZZAR_ACCESS_CLIENT_ID`. The
-   **Client Secret** is shown once: paste it only into the Nebuchadnezzar credential file (see
-   `docs/NEBUCHADNEZZAR_BOOTSTRAP.md`), nowhere else.
-6. **Deploy**: GitHub → Actions → *Cloudflare control plane* → Run workflow on `main` with `deploy=true`
-   (and `seed_wave1=true` once you want the Wave 1 cases to exist). The job validates, applies D1 migrations,
-   seeds the operator, deploys with `ENGINE_REVISION` = the commit, and then **fails** if `/`, `/api/v1/cases`
-   or `/api/v1/runtime` answer anything other than an Access redirect/401/403 without credentials.
-
-**First deploy** (the Worker must exist before step 4 is possible): run the workflow with `deploy=true` and
-`first_deploy=true`. Access values are not required; the Worker deploys with `PENDING` Access configuration and
-answers HTTP 503 to every request (dashboard included). Then do steps 4–5, set the variables, and run again with
-`first_deploy=false`, which also runs the unauthenticated-reachability check.
+3. **First deploy**: Actions → *Cloudflare control plane* → Run workflow on `main` with `deploy`,
+   `first_deploy` and `seed_wave1` checked. Access is not configured yet, so the Worker answers **503** to every
+   request (the job verifies this). The summary shows the `workers.dev` URL.
+4. **Access for this Worker only**: Workers & Pages → `accessibility-observatory-dev` → Settings → Domains &
+   Routes → `workers.dev` → *Enable Cloudflare Access* (not account-wide; preview URLs stay disabled). Rename
+   the created application `Accessibility Observatory Dev`, set its policies to *Allow* → Emails → your operator
+   email, and *Service Auth* → a new service token `Nebuchadnezzar Observatory Dev` (Zero Trust → Access →
+   Service credentials). Store the token's Client Secret only in your password manager until the
+   Nebuchadnezzar bootstrap. Add GitHub environment variables `ACCESS_TEAM_DOMAIN` (`<team>.cloudflareaccess.com`),
+   `ACCESS_AUD` (the application's audience tag), `NEBUCHADNEZZAR_ACCESS_CLIENT_ID` (the token's Client ID) and
+   `CONTROL_CENTER_API_URL` (the URL from step 3).
+5. **Protected deploy**: run the workflow again with only `deploy` checked. It fails if `/`, `/api/v1/cases`,
+   `/api/v1/runtime` or `/api/v1/runner/claim` answer anything but an Access redirect / 401 / 403 without
+   credentials. Then open the URL on your phone and sign in with the operator email.
 
 Every deploy pins `ENGINE_REVISION`. The UI queues runs for that revision and Nebuchadnezzar only claims runs
 whose revision equals its own clean checkout, so after each deploy install the same SHA on Nebuchadnezzar.
