@@ -14,6 +14,7 @@
     "control-center:worker": "tsx scripts/nebuchadnezzar-worker.ts",
     "control-center:selftest": "tsx scripts/nebuchadnezzar-selftest.ts",
     "evaluation:deterministic": "tsx src/evaluation/run-deterministic-pilot.ts",
+    "evaluation:ambiguity-census": "tsx src/evaluation/ambiguity-census-cli.ts",
     "scan": "tsx src/cli.ts scan",
     "test": "tsx --test test/*.test.ts",
     "check": "npm run build && npm test",
