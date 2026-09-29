@@ -1,0 +1,73 @@
+name: Cloudflare control plane
+
+on:
+  pull_request:
+    paths:
+      - "cloudflare/**"
+      - "control-center/**"
+      - "src/control-center/**"
+      - "wrangler.jsonc"
+      - "worker-configuration.d.ts"
+      - "package.json"
+      - "package-lock.json"
+      - ".github/workflows/cloudflare.yml"
+  push:
+    branches: [main]
+    paths:
+      - "cloudflare/**"
+      - "control-center/**"
+      - "src/control-center/**"
+      - "wrangler.jsonc"
+      - "worker-configuration.d.ts"
+      - "package.json"
+      - "package-lock.json"
+      - ".github/workflows/cloudflare.yml"
+  workflow_dispatch:
+    inputs:
+      deploy:
+        description: Deploy only after resources and repository variable are explicitly enabled
+        required: true
+        default: false
+        type: boolean
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm --prefix control-center ci
+      - run: npm run check
+      - run: npm --prefix control-center run build
+      - run: npm run cloudflare:typecheck
+      - run: npm run cloudflare:dry-run
+
+  deploy-development:
+    needs: validate
+    if: github.event_name == 'workflow_dispatch' && inputs.deploy && vars.CLOUDFLARE_DEPLOY_ENABLED == 'true'
+    environment: cloudflare-development
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm --prefix control-center ci
+      - name: Refuse the wrong Cloudflare account
+        env:
+          TARGET_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+        run: test "$TARGET_ACCOUNT_ID" = "0b32c4ab8bf48c4e1787c0fa763020fe"
+      - uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          command: deploy

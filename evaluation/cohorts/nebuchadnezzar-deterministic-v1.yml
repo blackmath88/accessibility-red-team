@@ -1,0 +1,19 @@
+schema: art/deterministic-evaluation-cohort/v1
+id: ch.nebuchadnezzar.deterministic-pilot-v1
+as_of: 2026-09-29
+purpose: >
+  Run the five-site deterministic pilot arm without Morrow or any other LLM.
+profile: requirements/profiles/ch.federal.yml
+settings:
+  max_pages: 6
+  max_depth: 2
+  max_surfaces: 2
+  journeys: true
+  concurrency: 1
+  delay_ms: 5000
+sites:
+  - { id: ch-bs-riehen, name: Riehen, url: "https://www.riehen.ch/" }
+  - { id: ch-bl-allschwil, name: Allschwil, url: "https://www.allschwil.ch/" }
+  - { id: ch-bl-binningen, name: Binningen, url: "https://www.binningen.ch/" }
+  - { id: ch-zh-volken, name: Volken, url: "https://www.volken.ch/" }
+  - { id: ch-zh-maschwanden, name: Maschwanden, url: "https://www.maschwanden.ch/de/index.php" }

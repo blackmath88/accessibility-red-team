@@ -1,4 +1,3 @@
-import { randomUUID } from "node:crypto";
 import { RunSchema, type Run } from "./contracts.js";
 import type { ControlCenterStore } from "./store.js";
 
@@ -24,7 +23,7 @@ export async function requestRun(store: ControlCenterStore, input: RequestRunInp
   const now = (input.now ?? new Date()).toISOString();
   const run = RunSchema.parse({
     schema: "art/control-center-run/v1",
-    id: `run_${randomUUID()}`,
+    id: `run_${crypto.randomUUID()}`,
     caseId: input.caseId,
     propertyId: input.propertyId,
     kind: input.kind,

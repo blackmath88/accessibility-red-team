@@ -2,6 +2,6 @@ export type QueueItem={caseId:string;organizationId:string;organizationName:stri
 export type QueueResponse={generatedAt:string;items:QueueItem[]};
 export interface ControlCenterApi{listCases():Promise<QueueResponse>}
 export class StaticControlCenterApi implements ControlCenterApi{
-  constructor(private readonly base="./data"){}
-  async listCases(){const r=await fetch(`${this.base}/case-queue.json`);if(!r.ok)throw new Error(`Case queue failed: ${r.status}`);return r.json() as Promise<QueueResponse>}
+  constructor(private readonly base=import.meta.env.DEV?"./data":"/api/v1"){}
+  async listCases(){const path=import.meta.env.DEV?`${this.base}/case-queue.json`:`${this.base}/cases`;const r=await fetch(path);if(!r.ok)throw new Error(`Case queue failed: ${r.status}`);return r.json() as Promise<QueueResponse>}
 }
