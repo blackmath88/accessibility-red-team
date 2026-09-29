@@ -20,7 +20,7 @@
     {
       "binding": "DB",
       "database_name": "accessibility-observatory-dev",
-      "database_id": "00000000-0000-0000-0000-000000000000",
+      "database_id": "13fedebf-30c8-4a52-b225-715c91523bb5",
       "migrations_dir": "./cloudflare/migrations"
     }
   ],
