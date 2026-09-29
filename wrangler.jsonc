@@ -32,7 +32,7 @@
   ],
   "vars": {
     "APP_ENV": "development",
-    "ACCESS_TEAM_DOMAIN": "PENDING.cloudflareaccess.com",
+    "ACCESS_TEAM_DOMAIN": "orange-glitter-3b65.cloudflareaccess.com",
     "ACCESS_AUD": "PENDING",
     "NEBUCHADNEZZAR_ACCESS_CLIENT_ID": "PENDING.access",
     "NEBUCHADNEZZAR_WORKER_ID": "nebuchadnezzar",
