@@ -47,6 +47,11 @@ on:
         required: true
         default: false
         type: boolean
+      seed_solothurn_2026:
+        description: Seed all 103 website-bearing Solothurn municipalities as independent READY cases (idempotent; does not queue runs)
+        required: true
+        default: false
+        type: boolean
 
 permissions:
   contents: read
@@ -141,6 +146,18 @@ jobs:
           set -euo pipefail
           npx tsx scripts/cloudflare/seed-sql.ts cohort evaluation/cohorts/zh-so-pilot-v1-wave1.yml wave1 "$RUNNER_TEMP/wave1.sql"
           npx wrangler d1 execute accessibility-observatory-dev --remote --file "$RUNNER_TEMP/wave1.sql" > /dev/null
+      - name: Seed Canton Solothurn 2026 web population (103 independent cases; no runs)
+        if: inputs.seed_solothurn_2026
+        run: |
+          set -euo pipefail
+          for shard in 1 2 3; do
+            sql="$RUNNER_TEMP/so-2026-$shard.sql"
+            npx tsx scripts/cloudflare/seed-sql.ts cohort "evaluation/cohorts/so-2026-population-$shard.yml" so-2026 "$sql"
+            npx wrangler d1 execute accessibility-observatory-dev --remote --file "$sql" > /dev/null
+          done
+          npx wrangler d1 execute accessibility-observatory-dev --remote --json --command \
+            "SELECT count(*) AS so_cases FROM assessment_cases c JOIN organizations o ON o.id=c.organization_id WHERE o.canton='SO' AND c.id LIKE '%:so-2026'" \
+            | tee "$RUNNER_TEMP/so-count.json"
       - name: Deploy Worker fail-closed (first deploy, no Access values)
         if: inputs.first_deploy
         run: npx wrangler deploy --var "ENGINE_REVISION:${GITHUB_SHA}" | tee "$RUNNER_TEMP/deploy.log"
