@@ -365,3 +365,150 @@ Before implementing Exchange Online, decide whether the Microsoft Graph adapter 
 Evaluate secret storage, OAuth refresh, Graph delta/webhook requirements, availability, D1 state ownership, Access boundary, deployment complexity and failure recovery.
 
 Do not choose Nebuchadnezzar merely because Morrow already runs there. Mailbox transport and local AI are separate concerns.
+
+
+---
+
+## 12. Run 2 — Microsoft Graph placement
+
+Question:
+
+Should Exchange Online / Microsoft Graph transport run in the Cloudflare control plane or on Nebuchadnezzar?
+
+### Recommendation
+
+**Run Microsoft Graph transport in the Cloudflare control plane. Keep Nebuchadnezzar out of the mailbox authority path.**
+
+Reasoning:
+
+1. **D1 already owns campaign state.** Mailbox message IDs, conversation IDs, delta cursors, send actions and approval receipts belong next to the campaign state they advance.
+
+2. **Graph supports pull-based incremental sync.** Outlook message delta queries return opaque nextLink/deltaLink state. Persisting the final deltaLink lets the system fetch only new/changed messages on later runs. This maps directly to a D1 sync-state row.
+
+3. **Cloudflare Workers can run periodic sync.** A scheduled Worker/Cron trigger can poll the Inbox delta endpoint without a permanently running inbound service. This is simpler for v1 than change-notification webhooks.
+
+4. **Cloudflare Workers support encrypted secrets.** Static application credentials can remain Worker secrets rather than entering D1 or the client UI.
+
+5. **Nebuchadnezzar is already the semantic compute boundary.** Putting Exchange credentials and mailbox transport there would mix two independent concerns and make campaign availability depend on the home/local worker.
+
+6. **Morrow does not need mailbox access.** The control plane can persist the bounded inbound message/context and hand only the semantic task to the outbound Nebuchadnezzar worker.
+
+### Proposed v1 auth
+
+Prefer a dedicated observatory mailbox plus **app-only Microsoft Graph access scoped to that mailbox through Exchange Online RBAC for Applications**.
+
+Microsoft documents Exchange Application RBAC as the current resource-scoped mechanism replacing legacy Application Access Policies. It can scope application Mail.Read / Mail.ReadWrite / Mail.Send roles to a defined Exchange resource scope.
+
+This is preferable to a broad tenant-wide application grant.
+
+Required permissions should be challenged to the minimum actually needed:
+
+- Mail.Read for inbound sync
+- Mail.Send for sending
+- Mail.ReadWrite only if creating/updating drafts in the mailbox is required
+
+Do not grant broader Exchange access merely for convenience.
+
+### Proposed sync strategy
+
+Start with pull/delta rather than Graph webhooks:
+
+    Worker Cron
+      → read stored deltaLink
+      → Graph Inbox messages/delta
+      → page through nextLink
+      → persist new raw message observations
+      → save final deltaLink
+      → enqueue semantic interpretation if relevant
+
+Why:
+
+- no public Graph notification callback required
+- no subscription-renewal lifecycle in v1
+- easy deterministic replay/testing
+- cursor fits naturally in D1
+- a few minutes of reply latency is acceptable for this campaign
+
+Later, change notifications can be added as a wake-up signal while delta remains the source of truth.
+
+### Send path
+
+    Control Center human GO
+      → atomic consume of approved action
+      → Cloudflare Graph adapter
+      → Graph send/reply
+      → persist provider acceptance + message IDs
+      → later delta sync observes mailbox state
+
+The send adapter must never accept arbitrary draft text from Morrow.
+
+It receives only an already-approved action ID whose payload hash matches the staged message.
+
+### Nebuchadnezzar role after this split
+
+Nebuchadnezzar remains:
+
+- Morrow inference
+- semantic classification
+- bounded draft generation
+- optional local evaluation
+
+It does **not** receive:
+
+- Graph client secret
+- Exchange mailbox credentials
+- Mail.Send authority
+- direct mailbox polling authority
+
+Flow:
+
+    Cloudflare/D1
+      → bounded semantic job
+      → Nebuchadnezzar/Morrow
+      → typed result
+      → Cloudflare/D1
+
+This keeps local-model failure from blocking mailbox synchronization or corrupting campaign state.
+
+### Secret boundary
+
+Do not store the Graph client secret in D1.
+
+For app-only v1:
+
+- Entra application/client ID: configuration
+- tenant ID: configuration
+- client secret/certificate: Cloudflare secret
+- target mailbox ID/address: configuration
+- Exchange RBAC scope: tenant-side policy
+
+If later using delegated OAuth instead, refresh-token rotation would require an encrypted durable token store and a key held separately as a Worker secret. App-only scoped service access is operationally cleaner for this single-purpose mailbox.
+
+### Failure behavior
+
+- Graph unavailable → campaign sync/send remains pending; no Morrow workaround
+- Morrow unavailable → raw reply is still synchronized; interpretation remains pending
+- frontier reviewer unavailable → outbound reply remains unsendable
+- approval expires → require a fresh human GO
+- Graph send transient failure → retain approved action but do not consume twice; retry policy must preserve exactly-once semantics
+- permanent Graph failure → surface NEEDS YOU / transport error
+
+### Why not Graph on Nebuchadnezzar?
+
+It would:
+
+- couple communication availability to a local machine
+- put customer-facing mail credentials beside the local model runtime
+- duplicate state between worker and D1
+- complicate retries after disconnect/reboot
+- make a semantic worker unnecessarily authoritative
+
+No current requirement earns that complexity.
+
+### Proposed architecture decision
+
+For campaign v1:
+
+> **Cloudflare owns mailbox transport and campaign authority; Nebuchadnezzar owns bounded local semantic work.**
+
+This remains a proposal until the Exchange Online app-registration/RBAC setup is tested against the actual bridge-work tenant.
