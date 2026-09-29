@@ -23,6 +23,14 @@ function accessToken(request: Request): string {
   return value;
 }
 
+// One JWKS resolver per issuer per isolate, so key sets are cached rather than refetched per request.
+const keySets = new Map<string, ReturnType<typeof createRemoteJWKSet>>();
+function remoteKeys(url: string): ReturnType<typeof createRemoteJWKSet> {
+  let keys = keySets.get(url);
+  if (!keys) { keys = createRemoteJWKSet(new URL(url)); keySets.set(url, keys); }
+  return keys;
+}
+
 function configured(value: string): boolean {
   return value.length > 0 && !value.includes("PENDING");
 }
@@ -43,7 +51,7 @@ export async function authenticateOperator(
 
   const token = accessToken(request);
   const issuer = `https://${env.ACCESS_TEAM_DOMAIN}`;
-  const keys = createRemoteJWKSet(new URL(`${issuer}/cdn-cgi/access/certs`));
+  const keys = remoteKeys(`${issuer}/cdn-cgi/access/certs`);
   let payload: JWTPayload;
   try {
     ({ payload } = await jwtVerify(token, keys, { issuer, audience: env.ACCESS_AUD }));
@@ -58,7 +66,7 @@ export async function authenticateOperator(
 
 export async function authenticateGitHubRunner(request: Request, env: Env): Promise<AuthenticatedActor> {
   const token = bearer(request);
-  const keys = createRemoteJWKSet(new URL("https://token.actions.githubusercontent.com/.well-known/jwks"));
+  const keys = remoteKeys("https://token.actions.githubusercontent.com/.well-known/jwks");
   let payload: JWTPayload;
   try {
     ({ payload } = await jwtVerify(token, keys, {
@@ -87,7 +95,7 @@ export async function authenticateNebuchadnezzar(request: Request, env: Env): Pr
     throw new HttpAuthError(503, "Nebuchadnezzar Access identity is not configured");
   }
   const issuer = `https://${env.ACCESS_TEAM_DOMAIN}`;
-  const keys = createRemoteJWKSet(new URL(`${issuer}/cdn-cgi/access/certs`));
+  const keys = remoteKeys(`${issuer}/cdn-cgi/access/certs`);
   let payload: JWTPayload;
   try {
     ({ payload } = await jwtVerify(accessToken(request), keys, { issuer, audience: env.ACCESS_AUD }));

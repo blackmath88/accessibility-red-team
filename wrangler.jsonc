@@ -1,7 +1,6 @@
 {
   "$schema": "./node_modules/wrangler/config-schema.json",
   "name": "accessibility-observatory-dev",
-  "account_id": "0b32c4ab8bf48c4e1787c0fa763020fe",
   "main": "./cloudflare/src/worker.ts",
   "compatibility_date": "2026-09-29",
   "compatibility_flags": ["nodejs_compat"],
@@ -14,7 +13,7 @@
     "directory": "./control-center/dist",
     "binding": "ASSETS",
     "not_found_handling": "single-page-application",
-    "run_worker_first": ["/api/*"]
+    "run_worker_first": true
   },
   "d1_databases": [
     {
@@ -32,7 +31,8 @@
   ],
   "vars": {
     "APP_ENV": "development",
-    "ACCESS_TEAM_DOMAIN": "orange-glitter-3b65.cloudflareaccess.com",
+    "ENGINE_REVISION": "unset",
+    "ACCESS_TEAM_DOMAIN": "PENDING.cloudflareaccess.com",
     "ACCESS_AUD": "PENDING",
     "NEBUCHADNEZZAR_ACCESS_CLIENT_ID": "PENDING.access",
     "NEBUCHADNEZZAR_WORKER_ID": "nebuchadnezzar",

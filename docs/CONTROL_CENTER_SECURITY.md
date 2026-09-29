@@ -5,7 +5,8 @@ The control center is an operator surface for active web assessment. Production 
 ## Authorization
 
 - Read access and execution access are separate permissions.
-- Cloudflare Access establishes operator identity; D1 operator records grant read, execute, and outreach permissions. The initial operator is `achim.imboden@bridge-work.ai`, with outreach disabled.
+- Cloudflare Access establishes operator identity; D1 operator records grant read, execute, and outreach permissions. Operators are seeded per deployment from a GitHub environment secret, never by a public migration; automation never grants outreach.
+- The dashboard shell is served only after the Worker validates the Access JWT, so the dashboard fails closed even if the Access application is missing or misconfigured. Browser mutations must be same-origin.
 - Starting scans/journeys requires an authenticated operator identity.
 - Outreach sending requires a separate explicit approval permission.
 - The engine never accepts arbitrary shell commands from UI input.
@@ -14,7 +15,7 @@ The control center is an operator surface for active web assessment. Production 
 
 - Every requested digital property passes the existing public-target validation before execution.
 - Run workers receive a canonical stored property URL, not an arbitrary URL supplied at execution time.
-- Private, loopback, link-local and otherwise disallowed targets fail closed.
+- Private, loopback, link-local, CGNAT (100.64.0.0/10, which includes Tailscale tailnet addresses), benchmark, multicast and IPv4-mapped private targets fail closed, so a redirect cannot steer the worker into the operator's private network.
 - Redirect targets remain subject to engine scope rules.
 
 ## Execution
@@ -25,7 +26,8 @@ The control center is an operator surface for active web assessment. Production 
 - GitHub Actions callbacks use workflow-scoped OIDC. Dispatch uses a repository-scoped GitHub App installation token that is minted just in time and immediately revoked.
 - Every runner mutation also requires an unguessable, expiring per-run lease token; only its SHA-256 is stored.
 - State transitions are explicit and terminal states cannot restart.
-- Engine git revision is recorded on every run.
+- Engine git revision is recorded on every run; workers claim only runs for their own clean checkout's revision.
+- Per-host concurrency 1 is enforced at claim time across every provider, and an expired lease is reclaimable only within a bounded attempt budget (3).
 - Cancellation is a state transition, not process deletion; it invalidates the lease, and the next heartbeat terminates the local child process.
 - A cancelled run cannot renew its lease, upload artifacts, or complete. An expired lease may be reclaimed as a new attempt.
 

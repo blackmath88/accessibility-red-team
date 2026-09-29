@@ -122,11 +122,8 @@ CREATE TABLE operators (
   updated_at TEXT NOT NULL
 );
 
-INSERT INTO operators
-  (id, email, display_name, can_read, can_execute, can_outreach, active, created_at, updated_at)
-VALUES
-  ('operator_achim_imboden', 'achim.imboden@bridge-work.ai', 'Achim Imboden', 1, 1, 0, 1,
-   '2026-09-29T00:00:00.000Z', '2026-09-29T00:00:00.000Z');
+-- Operators are deployment-specific and are never seeded by a public migration.
+-- See cloudflare/README.md ("Operator seeding").
 
 CREATE TABLE runner_agents (
   id TEXT PRIMARY KEY,

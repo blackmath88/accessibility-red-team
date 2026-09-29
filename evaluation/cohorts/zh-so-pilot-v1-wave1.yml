@@ -1,0 +1,24 @@
+schema: art/evaluation-cohort/v1
+id: ch.zh-so.pilot-v1-wave1
+as_of: 2026-09-29
+purpose: >
+  Eight-site operational and result-quality gate before the full 24-site pilot.
+  Four Zürich and four Solothurn municipalities, deliberately varied by scale,
+  civic-service complexity and observed site implementation.
+
+execution:
+  sequential: true
+  max_concurrent_per_host: 1
+  requested_arms: [baseline_axe, deterministic]
+  morrow_from_frozen_evidence_only: true
+  stop_after_wave_for_review: true
+
+sites:
+  - { id: ch-zh-zuerich, name: Zürich, canton: ZH, url: "https://www.stadt-zuerich.ch/" }
+  - { id: ch-zh-uster, name: Uster, canton: ZH, url: "https://www.uster.ch/" }
+  - { id: ch-zh-bauma, name: Bauma, canton: ZH, url: "https://www.bauma.ch/" }
+  - { id: ch-zh-volken, name: Volken, canton: ZH, url: "https://www.volken.ch/" }
+  - { id: ch-so-solothurn, name: Solothurn, canton: SO, url: "https://www.stadt-solothurn.ch/" }
+  - { id: ch-so-zuchwil, name: Zuchwil, canton: SO, url: "https://www.zuchwil.ch/" }
+  - { id: ch-so-messen, name: Messen, canton: SO, url: "https://www.messen.ch/" }
+  - { id: ch-so-welschenrohr, name: Welschenrohr-Gänsbrunnen, canton: SO, url: "https://www.welschenrohr.ch/" }

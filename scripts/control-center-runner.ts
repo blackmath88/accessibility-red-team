@@ -43,7 +43,7 @@ async function authHeaders(): Promise<Headers> {
 }
 async function api(path: string, init: RequestInit = {}, allowNoContent = false): Promise<Response> {
   const headers = await authHeaders(); new Headers(init.headers).forEach((value, key) => headers.set(key, value));
-  const response = await fetch(`${apiBase}${path}`, { ...init, headers });
+  const response = await fetch(`${apiBase}${path}`, { ...init, headers, redirect: "manual" });
   if (allowNoContent && response.status === 204) return response;
   if (!response.ok) throw new Error(`${init.method ?? "GET"} ${path} failed (${response.status}): ${await response.text()}`);
   return response;
@@ -93,7 +93,8 @@ else {
   claim = await (await api(`/api/v1/runs/${encodeURIComponent(runId)}/claim`, { method: "POST" })).json() as ClaimedRun;
 }
 activeLease = claim.leaseToken;
-if (process.env.GITHUB_SHA && claim.run.engineRevision !== process.env.GITHUB_SHA) throw new Error(`Checked-out revision ${process.env.GITHUB_SHA} does not match requested ${claim.run.engineRevision}`);
+const localRevision = process.env.GITHUB_SHA ?? process.env.CONTROL_CENTER_ENGINE_REVISION;
+if (!localRevision || claim.run.engineRevision !== localRevision) throw new Error(`Checked-out revision ${localRevision ?? "unknown"} does not match requested ${claim.run.engineRevision}`);
 
 const output = resolve("runs", "control-center", claim.run.id); await mkdir(output, { recursive: true });
 let failure: Error | null = null; let heartbeatFailure: Error | null = null;
@@ -105,7 +106,8 @@ try {
   await renew(claim.run.kind === "journeys" ? "journeys" : claim.run.kind === "assessment" ? "scout" : "probes");
   const command = claim.run.kind === "scan" ? "scan" : claim.run.kind === "journeys" ? "journey" : "audit";
   const args = ["run", command, "--", claim.propertyUrl, "--out", output];
-  if (claim.run.kind === "assessment") args.push("--profile", "requirements/profiles/ch.federal.yml", "--journeys");
+  // Bounded crawl, matching the deterministic Nebuchadnezzar pilot settings.
+  if (claim.run.kind === "assessment") args.push("--profile", "requirements/profiles/ch.federal.yml", "--journeys", "--max-pages", "6", "--max-depth", "2");
   args.push("--host-safe", "--delay-ms", String(claim.run.executionPolicy.delayMs),
     "--max-retries", String(claim.run.executionPolicy.maxRetries), "--base-backoff-ms", String(claim.run.executionPolicy.baseBackoffMs),
     "--max-backoff-ms", String(claim.run.executionPolicy.maxBackoffMs));
