@@ -16,7 +16,11 @@ const RequestRunSchema = z.object({
   executionProvider: ExecutionProviderSchema.default("nebuchadnezzar_worker"), executionPolicy: ExecutionPolicySchema.optional(),
 });
 const LegacyRequestRunSchema = RequestRunSchema.omit({ organizationId: true, propertyId: true });
-const ClaimSchema = z.object({ provider: z.literal("nebuchadnezzar_worker"), workerId: z.string().min(1).max(100), leaseSeconds: LeaseSecondsSchema });
+const EngineRevisionSchema = z.string().regex(/^[a-f0-9]{40}$/);
+const ClaimSchema = z.object({ provider: z.literal("nebuchadnezzar_worker"), workerId: z.string().min(1).max(100), leaseSeconds: LeaseSecondsSchema,
+  engineRevision: EngineRevisionSchema.optional() });
+const SelftestSchema = z.object({ workerId: z.string().min(1).max(100), engineRevision: EngineRevisionSchema.optional() });
+const SELFTEST_LEASE_SECONDS = 120;
 const RenewSchema = z.object({ stage: RunStageSchema, progress: ProgressSchema.default({}), leaseSeconds: LeaseSecondsSchema });
 const EventSchema = z.object({ eventType: z.enum(["stage", "throttle", "backoff", "lease", "progress", "partial"]), metadata: z.record(z.string(), z.unknown()).default({}) })
   .refine((v) => JSON.stringify(v.metadata).length <= 16_384, "Event metadata is too large");
@@ -33,7 +37,13 @@ async function bodyJson(request: Request): Promise<unknown> {
   if (!(request.headers.get("content-type") ?? "").startsWith("application/json")) throw new HttpError(415, "Expected application/json");
   try { return await request.json(); } catch { throw new HttpError(400, "Invalid JSON body"); }
 }
+function deployedRevision(env: AppEnv): string | null {
+  return EngineRevisionSchema.safeParse(env.ENGINE_REVISION).success ? env.ENGINE_REVISION : null;
+}
 async function operator(request: Request, env: AppEnv, permission: OperatorPermission, store: D1ControlCenterStore) {
+  // Browser mutations must be same-origin; runners and CLI callers send no Origin header.
+  const origin = request.headers.get("origin");
+  if (request.method !== "GET" && origin !== null && origin !== new URL(request.url).origin) throw new HttpAuthError(403, "Cross-origin operator request refused");
   const actor = await authenticateOperator(request, env);
   if (!actor.email || !await store.authorizeOperator(actor.email, permission)) throw new HttpAuthError(403, `Operator lacks ${permission} permission`);
   return actor;
@@ -111,6 +121,11 @@ async function api(request: Request, env: AppEnv): Promise<Response> {
   const path = new URL(request.url).pathname; const store = new D1ControlCenterStore(env.DB);
   if (request.method === "GET" && path === "/api/v1/health") return json({ ok: true, environment: env.APP_ENV });
   if (request.method === "GET" && path === "/api/v1/cases") { await operator(request, env, "read", store); return json(await listCases(env.DB)); }
+  if (request.method === "GET" && path === "/api/v1/runtime") {
+    const actor = await operator(request, env, "read", store);
+    return json({ environment: env.APP_ENV, engineRevision: deployedRevision(env), operator: actor.email,
+      canExecute: await store.authorizeOperator(actor.email!, "execute"), runners: await store.listRunners() });
+  }
   if (request.method === "POST" && path === "/api/v1/runs") return createRun(request, env, store);
   let match = path.match(/^\/api\/v1\/cases\/([^/]+)\/runs$/);
   if (request.method === "POST" && match) return createRun(request, env, store, decodeURIComponent(match[1] ?? ""));
@@ -120,12 +135,35 @@ async function api(request: Request, env: AppEnv): Promise<Response> {
     if (actor.workerId !== input.workerId || actor.provider !== input.provider) throw new HttpAuthError(403, "Runner identity mismatch");
     const now = new Date(); if (!await store.touchRunner(input.workerId, input.provider, now.toISOString())) throw new HttpAuthError(403, "Runner is disabled or unregistered");
     const rawLease = createLeaseToken(); const run = await store.claimNextRun({ provider: input.provider, workerId: input.workerId,
-      now: now.toISOString(), leaseExpiresAt: leaseExpiry(now, input.leaseSeconds), leaseTokenSha256: await hashLeaseToken(rawLease) });
+      now: now.toISOString(), leaseExpiresAt: leaseExpiry(now, input.leaseSeconds), leaseTokenSha256: await hashLeaseToken(rawLease),
+      engineRevision: input.engineRevision });
     if (!run) return new Response(null, { status: 204 }); const property = await propertyForCase(env.DB, run.caseId);
     if (!property || property.propertyId !== run.propertyId) throw new HttpError(409, "Run property is unavailable");
     await store.appendRunEvent(run.id, input.workerId, "lease", { action: "claimed", attempt: run.attempt });
     await store.appendAudit(actor.id, "run.claimed", "run", run.id, { provider: input.provider, attempt: run.attempt });
     return json({ run, propertyUrl: property.propertyUrl, leaseToken: rawLease });
+  }
+  if (request.method === "POST" && path === "/api/v1/runner/selftest") {
+    const actor = await authenticateNebuchadnezzar(request, env); const input = SelftestSchema.parse(await bodyJson(request));
+    if (actor.workerId !== input.workerId) throw new HttpAuthError(403, "Runner identity mismatch");
+    const now = new Date(); if (!await store.touchRunner(input.workerId, "nebuchadnezzar_worker", now.toISOString())) throw new HttpAuthError(403, "Runner is disabled or unregistered");
+    const rawLease = createLeaseToken(); const selftest = await store.createSelftest({ workerId: input.workerId,
+      engineRevision: input.engineRevision ?? null, now: now.toISOString(), leaseExpiresAt: leaseExpiry(now, SELFTEST_LEASE_SECONDS),
+      leaseTokenSha256: await hashLeaseToken(rawLease) });
+    await store.appendAudit(actor.id, "runner.selftest.claimed", "runner_selftest", selftest.id, { engineRevision: selftest.engineRevision });
+    return json({ selftest, leaseToken: rawLease }, { status: 201 });
+  }
+  match = path.match(/^\/api\/v1\/runner\/selftest\/([^/]+)\/(heartbeat|complete)$/);
+  if (request.method === "POST" && match) {
+    const actor = await authenticateNebuchadnezzar(request, env); const id = decodeURIComponent(match[1] ?? "");
+    let raw: string; try { raw = leaseToken(request); } catch { throw new HttpAuthError(401, "Missing or invalid run lease token"); }
+    const hash = await hashLeaseToken(raw); const now = new Date();
+    const selftest = match[2] === "heartbeat"
+      ? await store.heartbeatSelftest({ id, workerId: actor.workerId!, leaseTokenSha256: hash, now: now.toISOString(), leaseExpiresAt: leaseExpiry(now, SELFTEST_LEASE_SECONDS) })
+      : await store.completeSelftest({ id, workerId: actor.workerId!, leaseTokenSha256: hash, now: now.toISOString() });
+    if (!selftest) throw new HttpAuthError(403, "Self-test lease is invalid, expired, or already completed");
+    await store.appendAudit(actor.id, `runner.selftest.${match[2] === "heartbeat" ? "heartbeat" : "completed"}`, "runner_selftest", id, { heartbeats: selftest.heartbeats });
+    return json({ selftest });
   }
   match = path.match(/^\/api\/v1\/runs\/([^/]+)\/claim$/);
   if (request.method === "POST" && match) {
@@ -205,7 +243,13 @@ function staticHeaders(response: Response): Response {
 }
 export default {
   async fetch(request: Request, env: AppEnv): Promise<Response> {
-    try { if (new URL(request.url).pathname.startsWith("/api/")) return await api(request, env); return staticHeaders(await env.ASSETS.fetch(request)); }
+    try {
+      if (new URL(request.url).pathname.startsWith("/api/")) return await api(request, env);
+      // Defence in depth: the dashboard shell is never served without a valid Access identity,
+      // even if the Access application in front of this Worker is misconfigured or removed.
+      await authenticateOperator(request, env);
+      return staticHeaders(await env.ASSETS.fetch(request));
+    }
     catch (error) { if (error instanceof HttpAuthError || error instanceof HttpError) return json({ error: error.message }, { status: error.status });
       if (error instanceof z.ZodError) return json({ error: "Invalid request", issues: error.issues }, { status: 400 });
       console.error(JSON.stringify({ event: "request_failed", message: error instanceof Error ? error.message : "unknown" }));

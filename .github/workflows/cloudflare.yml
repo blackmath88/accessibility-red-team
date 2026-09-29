@@ -5,10 +5,10 @@ on:
     paths:
       - "cloudflare/**"
       - "control-center/**"
-      - "src/control-center/**"
-      - "src/network-policy.ts"
-      - "scripts/control-center-runner.ts"
-      - "scripts/nebuchadnezzar-worker.ts"
+      - "src/**"
+      - "scripts/**"
+      - "evaluation/cohorts/**"
+      - "ops/**"
       - ".github/workflows/assessment-runner.yml"
       - "wrangler.jsonc"
       - "worker-configuration.d.ts"
@@ -20,10 +20,10 @@ on:
     paths:
       - "cloudflare/**"
       - "control-center/**"
-      - "src/control-center/**"
-      - "src/network-policy.ts"
-      - "scripts/control-center-runner.ts"
-      - "scripts/nebuchadnezzar-worker.ts"
+      - "src/**"
+      - "scripts/**"
+      - "evaluation/cohorts/**"
+      - "ops/**"
       - ".github/workflows/assessment-runner.yml"
       - "wrangler.jsonc"
       - "worker-configuration.d.ts"
@@ -33,7 +33,17 @@ on:
   workflow_dispatch:
     inputs:
       deploy:
-        description: Deploy only after resources and repository variable are explicitly enabled
+        description: Deploy the development control plane (requires the cloudflare-development environment)
+        required: true
+        default: false
+        type: boolean
+      first_deploy:
+        description: First deploy only — Access not yet configured; the Worker deploys fail-closed (HTTP 503 everywhere)
+        required: true
+        default: false
+        type: boolean
+      seed_wave1:
+        description: Seed the eight ZH/SO Wave 1 organizations, properties and cases (idempotent; does not queue runs)
         required: true
         default: false
         type: boolean
@@ -44,6 +54,7 @@ permissions:
 jobs:
   validate:
     runs-on: ubuntu-latest
+    timeout-minutes: 15
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -52,16 +63,23 @@ jobs:
           cache: npm
       - run: npm ci
       - run: npm --prefix control-center ci
+      - run: npx playwright install --with-deps chromium
       - run: npm run check
       - run: npm --prefix control-center run build
       - run: npm run cloudflare:typecheck
+      - run: npm run cloudflare:test
+      - run: bash -n ops/nebuchadnezzar/observatory-worker.sh
       - run: npm run cloudflare:dry-run
 
   deploy-development:
     needs: validate
-    if: github.event_name == 'workflow_dispatch' && inputs.deploy && vars.CLOUDFLARE_DEPLOY_ENABLED == 'true'
+    if: github.event_name == 'workflow_dispatch' && inputs.deploy && github.ref == 'refs/heads/main' && vars.CLOUDFLARE_DEPLOY_ENABLED == 'true'
     environment: cloudflare-development
     runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+      CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -70,12 +88,65 @@ jobs:
           cache: npm
       - run: npm ci
       - run: npm --prefix control-center ci
-      - name: Refuse the wrong Cloudflare account
+      - name: Refuse the wrong Cloudflare account or incomplete Access configuration
         env:
-          TARGET_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-        run: test "$TARGET_ACCOUNT_ID" = "0b32c4ab8bf48c4e1787c0fa763020fe"
-      - uses: cloudflare/wrangler-action@v3
-        with:
-          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-          command: deploy
+          EXPECTED_ACCOUNT_ID: ${{ vars.CLOUDFLARE_EXPECTED_ACCOUNT_ID }}
+          ACCESS_TEAM_DOMAIN: ${{ vars.ACCESS_TEAM_DOMAIN }}
+          ACCESS_AUD: ${{ vars.ACCESS_AUD }}
+          NEBUCHADNEZZAR_ACCESS_CLIENT_ID: ${{ vars.NEBUCHADNEZZAR_ACCESS_CLIENT_ID }}
+          CONTROL_CENTER_API_URL: ${{ vars.CONTROL_CENTER_API_URL }}
+          FIRST_DEPLOY: ${{ inputs.first_deploy }}
+        run: |
+          set -euo pipefail
+          test -n "$CLOUDFLARE_API_TOKEN" || { echo "CLOUDFLARE_API_TOKEN secret missing"; exit 1; }
+          test -n "$EXPECTED_ACCOUNT_ID" || { echo "CLOUDFLARE_EXPECTED_ACCOUNT_ID variable missing"; exit 1; }
+          test "$CLOUDFLARE_ACCOUNT_ID" = "$EXPECTED_ACCOUNT_ID" || { echo "CLOUDFLARE_ACCOUNT_ID does not match the expected development account"; exit 1; }
+          if [ "$FIRST_DEPLOY" = "true" ]; then echo "first deploy: Access values not required; Worker will answer 503"; exit 0; fi
+          [[ "$ACCESS_TEAM_DOMAIN" =~ ^[a-z0-9-]+\.cloudflareaccess\.com$ ]] || { echo "ACCESS_TEAM_DOMAIN variable invalid"; exit 1; }
+          [[ "$ACCESS_AUD" =~ ^[a-f0-9]{64}$ ]] || { echo "ACCESS_AUD variable must be the 64-hex Access application audience tag"; exit 1; }
+          [[ "$NEBUCHADNEZZAR_ACCESS_CLIENT_ID" =~ ^[a-f0-9]{32}\.access$ ]] || { echo "NEBUCHADNEZZAR_ACCESS_CLIENT_ID variable invalid"; exit 1; }
+          [[ "$CONTROL_CENTER_API_URL" =~ ^https://accessibility-observatory-dev\.[a-z0-9-]+\.workers\.dev$ ]] || { echo "CONTROL_CENTER_API_URL variable invalid"; exit 1; }
+      - name: Apply D1 migrations
+        run: npx wrangler d1 migrations apply accessibility-observatory-dev --remote
+      - name: Seed operator from environment secret (never committed)
+        env:
+          OPERATOR_EMAIL: ${{ secrets.OPERATOR_EMAIL }}
+          OPERATOR_NAME: ${{ secrets.OPERATOR_NAME }}
+        run: |
+          set -euo pipefail
+          if [ -z "$OPERATOR_EMAIL" ]; then echo "OPERATOR_EMAIL secret not set; skipping operator seed"; exit 0; fi
+          npx tsx scripts/cloudflare/seed-sql.ts operator "$RUNNER_TEMP/operator.sql"
+          npx wrangler d1 execute accessibility-observatory-dev --remote --file "$RUNNER_TEMP/operator.sql" > /dev/null
+          rm -f "$RUNNER_TEMP/operator.sql"
+      - name: Seed ZH/SO Wave 1 (organizations, properties, cases only)
+        if: inputs.seed_wave1 && !inputs.first_deploy
+        run: |
+          set -euo pipefail
+          npx tsx scripts/cloudflare/seed-sql.ts cohort evaluation/cohorts/zh-so-pilot-v1-wave1.yml wave1 "$RUNNER_TEMP/wave1.sql"
+          npx wrangler d1 execute accessibility-observatory-dev --remote --file "$RUNNER_TEMP/wave1.sql"
+      - name: Deploy Worker fail-closed (first deploy, no Access values)
+        if: inputs.first_deploy
+        run: npx wrangler deploy --var "ENGINE_REVISION:${GITHUB_SHA}"
+      - name: Deploy Worker pinned to this commit
+        if: ${{ !inputs.first_deploy }}
+        env:
+          ACCESS_TEAM_DOMAIN: ${{ vars.ACCESS_TEAM_DOMAIN }}
+          ACCESS_AUD: ${{ vars.ACCESS_AUD }}
+          NEBUCHADNEZZAR_ACCESS_CLIENT_ID: ${{ vars.NEBUCHADNEZZAR_ACCESS_CLIENT_ID }}
+        run: >
+          npx wrangler deploy
+          --var "ENGINE_REVISION:${GITHUB_SHA}"
+          --var "ACCESS_TEAM_DOMAIN:${ACCESS_TEAM_DOMAIN}"
+          --var "ACCESS_AUD:${ACCESS_AUD}"
+          --var "NEBUCHADNEZZAR_ACCESS_CLIENT_ID:${NEBUCHADNEZZAR_ACCESS_CLIENT_ID}"
+      - name: Verify the dashboard and API are not publicly reachable
+        if: ${{ !inputs.first_deploy }}
+        env:
+          CONTROL_CENTER_API_URL: ${{ vars.CONTROL_CENTER_API_URL }}
+        run: |
+          set -euo pipefail
+          for path in / /api/v1/cases /api/v1/runtime; do
+            code=$(curl -sS -o /dev/null -w '%{http_code}' --max-redirs 0 "${CONTROL_CENTER_API_URL}${path}" || true)
+            echo "${path} -> ${code}"
+            case "$code" in 302|401|403) ;; *) echo "::error::${path} answered ${code} without authentication"; exit 1 ;; esac
+          done

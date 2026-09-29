@@ -93,7 +93,8 @@ else {
   claim = await (await api(`/api/v1/runs/${encodeURIComponent(runId)}/claim`, { method: "POST" })).json() as ClaimedRun;
 }
 activeLease = claim.leaseToken;
-if (process.env.GITHUB_SHA && claim.run.engineRevision !== process.env.GITHUB_SHA) throw new Error(`Checked-out revision ${process.env.GITHUB_SHA} does not match requested ${claim.run.engineRevision}`);
+const localRevision = process.env.GITHUB_SHA ?? process.env.CONTROL_CENTER_ENGINE_REVISION;
+if (!localRevision || claim.run.engineRevision !== localRevision) throw new Error(`Checked-out revision ${localRevision ?? "unknown"} does not match requested ${claim.run.engineRevision}`);
 
 const output = resolve("runs", "control-center", claim.run.id); await mkdir(output, { recursive: true });
 let failure: Error | null = null; let heartbeatFailure: Error | null = null;
@@ -105,7 +106,8 @@ try {
   await renew(claim.run.kind === "journeys" ? "journeys" : claim.run.kind === "assessment" ? "scout" : "probes");
   const command = claim.run.kind === "scan" ? "scan" : claim.run.kind === "journeys" ? "journey" : "audit";
   const args = ["run", command, "--", claim.propertyUrl, "--out", output];
-  if (claim.run.kind === "assessment") args.push("--profile", "requirements/profiles/ch.federal.yml", "--journeys");
+  // Bounded crawl, matching the deterministic Nebuchadnezzar pilot settings.
+  if (claim.run.kind === "assessment") args.push("--profile", "requirements/profiles/ch.federal.yml", "--journeys", "--max-pages", "6", "--max-depth", "2");
   args.push("--host-safe", "--delay-ms", String(claim.run.executionPolicy.delayMs),
     "--max-retries", String(claim.run.executionPolicy.maxRetries), "--base-backoff-ms", String(claim.run.executionPolicy.baseBackoffMs),
     "--max-backoff-ms", String(claim.run.executionPolicy.maxBackoffMs));

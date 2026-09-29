@@ -19,7 +19,7 @@ test("migration makes evidence and audit metadata append-only", async () => {
   assert.match(migration, /CREATE TRIGGER run_events_no_update/);
   assert.match(migration, /execution_provider TEXT NOT NULL/);
   assert.match(migration, /lease_token_sha256 TEXT/);
-  assert.match(migration, /achim\.imboden@bridge-work\.ai/);
+  assert.doesNotMatch(migration, /INSERT INTO operators/);
 });
 
 test("lease tokens are random, hash-only at rest, and bounded", async () => {

@@ -12,6 +12,7 @@
     "cloudflare:dry-run": "wrangler deploy --dry-run",
     "control-center:runner": "tsx scripts/control-center-runner.ts",
     "control-center:worker": "tsx scripts/nebuchadnezzar-worker.ts",
+    "control-center:selftest": "tsx scripts/nebuchadnezzar-selftest.ts",
     "evaluation:deterministic": "tsx src/evaluation/run-deterministic-pilot.ts",
     "scan": "tsx src/cli.ts scan",
     "test": "tsx --test test/*.test.ts",

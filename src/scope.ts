@@ -9,14 +9,19 @@ function isPrivateIPv4(ip: string): boolean {
     a === 10 ||
     a === 127 ||
     a === 0 ||
+    (a === 100 && b >= 64 && b <= 127) || // CGNAT, including Tailscale tailnet addresses
     (a === 169 && b === 254) ||
     (a === 172 && b >= 16 && b <= 31) ||
-    (a === 192 && b === 168)
+    (a === 192 && b === 168) ||
+    (a === 198 && (b === 18 || b === 19)) ||
+    a >= 224 // multicast and reserved
   );
 }
 
 function isPrivateIPv6(ip: string): boolean {
   const normalized = ip.toLowerCase();
+  const mapped = normalized.match(/^::ffff:(\d+\.\d+\.\d+\.\d+)$/);
+  if (mapped) return isPrivateIPv4(mapped[1]!);
   return (
     normalized === "::1" ||
     normalized === "::" ||

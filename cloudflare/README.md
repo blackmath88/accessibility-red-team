@@ -1,64 +1,153 @@
 # Cloudflare control plane
 
-This directory is the proposed development control plane for the Accessibility Observatory. It is implemented for local validation only. No remote resource has been created.
+Development control plane for the Accessibility Observatory:
 
-## Exact future resources
+```
+Cloudflare Access (this application only)
+      ↓
+React Control Center + Worker API   (accessibility-observatory-dev, workers.dev)
+      ↓
+D1 metadata / run state             (accessibility-observatory-dev)
+      ↓
+private R2 evidence                 (accessibility-observatory-artifacts-dev)
+      ↑
+outbound HTTPS only (Access service token)
+      ↑
+Nebuchadnezzar persistent worker → Playwright + axe + SCOUT + journeys
+```
+
+Nebuchadnezzar never accepts inbound connections. It polls `POST /api/v1/runner/claim`.
+
+## Resources
 
 | Resource | Name | Binding / purpose |
 | --- | --- | --- |
-| Worker + static assets | `accessibility-observatory-dev` | React Control Center and `/api/v1/*` |
+| Worker + static assets | `accessibility-observatory-dev` | React Control Center and `/api/v1/*` on `workers.dev` |
 | D1 database | `accessibility-observatory-dev` | `DB` |
 | Private R2 bucket | `accessibility-observatory-artifacts-dev` | `ARTIFACTS` |
-| Cloudflare Access application | `Accessibility Observatory Dev` | operator authentication |
-| Cloudflare Access service token | `Nebuchadnezzar Observatory Dev` | outbound runner authentication |
-| GitHub environment | `cloudflare-development` | gated manual deployment |
+| Access application | `Accessibility Observatory Dev` | protects only the Worker's `workers.dev` hostname |
+| Access service token | `Nebuchadnezzar Observatory Dev` | outbound runner identity |
+| GitHub environment | `cloudflare-development` | gated manual deployment from `main` |
 
-The committed D1 ID is the explicit non-resource placeholder `00000000-0000-0000-0000-000000000000`. Replace it with the created database UUID only after creation is separately approved. `ACCESS_*` and `GITHUB_APP_*` values marked `PENDING` also fail closed.
+No production resources, custom DNS, paid plans, R2 object locks or outreach sending are part of this setup.
 
-## Bindings and credentials
+## Configuration: what is committed and what is not
 
-- `ASSETS`: `control-center/dist`, with Worker-first routing only for `/api/*`.
-- `DB`: D1 relational records and append-only artifact/audit metadata.
-- `ARTIFACTS`: private R2 evidence blobs.
-- `GITHUB_APP_PRIVATE_KEY`: future Worker secret; the Worker uses it only to sign a GitHub App JWT. The resulting installation bearer token is scoped to this repository plus `Actions: write`, expires after one hour, and is explicitly revoked after dispatch.
-- `CLOUDFLARE_API_TOKEN` and `CLOUDFLARE_ACCOUNT_ID`: future GitHub environment secrets. Deployment refuses an account ID other than `0b32c4ab8bf48c4e1787c0fa763020fe`.
-- `CONTROL_CENTER_API_URL`: future GitHub repository/environment variable used by the external runner.
-- `NEBUCHADNEZZAR_ACCESS_CLIENT_ID`: non-secret Access service-token client ID used to pin the accepted machine identity.
-- `CF_ACCESS_CLIENT_ID` and `CF_ACCESS_CLIENT_SECRET`: future Nebuchadnezzar host credentials. They are never stored in the Worker, repository, or GitHub.
+Committed in `wrangler.jsonc` (non-secret, and safe for forks to replace): the Worker, D1 and R2 names, the D1
+database UUID of the development instance, and the GitHub repository/workflow names.
 
-Operator identity is a validated Cloudflare Access JWT. D1 `operators` rows provide separate read, execute, and outreach authorization; the seeded account is `achim.imboden@bridge-work.ai` with read/execute only. Nebuchadnezzar is a registered D1 runner and authenticates through an Access service-token JWT pinned to its client ID. GitHub runner identity is a freshly minted GitHub Actions OIDC JWT on each control-plane call, restricted to repository `blackmath88/accessibility-red-team`, workflow `assessment-runner.yml`, event `workflow_dispatch`, and audience `accessibility-observatory-control-plane`.
+Placeholders that **fail closed** until injected at deploy time (`PENDING` → HTTP 503 for every operator,
+runner and dashboard request):
 
-The only future long-lived Worker secret is `GITHUB_APP_PRIVATE_KEY`. It replaces the rejected `GITHUB_ACTIONS_TOKEN` design: the Worker signs a nine-minute app JWT, requests a repository-scoped installation token (maximum one hour), dispatches the workflow, then revokes it. Run callbacks do not reuse that credential.
+| Worker var | Injected from GitHub environment variable |
+| --- | --- |
+| `ACCESS_TEAM_DOMAIN` | `ACCESS_TEAM_DOMAIN` (e.g. `<team>.cloudflareaccess.com`) |
+| `ACCESS_AUD` | `ACCESS_AUD` (the Access application's audience tag) |
+| `NEBUCHADNEZZAR_ACCESS_CLIENT_ID` | `NEBUCHADNEZZAR_ACCESS_CLIENT_ID` (service token client ID, not the secret) |
+| `ENGINE_REVISION` | the deployed commit (`GITHUB_SHA`) |
 
-## Migration
+Never committed anywhere: the Cloudflare API token, the Access service-token **secret** (lives only on
+Nebuchadnezzar in a 0600 file), `GITHUB_APP_PRIVATE_KEY`, lease tokens, operator identities, `.env`/`.dev.vars`,
+and assessment artifacts.
 
-`migrations/0001_control_center.sql` creates organizations, digital properties, assessment cases, runs, artifacts, contacts, outreach, operators, runner agents, append-only run/audit events, and workflow dispatch records. It preserves the Organization → DigitalProperty → AssessmentCase → Run → Artifact foreign-key chain. Runs retain a unique idempotency key, immutable engine revision, provider, stage, policy, progress, attempt and renewable lease metadata. Artifact, run-event, and audit rows reject updates and deletes.
+`account_id` is not committed; deployments use `CLOUDFLARE_ACCOUNT_ID`, and the deploy job refuses any account
+other than the `CLOUDFLARE_EXPECTED_ACCOUNT_ID` environment variable.
 
-R2 objects use `sha256/<prefix>/<digest>` keys. Uploads supply a SHA-256 checksum for R2 verification and use create-only conditional writes. This provides development immutability without an R2 object-lock rule.
+### Operator seeding
 
-For production, start with selective protection rather than a bucket-wide development policy: lock signed final reports and their cited evidence for 30 days, retain raw probe/journey evidence for 30–90 days using lifecycle rules, and keep reproducible logs for 14–30 days. Increase legal/audit evidence retention only after data classification, deletion obligations, and expected storage cost are approved. A separate locked evidence bucket is preferable if only a subset needs compliance retention.
+Public migrations never create operators. The deploy job seeds one read/execute operator (never outreach) from
+the `OPERATOR_EMAIL` / `OPERATOR_NAME` **secrets** of the `cloudflare-development` environment using
+`scripts/cloudflare/seed-sql.ts operator`. The email must be the identity Cloudflare Access authenticates.
+
+## Development deployment (from a phone, no workstation)
+
+All steps are Cloudflare dashboard or GitHub web actions.
+
+1. **Cloudflare API token** (dashboard → My Profile → API Tokens → Create custom token), scoped to the
+   development account only: *Account → Workers Scripts: Edit*, *Account → D1: Edit*,
+   *Account → Workers R2 Storage: Edit* (only needed if the bucket must be created via API; otherwise omit).
+   Set a short expiry.
+2. **R2 bucket** `accessibility-observatory-artifacts-dev` (dashboard → R2) if it does not exist. Leave public
+   access disabled. Do not add an object lock.
+3. **GitHub** → Settings → Environments → `cloudflare-development`: restrict deployment branches to `main` and
+   require yourself as reviewer. Add
+   - secrets: `CLOUDFLARE_API_TOKEN`, `CLOUDFLARE_ACCOUNT_ID`, `OPERATOR_EMAIL`, `OPERATOR_NAME`;
+   - variables: `CLOUDFLARE_EXPECTED_ACCOUNT_ID`, `ACCESS_TEAM_DOMAIN`, `ACCESS_AUD`,
+     `NEBUCHADNEZZAR_ACCESS_CLIENT_ID`, `CONTROL_CENTER_API_URL` (`https://accessibility-observatory-dev.<subdomain>.workers.dev`);
+   - repository variable `CLOUDFLARE_DEPLOY_ENABLED=true`.
+4. **Access for this Worker only.** Workers & Pages → `accessibility-observatory-dev` → Settings → Domains &
+   Routes → `workers.dev` → *Enable Cloudflare Access*. This creates an Access application for that one
+   hostname; do not enable account-wide Access for all Workers. Rename it `Accessibility Observatory Dev`. Keep
+   *preview URLs* disabled (they are disabled in `wrangler.jsonc`). Policies on that application:
+   - *Allow* — Include: Emails → your operator email.
+   - *Service Auth* — Include: Service Token → `Nebuchadnezzar Observatory Dev`.
+   Copy the application's **Audience (AUD) tag** into `ACCESS_AUD`.
+5. **Service token** (Zero Trust → Access → Service credentials → Service tokens) named
+   `Nebuchadnezzar Observatory Dev`. Copy the **Client ID** into `NEBUCHADNEZZAR_ACCESS_CLIENT_ID`. The
+   **Client Secret** is shown once: paste it only into the Nebuchadnezzar credential file (see
+   `docs/NEBUCHADNEZZAR_BOOTSTRAP.md`), nowhere else.
+6. **Deploy**: GitHub → Actions → *Cloudflare control plane* → Run workflow on `main` with `deploy=true`
+   (and `seed_wave1=true` once you want the Wave 1 cases to exist). The job validates, applies D1 migrations,
+   seeds the operator, deploys with `ENGINE_REVISION` = the commit, and then **fails** if `/`, `/api/v1/cases`
+   or `/api/v1/runtime` answer anything other than an Access redirect/401/403 without credentials.
+
+**First deploy** (the Worker must exist before step 4 is possible): run the workflow with `deploy=true` and
+`first_deploy=true`. Access values are not required; the Worker deploys with `PENDING` Access configuration and
+answers HTTP 503 to every request (dashboard included). Then do steps 4–5, set the variables, and run again with
+`first_deploy=false`, which also runs the unauthenticated-reachability check.
+
+Every deploy pins `ENGINE_REVISION`. The UI queues runs for that revision and Nebuchadnezzar only claims runs
+whose revision equals its own clean checkout, so after each deploy install the same SHA on Nebuchadnezzar.
+
+## Security properties
+
+- Operator identity: Cloudflare Access JWT validated in the Worker (issuer, audience, signature via cached
+  JWKS), then D1 `operators` permissions (read / execute / outreach are separate; automation never grants
+  outreach).
+- Dashboard assets are served only after the same JWT validation (`run_worker_first: true`), so a missing or
+  misconfigured Access application cannot expose the dashboard.
+- Browser mutations must be same-origin and `application/json`.
+- Nebuchadnezzar: Access service-token JWT pinned to the configured client ID (`common_name`), plus a
+  registered, enabled `runner_agents` row.
+- GitHub fallback: per-call workflow OIDC restricted to this repository, `assessment-runner.yml`,
+  `workflow_dispatch`, and the configured audience; dispatch uses a repository-scoped GitHub App token that is
+  revoked immediately. (Inactive until `GITHUB_APP_*` is configured.)
+- Every runner mutation requires the unguessable per-run lease token; only its SHA-256 is stored.
+
+## Execution safety (enforced server-side)
+
+- Runs execute the stored `DigitalProperty.url`; the claim response carries it and the API accepts no target
+  URL. Property URLs are immutable once stored (new URL → new property).
+- Per-host concurrency 1 across all providers: a run is not claimable while any other unexpired lease exists
+  on the same canonical host (`digital_properties.host_key`).
+- Claims are filtered by engine revision; the runner re-checks and refuses a dirty checkout.
+- Bounded retry budget: an expired lease is reclaimable at most until `attempt = 3`; an exhausted run stays
+  visible until an operator cancels it. Site-level HTTP 429/503 handling (pacing, `Retry-After`, bounded
+  exponential backoff, ≤3 retries) lives in the engine execution policy and is recorded as run events.
+- `partial` is a valid terminal outcome; evidence is retained.
+- Cancellation invalidates the lease; the runner's next heartbeat fails and it stops the child process.
+- Artifacts are content-addressed in R2 (`sha256/<prefix>/<digest>`, checksum-verified, create-only);
+  `artifacts`, `run_events` and `audit_events` rows are append-only.
+
+## API
+
+- Operator: `GET /api/v1/cases`, `GET /api/v1/runtime`, `POST /api/v1/runs`, compatibility
+  `POST /api/v1/cases/:id/runs`, `POST /api/v1/runs/:id/cancel`, `GET /api/v1/runs/:id`.
+- Nebuchadnezzar: `POST /api/v1/runner/claim` (204 = no work), and the harmless self-test
+  `POST /api/v1/runner/selftest`, `POST /api/v1/runner/selftest/:id/heartbeat`, `POST /api/v1/runner/selftest/:id/complete`
+  (never touches the run queue or any site).
+- GitHub Actions: `POST /api/v1/runs/:id/claim` with workflow OIDC.
+- Both runners: `POST /lease/renew`, `POST /events`, `PUT /artifacts`, `POST /complete`, `POST /fail`.
 
 ## Local validation
 
 ```sh
-npm run cloudflare:types
 npm run cloudflare:typecheck
-npm run cloudflare:test
-npx wrangler d1 migrations apply accessibility-observatory-dev --local
+npm run cloudflare:test        # includes the Worker against real SQLite with both migrations
 npm run cloudflare:dry-run
 ```
 
-Do not add `--remote`, run `wrangler deploy` without `--dry-run`, create a bucket/database, enable R2, or configure Access/DNS until separately approved.
+## Retention (before production)
 
-## API and execution protocols
-
-- Operator: `GET /api/v1/cases`, `POST /api/v1/runs`, compatibility `POST /api/v1/cases/:id/runs`, `POST /api/v1/runs/:id/cancel`, and `GET /api/v1/runs/:id`.
-- Nebuchadnezzar: `POST /api/v1/runner/claim` with Access service-token headers. A 204 response means no work.
-- GitHub Actions: `POST /api/v1/runs/:id/claim` with workflow OIDC.
-- Both runners: `POST /lease/renew`, `POST /events`, `PUT /artifacts`, `POST /complete`, and `POST /fail`, all requiring the provider identity plus `x-run-lease-token`.
-
-`npm run control-center:worker` is the foreground outbound poller for Nebuchadnezzar. It runs one job at a time and does not install or alter a system service. Required host variables are `CONTROL_CENTER_API_URL`, `CF_ACCESS_CLIENT_ID`, and `CF_ACCESS_CLIENT_SECRET`; optional values are `CONTROL_CENTER_WORKER_ID=nebuchadnezzar` and `CONTROL_CENTER_POLL_MS` (default 15000).
-
-## Host-safe execution
-
-The default policy enforces one worker job and per-host concurrency 1, five-second navigation pacing, three retries for HTTP 429/503, bounded exponential backoff, and bounded `Retry-After`. The policy and decisions are written to `execution-policy.json`, uploaded to R2, and material backoff events are copied to append-only D1 events/audit metadata. A site-level failure retains logs and evidence; valid incomplete results may use the `partial` terminal state.
+Lock only signed final reports and cited evidence (e.g. 30 days); retain raw probe/journey evidence 30–90 days
+via lifecycle rules; reproducible logs 14–30 days. Decide after data classification and cost review.
