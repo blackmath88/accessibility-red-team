@@ -232,6 +232,19 @@ async function api(request: Request, env: AppEnv): Promise<Response> {
       await store.appendAudit(actor.id, "run.failed", "run", runId, {}); return json({ run });
     }
   }
+  match = path.match(/^\/api\/v1\/runs\/([^/]+)\/artifacts\/([^/]+)\/content$/);
+  if (request.method === "GET" && match) {
+    await operator(request, env, "read", store);
+    const runId = decodeURIComponent(match[1] ?? ""), artifactId = decodeURIComponent(match[2] ?? "");
+    const artifact = (await store.listArtifactsForRun(runId)).find((item) => item.id === artifactId);
+    if (!artifact) throw new HttpError(404, "Artifact not found");
+    if (!["report_json", "report_html", "screenshot"].includes(artifact.kind)) throw new HttpError(403, "Artifact kind is not viewable");
+    const object = await env.ARTIFACTS.get(artifact.storageKey);
+    if (!object) throw new HttpError(404, "Artifact object not found");
+    const headers = new Headers({ "content-type": artifact.contentType, "cache-control": "private, no-store",
+      "x-content-type-options": "nosniff", "content-security-policy": "default-src 'none'; style-src 'unsafe-inline'; img-src data:; sandbox" });
+    return new Response(object.body, { headers });
+  }
   match = path.match(/^\/api\/v1\/runs\/([^/]+)$/);
   if (request.method === "GET" && match) {
     await operator(request, env, "read", store); const runId = decodeURIComponent(match[1] ?? ""); const run = await store.getRun(runId);
