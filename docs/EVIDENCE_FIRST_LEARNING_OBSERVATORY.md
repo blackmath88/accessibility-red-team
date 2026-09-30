@@ -215,6 +215,109 @@ AgentSpecGap extracts checkable rules from agent artifacts into a policy IR and 
 
 **Difference:** EFLO learns candidates from domain evidence and validated investigations rather than primarily compiling pre-existing agent plans/policies.
 
+
+### CEGIS — formal propose → counterexample → refine ancestry
+
+Repository example:
+- https://github.com/marcelwa/CEGIS
+
+Counterexample-Guided Inductive Synthesis repeatedly proposes an implementation and searches for a counterexample that disproves it. Counterexamples refine the next candidate until the specification is satisfied or synthesis fails.
+
+**Steal conceptually:**
+- candidate capability is not accepted because it looks plausible;
+- counterexamples are first-class learning evidence;
+- verification/refutation drives refinement;
+- synthesis should terminate in executable structure.
+
+**Difference:** EFLO often operates before a complete formal specification exists. Frontier/human investigation may help discover the specification, and population evaluation is empirical rather than a proof.
+
+### Cleanlab / active learning — spend labels and investigation where information value is high
+
+Repository:
+- https://github.com/cleanlab/cleanlab
+- https://github.com/cleanlab/examples
+
+Cleanlab includes active-learning methods for selecting examples that are most informative to label or re-label, including multi-annotator settings.
+
+**Steal conceptually:**
+- do not spend expensive labels/reasoning uniformly;
+- uncertainty/information value should drive selection;
+- human labels become evaluation evidence;
+- re-labeling ambiguous examples can be more valuable than labeling easy new examples.
+
+**Difference:** EFLO target selection can include implementation-family representativeness, civic-task impact, contradictory evidence, coverage gaps and novelty in addition to classifier uncertainty.
+
+### PyRIT and garak — adaptive red-team missions and probe catalogues
+
+Repositories:
+- https://github.com/microsoft/PyRIT
+- https://github.com/NVIDIA/garak
+
+PyRIT provides automated and human-led AI red-team scenarios, including adaptive attacks. Garak combines static, dynamic and adaptive probes with detectors.
+
+**Steal conceptually:**
+- scenario/mission catalogues;
+- adaptive investigation;
+- repeatable probes and detectors;
+- retained run evidence;
+- explicit evaluation of whether an attack/probe succeeded.
+
+**Difference:** these systems red-team generative-AI targets. EFLO starts from heterogeneous domain evidence and makes capability lowering/recompilation a first-class lifecycle.
+
+### Nuclei, Sigma and Semgrep — the mature destination state for compiled knowledge
+
+Repositories:
+- https://github.com/projectdiscovery/nuclei-templates
+- https://github.com/SigmaHQ/sigma
+- https://github.com/semgrep/semgrep-rules
+
+These ecosystems encode expert detection knowledge as versioned, reusable, machine-executable templates/rules. Sigma explicitly exists so detection methods developed by analysts can be expressed in a generic structured format and reused.
+
+**Steal conceptually:**
+- a capability catalogue is a durable product;
+- rules/templates are versioned, testable and reviewable;
+- expert discoveries can become cheap repeatable execution;
+- community/analyst review can improve the catalogue.
+
+**Difference:** these are predominantly the destination of compilation; they do not themselves provide the whole population → selection → frontier investigation → validation → lowering loop.
+
+### DetectForge — close semantic-to-deterministic detection engineering precedent
+
+Repository:
+- https://github.com/Sim-Security/DetectForge
+
+DetectForge turns threat-intelligence reports into Sigma, YARA and Suricata rules. Its pipeline uses AI for semantic extraction/generation and deterministic validators/testing for generated rules.
+
+Conceptually:
+
+```
+unstructured expert evidence
+      ↓
+AI semantic extraction
+      ↓
+machine-executable detector candidate
+      ↓
+validation / testing
+```
+
+**Steal conceptually:**
+- semantic interpretation can produce a lower-level detector candidate;
+- generation and validation are separate stages;
+- rule syntax/schema/testing are gates;
+- false-positive and coverage analysis belong in the compilation pipeline.
+
+**Difference:** DetectForge begins with threat-intelligence documents, not broad population reconnaissance; target selection/active learning is not the central loop; and it compiles into known security rule formats rather than choosing dynamically among deterministic, local-semantic and retained-open capability levels.
+
+### yarGen — narrow evidence → signature precedent
+
+Repository:
+- https://github.com/Neo23x0/yarGen
+
+yarGen derives YARA rules from strings observed in malware while filtering strings common in goodware; newer versions also expose AI-assisted rule-refinement output.
+
+**Steal conceptually:** observations can be transformed into reusable signatures, but useful compilation needs negative/counterexample evidence as well as positive examples.
+
+
 ## Synthesis
 
 The open-source landscape suggests four mature-ish ideas that EFLO combines:
