@@ -6,6 +6,7 @@ import { D1ControlCenterStore } from "./d1-store.js";
 import { createLeaseToken, hashLeaseToken, leaseExpiry, leaseToken } from "./leases.js";
 import { queueWithProvider } from "./providers.js";
 import { storeArtifact } from "./r2-artifacts.js";
+import { buildPopulationAnalysis } from "./population-analysis.js";
 
 type AppEnv = Env & { GITHUB_APP_PRIVATE_KEY: string };
 const LeaseSecondsSchema = z.number().int().min(60).max(900).default(300);
@@ -121,6 +122,12 @@ async function api(request: Request, env: AppEnv): Promise<Response> {
   const path = new URL(request.url).pathname; const store = new D1ControlCenterStore(env.DB);
   if (request.method === "GET" && path === "/api/v1/health") return json({ ok: true, environment: env.APP_ENV });
   if (request.method === "GET" && path === "/api/v1/cases") { await operator(request, env, "read", store); return json(await listCases(env.DB)); }
+  if (request.method === "GET" && path === "/api/v1/analysis/population") {
+    await operator(request, env, "read", store);
+    const canton=(new URL(request.url).searchParams.get("canton")??"SO").toUpperCase();
+    if (!/^[A-Z]{2}$/.test(canton)) throw new HttpError(400,"canton must be a two-letter code");
+    return json(await buildPopulationAnalysis(env.DB,env.ARTIFACTS,canton),{headers:{"content-disposition":`attachment; filename="population-analysis-${canton.toLowerCase()}.json"`}});
+  }
   if (request.method === "GET" && path === "/api/v1/runtime") {
     const actor = await operator(request, env, "read", store);
     return json({ environment: env.APP_ENV, engineRevision: deployedRevision(env), operator: actor.email,
