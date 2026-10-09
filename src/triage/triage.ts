@@ -4,6 +4,7 @@ import { join } from "node:path";
 import { ProbeResultSchema, type ProbeResult } from "../contracts.js";
 import { TriageResultSchema } from "./contracts.js";
 import type { Emit } from "../theatre/emit.js";
+import { atOf } from "../theatre/schema.js";
 
 export type SurfaceRun = {
   surfaceId: string;
@@ -45,7 +46,7 @@ export async function triageSurfaceRuns(surfaceRuns: SurfaceRun[], outPath: stri
       if (probe.outcome !== "violation" && probe.outcome !== "incomplete") {
         emit({
           stage: "triage", actor: "code", verdict: "dropped",
-          subject: { kind: "observation", id: `${surfaceRef}/${probe.probeId}`, site },
+          subject: { kind: "observation", id: `${surfaceRef}/${probe.probeId}`, site }, ...(probe.nodes[0] ? { at: atOf(probe.nodes[0]) } : {}),
           detail: `${probe.probeId} · ${probe.outcome}`,
         });
         continue;
@@ -107,7 +108,9 @@ export async function triageSurfaceRuns(surfaceRuns: SurfaceRun[], outPath: stri
     const site = new URL(finding.occurrences[0]?.url ?? surfaceRuns[0]!.url).hostname;
     const detail = `${finding.probeId} · ${finding.templateLeverage}`;
     emit({ stage: "triage", actor: "code", verdict: "finding", subject: { kind: "finding", id: `${site}/${finding.probeId}:${finding.outcome}`, site }, detail });
-    for (const id of refs.slice(1)) emit({ stage: "triage", actor: "code", verdict: "merged", subject: { kind: "observation", id, site }, detail });
+    for (const [index, id] of refs.entries()) {
+      if (index > 0) emit({ stage: "triage", actor: "code", verdict: "merged", subject: { kind: "observation", id, site }, at: atOf(finding.occurrences[index]!), detail });
+    }
   }
 
   const result = TriageResultSchema.parse({

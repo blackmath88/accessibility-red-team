@@ -17,6 +17,7 @@ import { requirementsFromAxeTags } from "./wcag.js";
 import type { ExecutionPolicy } from "./control-center/contracts.js";
 import { gotoWithPolicy, type NetworkPolicyEvent } from "./network-policy.js";
 import type { Emit } from "./theatre/emit.js";
+import { atOf } from "./theatre/schema.js";
 
 const VIEWPORT = { width: 1440, height: 900 };
 
@@ -138,10 +139,11 @@ export async function scanUrl(
       // One event per node for violation/incomplete; one per rule for pass/inapplicable to keep the log readable.
       const perNode = result.outcome === "violation" || result.outcome === "incomplete";
       const refs = perNode ? result.nodes.map((_, index) => `${surfaceRef}/${result.probeId}#${index + 1}`) : [`${surfaceRef}/${result.probeId}`];
-      for (const id of refs) {
+      for (const [index, id] of refs.entries()) {
+        const node = result.nodes[index];
         emit({
           stage: "probe", actor: "code", verdict: result.outcome,
-          subject: { kind: "observation", id, site: target.hostname },
+          subject: { kind: "observation", id, site: target.hostname }, ...(node ? { at: atOf(node) } : {}),
           detail: perNode ? `${result.probeId} · ${result.impact}` : `${result.probeId} · ${result.nodes.length} nodes`,
         });
       }

@@ -5,6 +5,7 @@ import { join } from "node:path";
 import test from "node:test";
 import contract from "../theatre/events.schema.json" with { type: "json" };
 import { createEmitter, jsonlFile, TheatreEventSchema, type EmitInput } from "../src/theatre/emit.js";
+import { atOf } from "../src/theatre/schema.js";
 
 const probe = (id: string): EmitInput => ({
   stage: "probe", actor: "code", subject: { kind: "observation", id, site: "s" }, verdict: "violation",
@@ -73,4 +74,17 @@ test("events are stamped when emitted, not when a buffering sink flushes", async
   const [a, b] = buffered.map((l) => Date.parse(JSON.parse(l).ts));
   assert.ok(b! - a! >= 20, `expected ≥20 ms between stamps, got ${b! - a!}`);
   assert.ok(Date.now() - b! >= 20, "b must not be stamped at flush time");
+});
+
+test("at: selector + text-only snippet, only on probe/triage observation events", () => {
+  const at = atOf({ target: ["nav", "a.more"], html: '<a class="more" href="/x">Mehr &amp; <b>lesen</b></a><img src="' });
+  assert.deepEqual(at, { selector: "nav a.more", snippet: "Mehr & lesen" });
+  assert.equal(atOf({ target: ["#c"], html: "x".repeat(400) }).snippet!.length, contract.properties.at.properties.snippet.maxLength);
+  assert.equal(atOf({ target: [], html: "<img alt='x'>" }).snippet, undefined);
+  const base = { ts: new Date().toISOString(), run: "r", actor: "code", at };
+  TheatreEventSchema.parse({ ...base, stage: "probe", subject: { kind: "observation", id: "o" }, verdict: "violation" });
+  TheatreEventSchema.parse({ ...base, stage: "triage", subject: { kind: "observation", id: "o" }, verdict: "merged" });
+  assert.throws(() => TheatreEventSchema.parse({ ...base, stage: "triage", subject: { kind: "finding", id: "f" }, verdict: "finding" }));
+  assert.throws(() => TheatreEventSchema.parse({ ...base, stage: "verify", subject: { kind: "observation", id: "o" }, verdict: "blocked" }));
+  assert.throws(() => TheatreEventSchema.parse({ ...base, stage: "probe", subject: { kind: "observation", id: "o" }, verdict: "pass", at: { selector: "a", snippet: "<b>" } }));
 });
