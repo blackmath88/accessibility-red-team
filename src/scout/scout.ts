@@ -9,6 +9,7 @@ import { discoverSeedUrls } from "./seeds.js";
 import { validatePublicTarget } from "../scope.js";
 import type { ExecutionPolicy } from "../control-center/contracts.js";
 import { gotoWithPolicy, type NetworkPolicyEvent } from "../network-policy.js";
+import type { Emit } from "../theatre/emit.js";
 
 export type ScoutOptions = {
   maxPages?: number;
@@ -16,6 +17,7 @@ export type ScoutOptions = {
   out?: string;
   executionPolicy?: ExecutionPolicy;
   policyEvents?: NetworkPolicyEvent[];
+  emit?: Emit;
 };
 
 type QueueItem = { url: string; depth: number; score: number; order: number };

@@ -8,6 +8,7 @@ import { buildSiteReport } from "../report/site.js";
 import { runSafeJourneys } from "../journeys/engine.js";
 import type { ExecutionPolicy } from "../control-center/contracts.js";
 import type { NetworkPolicyEvent } from "../network-policy.js";
+import type { Emit } from "../theatre/emit.js";
 
 export async function auditSite(input: string, options: {
   outDir?: string;
@@ -17,6 +18,7 @@ export async function auditSite(input: string, options: {
   maxSurfaces?: number;
   journeys?: boolean;
   executionPolicy?: ExecutionPolicy;
+  emit?: Emit;
 } = {}) {
   const host = new URL(input).hostname.replace(/[^a-z0-9.-]/gi, "_");
   const outDir = resolve(options.outDir ?? join("runs", host));
@@ -30,6 +32,7 @@ export async function auditSite(input: string, options: {
     out: surfacePath,
     executionPolicy: options.executionPolicy,
     policyEvents,
+    emit: options.emit,
   });
 
   const selectedSurfaces = surface.surfaces.slice(0, options.maxSurfaces ?? surface.surfaces.length);
@@ -39,7 +42,7 @@ export async function auditSite(input: string, options: {
   try {
     for (const selected of selectedSurfaces) {
       const runDir = join(outDir, "surfaces", selected.surfaceId);
-      await scanUrl(selected.url, runDir, { browser, executionPolicy: options.executionPolicy, policyEvents });
+      await scanUrl(selected.url, runDir, { browser, executionPolicy: options.executionPolicy, policyEvents, emit: options.emit });
       if (options.journeys) {
         const journeyRun = await runSafeJourneys(selected.url, runDir, {
           browser,

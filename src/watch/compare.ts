@@ -5,6 +5,7 @@ import {
   SiteAccessibilityReportSchema,
 } from "../report/site-contracts.js";
 import { WatchResultSchema } from "./contracts.js";
+import type { Emit } from "../theatre/emit.js";
 
 function key(probeId: string, outcome: string): string {
   return createHash("sha256").update(`${probeId}:${outcome}`).digest("hex").slice(0, 16);
@@ -73,6 +74,7 @@ export async function compareSiteReports(options: {
   previousPath: string;
   currentPath: string;
   outPath: string;
+  emit?: Emit;
 }) {
   const [previousRaw, currentRaw] = await Promise.all([
     readFile(options.previousPath, "utf8"),

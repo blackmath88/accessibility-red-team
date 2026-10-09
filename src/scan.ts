@@ -16,6 +16,7 @@ import { buildCoverageManifest } from "./capability.js";
 import { requirementsFromAxeTags } from "./wcag.js";
 import type { ExecutionPolicy } from "./control-center/contracts.js";
 import { gotoWithPolicy, type NetworkPolicyEvent } from "./network-policy.js";
+import type { Emit } from "./theatre/emit.js";
 
 const VIEWPORT = { width: 1440, height: 900 };
 
@@ -63,10 +64,10 @@ async function settle(page: Page): Promise<void> {
 export async function scanUrl(
   input: string,
   outDir: string,
-  options: { browser?: Browser; executionPolicy?: ExecutionPolicy; policyEvents?: NetworkPolicyEvent[] } = {},
+  options: { browser?: Browser; executionPolicy?: ExecutionPolicy; policyEvents?: NetworkPolicyEvent[]; runId?: string; emit?: Emit } = {},
 ): Promise<void> {
   const target = await validatePublicTarget(input);
-  const runId = randomUUID();
+  const runId = options.runId ?? randomUUID();
   const surfaceId = "surface_root";
 
   await mkdir(outDir, { recursive: true });

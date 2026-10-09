@@ -5,11 +5,13 @@ import { loadJurisdictionProfile, loadSourceRegistry } from "../provenance/load.
 import { resolveProbeRequirements } from "../provenance/resolve.js";
 import { AccessibilityReportSchema } from "./contracts.js";
 import { renderReportHtml } from "./html.js";
+import type { Emit } from "../theatre/emit.js";
 
 export async function buildReport(options: {
   runDir: string;
   profilePath: string;
   sourcesPath?: string;
+  emit?: Emit;
 }) {
   const probesRaw = JSON.parse(await readFile(join(options.runDir, "probe-results.json"), "utf8"));
   const summaryRaw = JSON.parse(await readFile(join(options.runDir, "summary.json"), "utf8"));
