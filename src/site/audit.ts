@@ -62,7 +62,7 @@ export async function auditSite(input: string, options: {
     await browser.close();
   }
 
-  const triage = await triageSurfaceRuns(runs, join(outDir, "findings.json"));
+  const triage = await triageSurfaceRuns(runs, join(outDir, "findings.json"), options.emit);
 
   const manifest = {
     schema: "art/site-audit-manifest/v1",
