@@ -1,32 +1,8 @@
 import { appendFileSync, mkdirSync } from "node:fs";
 import { dirname } from "node:path";
-import { z } from "zod";
-import contract from "../../theatre/events.schema.json" with { type: "json" };
+import { TheatreEventSchema, type TheatreEvent, contractDetailMax } from "./schema.js";
 
-// The enum lists live in theatre/events.schema.json; the pipeline adapts to that contract.
-const p = contract.properties;
-const oneOf = (values: string[]) => z.enum(values as [string, ...string[]]);
-
-export const TheatreEventSchema = z.strictObject({
-  ts: z.iso.datetime(),
-  run: z.string().min(1),
-  stage: oneOf(p.stage.enum),
-  actor: oneOf(p.actor.enum),
-  subject: z.strictObject({
-    kind: oneOf(p.subject.properties.kind.enum),
-    id: z.string().min(1),
-    site: z.string().optional(),
-  }),
-  verdict: oneOf(p.verdict.enum),
-  detail: z.string().max(p.detail.maxLength).optional(),
-  cost: z.strictObject({
-    ms: z.number().min(0).optional(),
-    usd: z.number().min(0).optional(),
-    tokens: z.number().int().min(0).optional(),
-  }).optional(),
-});
-
-export type TheatreEvent = z.infer<typeof TheatreEventSchema>;
+export { TheatreEventSchema, type TheatreEvent };
 export type EmitInput = Omit<TheatreEvent, "ts" | "run"> & { ts?: string };
 export type Emit = (event: EmitInput) => void;
 export type Sink = (line: string) => void;
@@ -45,8 +21,8 @@ export function createEmitter(options: { run: string; sink: Sink }): Emit {
   return (input) => {
     try {
       const candidate = { ts: new Date().toISOString(), run: options.run, ...input };
-      if (candidate.detail && candidate.detail.length > p.detail.maxLength) {
-        candidate.detail = candidate.detail.slice(0, p.detail.maxLength - 1) + "…";
+      if (candidate.detail && candidate.detail.length > contractDetailMax) {
+        candidate.detail = candidate.detail.slice(0, contractDetailMax - 1) + "…";
       }
       const parsed = TheatreEventSchema.safeParse(candidate);
       if (!parsed.success) {

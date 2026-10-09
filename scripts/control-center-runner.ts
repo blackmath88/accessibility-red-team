@@ -87,14 +87,14 @@ async function renew(stage: string, progress: Record<string, unknown> = {}): Pro
 }
 
 // Live theatre feed: ship complete new lines of <output>/events.jsonl (byte offset, trailing partial line ignored) in batches of 50.
-// Serialized; a failed batch is retried on the next tick (400 = permanently invalid, skipped). Never fails the run; the file is also uploaded as an artifact.
+// The CLI run id (e.g. a scan runId) is replaced by the control-plane run id. Serialized; a failed batch is retried on the next tick (400 = permanently invalid, skipped). Never fails the run; the file is also uploaded as an artifact.
 let theatreOffset = 0; let theatreChain: Promise<void> = Promise.resolve();
 const streamTheatre = () => (theatreChain = theatreChain.then(async () => {
   try {
     const buf = await readFile(join(output, "events.jsonl")).catch(() => Buffer.alloc(0)); const end = buf.lastIndexOf(10) + 1;
     if (end <= theatreOffset) return; const lines = buf.subarray(theatreOffset, end).toString("utf8").split("\n").slice(0, -1);
     for (let i = 0; i < lines.length; i += 50) {
-      const batch = lines.slice(i, i + 50); const events = batch.flatMap((line) => { try { return [JSON.parse(line)]; } catch { return []; } });
+      const batch = lines.slice(i, i + 50); const events = batch.flatMap((line) => { try { return [{ ...JSON.parse(line), run: claim.run.id }]; } catch { return []; } });
       try { if (events.length) await api(`/api/v1/runs/${encodeURIComponent(claim.run.id)}/theatre-events`, { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ events }) }); }
       catch (error) { if (!String((error as Error).message).includes("(400)")) throw error; console.warn(`theatre: batch rejected, skipping (${(error as Error).message.slice(0, 200)})`); }
       theatreOffset += batch.reduce((n, line) => n + Buffer.byteLength(line) + 1, 0);

@@ -7,7 +7,7 @@ import { createLeaseToken, hashLeaseToken, leaseExpiry, leaseToken } from "./lea
 import { queueWithProvider } from "./providers.js";
 import { storeArtifact } from "./r2-artifacts.js";
 import { buildPopulationAnalysis } from "./population-analysis.js";
-import { TheatreEventSchema, type TheatreEvent } from "../../src/theatre/emit.js";
+import { TheatreEventSchema, type TheatreEvent } from "../../src/theatre/schema.js";
 
 type AppEnv = Env & { GITHUB_APP_PRIVATE_KEY: string };
 const LeaseSecondsSchema = z.number().int().min(60).max(900).default(300);
@@ -212,7 +212,7 @@ async function api(request: Request, env: AppEnv): Promise<Response> {
     const url = new URL(request.url); const rows = async (after: number) => (await env.DB.prepare(
       "SELECT id, event_json FROM theatre_events WHERE run_id = ? AND id > ? ORDER BY id LIMIT 500").bind(runId, after).all<{ id: number; event_json: string }>()).results;
     if (!(request.headers.get("accept") ?? "").includes("text/event-stream")) {
-      const all = await rows(0); return new Response(all.map((r) => r.event_json + "\n").join(""), { headers: { "content-type": "application/x-ndjson; charset=utf-8",
+      const all = []; for (let page = await rows(0); page.length; page = await rows(page.at(-1)!.id)) all.push(...page); return new Response(all.map((r) => r.event_json + "\n").join(""), { headers: { "content-type": "application/x-ndjson; charset=utf-8",
         "cache-control": "no-store", "x-content-type-options": "nosniff" } });
     }
     // One 25 s window (poll every 2 s), then close: EventSource reconnects with Last-Event-ID.
