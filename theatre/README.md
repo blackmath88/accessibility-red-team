@@ -22,8 +22,10 @@ Events follow `events.schema.json` (`art/theatre-event/v1`), one JSON object per
 
     npm run cohort -- cohorts/zh-small-pilot.yml --out runs/cohorts/zh-small-pilot
 
-(5/5 sites, 4,708 events, every one `actor: code`). `runs/zh-small-pilot-2026-10-09.summary.json` is the cohort summary from the same run; `test/theatre-acceptance.test.ts` checks the two against each other (`aiCalls` = model events).
+(5/5 sites, 4,783 events, every one `actor: code`). `runs/zh-small-pilot-2026-10-09.summary.json` is the cohort summary from the same run; `test/theatre-acceptance.test.ts` checks the two against each other (`aiCalls` = model events).
 
 Any CLI run with `--out <dir>` writes `<dir>/events.jsonl` (`--no-events` disables it); open it with `?src=../runs/<dir>/events.jsonl`.
 
-Not emitted yet: `interpret` (the pipeline has no interpret step, so the needs-review counter stays 0), journeys, and the cohort `max_surfaces` cap (scout `selected` surfaces beyond the cap are never probed). `scripts/synth-from-baseline.mjs` still generates a shaped log from a baseline for renderer work.
+`interpret` events come from the model router (`src/routing/route.ts`): violations are `explained` by template, incomplete findings are routed and, under the production policy, always land on `NO_MODEL → needs-review` with the reason in `detail`.
+
+Not emitted yet: journeys, and the cohort `max_surfaces` cap (scout `selected` surfaces beyond the cap are never probed). `scripts/synth-from-baseline.mjs` still generates a shaped log from a baseline for renderer work.

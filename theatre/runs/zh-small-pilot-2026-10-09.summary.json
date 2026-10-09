@@ -1,7 +1,7 @@
 {
   "schema": "art/cohort-result/v1",
   "cohortId": "ch.zh.small-pilot",
-  "generatedAt": "2026-10-09T09:21:19.294Z",
+  "generatedAt": "2026-10-09T11:22:45.701Z",
   "profileId": "requirements/profiles/ch.zh.municipal-research.yml",
   "aiCalls": 0,
   "journeyFamilies": [],
@@ -10,7 +10,7 @@
       "probeId": "axe.color-contrast",
       "outcome": "incomplete",
       "municipalityCount": 5,
-      "occurrenceCount": 157,
+      "occurrenceCount": 179,
       "municipalities": [
         "Bachs",
         "Maschwanden",
@@ -23,7 +23,7 @@
       "probeId": "axe.region",
       "outcome": "violation",
       "municipalityCount": 4,
-      "occurrenceCount": 240,
+      "occurrenceCount": 236,
       "municipalities": [
         "Bachs",
         "Ossingen",
@@ -47,7 +47,7 @@
       "probeId": "axe.heading-order",
       "outcome": "violation",
       "municipalityCount": 4,
-      "occurrenceCount": 14,
+      "occurrenceCount": 15,
       "municipalities": [
         "Bachs",
         "Maschwanden",
@@ -59,7 +59,7 @@
       "probeId": "axe.landmark-unique",
       "outcome": "violation",
       "municipalityCount": 4,
-      "occurrenceCount": 13,
+      "occurrenceCount": 12,
       "municipalities": [
         "Maschwanden",
         "Ossingen",
@@ -109,21 +109,21 @@
       ]
     },
     {
-      "probeId": "axe.accesskeys",
-      "outcome": "violation",
-      "municipalityCount": 1,
-      "occurrenceCount": 20,
-      "municipalities": [
-        "Truttikon"
-      ]
-    },
-    {
       "probeId": "axe.listitem",
       "outcome": "violation",
       "municipalityCount": 1,
       "occurrenceCount": 20,
       "municipalities": [
         "Ossingen"
+      ]
+    },
+    {
+      "probeId": "axe.accesskeys",
+      "outcome": "violation",
+      "municipalityCount": 1,
+      "occurrenceCount": 19,
+      "municipalities": [
+        "Truttikon"
       ]
     },
     {
@@ -208,15 +208,6 @@
       ]
     },
     {
-      "probeId": "axe.th-has-data-cells",
-      "outcome": "incomplete",
-      "municipalityCount": 1,
-      "occurrenceCount": 1,
-      "municipalities": [
-        "Truttikon"
-      ]
-    },
-    {
       "probeId": "axe.video-caption",
       "outcome": "incomplete",
       "municipalityCount": 1,
@@ -257,9 +248,9 @@
       "url": "https://www.truttikon.ch/",
       "status": "PASS",
       "selectedSurfaces": 4,
-      "findings": 8,
+      "findings": 7,
       "repeatedFindings": 6,
-      "needsReview": 2,
+      "needsReview": 1,
       "applicableFindings": 0,
       "reportPath": "ch-zh-truttikon/report.html"
     },
