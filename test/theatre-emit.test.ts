@@ -62,3 +62,15 @@ test("zod schema accepts every verdict listed in the JSON contract", () => {
     TheatreEventSchema.parse({ ts: new Date().toISOString(), run: "r", stage: "run", actor: "code", subject: { kind: "run", id: "r" }, verdict });
   }
 });
+
+test("events are stamped when emitted, not when a buffering sink flushes", async () => {
+  const buffered: string[] = [];
+  const emit = createEmitter({ run: "r", sink: (l) => buffered.push(l) });
+  emit(probe("a"));
+  await new Promise((r) => setTimeout(r, 25));
+  emit(probe("b"));
+  await new Promise((r) => setTimeout(r, 25));
+  const [a, b] = buffered.map((l) => Date.parse(JSON.parse(l).ts));
+  assert.ok(b! - a! >= 20, `expected ≥20 ms between stamps, got ${b! - a!}`);
+  assert.ok(Date.now() - b! >= 20, "b must not be stamped at flush time");
+});

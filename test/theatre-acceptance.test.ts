@@ -29,6 +29,14 @@ test("recorded cohort run: every event is valid and manifest aiCalls equals mode
   assertModelEventsCarryCost(events);
   assert.ok(events.every((e) => e.run === summary.cohortId));
   assert.deepEqual(events.map((e) => e.ts), [...events.map((e) => e.ts)].sort());
+  // ts is monotonic and spans the run: run·start is first, run·end last, and stamps advance through the stages.
+  const [start, end] = [events[0]!, events.at(-1)!];
+  assert.deepEqual([start.stage, start.verdict, end.stage, end.verdict], ["run", "start", "run", "end"]);
+  const span = Date.parse(end.ts) - Date.parse(start.ts);
+  assert.ok(Math.abs(span - (end.cost?.ms ?? 0)) < 1000, `ts span ${span} ms vs run duration ${end.cost?.ms} ms`);
+  assert.ok(new Set(events.map((e) => e.ts)).size > events.filter((e) => e.stage === "report").length * 10);
+  const firstOf = (stage: string) => events.find((e) => e.stage === stage)!.ts;
+  assert.ok(firstOf("scout") < firstOf("probe") && firstOf("probe") < firstOf("report"));
 
   const reported = events.filter((e) => e.stage === "report" && e.verdict === "written").length;
   assert.equal(reported, summary.sites.filter((site: { status: string }) => site.status === "PASS").length);
