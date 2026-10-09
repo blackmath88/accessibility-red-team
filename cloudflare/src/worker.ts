@@ -7,6 +7,7 @@ import { createLeaseToken, hashLeaseToken, leaseExpiry, leaseToken } from "./lea
 import { queueWithProvider } from "./providers.js";
 import { storeArtifact } from "./r2-artifacts.js";
 import { buildPopulationAnalysis } from "./population-analysis.js";
+import { TheatreEventSchema, type TheatreEvent } from "../../src/theatre/emit.js";
 
 type AppEnv = Env & { GITHUB_APP_PRIVATE_KEY: string };
 const LeaseSecondsSchema = z.number().int().min(60).max(900).default(300);
@@ -28,6 +29,8 @@ const EventSchema = z.object({ eventType: z.enum(["stage", "throttle", "backoff"
 const CompleteSchema = z.object({ outcome: z.enum(["succeeded", "partial"]), progress: ProgressSchema.default({}) });
 const FailSchema = z.object({ error: z.string().min(1).max(4000), progress: ProgressSchema.default({}) });
 
+const TheatreBatchSchema = z.object({ events: z.array(z.unknown()).min(1).max(200) });
+
 class HttpError extends Error { constructor(readonly status: number, message: string) { super(message); } }
 function json(value: unknown, init: ResponseInit = {}): Response {
   const headers = new Headers(init.headers); headers.set("content-type", "application/json; charset=utf-8");
@@ -48,6 +51,13 @@ async function operator(request: Request, env: AppEnv, permission: OperatorPermi
   const actor = await authenticateOperator(request, env);
   if (!actor.email || !await store.authorizeOperator(actor.email, permission)) throw new HttpAuthError(403, `Operator lacks ${permission} permission`);
   return actor;
+}
+const theatreInsert = (db: D1Database, runId: string, event: TheatreEvent) => db.prepare(
+  "INSERT INTO theatre_events (run_id, event_json, received_at) VALUES (?, ?, ?)").bind(runId, JSON.stringify(event), new Date().toISOString());
+// Control-plane lifecycle as `run` stage events, so a run shows motion before fine-grained events arrive.
+async function runStage(db: D1Database, runId: string, verdict: "start" | "end" | "partial" | "cancelled", detail?: string): Promise<void> {
+  await theatreInsert(db, runId, { ts: new Date().toISOString(), run: runId, stage: "run", actor: "code", subject: { kind: "run", id: runId }, verdict,
+    ...(detail ? { detail: detail.slice(0, 200) } : {}) }).run();
 }
 async function propertyForCase(db: D1Database, caseId: string): Promise<{ organizationId: string; propertyId: string; propertyUrl: string } | null> {
   const row = await db.prepare(`SELECT c.organization_id, c.property_id, p.url AS property_url FROM assessment_cases c
@@ -147,7 +157,7 @@ async function api(request: Request, env: AppEnv): Promise<Response> {
     if (!run) return new Response(null, { status: 204 }); const property = await propertyForCase(env.DB, run.caseId);
     if (!property || property.propertyId !== run.propertyId) throw new HttpError(409, "Run property is unavailable");
     await store.appendRunEvent(run.id, input.workerId, "lease", { action: "claimed", attempt: run.attempt });
-    await store.appendAudit(actor.id, "run.claimed", "run", run.id, { provider: input.provider, attempt: run.attempt });
+    await store.appendAudit(actor.id, "run.claimed", "run", run.id, { provider: input.provider, attempt: run.attempt }); await runStage(env.DB, run.id, "start");
     return json({ run, propertyUrl: property.propertyUrl, leaseToken: rawLease });
   }
   if (request.method === "POST" && path === "/api/v1/runner/selftest") {
@@ -183,7 +193,7 @@ async function api(request: Request, env: AppEnv): Promise<Response> {
     if (!run) throw new HttpError(409, "Run is not available to claim"); const property = await propertyForCase(env.DB, run.caseId);
     if (!property || property.propertyId !== run.propertyId) throw new HttpError(409, "Run property is unavailable");
     await store.appendRunEvent(run.id, actor.workerId!, "lease", { action: "claimed", attempt: run.attempt });
-    await store.appendAudit(actor.id, "run.claimed", "run", run.id, { provider: actor.provider, attempt: run.attempt });
+    await store.appendAudit(actor.id, "run.claimed", "run", run.id, { provider: actor.provider, attempt: run.attempt }); await runStage(env.DB, run.id, "start");
     return json({ run, propertyUrl: property.propertyUrl, leaseToken: rawLease });
   }
   match = path.match(/^\/api\/v1\/runs\/([^/]+)\/cancel$/);
@@ -192,10 +202,10 @@ async function api(request: Request, env: AppEnv): Promise<Response> {
     const existing = await store.getRun(runId); if (!existing) throw new HttpError(404, "Run not found");
     if (existing.state === "cancelled") return json({ run: existing, replayed: true });
     const run = await store.cancelRun(runId, new Date().toISOString()); if (!run) throw new HttpError(409, "Only queued or running runs can be cancelled");
-    await store.appendAudit(actor.id, "run.cancelled", "run", run.id, {}); return json({ run });
+    await store.appendAudit(actor.id, "run.cancelled", "run", run.id, {}); await runStage(env.DB, run.id, "cancelled"); return json({ run });
   }
 
-  match = path.match(/^\/api\/v1\/runs\/([^/]+)\/(lease\/renew|events|artifacts|complete|fail)$/);
+  match = path.match(/^\/api\/v1\/runs\/([^/]+)\/(lease\/renew|events|theatre-events|artifacts|complete|fail)$/);
   if (match) {
     const runId = decodeURIComponent(match[1] ?? ""); const action = match[2]; const current = await store.getRun(runId);
     if (!current) throw new HttpError(404, "Run not found"); const actor = await runnerFor(request, env, current);
@@ -212,6 +222,11 @@ async function api(request: Request, env: AppEnv): Promise<Response> {
       if (["throttle", "backoff", "partial"].includes(input.eventType)) await store.appendAudit(actor.id, `run.${input.eventType}`, "run", runId, input.metadata);
       return json({ accepted: true }, { status: 201 });
     }
+    if (request.method === "POST" && action === "theatre-events") {
+      const events = TheatreBatchSchema.parse(await bodyJson(request)).events.map((event) => TheatreEventSchema.parse(event));
+      if (events.some((event) => event.run !== runId)) throw new HttpError(400, "Event run does not match run id");
+      await env.DB.batch(events.map((event) => theatreInsert(env.DB, runId, event))); return json({ accepted: events.length }, { status: 201 });
+    }
     if (request.method === "PUT" && action === "artifacts") {
       const digest = request.headers.get("x-artifact-sha256") ?? ""; const kind = ArtifactKindSchema.parse(request.headers.get("x-artifact-kind"));
       const existing = await store.findArtifact(runId, kind, digest); if (existing) return json({ artifact: existing, replayed: true });
@@ -223,13 +238,15 @@ async function api(request: Request, env: AppEnv): Promise<Response> {
       const input = CompleteSchema.parse(await bodyJson(request)); const now = new Date().toISOString();
       const run = await store.finishLeasedRun({ id: runId, workerId: actor.workerId!, leaseTokenSha256: hash, now,
         state: input.outcome, error: null, progress: input.progress }); if (!run) throw new HttpError(409, "Run could not be completed");
-      await store.appendAudit(actor.id, `run.${input.outcome}`, "run", runId, {}); return json({ run });
+      await store.appendAudit(actor.id, `run.${input.outcome}`, "run", runId, {});
+      await runStage(env.DB, runId, input.outcome === "partial" ? "partial" : "end"); return json({ run });
     }
     if (request.method === "POST" && action === "fail") {
       const input = FailSchema.parse(await bodyJson(request)); const now = new Date().toISOString();
       const run = await store.finishLeasedRun({ id: runId, workerId: actor.workerId!, leaseTokenSha256: hash, now,
         state: "failed", error: input.error, progress: input.progress }); if (!run) throw new HttpError(409, "Run could not be failed");
-      await store.appendAudit(actor.id, "run.failed", "run", runId, {}); return json({ run });
+      await store.appendAudit(actor.id, "run.failed", "run", runId, {});
+      await runStage(env.DB, runId, "partial", input.error); return json({ run });
     }
   }
   match = path.match(/^\/api\/v1\/runs\/([^/]+)\/artifacts\/([^/]+)\/content$/);
