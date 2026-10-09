@@ -36,6 +36,10 @@ export async function auditSite(input: string, options: {
   });
 
   const selectedSurfaces = surface.surfaces.slice(0, options.maxSurfaces ?? surface.surfaces.length);
+  for (const capped of surface.surfaces.slice(selectedSurfaces.length)) {
+    options.emit?.({ stage: "scout", actor: "code", verdict: "skipped", subject: { kind: "surface", id: capped.url, site: new URL(surface.finalEntrypoint).hostname },
+      detail: `${capped.kind} · over max_surfaces ${options.maxSurfaces}` });
+  }
   const runs = [];
   const journeyRuns = [];
   const browser = await chromium.launch({ headless: true });
