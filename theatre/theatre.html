@@ -38,15 +38,22 @@
   .panel h2{margin:0;padding:6px 10px;font-size:10px;letter-spacing:.08em;color:var(--dim);font-weight:600;border-bottom:1px solid var(--line);display:flex;justify-content:space-between}
   .panel h2 em{font-style:normal;color:var(--mute)}
 
-  #stream{height:100%;display:flex;flex-direction:column}
-  #streamBody{flex:1;overflow:hidden;padding:8px 10px;display:flex;flex-direction:column;justify-content:flex-end;gap:2px}
-  .ln{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:var(--dim);opacity:.55;transition:opacity .3s}
-  .ln:last-child{opacity:1;color:var(--ink)}
-  .ln:nth-last-child(2){opacity:.85}.ln:nth-last-child(3){opacity:.7}
   .chip{display:inline-block;padding:0 5px;border-radius:2px;margin-right:6px;font-size:11px;color:#0b0b0d;font-weight:700}
   .c-teal{background:var(--teal)} .c-pink{background:var(--pink)} .c-orange{background:var(--orange)} .c-yellow{background:var(--yellow)} .c-magenta{background:var(--magenta)} .c-white{background:var(--white)} .c-mute{background:var(--mute);color:var(--ink)}
   .t-teal{color:var(--teal)} .t-pink{color:var(--pink)} .t-orange{color:var(--orange)} .t-yellow{color:var(--yellow)} .t-magenta{color:var(--magenta)} .t-white{color:var(--white)}
 
+  #reader{display:flex;flex-direction:column;contain:size}
+  #readerTitle{padding:5px 10px;color:var(--white);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;border-bottom:1px solid var(--line)}
+  #readerBody{flex:1;overflow:hidden;padding:6px 0;min-height:0}
+  .rr{display:grid;grid-template-columns:36% 1fr auto;gap:8px;padding:1px 10px;white-space:nowrap;line-height:1.5}
+  .rr span{overflow:hidden;text-overflow:ellipsis}
+  .rr .sl{color:var(--mute)} .rr .sn{color:var(--dim);transition:color .5s,background .5s;border-radius:2px}
+  .rr.teal .sn{color:var(--teal)} .rr.pink .sn{color:var(--pink);background:#2a1119} .rr.orange .sn{color:var(--orange);background:#2a1d10}
+  .rr .bd{font-size:10px;border:1px solid var(--mute);border-radius:2px;padding:0 4px;color:var(--dim)}
+  .rr.pink .bd{color:var(--pink);border-color:var(--pink)} .rr.orange .bd{color:var(--orange);border-color:var(--orange)}
+  .rr.pink .bd.solid{background:var(--pink);color:#0b0b0d} .rr.orange .bd.solid{background:var(--orange);color:#0b0b0d}
+  #crawler{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
+  body.crawlOff #crawler{display:none}
   #stage{position:relative}
   canvas{display:block;width:100%;height:100%}
   .hero{position:absolute;left:24px;top:50%;transform:translateY(-50%);pointer-events:none;max-width:46%}
@@ -118,11 +125,13 @@
   <label>tempo <input type="range" id="tempo" min="0" max="100" value="55"> <span id="tempoVal">×</span></label>
   <input type="range" id="scrub" min="0" max="0" value="0">
   <span id="pos" style="color:var(--dim)">0 / 0</span>
+  <button id="crawlBtn" aria-pressed="true" title="show/hide the crawler">crawler ◉</button>
   <span id="liveFlag"></span>
 </div>
 
 <main>
-  <section class="panel" id="stream"><h2>event stream <em id="streamMeta">—</em></h2><div id="streamBody"></div></section>
+  <section class="panel" id="reader"><h2>reader <em id="streamMeta">—</em></h2><div id="readerTitle">—</div><div id="readerBody"></div>
+    <svg id="crawler" aria-hidden="true" focusable="false"><g id="crawlG"></g></svg></section>
   <section class="panel" id="stage">
     <canvas id="cv"></canvas>
     <div class="hero">
@@ -178,7 +187,7 @@ const COL = c => CSS.getPropertyValue("--"+c).trim();
 
 // ---------- state ----------
 let events=[], cursor=0, playing=false, live=false, es=null, pollTimer=null;
-let S; function reset(){ S={ n:0,obs:0,find:0,review:0,model:0,human:0,verify:0,code:0,
+let S, GEN=0; function reset(){ S={ rd:{url:"",rows:new Map(),gen:++GEN,cur:null,mode:"idle",label:"",hold:0,alert:0,readT:0}, n:0,obs:0,find:0,review:0,model:0,human:0,verify:0,code:0,
   stage:{}, verdict:{}, sites:{}, surfaces:{}, run:"", start:null, last:null, ticks:[], threads:[], rate:[], rateT:0, usd:0, tokens:0 }; }
 reset();
 const $=id=>document.getElementById(id);
@@ -206,20 +215,66 @@ function apply(e, animate){
     if(important) S.threads.push({c, born:performance.now(), idx:S.ticks.length-1, lane:S.ticks.length, label:(e.verdict+" · "+(e.subject.id.split("/").pop())).slice(0,30), life:1500});
     else if(Math.random()<0.12) S.threads.push({c, born:performance.now(), idx:S.ticks.length-1, lane:S.ticks.length, label:null, life:450});
   }
-  if(animate) pushLine(e), pushRow(e);
+  readerApply(e, animate); if(animate) pushRow(e);
   if(animate && e.actor==="human") flash("cardHuman");
   if(animate && (e.actor==="small-model"||e.actor==="large-model")) flash("cardModel");
 }
 function flash(id){ const el=$(id); el.classList.add("flash"); setTimeout(()=>el.classList.remove("flash"),350); }
 
 // ---------- stream + table ----------
-const streamBody=$("streamBody"); const MAXL=26;
-function pushLine(e){
-  const d=document.createElement("div"); d.className="ln";
-  const t=e.ts.slice(11,23);
-  d.innerHTML=`<span style="color:var(--mute)">${t}</span> <span class="chip c-${cls(e)}">${e.verdict}</span><span class="t-white">${esc(e.subject.id)}</span> <span style="color:var(--dim)">${esc(e.detail||"")}</span>`;
-  streamBody.appendChild(d); while(streamBody.children.length>MAXL) streamBody.firstChild.remove();
+// ---------- reader: the page being probed, with the crawler drawn on the material it reads ----------
+const probeOf=e=>(e.detail||"").split(" · ")[0];
+function readerApply(e, animate){
+  const rd=S.rd, now=performance.now();
+  if(e.subject.kind==="surface"&&((e.stage==="scout"&&e.verdict==="selected")||e.stage==="probe")){
+    if(rd.url!==e.subject.id){ rd.url=e.subject.id; rd.rows=new Map(); rd.gen=++GEN; rd.cur=null; }
+    rd.mode="reading"; rd.label="crawler · reading"; return;
+  }
+  if(e.at&&e.stage==="probe"&&e.subject.id.startsWith(rd.url.replace(/\/$/,""))){
+    const sel=e.at.selector, pid=probeOf(e); let row=rd.rows.get(sel);
+    if(!row){ row={sel,snip:e.at.snippet||"",probe:pid,col:"",solid:false,t:0,el:null}; rd.rows.set(sel,row); if(rd.rows.size>150) rd.rows.delete(rd.rows.keys().next().value); }
+    if(e.verdict==="violation"){ row.col="pink"; row.probe=pid; } else if(e.verdict==="incomplete"&&row.col!=="pink"){ row.col="orange"; row.probe=pid; } else if(animate) row.t=now;
+    if(rd.hold<now){ rd.cur=sel; rd.label=`crawler · probing ${pid}`; } rd.mode="reading"; rd.readT=now; return;
+  }
+  if(e.stage==="triage"&&e.verdict==="finding"){ const pid=probeOf(e); rd.rows.forEach(r=>{ if(r.probe===pid&&r.col) r.solid=true; }); return; }
+  if(e.stage==="verify"&&e.verdict==="blocked"){
+    const pid=(e.subject.id.split("/")[1]||"").split(":")[0]; const row=[...rd.rows.values()].find(r=>r.probe===pid);
+    if(row&&animate){ rd.cur=row.sel; rd.hold=rd.alert=now+900; rd.label=`crawler · blocked ${pid}`; } return;
+  }
+  if(e.stage==="report"&&e.verdict==="written"){ rd.mode="gone"; return; }
+  if(e.stage==="run"&&e.verdict!=="start"){ rd.mode="stopped"; rd.label="crawler · stopped"; }
 }
+const readerBody=$("readerBody"), crawlG=$("crawlG"), RM=matchMedia("(prefers-reduced-motion: reduce)");
+// 7 nodes: a centre and a ring of six; edges centre→ring and ring→ring. No face, no legs.
+const NODES=[[0,0],...[0,1,2,3,4,5].map(i=>[Math.cos(i*Math.PI/3)*11,Math.sin(i*Math.PI/3)*11])];
+const EDGES=[[0,1],[0,2],[0,3],[0,4],[0,5],[0,6],[1,2],[2,3],[3,4],[4,5],[5,6],[6,1]];
+crawlG.innerHTML=EDGES.map(()=>`<line stroke-width="1"/>`).join("")+NODES.map((_,i)=>`<circle r="${i?1.8:2.4}"/>`).join("")+`<text x="20" y="4" font-size="10"></text>`;
+const cLines=[...crawlG.querySelectorAll("line")], cDots=[...crawlG.querySelectorAll("circle")], cText=crawlG.querySelector("text");
+let cx=-40, cy=40, cOp=0, lastR=performance.now();
+function renderReader(now){
+  const rd=S.rd, dt=Math.min(.1,(now-lastR)/1000); lastR=now;
+  if(readerBody.dataset.gen!==String(rd.gen)){ readerBody.innerHTML=""; readerBody.dataset.gen=rd.gen; rd.rows.forEach(r=>r.el=null); $("readerTitle").textContent=rd.url||"—"; }
+  rd.rows.forEach(r=>{
+    if(!r.el){ r.el=document.createElement("div"); r.el.innerHTML=`<span class="sl">${esc(r.sel)}</span><span class="sn">${esc(r.snip||"·")}</span><span class="bd"></span>`; readerBody.appendChild(r.el); }
+    const c=r.col||(now-r.t<700?"teal":""), k=`rr ${c}|${r.solid}|${r.probe}`;
+    if(r.el._k!==k){ r.el._k=k; r.el.className="rr "+c; const b=r.el.lastChild; b.textContent=r.col?r.probe.replace(/^axe\./,""):""; b.style.display=r.col?"":"none"; b.classList.toggle("solid",r.solid); }
+  });
+  if(document.body.classList.contains("crawlOff")) return;
+  const row=rd.rows.get(rd.cur)?.el, W=$("reader").clientWidth;
+  let tx=24, ty=readerBody.offsetTop+16, top=1;
+  if(row){ const want=row.offsetTop-readerBody.offsetTop-readerBody.clientHeight/2; readerBody.scrollTop+=RM.matches?want-readerBody.scrollTop:(want-readerBody.scrollTop)*Math.min(1,dt*6);
+    tx=row.children[1].offsetLeft+28; ty=row.offsetTop-readerBody.scrollTop+row.offsetHeight/2; }
+  if(rd.mode==="gone"){ tx=W+40; top=0; } if(rd.mode==="idle") top=0;
+  const k=RM.matches?1:1-Math.exp(-dt*7); cx+=(tx-cx)*k; cy+=(ty-cy)*k; cOp+=(top-cOp)*k;
+  const jit=!RM.matches&&rd.mode==="reading"&&now-rd.readT<600, alert=rd.alert>now;
+  const P=NODES.map(([x,y],i)=>jit?[x+Math.sin(now/90+i*1.7)*1.1,y+Math.cos(now/110+i*2.3)*1.1]:[x,y]);
+  const edge=alert?COL("orange"):rd.mode==="stopped"?COL("dim"):COL("teal");
+  crawlG.setAttribute("transform",`translate(${cx.toFixed(1)},${cy.toFixed(1)})`); crawlG.setAttribute("opacity",cOp.toFixed(2));
+  cLines.forEach((l,i)=>{ const [a,b]=EDGES[i]; l.setAttribute("x1",P[a][0]); l.setAttribute("y1",P[a][1]); l.setAttribute("x2",P[b][0]); l.setAttribute("y2",P[b][1]); l.setAttribute("stroke",edge); l.setAttribute("stroke-opacity",alert?1:.6); });
+  cDots.forEach((d,i)=>{ d.setAttribute("cx",P[i][0]); d.setAttribute("cy",P[i][1]); d.setAttribute("fill",rd.mode==="stopped"?COL("dim"):COL("teal")); });
+  cText.textContent=rd.label; cText.setAttribute("fill",alert?COL("orange"):COL("dim"));
+}
+$("crawlBtn").onclick=()=>{ const off=document.body.classList.toggle("crawlOff"); $("crawlBtn").setAttribute("aria-pressed",String(!off)); $("crawlBtn").textContent=off?"crawler ○":"crawler ◉"; };
 const tbl=$("decisionsBody"); const MAXR=9;
 function pushRow(e){
   const tr=document.createElement("tr"); const c=cls(e);
@@ -324,7 +379,7 @@ function frame(now){
     if(cursor>=events.length){ playing=false; $("playBtn").textContent="↺ replay"; }
   }
   S.rateT+=dt; S._acc=(S._acc||0)+applied; if(S.rateT>0.25){ S.rate.push(S._acc); S._acc=0; S.rateT=0; if(S.rate.length>120) S.rate.shift(); }
-  renderNumbers(); drawArc(now); drawSpark(); drawSites();
+  renderNumbers(); drawArc(now); drawSpark(); drawSites(); renderReader(now);
   requestAnimationFrame(frame);
 }
 requestAnimationFrame(frame);
@@ -332,8 +387,8 @@ $("tempo").oninput=()=>$("tempoVal").textContent=`${tempoEPS()} ev/s`; $("tempo"
 $("playBtn").onclick=()=>{ if(live) return; if(cursor>=events.length){ seek(0); } playing=!playing; $("playBtn").textContent=playing?"❚❚ pause":"▶ play"; };
 $("scrub").addEventListener("input",()=>{ scrubbing=true; seek(+$("scrub").value); });
 $("scrub").addEventListener("change",()=>{ scrubbing=false; });
-function seek(i){ reset(); streamBody.innerHTML=""; tbl.innerHTML=""; cursor=0; while(cursor<i) apply(events[cursor++],false); // show tail of the stream
-  for(let k=Math.max(0,cursor-MAXL);k<cursor;k++) pushLine(events[k]); for(let k=Math.max(0,cursor-MAXR);k<cursor;k++) pushRow(events[k]); }
+function seek(i){ reset(); tbl.innerHTML=""; cursor=0; while(cursor<i) apply(events[cursor++],false); // show tail of the stream
+  for(let k=Math.max(0,cursor-MAXR);k<cursor;k++) pushRow(events[k]); }
 
 // ---------- feeds ----------
 function parseJSONL(text){ return text.split(/\r?\n/).filter(Boolean).map((l,i)=>{ try{ return JSON.parse(l);}catch(e){ console.warn("bad line",i); return null; } }).filter(Boolean); }
@@ -344,7 +399,7 @@ async function loadSrc(src){
   seek(0); playing=true; $("playBtn").textContent="❚❚ pause";
 }
 function startLive(url){
-  live=true; events=[]; reset(); streamBody.innerHTML=""; tbl.innerHTML=""; cursor=0; $("liveFlag").className="live"; $("liveFlag").textContent="live"; $("streamMeta").textContent=url;
+  live=true; events=[]; reset(); tbl.innerHTML=""; cursor=0; $("liveFlag").className="live"; $("liveFlag").textContent="live"; $("streamMeta").textContent=url;
   const onEv=e=>{ events.push(e); cursor=events.length; apply(e,true); };
   if(/\.jsonl(\?|$)/.test(url)){ // growing file: poll
     let seen=0; const poll=async()=>{ try{ const t=await (await fetch(url,{cache:"no-store"})).text(); const all=parseJSONL(t); for(;seen<all.length;seen++) onEv(all[seen]); }catch(err){ console.warn(err);} }; poll(); pollTimer=setInterval(poll,2000);
@@ -358,7 +413,7 @@ $("file").onchange=async()=>{ const f=$("file").files[0]; if(!f) return; stopLiv
 const q=new URLSearchParams(location.search);
 if(q.get("live")) { $("src").value="live:"+q.get("live"); startLive(q.get("live")); }
 else if(q.get("src")) { $("src").value=q.get("src"); loadSrc(q.get("src")); }
-else { $("src").value="runs/zh-small-pilot-2026-09-26.events.jsonl"; loadSrc($("src").value).catch(()=>{ $("streamMeta").textContent="serve the folder over http, or pick a file…"; }); }
+else { $("src").value="runs/zh-small-pilot-2026-10-09.events.jsonl"; loadSrc($("src").value).catch(()=>{ $("streamMeta").textContent="serve the folder over http, or pick a file…"; }); }
 if(q.get("tempo")){ $("tempo").value=q.get("tempo"); $("tempo").oninput(); }
 </script>
 </body>
