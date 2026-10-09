@@ -456,6 +456,14 @@ small model uncertain
 
 Escalation must be an explicit policy decision.
 
+**Implemented** (`src/routing/route.ts`): tasks declare `maxTier` and the evidence modalities a text model can
+decide (reusing the ambiguity-census classification). `route()` returns the cheapest provider at or below the
+ceiling and `NO_MODEL` otherwise; it never escalates. `PRODUCTION_POLICY` enables no task (ADR-0012), so the
+site report routes every `incomplete` finding to `NO_MODEL → needs-review`, visible as a theatre `interpret`
+event with the reason (e.g. `visual_rendering: not text-decidable`). `interpret()` is the experiment path:
+validated through `validateSemanticDecision`, emits `small-model`/`large-model` events with `cost.tokens`, and
+falls back to review on UNKNOWN or any failure. Only a fixture provider exists until the re-entry gate opens.
+
 ---
 
 ## Measure the AI, do not assume it is needed
