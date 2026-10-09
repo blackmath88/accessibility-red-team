@@ -127,13 +127,13 @@
   <label>tempo <input type="range" id="tempo" min="0" max="100" value="55"> <span id="tempoVal">×</span></label>
   <input type="range" id="scrub" min="0" max="0" value="0">
   <span id="pos" style="color:var(--dim)">0 / 0</span>
-  <button id="crawlBtn" aria-pressed="true" title="show/hide the crawler">crawler ◉</button>
+  <button id="crawlBtn" title="crawler: creature → instrument → off">crawler · creature</button>
   <span id="liveFlag"></span>
 </div>
 
 <main>
   <section class="panel" id="reader"><h2>reader <em id="streamMeta">—</em></h2><div id="readerTitle"><i style="background:var(--pink)"></i><i style="background:var(--yellow)"></i><i style="background:var(--teal)"></i><b id="rdName">—</b><em id="rdPage"></em></div><div id="readerBody"></div>
-    <svg id="crawler" aria-hidden="true" focusable="false"><g id="crawlRep"></g><rect id="crawlBox" fill="none" stroke-dasharray="3 3"/><g id="crawlG"></g></svg></section>
+    <svg id="crawler" aria-hidden="true" focusable="false"><g id="crawlRep"></g><rect id="crawlBox" fill="none" stroke-dasharray="3 3"/><g id="crawlG"></g><g id="crawlBal"></g><g id="crawlSay"><rect rx="3" height="17"/><text font-size="11" font-weight="700"></text></g></svg></section>
   <section class="panel" id="stage">
     <canvas id="cv"></canvas>
     <div class="hero">
@@ -189,7 +189,7 @@ const COL = c => CSS.getPropertyValue("--"+c).trim();
 
 // ---------- state ----------
 let events=[], cursor=0, playing=false, live=false, es=null, pollTimer=null;
-let S, GEN=0; function reset(){ S={ rd:{url:"",rows:new Map(),gen:++GEN,cur:null,mode:"idle",label:"",hold:0,alert:0,readT:0}, n:0,obs:0,find:0,review:0,model:0,human:0,verify:0,code:0,
+let S, GEN=0; function reset(){ S={ rd:{url:"",rows:new Map(),gen:++GEN,cur:null,mode:"idle",label:"",hold:0,alert:0,readT:0,fx:{ges:null,gesT:0,say:"",sayT:-1e9,bal:[],passRun:0,told:new Set()}}, n:0,obs:0,find:0,review:0,model:0,human:0,verify:0,code:0,
   stage:{}, verdict:{}, sites:{}, surfaces:{}, run:"", start:null, last:null, ticks:[], threads:[], rate:[], rateT:0, usd:0, tokens:0 }; }
 reset();
 const $=id=>document.getElementById(id);
@@ -229,9 +229,16 @@ const probeOf=e=>(e.detail||"").split(" · ")[0];
 const ROLE={a:"link",button:"button",img:"image",svg:"image",nav:"navigation",input:"field",select:"field",textarea:"field",label:"label",li:"list item",ul:"list",ol:"list",table:"table",th:"table header",td:"cell",tr:"row",form:"form",header:"banner",footer:"contentinfo",main:"main",p:"text",html:"document",body:"document",iframe:"frame",video:"media",audio:"media",meta:"metadata",title:"title"};
 const partsOf=sel=>sel.match(/(?:[^\s>\[]+|\[[^\]]*\])+/g)||[];
 function roleOf(sel){ const last=partsOf(sel).at(-1)||"", r=/\[role="?([a-z]+)/.exec(last), t=/^([a-z][a-z0-9]*)/.exec(last); if(r) return r[1]; if(!t) return "group"; const h=/^h([1-6])$/.exec(t[1]); return h?"heading "+h[1]:ROLE[t[1]]||t[1]; }
+// Walliserdeutsch, one place to edit. The crawler only ever says something an event just made true.
+const SAY={start:()=>"Salü zäme.", page:()=>"Salü, nächschti Siita.", ouch:p=>`Autsch. ${p}.`, tmpl:(n)=>`Ds glicha ×${n}. Ds ischt äs Template.`,
+  unsure:()=>"Weiss nit. Ds müess äs Mänsch aaluegä.", blocked:()=>"Kei Quälla. Nit publiziert.", calm:()=>"Alls güet hiä.",
+  site:(s)=>`${s}: fertig.`, end:(n)=>`${n} Entscheidä, null Modäll. Güet Nacht.`};
+const GES={roll:700,jolt:260,tilt:700,ripple:650};
+function act(fx, ges, line, force){ const now=performance.now(); if(ges){ fx.ges=ges; fx.gesT=now; } if(line&&(force||now-fx.sayT>6000)){ fx.say=line; fx.sayT=now; } }
 function readerApply(e, animate){
   const rd=S.rd, now=performance.now();
   if(e.subject.kind==="surface"&&((e.stage==="scout"&&e.verdict==="selected")||e.stage==="probe")){
+    if(rd.url!==e.subject.id&&animate&&rd.url) act(rd.fx,"roll",SAY.page());
     if(rd.url!==e.subject.id){ rd.url=e.subject.id; rd.rows=new Map(); rd.gen=++GEN; rd.cur=null; rd.n=0; const u=new URL(e.subject.id); rd.rows.set("##",{hdr:true,n:++rd.n,sel:"##",snip:`## ${u.hostname.replace(/^www\./,"")} · ${u.pathname}`,res:[]});
       const site=Object.keys(S.surfaces).filter(k=>k.startsWith(u.origin)); rd.page=`surface ${site.indexOf(e.subject.id)+1} / ${site.length}`; }
     rd.mode="reading"; rd.label="crawler · reading"; return;
@@ -240,16 +247,24 @@ function readerApply(e, animate){
     const sel=e.at.selector, pid=probeOf(e); let row=rd.rows.get(sel);
     if(!row){ row={sel,n:++rd.n,snip:e.at.snippet||"",probe:pid,col:"",solid:false,res:[],el:null}; rd.rows.set(sel,row); if(rd.rows.size>150) rd.rows.delete([...rd.rows.keys()][1]); }
     if(e.verdict==="violation"){ row.col="pink"; row.probe=pid; } else if(e.verdict==="incomplete"&&row.col!=="pink"){ row.col="orange"; row.probe=pid; }
+    const fx=rd.fx; fx.passRun=e.verdict==="pass"?fx.passRun+1:0;
+    if(animate){ const short=pid.replace(/^axe\./,""), same=[...rd.rows.values()].filter(r=>r.probe===pid&&r.col==="pink").length;
+      if(e.verdict==="violation"&&same>=3&&!fx.told.has(rd.url+pid)){ fx.told.add(rd.url+pid); act(fx,"jolt",SAY.tmpl(same),true); }
+      else if(e.verdict==="violation") act(fx,"jolt",SAY.ouch(short));
+      else if(e.verdict==="incomplete") act(fx,"tilt",SAY.unsure());
+      else if(fx.passRun===20) act(fx,"ripple",SAY.calm()); }
     row.read=true; row.res=[...row.res,e.verdict==="violation"?"pink":e.verdict==="incomplete"?"orange":"teal"].slice(-3);
     if(rd.hold<now){ rd.cur=sel; rd.label=`crawler · probing ${pid.replace(/^axe\./,"")}`; } rd.mode="reading"; rd.readT=now; return;
   }
   if(e.stage==="triage"&&e.verdict==="finding"){ const pid=probeOf(e); rd.rows.forEach(r=>{ if(r.probe===pid&&r.col) r.solid=true; }); return; }
   if(e.stage==="verify"&&e.verdict==="blocked"){
     const pid=(e.subject.id.split("/")[1]||"").split(":")[0]; const row=[...rd.rows.values()].find(r=>r.probe===pid);
-    if(row&&animate){ rd.cur=row.sel; rd.hold=rd.alert=now+900; rd.label=`crawler · blocked ${pid.replace(/^axe\./,"")}`; } return;
+    if(row&&animate){ act(rd.fx,null,SAY.blocked()); rd.cur=row.sel; rd.hold=rd.alert=now+900; rd.label=`crawler · blocked ${pid.replace(/^axe\./,"")}`; } return;
   }
-  if(e.stage==="report"&&e.verdict==="written"){ rd.mode="gone"; return; }
-  if(e.stage==="run"&&e.verdict!=="start"){ rd.mode="stopped"; rd.label="crawler · stopped"; }
+  if(e.stage==="report"&&e.verdict==="written"){ rd.mode="gone"; if(animate){ const n0=e.subject.id.replace(/^www\./,"").split(".")[0], name=n0[0].toUpperCase()+n0.slice(1), f=(S.sites[e.subject.id]||{}).find||0;
+    rd.fx.bal.push({t0:now,text:`${name} · ${f} ${f===1?"Befund":"Befünd"}`,c:f?"pink":"teal"}); act(rd.fx,null,SAY.site(name),true); } return; }
+  if(e.stage==="run"&&e.verdict==="start"&&animate) act(rd.fx,null,SAY.start(),true);
+  if(e.stage==="run"&&e.verdict!=="start"){ rd.mode="stopped"; rd.label="crawler · stopped"; if(animate) act(rd.fx,null,SAY.end(fmt(S.n)),true); }
 }
 const readerBody=$("readerBody"), crawlG=$("crawlG"), crawlRep=$("crawlRep"), crawlBox=$("crawlBox"), RM=matchMedia("(prefers-reduced-motion: reduce)");
 crawlG.innerHTML=Array(14).fill('<line stroke-width="1.4"/>').join("")+Array(8).fill('<circle/>').join("")+'<rect rx="2" height="13"/><text font-size="10" font-weight="700" fill="#0b0b0d"></text>';
@@ -287,22 +302,37 @@ function renderReader(now){
   crawlBox.setAttribute("stroke",alert?COL("orange"):COL("teal")); crawlBox.setAttribute("opacity",row&&!stop&&rd.mode!=="gone"?.55:0);
   const k=RM.matches?1:1-Math.exp(-dt*6); ax+=(tx-ax)*k; ay+=(ty-ay)*k; aOp+=(top-aOp)*k;
   const sh=rowO&&!rowO.hdr?shapeOf(rowO):{N:[{x:0,y:0,c:"white",r:3}],E:[]}, jit=!RM.matches&&!stop&&rd.mode==="reading";
-  NP.forEach((p,i)=>{ const n=sh.N[i], m=RM.matches?1:1-Math.exp(-dt*9); p.x+=((n?.x??0)-p.x)*m; p.y+=((n?.y??0)-p.y)*m; p.o+=((n?1:0)-p.o)*m;
+  const fx=rd.fx, calm=document.body.classList.contains("calm"), anim=!RM.matches&&!calm, gp=fx.ges?(now-fx.gesT)/GES[fx.ges]:1;
+  const g=!calm&&stop?"curl":anim&&gp<1?fx.ges:null, swell=g==="ripple"?1+.35*Math.sin(gp*Math.PI):1;
+  const ball=g==="roll"||g==="curl"||!rowO||rowO.hdr; /* nothing under it yet: stays rolled up */ if(ball&&sh.N.length<7) sh.N=Array.from({length:7},(_,i)=>sh.N[i]||{x:0,y:0,c:i%2?"pink":"teal",r:2.6});
+  if(ball) sh.E=sh.N.map((_,i)=>[i,(i+1)%sh.N.length,i%2?"pink":"teal"]); // rolled up: a closed ring
+  const T=sh.N.map((n,i)=>ball?{...n,x:Math.cos(i/sh.N.length*6.283+(g==="roll"?now/90:0))*12,y:Math.sin(i/sh.N.length*6.283+(g==="roll"?now/90:0))*12}:{...n,x:n.x*swell,y:n.y*swell});
+  const rot=g==="tilt"?Math.sin(gp*Math.PI*2)*16:0, jo=g==="jolt"?-12*(1-gp):0;
+  NP.forEach((p,i)=>{ const n=T[i], m=RM.matches?1:1-Math.exp(-dt*9); p.x+=((n?.x??0)-p.x)*m; p.y+=((n?.y??0)-p.y)*m; p.o+=((n?1:0)-p.o)*m;
     const jx=jit?Math.sin(now/70+i*1.9)*1.6:0, jy=jit?Math.cos(now/83+i*2.7)*1.6:0, d=cD[i];
     d.setAttribute("cx",(p.x+jx).toFixed(1)); d.setAttribute("cy",(p.y+jy).toFixed(1)); d.setAttribute("r",n?.r??1.5); d.setAttribute("opacity",p.o.toFixed(2));
     d.setAttribute("fill",stop?COL("dim"):i===0&&alert?COL("orange"):COL(n?.c??"dim")); p.jx=jx; p.jy=jy; });
   cL.forEach((l,i)=>{ const e=sh.E[i]; if(!e){ l.setAttribute("opacity",0); return; } const [a,b,c]=e, A=NP[a], B=NP[b];
     l.setAttribute("x1",A.x+A.jx); l.setAttribute("y1",A.y+A.jy); l.setAttribute("x2",B.x+B.jx); l.setAttribute("y2",B.y+B.jy);
     l.setAttribute("stroke",stop?COL("dim"):alert?COL("orange"):COL(c)); l.setAttribute("opacity",Math.min(A.o,B.o).toFixed(2)); });
-  crawlG.setAttribute("transform",`translate(${ax.toFixed(1)},${ay.toFixed(1)}) scale(1.35)`); crawlG.setAttribute("opacity",aOp.toFixed(2));
+  crawlG.setAttribute("transform",`translate(${(ax+jo).toFixed(1)},${ay.toFixed(1)}) rotate(${rot.toFixed(1)}) scale(1.35)`); crawlG.setAttribute("opacity",aOp.toFixed(2));
   cTxt.textContent=rd.label; cTxt.setAttribute("x",12); cTxt.setAttribute("y",-12); const tw=rd.label?cTxt.getComputedTextLength()+8:0; tagW=tw||tagW;
   cTag.setAttribute("x",8); cTag.setAttribute("y",-22); cTag.setAttribute("width",tw); cTag.setAttribute("fill",stop?COL("dim"):alert?COL("orange"):COL("teal"));
+  // speech bubble + balloons (creature mode only)
+  const sayG=$("crawlSay"), sa=calm?0:Math.max(0,Math.min(1,(2800-(now-fx.sayT))/400));
+  sayG.setAttribute("opacity",sa.toFixed(2)); if(sa>0){ const st=sayG.lastChild, sr=sayG.firstChild; st.textContent=fx.say;
+    const sw=st.getComputedTextLength()+12, sx=Math.max(4,Math.min(W-sw-4,ax-sw/2)), sy=Math.max(readerBody.offsetTop+4,ay-74);
+    sr.setAttribute("x",sx); sr.setAttribute("y",sy); sr.setAttribute("width",sw); sr.setAttribute("fill",COL("white")); st.setAttribute("x",sx+6); st.setAttribute("y",sy+12.5); st.setAttribute("fill","#0b0b0d"); }
+  fx.bal=fx.bal.filter(b=>now-b.t0<5200); const balG=$("crawlBal");
+  balG.innerHTML=calm?"":fx.bal.map((b,i)=>{ const age=(now-b.t0)/1000, x=W*0.7-i*28+(RM.matches?0:Math.sin(age*2.2+i)*10), y=(RM.matches?readerBody.offsetTop+60:$("reader").clientHeight-40-age*90), o=Math.min(1,(5.2-age)/1.2);
+    return `<g opacity="${o.toFixed(2)}"><path d="M${x} ${y+11} q-4 10 2 20 t-2 22" stroke="${COL("dim")}" fill="none"/><ellipse cx="${x}" cy="${y}" rx="10" ry="12" fill="${COL(b.c)}"/><text x="${x+15}" y="${y+4}" font-size="10" fill="${COL(b.c)}">${esc(b.text)}</text></g>`; }).join("");
   // repetition: one edge from the element to every other visible line failing the same probe
   const reps=rowO&&rowO.col&&!stop?[...rd.rows.values()].filter(r=>r!==rowO&&r.el&&r.probe===rowO.probe&&r.col):[];
   cRep.forEach((l,i)=>{ const r=reps[i]; if(!r){ l.setAttribute("opacity",0); return; } const y=r.el.offsetTop-readerBody.scrollTop+r.el.offsetHeight/2;
     l.setAttribute("x1",ax); l.setAttribute("y1",ay); l.setAttribute("x2",r.el.lastChild.offsetLeft+40); l.setAttribute("y2",y); l.setAttribute("stroke",COL(r.col)); l.setAttribute("opacity",(aOp*.8).toFixed(2)); });
 }
-$("crawlBtn").onclick=()=>{ const off=document.body.classList.toggle("crawlOff"); $("crawlBtn").setAttribute("aria-pressed",String(!off)); $("crawlBtn").textContent=off?"crawler ○":"crawler ◉"; };
+$("crawlBtn").onclick=()=>{ const b=document.body.classList, next=b.contains("crawlOff")?"creature":b.contains("calm")?"off":"instrument";
+  b.toggle("calm",next==="instrument"); b.toggle("crawlOff",next==="off"); $("crawlBtn").textContent=`crawler · ${next}`; };
 const tbl=$("decisionsBody"); const MAXR=9;
 function pushRow(e){
   const tr=document.createElement("tr"); const c=cls(e);

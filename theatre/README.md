@@ -12,6 +12,8 @@ Pass `?src=` explicitly: without it `theatre.html` falls back to the old synthet
 URL params: `src=<jsonl>` replay a file · `live=<url>` SSE endpoint (control plane: `/api/v1/runs/<id>/theatre-events`, needs the operator Access cookie), or a growing `.jsonl` (polled every 2 s) · `tempo=0..100`.
 Controls: play/pause, tempo (events per second), scrub bar (rebuilds state up to that event), `file…` loads a local log without a server.
 
+Left panel: the **reader** shows the surface being probed as a screen reader would announce it (`<role> · <text>`, from `at.selector` / `at.snippet`), with a read trail of word chips. The **crawler** is drawn on that material; its shape comes from the element's selector path and latest probe results. `crawler · creature | instrument | off` toggles gestures (roll between pages, jolt on violations, tilt on incomplete, a balloon per finished site) and its lines. Every gesture and line is triggered by an event; the Walliserdeutsch lines live in one `SAY` table near the top of the script. Reduced motion: no rolling or jitter; scrubbing never triggers gestures.
+
 ## Feed
 
 Events follow `events.schema.json` (`art/theatre-event/v1`), one JSON object per line. See `docs/RUN_THEATRE.md` for the contract, the verdict spaces per stage, and the build plan for emitting real events from scout/probe/triage/report/watch and from the control plane.
