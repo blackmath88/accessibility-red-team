@@ -91,6 +91,12 @@ Keep every step independently shippable. No step may change pipeline outputs or 
 - Nebuchadnezzar worker: ship `events.jsonl` as an artifact at completion **and** stream batches (every 2 s or 50 events) through the existing renew call. Outbound only, no new inbound route.
 - Theatre: `?live=https://…/api/runs/<id>/events` uses `EventSource`; `?src=` stays for files.
 
+**Implemented** (deviations from the plan above):
+- Table is `theatre_events` (migration `0003_theatre_events.sql`), not `run_events`: that name is already the operational log (stage/throttle/backoff/lease). Rows are `(id AUTOINCREMENT, run_id, event_json, received_at)`, append-only; `id` is the SSE `Last-Event-ID`.
+- Ingest is a dedicated `POST /api/v1/runs/:id/theatre-events` (`{ events: [1..200] }`, runner + lease auth, whole batch rejected with 400 on any invalid event or `run` mismatch), not piggybacked on lease renew, because renew writes a lease row on every call. The runner posts batches of <= 50 every 2 s and flushes once more before artifact upload; failures are logged and never fail the run, and `events.jsonl` is still uploaded as an artifact.
+- Control-plane lifecycle is synthesized as `run` events (claim -> `start`, complete -> `end`/`partial`, fail -> `partial` + error, cancel -> `cancelled`), so a run moves before fine-grained events arrive.
+- Read is `GET /api/v1/runs/:id/theatre-events` (operator read; Access cookie, since `EventSource` cannot set headers). With `Accept: text/event-stream` it streams rows after `Last-Event-ID`/`?after=`, polling D1 every 2 s for a 25 s window, then closes and the browser reconnects; otherwise it returns NDJSON.
+
 ### 4. Cohort scene
 - One run = one cohort. Sites appear on the arc in cohort order; coverage grid = sites × surfaces.
 - Add a "Theatre" link per Run in the control center (`control-center/src/main.tsx`), opening `theatre.html?live=…` while running and `?src=<artifact url>` after.

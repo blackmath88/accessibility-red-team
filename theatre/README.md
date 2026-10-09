@@ -9,7 +9,7 @@ Live + replayable visualization of pipeline events. One HTML file, no build, no 
 
 Pass `?src=` explicitly: without it `theatre.html` falls back to the old synthetic `runs/zh-small-pilot-2026-09-26.events.jsonl`, which is no longer shipped.
 
-URL params: `src=<jsonl>` replay a file · `live=<url>` SSE endpoint, or a growing `.jsonl` (polled every 2 s) · `tempo=0..100`.
+URL params: `src=<jsonl>` replay a file · `live=<url>` SSE endpoint (control plane: `/api/v1/runs/<id>/theatre-events`, needs the operator Access cookie), or a growing `.jsonl` (polled every 2 s) · `tempo=0..100`.
 Controls: play/pause, tempo (events per second), scrub bar (rebuilds state up to that event), `file…` loads a local log without a server.
 
 ## Feed
