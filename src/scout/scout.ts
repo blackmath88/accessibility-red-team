@@ -27,6 +27,7 @@ export async function scoutSite(input: string, options: ScoutOptions = {}) {
   const maxPages = options.maxPages ?? 20;
   const maxDepth = options.maxDepth ?? 2;
   const out = options.out ?? resolve("runs", start.hostname, "surface.json");
+  const emit = options.emit ?? (() => {});
 
   const browser = await chromium.launch({ headless: true });
   const discovered: DiscoveredPage[] = [];
@@ -62,6 +63,7 @@ export async function scoutSite(input: string, options: ScoutOptions = {}) {
       seen.add(next.url);
 
       const page = await context.newPage();
+      const startedAt = Date.now();
       try {
         const response = await gotoWithPolicy(page, next.url, { waitUntil: "domcontentloaded", timeout: 20_000 }, options.executionPolicy, options.policyEvents);
         if (!response || response.status() >= 400) continue;
@@ -83,6 +85,12 @@ export async function scoutSite(input: string, options: ScoutOptions = {}) {
           hasForm: inspected.hasForm,
           pdfLinks: inspected.pdfLinks,
           internalLinks: inspected.internalLinks,
+        });
+        emit({
+          stage: "scout", actor: "code", verdict: "discovered",
+          subject: { kind: "surface", id: finalUrl, site: start.hostname },
+          detail: `${discovered.at(-1)!.kind} · depth ${next.depth}`,
+          cost: { ms: Date.now() - startedAt },
         });
 
         if (next.depth < maxDepth) {
@@ -126,6 +134,13 @@ export async function scoutSite(input: string, options: ScoutOptions = {}) {
   };
 
   const representatives = selectRepresentativeSurfaces(discovered);
+  for (const page of discovered) {
+    emit({
+      stage: "scout", actor: "code", verdict: representatives.includes(page) ? "selected" : "skipped",
+      subject: { kind: "surface", id: page.url, site: start.hostname },
+      detail: `${page.kind} · ${strategy.mode}`,
+    });
+  }
   const result = AccessibilitySurfaceSchema.parse({
     schema: "art/accessibility-surface/v1",
     entrypoint: start.toString(),
