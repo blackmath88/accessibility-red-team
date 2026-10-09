@@ -205,6 +205,30 @@ async function api(request: Request, env: AppEnv): Promise<Response> {
     await store.appendAudit(actor.id, "run.cancelled", "run", run.id, {}); await runStage(env.DB, run.id, "cancelled"); return json({ run });
   }
 
+  match = path.match(/^\/api\/v1\/runs\/([^/]+)\/theatre-events$/);
+  if (request.method === "GET" && match) {
+    await operator(request, env, "read", store); const runId = decodeURIComponent(match[1] ?? "");
+    if (!await store.getRun(runId)) throw new HttpError(404, "Run not found");
+    const url = new URL(request.url); const rows = async (after: number) => (await env.DB.prepare(
+      "SELECT id, event_json FROM theatre_events WHERE run_id = ? AND id > ? ORDER BY id LIMIT 500").bind(runId, after).all<{ id: number; event_json: string }>()).results;
+    if (!(request.headers.get("accept") ?? "").includes("text/event-stream")) {
+      const all = await rows(0); return new Response(all.map((r) => r.event_json + "\n").join(""), { headers: { "content-type": "application/x-ndjson; charset=utf-8",
+        "cache-control": "no-store", "x-content-type-options": "nosniff" } });
+    }
+    // One 25 s window (poll every 2 s), then close: EventSource reconnects with Last-Event-ID.
+    let cursor = Math.max(0, Math.floor(Number(request.headers.get("last-event-id") ?? url.searchParams.get("after") ?? 0)) || 0); let open = true;
+    const enc = new TextEncoder(); const deadline = Date.now() + 25_000;
+    return new Response(new ReadableStream({
+      async start(controller) {
+        while (open) {
+          let sent = false; for (let batch = await rows(cursor); batch.length; batch = await rows(cursor)) {
+            for (const r of batch) { controller.enqueue(enc.encode(`id: ${r.id}\ndata: ${r.event_json}\n\n`)); cursor = r.id; } sent = true; }
+          if (!sent) controller.enqueue(enc.encode(": keepalive\n\n"));
+          if (Date.now() >= deadline) break; await new Promise((r) => setTimeout(r, 2000));
+        }
+        if (open) controller.close();
+      }, cancel() { open = false; } }), { headers: { "content-type": "text/event-stream; charset=utf-8", "cache-control": "no-store", "x-content-type-options": "nosniff" } });
+  }
   match = path.match(/^\/api\/v1\/runs\/([^/]+)\/(lease\/renew|events|theatre-events|artifacts|complete|fail)$/);
   if (match) {
     const runId = decodeURIComponent(match[1] ?? ""); const action = match[2]; const current = await store.getRun(runId);
