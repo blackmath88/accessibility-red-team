@@ -101,6 +101,11 @@ Keep every step independently shippable. No step may change pipeline outputs or 
 - One run = one cohort. Sites appear on the arc in cohort order; coverage grid = sites × surfaces.
 - Add a "Theatre" link per Run in the control center (`control-center/src/main.tsx`), opening `theatre.html?live=…` while running and `?src=<artifact url>` after.
 
+**Implemented:** the run console has a "Theatre" link opening `/theatre/theatre.html?live=/api/v1/runs/<id>/theatre-events`
+(the SSE feed replays history first, so the same link works during and after a run). The control-center build copies
+`theatre/theatre.html` into `dist/theatre/`; the Worker serves it behind the same Access check as the dashboard, with a CSP
+that allows only its one inline script by SHA-256 hash.
+
 ### 5. Non-goals for v1
 No auth in the theatre (it reads a URL the control center hands it with the operator's Access JWT cookie).
 No persistence of UI state. No React. No charting library.

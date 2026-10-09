@@ -297,6 +297,13 @@ async function api(request: Request, env: AppEnv): Promise<Response> {
   }
   throw new HttpError(404, "API route not found");
 }
+// theatre.html is a no-build single file with one inline script: allow exactly that script by hash, nothing else inline.
+async function theatreHeaders(response: Response): Promise<Response> {
+  const html = await response.text(); const script = html.match(/<script>([\s\S]*?)<\/script>/)?.[1] ?? "";
+  const digest = btoa(String.fromCharCode(...new Uint8Array(await crypto.subtle.digest("SHA-256", new TextEncoder().encode(script)))));
+  const result = staticHeaders(new Response(html, response));
+  result.headers.set("content-security-policy", result.headers.get("content-security-policy")!.replace("script-src 'self'", `script-src 'self' 'sha256-${digest}'`)); return result;
+}
 function staticHeaders(response: Response): Response {
   const result = new Response(response.body, response); result.headers.set("x-content-type-options", "nosniff");
   result.headers.set("referrer-policy", "no-referrer"); result.headers.set("permissions-policy", "camera=(), microphone=(), geolocation=()");
@@ -309,7 +316,8 @@ export default {
       // Defence in depth: the dashboard shell is never served without a valid Access identity,
       // even if the Access application in front of this Worker is misconfigured or removed.
       await authenticateOperator(request, env);
-      return staticHeaders(await env.ASSETS.fetch(request));
+      const asset = await env.ASSETS.fetch(request);
+      return /^\/theatre\/theatre(\.html)?$/.test(new URL(request.url).pathname) && asset.ok ? await theatreHeaders(asset) : staticHeaders(asset);
     }
     catch (error) { if (error instanceof HttpAuthError || error instanceof HttpError) return json({ error: error.message }, { status: error.status });
       if (error instanceof z.ZodError) return json({ error: "Invalid request", issues: error.issues }, { status: 400 });

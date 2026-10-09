@@ -73,6 +73,22 @@ test("dashboard assets fail closed without a valid Access identity", async () =>
   assert.equal((await call(unconfigured, "GET", "/", { jwt: operatorJwt })).status, 503);
 });
 
+test("theatre page is Access-gated and allows only its own inline script by hash", async () => {
+  const { env } = setup();
+  const page = await readFile(new URL("../../theatre/theatre.html", import.meta.url), "utf8");
+  const theatreEnv = { ...env, ASSETS: { fetch: async () => new Response(page, { headers: { "content-type": "text/html" } }) } };
+  assert.equal((await call(theatreEnv, "GET", "/theatre/theatre.html")).status, 401);
+  const ok = await call(theatreEnv, "GET", "/theatre/theatre.html?live=%2Fapi%2Fv1%2Fruns%2Fx%2Ftheatre-events", { jwt: operatorJwt });
+  const script = page.match(/<script>([\s\S]*?)<\/script>/)![1]!;
+  const digest = (await import("node:crypto")).createHash("sha256").update(script).digest("base64");
+  const csp = ok.headers.get("content-security-policy") ?? "";
+  assert.equal(ok.status, 200);
+  assert.match(csp, new RegExp(`script-src 'self' 'sha256-${digest.replace(/[+/]/g, "\\$&")}'`));
+  assert.doesNotMatch(csp, /script-src[^;]*unsafe-inline/);
+  assert.match(csp, /connect-src 'self'/);
+  assert.doesNotMatch((await call(env, "GET", "/", { jwt: operatorJwt })).headers.get("content-security-policy") ?? "", /sha256-/);
+});
+
 test("operator API requires a registered operator and same-origin mutations", async () => {
   const { db, env } = setup(); await seed(db);
   assert.equal((await call(env, "GET", "/api/v1/cases", { jwt: strangerJwt })).status, 403);

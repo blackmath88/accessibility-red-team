@@ -28,4 +28,4 @@ Any CLI run with `--out <dir>` writes `<dir>/events.jsonl` (`--no-events` disabl
 
 `interpret` events come from the model router (`src/routing/route.ts`): violations are `explained` by template, incomplete findings are routed and, under the production policy, always land on `NO_MODEL → needs-review` with the reason in `detail`.
 
-Not emitted yet: journeys, and the cohort `max_surfaces` cap (scout `selected` surfaces beyond the cap are never probed). `scripts/synth-from-baseline.mjs` still generates a shaped log from a baseline for renderer work.
+Not emitted yet: journeys. (Surfaces cut by the cohort `max_surfaces` cap are now emitted as scout `skipped`; the recorded run predates that.) `scripts/synth-from-baseline.mjs` still generates a shaped log from a baseline for renderer work.
