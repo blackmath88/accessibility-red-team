@@ -62,11 +62,11 @@ theatre/
   events.schema.json             the contract above (JSON Schema, strict)
   theatre.html                   single-file renderer, no build step, no deps
   scripts/synth-from-baseline.mjs  expands a cohort baseline into a shaped event log (dev only)
-  runs/zh-small-pilot-2026-09-26.events.jsonl   synthesized from the real baseline
+  runs/zh-small-pilot-2026-10-09.events.jsonl   real cohort run (+ .summary.json)
 docs/RUN_THEATRE.md              this file
 ```
 
-`theatre.html` works standalone: `python3 -m http.server 8080` in repo root → `/theatre/theatre.html?src=runs/zh-small-pilot-2026-09-26.events.jsonl`.
+`theatre.html` works standalone: `python3 -m http.server 8080` in repo root → `/theatre/theatre.html?src=runs/zh-small-pilot-2026-10-09.events.jsonl`.
 
 ## Build plan for Claude Code
 

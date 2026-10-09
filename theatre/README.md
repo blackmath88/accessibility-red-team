@@ -5,7 +5,9 @@ Live + replayable visualization of pipeline events. One HTML file, no build, no 
 ## Open
 
     python3 -m http.server 8080          # from repo root
-    http://localhost:8080/theatre/theatre.html?src=runs/zh-small-pilot-2026-09-26.events.jsonl
+    http://localhost:8080/theatre/theatre.html?src=runs/zh-small-pilot-2026-10-09.events.jsonl
+
+Pass `?src=` explicitly: without it `theatre.html` falls back to the old synthetic `runs/zh-small-pilot-2026-09-26.events.jsonl`, which is no longer shipped.
 
 URL params: `src=<jsonl>` replay a file · `live=<url>` SSE endpoint, or a growing `.jsonl` (polled every 2 s) · `tempo=0..100`.
 Controls: play/pause, tempo (events per second), scrub bar (rebuilds state up to that event), `file…` loads a local log without a server.
@@ -16,4 +18,12 @@ Events follow `events.schema.json` (`art/theatre-event/v1`), one JSON object per
 
 ## Sample run
 
-`runs/zh-small-pilot-2026-09-26.events.jsonl` is **synthesized** from the real cohort baseline (`benchmarks/baselines/zh-small-pilot-2026-09-26.json`): site, surface, finding, needs-review and issue-family counts are real; per-event ordering and timing are generated (`scripts/synth-from-baseline.mjs`). Replace it with a real `events.jsonl` as soon as the emitter lands — the renderer does not change.
+`runs/zh-small-pilot-2026-10-09.events.jsonl` is a **real** event log from
+
+    npm run cohort -- cohorts/zh-small-pilot.yml --out runs/cohorts/zh-small-pilot
+
+(5/5 sites, 4,708 events, every one `actor: code`). `runs/zh-small-pilot-2026-10-09.summary.json` is the cohort summary from the same run; `test/theatre-acceptance.test.ts` checks the two against each other (`aiCalls` = model events).
+
+Any CLI run with `--out <dir>` writes `<dir>/events.jsonl` (`--no-events` disables it); open it with `?src=../runs/<dir>/events.jsonl`.
+
+Not emitted yet: `interpret` (the pipeline has no interpret step, so the needs-review counter stays 0), journeys, and the cohort `max_surfaces` cap (scout `selected` surfaces beyond the cap are never probed). `scripts/synth-from-baseline.mjs` still generates a shaped log from a baseline for renderer work.
