@@ -7,7 +7,7 @@
 <style>
   :root{
     --bg:#0b0b0d; --panel:#111114; --line:#1f1f25; --ink:#d9d9de; --dim:#6b6b76; --mute:#3a3a44;
-    --teal:#4fd1a5; --pink:#ff4f7d; --orange:#ff9a3c; --yellow:#ffd43b; --magenta:#e04fff; --white:#f3f3f5;
+    --teal:#4fd1a5; --pink:#ff4f7d; --orange:#ff9a3c; --yellow:#ffd43b; --glacier:#7fd3ff; --magenta:#e04fff; --white:#f3f3f5;
     --mono:ui-monospace,"JetBrains Mono","SF Mono",Menlo,Consolas,monospace;
   }
   *{box-sizing:border-box}
@@ -133,7 +133,7 @@
 
 <main>
   <section class="panel" id="reader"><h2>reader <em id="streamMeta">—</em></h2><div id="readerTitle"><i style="background:var(--pink)"></i><i style="background:var(--yellow)"></i><i style="background:var(--teal)"></i><b id="rdName">—</b><em id="rdPage"></em></div><div id="readerBody"></div>
-    <svg id="crawler" aria-hidden="true" focusable="false"><g id="crawlRep"></g><rect id="crawlBox" fill="none" stroke-dasharray="3 3"/><g id="crawlG"></g><g id="crawlBal"></g><g id="crawlSay"><rect rx="3" height="17"/><text font-size="11" font-weight="700"></text></g></svg></section>
+    <svg id="crawler" aria-hidden="true" focusable="false"><g id="crawlRep"></g><rect id="crawlBox" fill="none" stroke-dasharray="3 3"/><g id="crawlG"></g><g id="crawlBal"></g><g id="manG"></g><g id="crawlSay"><path/><rect rx="3" height="17" stroke-width="1.2"/><text font-size="11" font-weight="700"></text></g></svg></section>
   <section class="panel" id="stage">
     <canvas id="cv"></canvas>
     <div class="hero">
@@ -230,15 +230,22 @@ const ROLE={a:"link",button:"button",img:"image",svg:"image",nav:"navigation",in
 const partsOf=sel=>sel.match(/(?:[^\s>\[]+|\[[^\]]*\])+/g)||[];
 function roleOf(sel){ const last=partsOf(sel).at(-1)||"", r=/\[role="?([a-z]+)/.exec(last), t=/^([a-z][a-z0-9]*)/.exec(last); if(r) return r[1]; if(!t) return "group"; const h=/^h([1-6])$/.exec(t[1]); return h?"heading "+h[1]:ROLE[t[1]]||t[1]; }
 // Walliserdeutsch, one place to edit. The crawler only ever says something an event just made true.
-const SAY={start:()=>"Salü zäme.", page:()=>"Salü, nächschti Siita.", ouch:p=>`Autsch. ${p}.`, tmpl:(n)=>`Ds glicha ×${n}. Ds ischt äs Template.`,
-  unsure:()=>"Weiss nit. Ds müess äs Mänsch aaluegä.", blocked:()=>"Kei Quälla. Nit publiziert.", calm:()=>"Alls güet hiä.",
-  site:(s)=>`${s}: fertig.`, end:(n)=>`${n} Entscheidä, null Modäll. Güet Nacht.`};
+const pick=(a,seed)=>a[Math.floor(hash(String(seed))()*a.length)]; // deterministic: replay and live say the same thing
+const SAY={start:s=>pick(["Salü zäme.","Salü. So, de wei-wer mal.","Salü! Wer hed mich gwecht?"],s),
+  page:s=>pick(["Salü, nächschti Siita.","Wiitär, wiitär.","Ui, äs nüüs Hüüs."],s),
+  ouch:(p,s)=>pick([`Autsch. ${p}.`,`Heiteri Fahna! ${p}.`,`Dü da obä! ${p}!`,`Ds gaht doch nit: ${p}.`],s),
+  tmpl:(n,s)=>pick([`Ds glicha ×${n}. Ds ischt äs Template.`,`Scho widr! ×${n}. D'Vorlaga.`,`${n} Mal ds glicha. Wär hed das gmacht?`],s),
+  unsure:s=>pick(["Weiss nit. Ds müess äs Mänsch aaluegä.","Hmm. Ds gsiän ich vo hiä nit.","Da lüegt besser öpper anders."],s),
+  blocked:s=>pick(["Kei Quälla. Nit publiziert.","Ohni Bewiis? Nix da.","Halt! Wo steit ds gschribu?"],s),
+  calm:s=>pick(["Alls güet hiä.","Äs passt.","Schön ruhig hiä."],s),
+  site:(n,s)=>pick([`${n}: fertig.`,`${n}, erlediget.`,`Adiö ${n}.`],s),
+  end:(n,s)=>pick([`${n} Entscheidä, null Modäll. Güet Nacht.`,`Fertig für hitt. ${n} Mal ufpasst.`,`So. Firabä. ${n} Entscheidä.`],s)};
 const GES={roll:700,jolt:260,tilt:700,ripple:650};
-function act(fx, ges, line, force){ const now=performance.now(); if(ges){ fx.ges=ges; fx.gesT=now; } if(line&&(force||now-fx.sayT>6000)){ fx.say=line; fx.sayT=now; } }
+function act(fx, ges, line, force){ const now=performance.now(); if(ges){ fx.ges=ges; fx.gesT=now; } if(line&&(force||now-fx.sayT>6000)){ fx.say=line; fx.sayT=now; fx.sayGes=ges; } }
 function readerApply(e, animate){
   const rd=S.rd, now=performance.now();
   if(e.subject.kind==="surface"&&((e.stage==="scout"&&e.verdict==="selected")||e.stage==="probe")){
-    if(rd.url!==e.subject.id&&animate&&rd.url) act(rd.fx,"roll",SAY.page());
+    if(rd.url!==e.subject.id&&animate&&rd.url) act(rd.fx,"roll",SAY.page(e.subject.id));
     if(rd.url!==e.subject.id){ rd.url=e.subject.id; rd.rows=new Map(); rd.gen=++GEN; rd.cur=null; rd.n=0; const u=new URL(e.subject.id); rd.rows.set("##",{hdr:true,n:++rd.n,sel:"##",snip:`## ${u.hostname.replace(/^www\./,"")} · ${u.pathname}`,res:[]});
       const site=Object.keys(S.surfaces).filter(k=>k.startsWith(u.origin)); rd.page=`surface ${site.indexOf(e.subject.id)+1} / ${site.length}`; }
     rd.mode="reading"; rd.label="crawler · reading"; return;
@@ -249,22 +256,22 @@ function readerApply(e, animate){
     if(e.verdict==="violation"){ row.col="pink"; row.probe=pid; } else if(e.verdict==="incomplete"&&row.col!=="pink"){ row.col="orange"; row.probe=pid; }
     const fx=rd.fx; fx.passRun=e.verdict==="pass"?fx.passRun+1:0;
     if(animate){ const short=pid.replace(/^axe\./,""), same=[...rd.rows.values()].filter(r=>r.probe===pid&&r.col==="pink").length;
-      if(e.verdict==="violation"&&same>=3&&!fx.told.has(rd.url+pid)){ fx.told.add(rd.url+pid); act(fx,"jolt",SAY.tmpl(same),true); }
-      else if(e.verdict==="violation") act(fx,"jolt",SAY.ouch(short));
-      else if(e.verdict==="incomplete") act(fx,"tilt",SAY.unsure());
-      else if(fx.passRun===20) act(fx,"ripple",SAY.calm()); }
+      if(e.verdict==="violation"&&same>=3&&!fx.told.has(rd.url+pid)){ fx.told.add(rd.url+pid); act(fx,"jolt",SAY.tmpl(same,e.subject.id),true); }
+      else if(e.verdict==="violation") act(fx,"jolt",SAY.ouch(short,e.subject.id));
+      else if(e.verdict==="incomplete") act(fx,"tilt",SAY.unsure(e.subject.id));
+      else if(fx.passRun===20) act(fx,"ripple",SAY.calm(e.subject.id)); }
     row.read=true; row.res=[...row.res,e.verdict==="violation"?"pink":e.verdict==="incomplete"?"orange":"teal"].slice(-3);
     if(rd.hold<now){ rd.cur=sel; rd.label=`crawler · probing ${pid.replace(/^axe\./,"")}`; } rd.mode="reading"; rd.readT=now; return;
   }
   if(e.stage==="triage"&&e.verdict==="finding"){ const pid=probeOf(e); rd.rows.forEach(r=>{ if(r.probe===pid&&r.col) r.solid=true; }); return; }
   if(e.stage==="verify"&&e.verdict==="blocked"){
     const pid=(e.subject.id.split("/")[1]||"").split(":")[0]; const row=[...rd.rows.values()].find(r=>r.probe===pid);
-    if(row&&animate){ act(rd.fx,null,SAY.blocked()); rd.cur=row.sel; rd.hold=rd.alert=now+900; rd.label=`crawler · blocked ${pid.replace(/^axe\./,"")}`; } return;
+    if(row&&animate){ act(rd.fx,null,SAY.blocked(e.subject.id)); rd.cur=row.sel; rd.hold=rd.alert=now+900; rd.label=`crawler · blocked ${pid.replace(/^axe\./,"")}`; } return;
   }
   if(e.stage==="report"&&e.verdict==="written"){ rd.mode="gone"; if(animate){ const n0=e.subject.id.replace(/^www\./,"").split(".")[0], name=n0[0].toUpperCase()+n0.slice(1), f=(S.sites[e.subject.id]||{}).find||0;
-    rd.fx.bal.push({t0:now,text:`${name} · ${f} ${f===1?"Befund":"Befünd"}`,c:f?"pink":"teal"}); act(rd.fx,null,SAY.site(name),true); } return; }
-  if(e.stage==="run"&&e.verdict==="start"&&animate) act(rd.fx,null,SAY.start(),true);
-  if(e.stage==="run"&&e.verdict!=="start"){ rd.mode="stopped"; rd.label="crawler · stopped"; if(animate) act(rd.fx,null,SAY.end(fmt(S.n)),true); }
+    rd.fx.bal.push({t0:now,text:`${name} · ${f} ${f===1?"Befund":"Befünd"}`,c:f?"pink":"teal"}); act(rd.fx,"wave",SAY.site(name,e.subject.id),true); } return; }
+  if(e.stage==="run"&&e.verdict==="start"&&animate) act(rd.fx,null,SAY.start(e.run),true);
+  if(e.stage==="run"&&e.verdict!=="start"){ rd.mode="stopped"; rd.label="crawler · stopped"; if(animate) act(rd.fx,null,SAY.end(fmt(S.n),e.run),true); }
 }
 const readerBody=$("readerBody"), crawlG=$("crawlG"), crawlRep=$("crawlRep"), crawlBox=$("crawlBox"), RM=matchMedia("(prefers-reduced-motion: reduce)");
 crawlG.innerHTML=Array(14).fill('<line stroke-width="1.4"/>').join("")+Array(8).fill('<circle/>').join("")+'<rect rx="2" height="13"/><text font-size="10" font-weight="700" fill="#0b0b0d"></text>';
@@ -280,6 +287,22 @@ function shapeOf(row){
   for(let i=3;i<N.length&&E.length<14;i+=2) E.push([i,i-2,i%4===1?"pink":"teal"]); // cross-strands: a web, not a stick
   return {N:N.slice(0,8),E:E.filter(([a,b])=>a<8&&b<8).slice(0,14)};
 }
+// The Walliser: 21 joints (hat, head, beard, stooped back, arms, legs, stick), feet on y=0, facing right.
+// 0 hat top,1/2 brim,3 head,4 beard tip,5 neck,6 shoulder,7/8 front elbow/hand,9/10 back elbow/hand,11 hip,12/13 front knee/foot,14/15 back knee/foot,16/17 stick top/bottom,18 jaw,19/20 toes
+const LEAN=[[2,-68],[-7,-61],[11,-61],[2,-55],[7,-41],[0,-48],[1,-43],[9,-34],[15,-29],[-6,-35],[-9,-27],[-4,-24],[1,-12],[2,0],[-7,-12],[-8,0],[16,-34],[24,0],[6,-49],[8,0],[-2,0]];
+const BONES=[[0,1],[0,2],[1,2],[5,18],[18,4],[5,6],[6,7],[7,8],[6,9],[9,10],[6,11],[11,12],[12,13],[13,19],[11,14],[14,15],[15,20],[16,17]];
+const P=o=>LEAN.map((v,i)=>o[i]||v), POSES={lean:LEAN,
+  shake:P({0:[6,-70],1:[-2,-64],2:[14,-63],3:[4,-56],18:[8,-50],4:[11,-44],6:[0,-44],7:[12,-52],8:[16,-64],9:[-10,-40],10:[-6,-48],16:[26,-86],17:[8,-46]}),
+  peer:P({0:[6,-67],1:[-2,-60],2:[14,-60],3:[6,-54],18:[10,-48],4:[12,-41],7:[14,-48],8:[11,-58],9:[-8,-34],10:[-11,-27],16:[-11,-34],17:[-15,0]}),
+  halt:P({7:[13,-42],8:[24,-46],9:[-7,-34],10:[-10,-28],16:[-10,-40],17:[-12,0]}),
+  crossed:P({6:[0,-44],7:[10,-34],8:[-3,-37],9:[-7,-33],10:[7,-38],11:[-2,-24],16:[-14,-32],17:[-22,0]}),
+  wave:P({0:[19,-76],1:[12,-69],2:[26,-69],7:[12,-52],8:[18,-66],9:[-7,-34],10:[-10,-28],16:[-10,-36],17:[-12,0]}),
+  slump:P({0:[10,-55],1:[1,-50],2:[17,-47],3:[8,-44],18:[11,-38],4:[12,-33],5:[4,-38],6:[2,-34],7:[9,-26],8:[13,-30],9:[-2,-26],10:[11,-31],11:[-4,-18],12:[3,-9],14:[-6,-9],16:[14,-34],17:[16,0]}),
+  walkA:P({12:[4,-12],13:[8,0],19:[13,0],14:[-6,-12],15:[-10,0],20:[-5,0],17:[26,0]}),
+  walkB:P({12:[-2,-12],13:[-4,0],19:[1,0],14:[2,-12],15:[5,0],20:[10,0],17:[20,0]})};
+$("manG").innerHTML=BONES.map(()=>'<line stroke-width="1.8" stroke-linecap="round"/>').join("")+LEAN.map(()=>'<circle r="1.7"/>').join("")+'<circle class="hd" r="6" fill="none" stroke-width="1.7"/><path class="cl" fill="none" stroke-width="1.5" d="M-14 0a8 8 0 0 1 8-9a10 10 0 0 1 18-3a8 8 0 0 1 8 12z"/>';
+const mL=[...$("manG").querySelectorAll("line")], mD=[...$("manG").querySelectorAll("circle:not(.hd)")], mHead=$("manG").querySelector(".hd"), mCloud=$("manG").querySelector(".cl");
+const MP=LEAN.map(([x,y])=>({x,y})); let manAmt=0, face=1;
 let ax=-60, ay=40, aOp=0, tagW=120, lastR=performance.now(); const NP=Array.from({length:8},()=>({x:0,y:0,o:0}));
 function renderReader(now){
   const rd=S.rd, dt=Math.min(.1,(now-lastR)/1000); lastR=now;
@@ -298,7 +321,8 @@ function renderReader(now){
   if(row){ const want=row.offsetTop-readerBody.offsetTop-readerBody.clientHeight*0.55; readerBody.scrollTop+=RM.matches?want-readerBody.scrollTop:(want-readerBody.scrollTop)*Math.min(1,dt*6);
     const tx0=row.lastChild; tx=Math.max(70,Math.min(W-30-tagW*1.35, tx0.offsetLeft+Math.min(tx0.scrollWidth,W)*0.5+30)); ty=row.offsetTop-readerBody.scrollTop+row.offsetHeight/2;
     crawlBox.setAttribute("x",row.offsetLeft+2); crawlBox.setAttribute("y",ty-row.offsetHeight/2-1); crawlBox.setAttribute("width",W-8); crawlBox.setAttribute("height",row.offsetHeight+2); }
-  if(rd.mode==="gone"){ tx=W+90; top=0; }
+  const waving=rd.fx.ges==="wave"&&now-rd.fx.gesT<1800&&!document.body.classList.contains("calm");
+  if(rd.mode==="gone"&&!waving){ tx=W+90; top=0; }
   crawlBox.setAttribute("stroke",alert?COL("orange"):COL("teal")); crawlBox.setAttribute("opacity",row&&!stop&&rd.mode!=="gone"?.55:0);
   const k=RM.matches?1:1-Math.exp(-dt*6); ax+=(tx-ax)*k; ay+=(ty-ay)*k; aOp+=(top-aOp)*k;
   const sh=rowO&&!rowO.hdr?shapeOf(rowO):{N:[{x:0,y:0,c:"white",r:3}],E:[]}, jit=!RM.matches&&!stop&&rd.mode==="reading";
@@ -318,16 +342,37 @@ function renderReader(now){
   crawlG.setAttribute("transform",`translate(${(ax+jo).toFixed(1)},${ay.toFixed(1)}) rotate(${rot.toFixed(1)}) scale(1.35)`); crawlG.setAttribute("opacity",aOp.toFixed(2));
   cTxt.textContent=rd.label; cTxt.setAttribute("x",12); cTxt.setAttribute("y",-12); const tw=rd.label?cTxt.getComputedTextLength()+8:0; tagW=tw||tagW;
   cTag.setAttribute("x",8); cTag.setAttribute("y",-22); cTag.setAttribute("width",tw); cTag.setAttribute("fill",stop?COL("dim"):alert?COL("orange"):COL("teal"));
-  // speech bubble + balloons (creature mode only)
+  // the Walliser forms from the same dots whenever he has something to say; while reading he dissolves into the web
+  const PT={jolt:1400,tilt:1600,ripple:1500,roll:900,wave:1800}, mp=fx.ges?(now-fx.gesT)/(PT[fx.ges]||1):1, talk=now-fx.sayT<2800;
+  // He only forms when he has something to say (≤ 1 line / 6 s), walks to a new page, waves, blocks or ends; otherwise the web works.
+  const walk=Math.floor(now/180)%2?"walkA":"walkB", walking=fx.ges==="roll"&&mp<1;
+  const pose=stop?"slump":alert?"halt":waving?"wave":talk?{jolt:"shake",tilt:"peer",ripple:"crossed",roll:walk}[fx.sayGes]||"lean":walking?walk:"lean";
+  manAmt+=((!calm&&(talk||alert||stop||waving||walking||!rowO||rowO.hdr)?1:0)-manAmt)*(RM.matches?1:1-Math.exp(-dt*5));
+  if(Math.abs(tx-ax)>24) face=tx>ax?1:-1;
+  const mk=RM.matches?1:1-Math.exp(-dt*10), sw=pose==="shake"&&anim?Math.sin(now/70)*.35:0, nod=pose==="crossed"&&anim?Math.sin(now/160)*1.6:0;
+  const MD=MP.map((p,i)=>{ let [x,y]=POSES[pose][i];
+    if(sw&&[7,8,16,17].includes(i)){ const dx=x,dy=y+44; x=dx*Math.cos(sw)-dy*Math.sin(sw); y=-44+dx*Math.sin(sw)+dy*Math.cos(sw); }
+    if(nod&&[0,1,2,3,4,18].includes(i)) y+=nod;
+    p.x+=(x-p.x)*mk; p.y+=(y-p.y)*mk; const w=NP[i%Math.max(1,sh.N.length)], wx=face*(w.x+(w.jx||0))*1.35/1.55, wy=((w.y+(w.jy||0))*1.35-(Math.max(ay+14,readerBody.offsetTop+(pose==="shake"?150:115))-ay))/1.55;
+    return {x:wx+(p.x-wx)*manAmt, y:wy+(p.y-wy)*manAmt}; });
+  const MS=1.55, my=Math.max(ay+14,readerBody.offsetTop+(pose==="shake"?150:115)), man=$("manG"), gl=stop?COL("dim"):COL("glacier"); man.setAttribute("transform",`translate(${(ax+jo).toFixed(1)},${my.toFixed(1)}) scale(${face*MS},${MS})`); man.setAttribute("opacity",(aOp*Math.min(1,manAmt*1.4)).toFixed(2));
+  mL.forEach((l,i)=>{ const [a,b]=BONES[i]; l.setAttribute("x1",MD[a].x); l.setAttribute("y1",MD[a].y); l.setAttribute("x2",MD[b].x); l.setAttribute("y2",MD[b].y); l.setAttribute("stroke",gl); l.setAttribute("opacity",manAmt.toFixed(2)); });
+  mD.forEach((d,i)=>{ d.setAttribute("cx",MD[i].x); d.setAttribute("cy",MD[i].y); d.setAttribute("fill",gl); d.setAttribute("opacity",i===3?(1-manAmt).toFixed(2):1); }); // no dot inside the head ring
+  mHead.setAttribute("cx",MD[3].x); mHead.setAttribute("cy",MD[3].y); mHead.setAttribute("stroke",gl); mHead.setAttribute("opacity",manAmt.toFixed(2));
+  mCloud.setAttribute("transform","translate(34,-94)"); mCloud.setAttribute("stroke",gl); mCloud.setAttribute("opacity",pose==="shake"?manAmt.toFixed(2):0);
+  crawlG.setAttribute("opacity",(aOp*(1-manAmt)).toFixed(2));
+  // speech bubble: his colour, tail to his head
   const sayG=$("crawlSay"), sa=calm?0:Math.max(0,Math.min(1,(2800-(now-fx.sayT))/400));
-  sayG.setAttribute("opacity",sa.toFixed(2)); if(sa>0){ const st=sayG.lastChild, sr=sayG.firstChild; st.textContent=fx.say;
-    const sw=st.getComputedTextLength()+12, sx=Math.max(4,Math.min(W-sw-4,ax-sw/2)), sy=Math.max(readerBody.offsetTop+4,ay-74);
-    sr.setAttribute("x",sx); sr.setAttribute("y",sy); sr.setAttribute("width",sw); sr.setAttribute("fill",COL("white")); st.setAttribute("x",sx+6); st.setAttribute("y",sy+12.5); st.setAttribute("fill","#0b0b0d"); }
+  sayG.setAttribute("opacity",sa.toFixed(2)); if(sa>0){ const [tl,sr,st]=sayG.children; st.textContent=fx.say;
+    const hx=ax+jo+face*MD[3].x*MS, hy=my+MD[3].y*MS, bw=st.getComputedTextLength()+12, sx=Math.max(4,Math.min(W-bw-4,hx-bw/2)), sy=Math.max(readerBody.offsetTop+4,hy-46);
+    sr.setAttribute("x",sx); sr.setAttribute("y",sy); sr.setAttribute("width",bw); sr.setAttribute("fill","#0f2633"); sr.setAttribute("stroke",COL("glacier"));
+    st.setAttribute("x",sx+6); st.setAttribute("y",sy+12.5); st.setAttribute("fill",COL("glacier"));
+    const bx=Math.max(sx+8,Math.min(sx+bw-8,hx)); tl.setAttribute("d",`M${bx-5} ${sy+17}L${hx} ${hy-9}L${bx+5} ${sy+17}z`); tl.setAttribute("fill","#0f2633"); tl.setAttribute("stroke",COL("glacier")); }
   fx.bal=fx.bal.filter(b=>now-b.t0<5200); const balG=$("crawlBal");
   balG.innerHTML=calm?"":fx.bal.map((b,i)=>{ const age=(now-b.t0)/1000, x=W*0.7-i*28+(RM.matches?0:Math.sin(age*2.2+i)*10), y=(RM.matches?readerBody.offsetTop+60:$("reader").clientHeight-40-age*90), o=Math.min(1,(5.2-age)/1.2);
     return `<g opacity="${o.toFixed(2)}"><path d="M${x} ${y+11} q-4 10 2 20 t-2 22" stroke="${COL("dim")}" fill="none"/><ellipse cx="${x}" cy="${y}" rx="10" ry="12" fill="${COL(b.c)}"/><text x="${x+15}" y="${y+4}" font-size="10" fill="${COL(b.c)}">${esc(b.text)}</text></g>`; }).join("");
   // repetition: one edge from the element to every other visible line failing the same probe
-  const reps=rowO&&rowO.col&&!stop?[...rd.rows.values()].filter(r=>r!==rowO&&r.el&&r.probe===rowO.probe&&r.col):[];
+  const vis=r=>{ const y=r.el.offsetTop-readerBody.scrollTop; return y>0&&y<readerBody.clientHeight; }, reps=rowO&&rowO.col&&!stop?[...rd.rows.values()].filter(r=>r!==rowO&&r.el&&r.probe===rowO.probe&&r.col&&vis(r)):[];
   cRep.forEach((l,i)=>{ const r=reps[i]; if(!r){ l.setAttribute("opacity",0); return; } const y=r.el.offsetTop-readerBody.scrollTop+r.el.offsetHeight/2;
     l.setAttribute("x1",ax); l.setAttribute("y1",ay); l.setAttribute("x2",r.el.lastChild.offsetLeft+40); l.setAttribute("y2",y); l.setAttribute("stroke",COL(r.col)); l.setAttribute("opacity",(aOp*.8).toFixed(2)); });
 }
