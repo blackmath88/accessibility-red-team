@@ -1,0 +1,291 @@
+{
+  "schema": "art/cohort-result/v1",
+  "cohortId": "ch.zh.small-pilot",
+  "generatedAt": "2026-10-09T09:21:19.294Z",
+  "profileId": "requirements/profiles/ch.zh.municipal-research.yml",
+  "aiCalls": 0,
+  "journeyFamilies": [],
+  "issueFamilies": [
+    {
+      "probeId": "axe.color-contrast",
+      "outcome": "incomplete",
+      "municipalityCount": 5,
+      "occurrenceCount": 157,
+      "municipalities": [
+        "Bachs",
+        "Maschwanden",
+        "Ossingen",
+        "Truttikon",
+        "Volken"
+      ]
+    },
+    {
+      "probeId": "axe.region",
+      "outcome": "violation",
+      "municipalityCount": 4,
+      "occurrenceCount": 240,
+      "municipalities": [
+        "Bachs",
+        "Ossingen",
+        "Truttikon",
+        "Volken"
+      ]
+    },
+    {
+      "probeId": "axe.link-name",
+      "outcome": "violation",
+      "municipalityCount": 4,
+      "occurrenceCount": 55,
+      "municipalities": [
+        "Bachs",
+        "Maschwanden",
+        "Ossingen",
+        "Truttikon"
+      ]
+    },
+    {
+      "probeId": "axe.heading-order",
+      "outcome": "violation",
+      "municipalityCount": 4,
+      "occurrenceCount": 14,
+      "municipalities": [
+        "Bachs",
+        "Maschwanden",
+        "Ossingen",
+        "Truttikon"
+      ]
+    },
+    {
+      "probeId": "axe.landmark-unique",
+      "outcome": "violation",
+      "municipalityCount": 4,
+      "occurrenceCount": 13,
+      "municipalities": [
+        "Maschwanden",
+        "Ossingen",
+        "Truttikon",
+        "Volken"
+      ]
+    },
+    {
+      "probeId": "axe.page-has-heading-one",
+      "outcome": "violation",
+      "municipalityCount": 3,
+      "occurrenceCount": 5,
+      "municipalities": [
+        "Bachs",
+        "Ossingen",
+        "Volken"
+      ]
+    },
+    {
+      "probeId": "axe.color-contrast",
+      "outcome": "violation",
+      "municipalityCount": 2,
+      "occurrenceCount": 44,
+      "municipalities": [
+        "Maschwanden",
+        "Ossingen"
+      ]
+    },
+    {
+      "probeId": "axe.link-in-text-block",
+      "outcome": "violation",
+      "municipalityCount": 2,
+      "occurrenceCount": 10,
+      "municipalities": [
+        "Bachs",
+        "Maschwanden"
+      ]
+    },
+    {
+      "probeId": "axe.landmark-one-main",
+      "outcome": "violation",
+      "municipalityCount": 2,
+      "occurrenceCount": 8,
+      "municipalities": [
+        "Ossingen",
+        "Truttikon"
+      ]
+    },
+    {
+      "probeId": "axe.accesskeys",
+      "outcome": "violation",
+      "municipalityCount": 1,
+      "occurrenceCount": 20,
+      "municipalities": [
+        "Truttikon"
+      ]
+    },
+    {
+      "probeId": "axe.listitem",
+      "outcome": "violation",
+      "municipalityCount": 1,
+      "occurrenceCount": 20,
+      "municipalities": [
+        "Ossingen"
+      ]
+    },
+    {
+      "probeId": "axe.image-alt",
+      "outcome": "violation",
+      "municipalityCount": 1,
+      "occurrenceCount": 16,
+      "municipalities": [
+        "Ossingen"
+      ]
+    },
+    {
+      "probeId": "axe.image-redundant-alt",
+      "outcome": "violation",
+      "municipalityCount": 1,
+      "occurrenceCount": 4,
+      "municipalities": [
+        "Volken"
+      ]
+    },
+    {
+      "probeId": "axe.landmark-banner-is-top-level",
+      "outcome": "violation",
+      "municipalityCount": 1,
+      "occurrenceCount": 4,
+      "municipalities": [
+        "Ossingen"
+      ]
+    },
+    {
+      "probeId": "axe.landmark-no-duplicate-banner",
+      "outcome": "violation",
+      "municipalityCount": 1,
+      "occurrenceCount": 4,
+      "municipalities": [
+        "Ossingen"
+      ]
+    },
+    {
+      "probeId": "axe.list",
+      "outcome": "violation",
+      "municipalityCount": 1,
+      "occurrenceCount": 4,
+      "municipalities": [
+        "Ossingen"
+      ]
+    },
+    {
+      "probeId": "axe.meta-viewport",
+      "outcome": "violation",
+      "municipalityCount": 1,
+      "occurrenceCount": 4,
+      "municipalities": [
+        "Ossingen"
+      ]
+    },
+    {
+      "probeId": "axe.aria-valid-attr-value",
+      "outcome": "incomplete",
+      "municipalityCount": 1,
+      "occurrenceCount": 3,
+      "municipalities": [
+        "Maschwanden"
+      ]
+    },
+    {
+      "probeId": "axe.label",
+      "outcome": "violation",
+      "municipalityCount": 1,
+      "occurrenceCount": 2,
+      "municipalities": [
+        "Maschwanden"
+      ]
+    },
+    {
+      "probeId": "axe.autocomplete-valid",
+      "outcome": "violation",
+      "municipalityCount": 1,
+      "occurrenceCount": 1,
+      "municipalities": [
+        "Ossingen"
+      ]
+    },
+    {
+      "probeId": "axe.th-has-data-cells",
+      "outcome": "incomplete",
+      "municipalityCount": 1,
+      "occurrenceCount": 1,
+      "municipalities": [
+        "Truttikon"
+      ]
+    },
+    {
+      "probeId": "axe.video-caption",
+      "outcome": "incomplete",
+      "municipalityCount": 1,
+      "occurrenceCount": 1,
+      "municipalities": [
+        "Ossingen"
+      ]
+    }
+  ],
+  "sites": [
+    {
+      "id": "ch-zh-volken",
+      "name": "Volken",
+      "url": "https://www.volken.ch/",
+      "status": "PASS",
+      "selectedSurfaces": 4,
+      "findings": 5,
+      "repeatedFindings": 4,
+      "needsReview": 1,
+      "applicableFindings": 0,
+      "reportPath": "ch-zh-volken/report.html"
+    },
+    {
+      "id": "ch-zh-maschwanden",
+      "name": "Maschwanden",
+      "url": "https://www.maschwanden.ch/de/index.php",
+      "status": "PASS",
+      "selectedSurfaces": 3,
+      "findings": 8,
+      "repeatedFindings": 7,
+      "needsReview": 2,
+      "applicableFindings": 0,
+      "reportPath": "ch-zh-maschwanden/report.html"
+    },
+    {
+      "id": "ch-zh-truttikon",
+      "name": "Truttikon",
+      "url": "https://www.truttikon.ch/",
+      "status": "PASS",
+      "selectedSurfaces": 4,
+      "findings": 8,
+      "repeatedFindings": 6,
+      "needsReview": 2,
+      "applicableFindings": 0,
+      "reportPath": "ch-zh-truttikon/report.html"
+    },
+    {
+      "id": "ch-zh-ossingen",
+      "name": "Ossingen",
+      "url": "https://www.ossingen.ch/",
+      "status": "PASS",
+      "selectedSurfaces": 4,
+      "findings": 16,
+      "repeatedFindings": 12,
+      "needsReview": 2,
+      "applicableFindings": 0,
+      "reportPath": "ch-zh-ossingen/report.html"
+    },
+    {
+      "id": "ch-zh-bachs",
+      "name": "Bachs",
+      "url": "https://www.bachs.ch/",
+      "status": "PASS",
+      "selectedSurfaces": 4,
+      "findings": 6,
+      "repeatedFindings": 6,
+      "needsReview": 1,
+      "applicableFindings": 0,
+      "reportPath": "ch-zh-bachs/report.html"
+    }
+  ]
+}
