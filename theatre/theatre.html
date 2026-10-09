@@ -248,7 +248,7 @@ const readerBody=$("readerBody"), crawlG=$("crawlG"), RM=matchMedia("(prefers-re
 // 7 nodes: a centre and a ring of six; edges centre→ring and ring→ring. No face, no legs.
 const NODES=[[0,0],...[0,1,2,3,4,5].map(i=>[Math.cos(i*Math.PI/3)*11,Math.sin(i*Math.PI/3)*11])];
 const EDGES=[[0,1],[0,2],[0,3],[0,4],[0,5],[0,6],[1,2],[2,3],[3,4],[4,5],[5,6],[6,1]];
-crawlG.innerHTML=EDGES.map(()=>`<line stroke-width="1"/>`).join("")+NODES.map((_,i)=>`<circle r="${i?1.8:2.4}"/>`).join("")+`<text x="20" y="4" font-size="10"></text>`;
+crawlG.innerHTML=EDGES.map(()=>`<line stroke-width="1"/>`).join("")+NODES.map((_,i)=>`<circle r="${i?1.8:2.4}"/>`).join("")+`<text x="20" y="4" font-size="10" stroke="#111114" stroke-width="4" paint-order="stroke"></text>`;
 const cLines=[...crawlG.querySelectorAll("line")], cDots=[...crawlG.querySelectorAll("circle")], cText=crawlG.querySelector("text");
 let cx=-40, cy=40, cOp=0, lastR=performance.now();
 function renderReader(now){

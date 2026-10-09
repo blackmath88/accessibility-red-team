@@ -22,7 +22,7 @@ Events follow `events.schema.json` (`art/theatre-event/v1`), one JSON object per
 
     npm run cohort -- cohorts/zh-small-pilot.yml --out runs/cohorts/zh-small-pilot
 
-(5/5 sites, 4,783 events, every one `actor: code`). `runs/zh-small-pilot-2026-10-09.summary.json` is the cohort summary from the same run; `test/theatre-acceptance.test.ts` checks the two against each other (`aiCalls` = model events).
+(5/5 sites, 4,793 events, every one `actor: code`; probe and triage observations carry `at` locations for the reader). `runs/zh-small-pilot-2026-10-09.summary.json` is the cohort summary from the same run; `test/theatre-acceptance.test.ts` checks the two against each other (`aiCalls` = model events).
 
 Any CLI run with `--out <dir>` writes `<dir>/events.jsonl` (`--no-events` disables it); open it with `?src=../runs/<dir>/events.jsonl`.
 
