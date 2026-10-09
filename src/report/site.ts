@@ -7,6 +7,8 @@ import { TriageResultSchema } from "../triage/contracts.js";
 import type { JourneyRun } from "../journeys/contracts.js";
 import { summarizeJourneys } from "./journeys.js";
 import { SiteAccessibilityReportV2Schema, type SiteAccessibilityReport } from "./site-contracts.js";
+import type { Emit } from "../theatre/emit.js";
+import { route } from "../routing/route.js";
 
 function esc(value: string): string {
   return value.replace(/[&<>"']/g, (char) => ({
@@ -133,6 +135,7 @@ export async function buildSiteReport(options: {
   profilePath: string;
   sourcesPath?: string;
   journeyRuns?: JourneyRun[];
+  emit?: Emit;
 }) {
   const [surfaceRaw, triageRaw, profile, registry] = await Promise.all([
     readFile(join(options.auditDir, "surface.json"), "utf8"),
@@ -151,6 +154,27 @@ export async function buildSiteReport(options: {
       resolveRequirement(requirement.criterion, finding.tags, profile, registry)
     ),
   }));
+
+  const emit = options.emit ?? (() => {});
+  const site = new URL(surface.finalEntrypoint).hostname;
+  for (const { finding } of findings) {
+    // Violations have a maintained template explanation; incomplete results are routed (production: always NO_MODEL).
+    const routed = finding.outcome === "incomplete" ? route("incomplete-triage", finding.probeId) : null;
+    emit({
+      stage: "interpret", actor: "code", verdict: routed ? "needs-review" : "explained",
+      subject: { kind: "finding", id: `${site}/${finding.probeId}:${finding.outcome}`, site },
+      detail: routed ? `${finding.probeId} · ${routed.tier} · ${routed.reason}` : `${finding.probeId} · template explanation`,
+    });
+  }
+  for (const { finding, requirements } of findings) {
+    for (const requirement of requirements) {
+      emit({
+        stage: "verify", actor: "code", verdict: requirement.chain.length ? "supported" : "blocked",
+        subject: { kind: "claim", id: `${site}/${finding.probeId}:${finding.outcome}/wcag-${requirement.criterion}`, site },
+        detail: `WCAG ${requirement.criterion} · ${requirement.status} · ${requirement.chain.map((link) => link.sourceId).join(" ← ") || "no source chain"}`,
+      });
+    }
+  }
 
   const report = SiteAccessibilityReportV2Schema.parse({
     schema: "art/site-accessibility-report/v2",
@@ -176,5 +200,9 @@ export async function buildSiteReport(options: {
 
   await writeFile(join(options.auditDir, "report.json"), JSON.stringify(report, null, 2));
   await writeFile(join(options.auditDir, "report.html"), render(report));
+  emit({
+    stage: "report", actor: "code", verdict: "written", subject: { kind: "site", id: site, site },
+    detail: `${report.summary.findings} findings · ${report.summary.needsReview} needs review · ${report.summary.applicableFindings} applicable`,
+  });
   return report;
 }

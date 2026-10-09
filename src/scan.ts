@@ -16,6 +16,8 @@ import { buildCoverageManifest } from "./capability.js";
 import { requirementsFromAxeTags } from "./wcag.js";
 import type { ExecutionPolicy } from "./control-center/contracts.js";
 import { gotoWithPolicy, type NetworkPolicyEvent } from "./network-policy.js";
+import type { Emit } from "./theatre/emit.js";
+import { atOf } from "./theatre/schema.js";
 
 const VIEWPORT = { width: 1440, height: 900 };
 
@@ -63,11 +65,14 @@ async function settle(page: Page): Promise<void> {
 export async function scanUrl(
   input: string,
   outDir: string,
-  options: { browser?: Browser; executionPolicy?: ExecutionPolicy; policyEvents?: NetworkPolicyEvent[] } = {},
+  options: { browser?: Browser; executionPolicy?: ExecutionPolicy; policyEvents?: NetworkPolicyEvent[]; runId?: string; emit?: Emit } = {},
 ): Promise<void> {
   const target = await validatePublicTarget(input);
-  const runId = randomUUID();
+  const runId = options.runId ?? randomUUID();
   const surfaceId = "surface_root";
+  const emit = options.emit ?? (() => {});
+  const startedAt = Date.now();
+  const surfaceRef = input.replace(/\/$/, "");
 
   await mkdir(outDir, { recursive: true });
 
@@ -124,6 +129,26 @@ export async function scanUrl(
       ...axe.inapplicable.map((r) => normalizeRule(r, "inapplicable", surfaceId)),
     ];
 
+    emit({
+      stage: "probe", actor: "code", verdict: "pass",
+      subject: { kind: "surface", id: input, site: target.hostname },
+      detail: `axe-core 4.13 · ${results.length} rules`,
+      cost: { ms: Date.now() - startedAt },
+    });
+    for (const result of results) {
+      // One event per node for violation/incomplete; one per rule for pass/inapplicable to keep the log readable.
+      const perNode = result.outcome === "violation" || result.outcome === "incomplete";
+      const refs = perNode ? result.nodes.map((_, index) => `${surfaceRef}/${result.probeId}#${index + 1}`) : [`${surfaceRef}/${result.probeId}`];
+      for (const [index, id] of refs.entries()) {
+        const node = result.nodes[index];
+        emit({
+          stage: "probe", actor: "code", verdict: result.outcome,
+          subject: { kind: "observation", id, site: target.hostname }, ...(node ? { at: atOf(node) } : {}),
+          detail: perNode ? `${result.probeId} · ${result.impact}` : `${result.probeId} · ${result.nodes.length} nodes`,
+        });
+      }
+    }
+
     const criteria = Array.from(
       new Set(results.flatMap((r) => r.requirements.map((req) => req.criterion))),
     ).sort();
@@ -171,6 +196,14 @@ export async function scanUrl(
     ]);
 
     console.log(JSON.stringify(summary, null, 2));
+  } catch (error) {
+    emit({
+      stage: "probe", actor: "code", verdict: "blocked",
+      subject: { kind: "surface", id: input, site: target.hostname },
+      detail: error instanceof Error ? error.message : String(error),
+      cost: { ms: Date.now() - startedAt },
+    });
+    throw error;
   } finally {
     if (ownsBrowser) await browser.close();
   }

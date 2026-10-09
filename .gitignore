@@ -1,6 +1,7 @@
 node_modules/
 dist/
 runs/
+!theatre/runs/
 evaluation/runs/
 playwright-report/
 .DS_Store

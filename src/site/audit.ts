@@ -8,6 +8,7 @@ import { buildSiteReport } from "../report/site.js";
 import { runSafeJourneys } from "../journeys/engine.js";
 import type { ExecutionPolicy } from "../control-center/contracts.js";
 import type { NetworkPolicyEvent } from "../network-policy.js";
+import type { Emit } from "../theatre/emit.js";
 
 export async function auditSite(input: string, options: {
   outDir?: string;
@@ -17,6 +18,7 @@ export async function auditSite(input: string, options: {
   maxSurfaces?: number;
   journeys?: boolean;
   executionPolicy?: ExecutionPolicy;
+  emit?: Emit;
 } = {}) {
   const host = new URL(input).hostname.replace(/[^a-z0-9.-]/gi, "_");
   const outDir = resolve(options.outDir ?? join("runs", host));
@@ -30,16 +32,21 @@ export async function auditSite(input: string, options: {
     out: surfacePath,
     executionPolicy: options.executionPolicy,
     policyEvents,
+    emit: options.emit,
   });
 
   const selectedSurfaces = surface.surfaces.slice(0, options.maxSurfaces ?? surface.surfaces.length);
+  for (const capped of surface.surfaces.slice(selectedSurfaces.length)) {
+    options.emit?.({ stage: "scout", actor: "code", verdict: "skipped", subject: { kind: "surface", id: capped.url, site: new URL(surface.finalEntrypoint).hostname },
+      detail: `${capped.kind} · over max_surfaces ${options.maxSurfaces}` });
+  }
   const runs = [];
   const journeyRuns = [];
   const browser = await chromium.launch({ headless: true });
   try {
     for (const selected of selectedSurfaces) {
       const runDir = join(outDir, "surfaces", selected.surfaceId);
-      await scanUrl(selected.url, runDir, { browser, executionPolicy: options.executionPolicy, policyEvents });
+      await scanUrl(selected.url, runDir, { browser, executionPolicy: options.executionPolicy, policyEvents, emit: options.emit });
       if (options.journeys) {
         const journeyRun = await runSafeJourneys(selected.url, runDir, {
           browser,
@@ -59,7 +66,7 @@ export async function auditSite(input: string, options: {
     await browser.close();
   }
 
-  const triage = await triageSurfaceRuns(runs, join(outDir, "findings.json"));
+  const triage = await triageSurfaceRuns(runs, join(outDir, "findings.json"), options.emit);
 
   const manifest = {
     schema: "art/site-audit-manifest/v1",
@@ -90,6 +97,7 @@ export async function auditSite(input: string, options: {
     ? await buildSiteReport({
         auditDir: outDir,
         profilePath: resolve(options.profilePath),
+        emit: options.emit,
       })
     : null;
 

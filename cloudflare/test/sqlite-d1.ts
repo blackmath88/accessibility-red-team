@@ -14,7 +14,8 @@ export function sqliteD1(): { d1: D1Database; db: DatabaseSync } {
   const db = new DatabaseSync(":memory:");
   const dir = new URL("../migrations/", import.meta.url);
   for (const file of readdirSync(dir).filter((f) => f.endsWith(".sql")).sort()) db.exec(readFileSync(new URL(file, dir), "utf8"));
-  return { db, d1: { prepare: (sql: string) => new Statement(db, sql) } as unknown as D1Database };
+  const batch = async (statements: Statement[]) => { db.exec("BEGIN"); try { const out = []; for (const s of statements) out.push(await s.run()); db.exec("COMMIT"); return out; } catch (e) { db.exec("ROLLBACK"); throw e; } };
+  return { db, d1: { prepare: (sql: string) => new Statement(db, sql), batch } as unknown as D1Database };
 }
 
 export function memoryR2(): R2Bucket & { objects: Map<string, Uint8Array> } {

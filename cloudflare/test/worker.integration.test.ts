@@ -73,6 +73,22 @@ test("dashboard assets fail closed without a valid Access identity", async () =>
   assert.equal((await call(unconfigured, "GET", "/", { jwt: operatorJwt })).status, 503);
 });
 
+test("theatre page is Access-gated and allows only its own inline script by hash", async () => {
+  const { env } = setup();
+  const page = await readFile(new URL("../../theatre/theatre.html", import.meta.url), "utf8");
+  const theatreEnv = { ...env, ASSETS: { fetch: async () => new Response(page, { headers: { "content-type": "text/html" } }) } };
+  assert.equal((await call(theatreEnv, "GET", "/theatre/theatre.html")).status, 401);
+  const ok = await call(theatreEnv, "GET", "/theatre/theatre.html?live=%2Fapi%2Fv1%2Fruns%2Fx%2Ftheatre-events", { jwt: operatorJwt });
+  const script = page.match(/<script>([\s\S]*?)<\/script>/)![1]!;
+  const digest = (await import("node:crypto")).createHash("sha256").update(script).digest("base64");
+  const csp = ok.headers.get("content-security-policy") ?? "";
+  assert.equal(ok.status, 200);
+  assert.match(csp, new RegExp(`script-src 'self' 'sha256-${digest.replace(/[+/]/g, "\\$&")}'`));
+  assert.doesNotMatch(csp, /script-src[^;]*unsafe-inline/);
+  assert.match(csp, /connect-src 'self'/);
+  assert.doesNotMatch((await call(env, "GET", "/", { jwt: operatorJwt })).headers.get("content-security-policy") ?? "", /sha256-/);
+});
+
 test("operator API requires a registered operator and same-origin mutations", async () => {
   const { db, env } = setup(); await seed(db);
   assert.equal((await call(env, "GET", "/api/v1/cases", { jwt: strangerJwt })).status, 403);
@@ -178,4 +194,56 @@ test("runner self-test exercises auth, lease and heartbeat without touching the 
   assert.ok(runtime.body.runners.find((r: { id: string; lastSeenAt: string | null }) => r.id === "nebuchadnezzar")?.lastSeenAt);
   const actions = (db.prepare("SELECT action FROM audit_events ORDER BY occurred_at").all() as Array<{ action: string }>).map((r) => r.action);
   assert.deepEqual(actions, ["runner.selftest.claimed", "runner.selftest.heartbeat", "runner.selftest.completed"]);
+});
+
+test("theatre events: ingest is lease-gated and atomic; lifecycle is synthesized; operator reads ndjson and SSE", async () => {
+  const { db, env } = setup(); await seed(db);
+  await call(env, "POST", "/api/v1/runs", { jwt: operatorJwt, body: runRequest("ch-zh-uster:wave1", "k-theatre-1") });
+  const claim = await call(env, "POST", "/api/v1/runner/claim", { jwt: serviceJwt, body: claimBody() });
+  const runId = claim.body.run.id as string; const lease = claim.body.leaseToken as string; const path = `/api/v1/runs/${runId}/theatre-events`;
+  const ev = (verdict: string, run = runId) => ({ ts: "2026-09-29T00:00:00.000Z", run, stage: "probe", actor: "code", subject: { kind: "site", id: "uster" }, verdict });
+  const count = () => (db.prepare("SELECT count(*) AS n FROM theatre_events").get() as { n: number }).n;
+  const ndjson = async () => { const r = await call(env, "GET", path, { jwt: operatorJwt }); assert.match(r.headers.get("content-type") ?? "", /application\/x-ndjson/);
+    return (typeof r.body === "string" ? r.body : JSON.stringify(r.body)).trim().split("\n").map((l) => JSON.parse(l) as { stage: string; verdict: string }); };
+
+  assert.deepEqual((await ndjson()).map((e) => `${e.stage}:${e.verdict}`), ["run:start"], "claim synthesizes run start");
+  assert.equal((await call(env, "POST", path, { jwt: serviceJwt, body: { events: [ev("discovered")] } })).status, 401, "lease required");
+  assert.equal(count(), 1);
+  assert.equal((await call(env, "POST", path, { jwt: serviceJwt, lease, body: { events: [ev("not-a-verdict")] } })).status, 400);
+  assert.equal((await call(env, "POST", path, { jwt: serviceJwt, lease, body: { events: [ev("discovered", "other-run")] } })).status, 400);
+  assert.equal((await call(env, "POST", path, { jwt: serviceJwt, lease, body: { events: [ev("discovered"), ev("not-a-verdict")] } })).status, 400);
+  assert.equal((await call(env, "POST", path, { jwt: serviceJwt, lease, body: { events: [] } })).status, 400);
+  assert.equal(count(), 1, "rejected batches insert nothing");
+  const ok = await call(env, "POST", path, { jwt: serviceJwt, lease, body: { events: [ev("discovered"), ev("selected")] } });
+  assert.equal(ok.status, 201); assert.equal(ok.body.accepted, 2);
+  assert.equal((await call(env, "POST", `/api/v1/runs/${runId}/complete`, { jwt: serviceJwt, lease, body: { outcome: "succeeded" } })).status, 200);
+  assert.deepEqual((await ndjson()).map((e) => `${e.stage}:${e.verdict}`), ["run:start", "probe:discovered", "probe:selected", "run:end"]);
+
+  assert.equal((await call(env, "GET", path, { jwt: strangerJwt })).status, 403);
+  assert.equal((await call(env, "GET", path)).status, 401);
+  assert.equal((await call(env, "GET", "/api/v1/runs/nope/theatre-events", { jwt: operatorJwt })).status, 404);
+
+  const sse = await worker.fetch(new Request(`${ORIGIN}${path}`, { headers: { accept: "text/event-stream", "last-event-id": "2", "cf-access-jwt-assertion": operatorJwt } }), env as never);
+  assert.equal(sse.headers.get("content-type"), "text/event-stream; charset=utf-8"); assert.equal(sse.headers.get("cache-control"), "no-store");
+  const reader = sse.body!.getReader(); const dec = new TextDecoder(); let first = ""; while (!first.includes("id: 4")) first += dec.decode((await reader.read()).value); await reader.cancel();
+  assert.match(first, /^id: 3\ndata: .*"verdict":"selected".*\n\nid: 4\ndata: .*"verdict":"end"/s);
+  assert.doesNotMatch(first, /id: [12]\n/);
+
+  assert.throws(() => db.exec("UPDATE theatre_events SET event_json = '{}'"), /append-only/);
+  assert.throws(() => db.exec("DELETE FROM theatre_events"), /append-only/);
+});
+
+test("theatre events: failure and cancellation emit run stage events", async () => {
+  const { db, env } = setup(); await seed(db);
+  await call(env, "POST", "/api/v1/runs", { jwt: operatorJwt, body: runRequest("ch-so-messen:wave1", "k-theatre-2") });
+  const claim = await call(env, "POST", "/api/v1/runner/claim", { jwt: serviceJwt, body: claimBody() });
+  const runId = claim.body.run.id as string; const lease = claim.body.leaseToken as string;
+  const stages = () => db.prepare("SELECT event_json FROM theatre_events WHERE run_id = ? ORDER BY id").all(runId).map((r) => JSON.parse(String(r.event_json)) as { verdict: string; detail?: string });
+  assert.equal((await call(env, "POST", `/api/v1/runs/${runId}/fail`, { jwt: serviceJwt, lease, body: { error: "x".repeat(500) } })).status, 200);
+  assert.deepEqual(stages().map((e) => e.verdict), ["start", "partial"]); assert.equal(stages()[1]?.detail?.length, 200);
+  await call(env, "POST", "/api/v1/runs", { jwt: operatorJwt, body: runRequest("ch-zh-bauma:wave1", "k-theatre-3") });
+  const second = await call(env, "POST", "/api/v1/runner/claim", { jwt: serviceJwt, body: claimBody() });
+  await call(env, "POST", `/api/v1/runs/${second.body.run.id}/cancel`, { jwt: operatorJwt, body: {} });
+  const last = db.prepare("SELECT event_json FROM theatre_events WHERE run_id = ? ORDER BY id DESC LIMIT 1").get(second.body.run.id) as { event_json: string };
+  assert.equal(JSON.parse(last.event_json).verdict, "cancelled");
 });

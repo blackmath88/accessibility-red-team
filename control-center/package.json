@@ -3,7 +3,7 @@
   "private": true,
   "version": "0.1.0",
   "type": "module",
-  "scripts": { "dev": "vite", "build": "tsc -b && vite build", "preview": "vite preview" },
+  "scripts": { "dev": "vite", "build": "tsc -b && vite build && mkdir -p dist/theatre && cp ../theatre/theatre.html dist/theatre/theatre.html", "preview": "vite preview" },
   "dependencies": {
     "@radix-ui/react-dialog": "^1.1.15",
     "@radix-ui/react-dropdown-menu": "^2.1.16",

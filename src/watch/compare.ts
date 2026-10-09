@@ -5,6 +5,7 @@ import {
   SiteAccessibilityReportSchema,
 } from "../report/site-contracts.js";
 import { WatchResultSchema } from "./contracts.js";
+import type { Emit } from "../theatre/emit.js";
 
 function key(probeId: string, outcome: string): string {
   return createHash("sha256").update(`${probeId}:${outcome}`).digest("hex").slice(0, 16);
@@ -73,6 +74,7 @@ export async function compareSiteReports(options: {
   previousPath: string;
   currentPath: string;
   outPath: string;
+  emit?: Emit;
 }) {
   const [previousRaw, currentRaw] = await Promise.all([
     readFile(options.previousPath, "utf8"),
@@ -98,6 +100,8 @@ export async function compareSiteReports(options: {
     ]),
   );
 
+  const emit = options.emit ?? (() => {});
+  const site = new URL(current.entrypoint).hostname;
   const allKeys = Array.from(new Set([...previousMap.keys(), ...currentMap.keys()])).sort();
   const changes = allKeys.map((findingKey) => {
     const before = previousMap.get(findingKey) ?? null;
@@ -117,6 +121,11 @@ export async function compareSiteReports(options: {
     }
 
     const probeId = after?.probeId ?? before!.probeId;
+    emit({
+      stage: "watch", actor: "code", verdict: state.toLowerCase().replace("_", "-"),
+      subject: { kind: "finding", id: `${site}/${probeId}:${(after ?? before)!.outcome}`, site },
+      detail: `${probeId} · occurrences ${before?.occurrenceCount ?? "–"} → ${after?.occurrenceCount ?? "–"}`,
+    });
     return {
       findingKey,
       probeId,

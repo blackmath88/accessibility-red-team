@@ -86,6 +86,22 @@ async function renew(stage: string, progress: Record<string, unknown> = {}): Pro
     body: JSON.stringify({ stage, progress, leaseSeconds: 300 }) });
 }
 
+// Live theatre feed: ship complete new lines of <output>/events.jsonl (byte offset, trailing partial line ignored) in batches of 50.
+// The CLI run id (e.g. a scan runId) is replaced by the control-plane run id. Serialized; a failed batch is retried on the next tick (400 = permanently invalid, skipped). Never fails the run; the file is also uploaded as an artifact.
+let theatreOffset = 0; let theatreChain: Promise<void> = Promise.resolve();
+const streamTheatre = () => (theatreChain = theatreChain.then(async () => {
+  try {
+    const buf = await readFile(join(output, "events.jsonl")).catch(() => Buffer.alloc(0)); const end = buf.lastIndexOf(10) + 1;
+    if (end <= theatreOffset) return; const lines = buf.subarray(theatreOffset, end).toString("utf8").split("\n").slice(0, -1);
+    for (let i = 0; i < lines.length; i += 50) {
+      const batch = lines.slice(i, i + 50); const events = batch.flatMap((line) => { try { return [{ ...JSON.parse(line), run: claim.run.id }]; } catch { return []; } });
+      try { if (events.length) await api(`/api/v1/runs/${encodeURIComponent(claim.run.id)}/theatre-events`, { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ events }) }); }
+      catch (error) { if (!String((error as Error).message).includes("(400)")) throw error; console.warn(`theatre: batch rejected, skipping (${(error as Error).message.slice(0, 200)})`); }
+      theatreOffset += batch.reduce((n, line) => n + Buffer.byteLength(line) + 1, 0);
+    }
+  } catch (error) { console.warn(`theatre: stream failed, will retry (${error instanceof Error ? error.message : String(error)})`); }
+}));
+
 const preclaimed = process.env.CONTROL_CENTER_CLAIM_JSON;
 if (preclaimed) claim = JSON.parse(Buffer.from(preclaimed, "base64url").toString("utf8")) as ClaimedRun;
 else {
@@ -99,6 +115,7 @@ if (!localRevision || claim.run.engineRevision !== localRevision) throw new Erro
 const output = resolve("runs", "control-center", claim.run.id); await mkdir(output, { recursive: true });
 let failure: Error | null = null; let heartbeatFailure: Error | null = null;
 const execution = new AbortController();
+const theatreTimer = setInterval(() => { void streamTheatre(); }, 2000);
 const heartbeat = setInterval(() => { void renew("probes", { heartbeat: new Date().toISOString() }).catch((e) => {
   heartbeatFailure = e instanceof Error ? e : new Error(String(e)); execution.abort();
 }); }, 120_000);
@@ -116,7 +133,7 @@ try {
 } catch (error) {
   failure = error instanceof Error ? error : new Error(String(error)); const captured = (error as { result?: { stdout: string; stderr: string } }).result;
   await writeFile(join(output, "runner.log"), `${captured?.stdout ?? ""}\n${captured?.stderr ?? ""}\n${failure.stack ?? failure.message}`);
-} finally { clearInterval(heartbeat); }
+} finally { clearInterval(heartbeat); clearInterval(theatreTimer); await streamTheatre(); }
 
 let recordedPartial = false;
 try {

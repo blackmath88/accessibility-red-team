@@ -3,10 +3,12 @@ import { join, resolve } from "node:path";
 import YAML from "yaml";
 import { auditSite } from "../site/audit.js";
 import { CohortResultSchema, CohortSchema } from "./contracts.js";
+import type { Emit } from "../theatre/emit.js";
 
 export async function runCohort(options: {
   cohortPath: string;
   outDir?: string;
+  emit?: Emit;
 }) {
   const cohortPath = resolve(options.cohortPath);
   const cohort = CohortSchema.parse(YAML.parse(await readFile(cohortPath, "utf8")));
@@ -40,6 +42,7 @@ export async function runCohort(options: {
         profilePath: resolvedProfile,
         maxSurfaces: cohort.settings.max_surfaces,
         journeys: cohort.settings.journeys ?? false,
+        emit: options.emit,
       });
 
       for (const journeyRun of result.journeyRuns) {
