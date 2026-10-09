@@ -93,6 +93,7 @@ export async function auditSite(input: string, options: {
     ? await buildSiteReport({
         auditDir: outDir,
         profilePath: resolve(options.profilePath),
+        emit: options.emit,
       })
     : null;
 

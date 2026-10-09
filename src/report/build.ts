@@ -27,6 +27,18 @@ export async function buildReport(options: {
     requirements: resolveProbeRequirements(probe, profile, registry),
   }));
 
+  const emit = options.emit ?? (() => {});
+  const site = new URL(scanSummary.finalUrl).hostname;
+  for (const { probe, requirements } of findings) {
+    for (const requirement of requirements) {
+      emit({
+        stage: "verify", actor: "code", verdict: requirement.chain.length ? "supported" : "blocked",
+        subject: { kind: "claim", id: `${site}/${probe.probeId}:${probe.outcome}/wcag-${requirement.criterion}`, site },
+        detail: `WCAG ${requirement.criterion} · ${requirement.status} · ${requirement.chain.map((link) => link.sourceId).join(" ← ") || "no source chain"}`,
+      });
+    }
+  }
+
   const resolutions = findings.flatMap((finding) => finding.requirements);
   const report = AccessibilityReportSchema.parse({
     schema: "art/accessibility-report/v1",
@@ -49,5 +61,9 @@ export async function buildReport(options: {
 
   await writeFile(join(options.runDir, "report.json"), JSON.stringify(report, null, 2));
   await writeFile(join(options.runDir, "report.html"), renderReportHtml(report));
+  emit({
+    stage: "report", actor: "code", verdict: "written", subject: { kind: "site", id: site, site },
+    detail: `${report.findings.length} findings · ${report.summary.incomplete} needs review · ${report.summary.applicable} applicable`,
+  });
   return report;
 }
