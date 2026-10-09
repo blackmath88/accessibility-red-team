@@ -1,0 +1,365 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Run Theatre</title>
+<style>
+  :root{
+    --bg:#0b0b0d; --panel:#111114; --line:#1f1f25; --ink:#d9d9de; --dim:#6b6b76; --mute:#3a3a44;
+    --teal:#4fd1a5; --pink:#ff4f7d; --orange:#ff9a3c; --yellow:#ffd43b; --magenta:#e04fff; --white:#f3f3f5;
+    --mono:ui-monospace,"JetBrains Mono","SF Mono",Menlo,Consolas,monospace;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;background:var(--bg);color:var(--ink);font:12px/1.45 var(--mono)}
+  body{padding:14px 16px 10px;min-height:100vh;display:flex;flex-direction:column;gap:10px}
+  header{display:flex;justify-content:space-between;align-items:flex-end;gap:16px;flex-wrap:wrap}
+  h1{margin:0;font-size:15px;letter-spacing:.04em;font-weight:700}
+  h1 span{color:var(--pink)}
+  .sub{color:var(--dim);font-size:11px;margin-top:2px;max-width:70ch}
+  .counters{display:flex;gap:22px}
+  .counters div{text-align:right}
+  .counters small{display:block;color:var(--dim);font-size:10px;letter-spacing:.06em}
+  .counters b{font-size:17px;font-weight:700;color:var(--white)}
+  .counters b.pink{color:var(--pink)} .counters b.teal{color:var(--teal)} .counters b.orange{color:var(--orange)} .counters b.yellow{color:var(--yellow)} .counters b.magenta{color:var(--magenta)}
+
+  .controls{display:flex;gap:10px;align-items:center;flex-wrap:wrap;border:1px solid var(--line);background:var(--panel);padding:6px 10px;border-radius:4px}
+  .controls input[type=text]{flex:1;min-width:220px;background:#0b0b0d;border:1px solid var(--line);color:var(--ink);font:inherit;padding:4px 7px;border-radius:3px}
+  .controls button{background:#1a1a20;border:1px solid var(--mute);color:var(--ink);font:inherit;padding:4px 10px;border-radius:3px;cursor:pointer}
+  .controls button:hover{border-color:var(--dim)}
+  .controls label{color:var(--dim);font-size:11px;display:flex;gap:6px;align-items:center}
+  .controls input[type=range]{accent-color:var(--pink)}
+  #scrub{flex:1;min-width:160px}
+  .live{color:var(--teal)} .live::before{content:"● ";animation:blink 1s infinite}
+  @keyframes blink{50%{opacity:.2}}
+
+  main{display:grid;grid-template-columns:minmax(260px,1fr) minmax(360px,1.4fr) 230px;gap:10px;min-height:440px}
+  .panel{border:1px solid var(--line);background:var(--panel);border-radius:4px;position:relative;overflow:hidden}
+  .panel h2{margin:0;padding:6px 10px;font-size:10px;letter-spacing:.08em;color:var(--dim);font-weight:600;border-bottom:1px solid var(--line);display:flex;justify-content:space-between}
+  .panel h2 em{font-style:normal;color:var(--mute)}
+
+  #stream{height:100%;display:flex;flex-direction:column}
+  #streamBody{flex:1;overflow:hidden;padding:8px 10px;display:flex;flex-direction:column;justify-content:flex-end;gap:2px}
+  .ln{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:var(--dim);opacity:.55;transition:opacity .3s}
+  .ln:last-child{opacity:1;color:var(--ink)}
+  .ln:nth-last-child(2){opacity:.85}.ln:nth-last-child(3){opacity:.7}
+  .chip{display:inline-block;padding:0 5px;border-radius:2px;margin-right:6px;font-size:11px;color:#0b0b0d;font-weight:700}
+  .c-teal{background:var(--teal)} .c-pink{background:var(--pink)} .c-orange{background:var(--orange)} .c-yellow{background:var(--yellow)} .c-magenta{background:var(--magenta)} .c-white{background:var(--white)} .c-mute{background:var(--mute);color:var(--ink)}
+  .t-teal{color:var(--teal)} .t-pink{color:var(--pink)} .t-orange{color:var(--orange)} .t-yellow{color:var(--yellow)} .t-magenta{color:var(--magenta)} .t-white{color:var(--white)}
+
+  #stage{position:relative}
+  canvas{display:block;width:100%;height:100%}
+  .hero{position:absolute;left:24px;top:50%;transform:translateY(-50%);pointer-events:none;max-width:46%}
+  .hero b{display:block;font-size:40px;line-height:1;color:var(--white);font-weight:800;letter-spacing:-.02em}
+  .hero .l2{font-size:18px;color:var(--pink);margin-top:6px;font-weight:700}
+  .hero .l3{font-size:12px;color:var(--teal);margin-top:10px}
+  .hero .l4{font-size:11px;color:var(--dim);margin-top:2px}
+
+  #actors{display:flex;flex-direction:column;gap:8px}
+  .card{border:1px solid;border-radius:4px;padding:8px 10px;background:#0d0d10;flex:1;display:flex;flex-direction:column;justify-content:space-between;position:relative}
+  .card .tag{position:absolute;top:-7px;left:8px;font-size:9px;letter-spacing:.08em;padding:0 5px;color:#0b0b0d;font-weight:700;border-radius:2px}
+  .card .row{display:flex;align-items:center;justify-content:space-between;gap:8px}
+  .card .num{font-size:28px;font-weight:800;line-height:1}
+  .card .name{font-size:11px;margin-top:4px}
+  .card .foot{font-size:10px;color:var(--dim);margin-top:6px}
+  .card svg{width:34px;height:34px}
+  .card.teal{border-color:var(--teal)} .card.teal .tag{background:var(--teal)} .card.teal .num{color:var(--teal)}
+  .card.magenta{border-color:var(--magenta)} .card.magenta .tag{background:var(--magenta)} .card.magenta .num{color:var(--magenta)}
+  .card.orange{border-color:var(--orange)} .card.orange .tag{background:var(--orange)} .card.orange .num{color:var(--orange)}
+  .card.yellow{border-color:var(--yellow)} .card.yellow .tag{background:var(--yellow)} .card.yellow .num{color:var(--yellow)}
+  .card.flash{box-shadow:0 0 0 1px currentColor inset}
+
+  .bottom{display:grid;grid-template-columns:1.6fr 1fr;gap:10px}
+  .bottom2{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:10px}
+  table{width:100%;border-collapse:collapse;font-size:11px;table-layout:fixed}
+  td{padding:2px 10px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:0}
+  tr.latest td{background:#1a1118}
+  td.t{color:var(--dim);width:72px} td.v{width:84px} td.r{width:130px} td.a{color:var(--dim);width:92px}
+  .bars{padding:8px 10px}
+  .bars .big{font-size:34px;font-weight:800;color:var(--pink);line-height:1}
+  .bars .big small{font-size:11px;color:var(--dim);font-weight:400;margin-left:8px}
+  .bar{display:grid;grid-template-columns:120px 1fr 48px;gap:8px;align-items:center;margin-top:5px;font-size:11px}
+  .bar i{display:block;height:6px;background:#1c1c22;border-radius:2px;overflow:hidden}
+  .bar i b{display:block;height:100%;width:0;transition:width .25s}
+  .bar span:last-child{text-align:right;color:var(--ink)}
+  .legend{padding:8px 10px;font-size:11px}
+  .legend div{display:flex;gap:8px;margin-bottom:6px}
+  .legend i{width:3px;border-radius:2px;flex:none}
+  .legend small{display:block;color:var(--dim)}
+  .mini{height:118px}
+  .grid{padding:8px 10px;display:grid;grid-template-columns:repeat(auto-fill,8px);gap:3px;align-content:start}
+  .grid i{width:8px;height:8px;border-radius:50%;background:#1c1c22}
+  footer{display:flex;justify-content:space-between;color:var(--mute);font-size:10px;padding-top:2px}
+  footer span.pink{color:var(--pink)}
+  @media (max-width:900px){main{grid-template-columns:1fr}.bottom,.bottom2{grid-template-columns:1fr 1fr}.hero b{font-size:28px}}
+</style>
+</head>
+<body>
+<header>
+  <div>
+    <h1>RUN THEATRE <span>//</span> <span id="runName">no run loaded</span></h1>
+    <div class="sub" id="subtitle">every pipeline step becomes a typed event · code decides the sure ones · a model only touches semantic boundaries · a human presses the button</div>
+  </div>
+  <div class="counters">
+    <div><small>events</small><b id="cEvents">0</b></div>
+    <div><small>observations</small><b id="cObs">0</b></div>
+    <div><small>findings</small><b class="pink" id="cFind">0</b></div>
+    <div><small>needs review</small><b class="orange" id="cReview">0</b></div>
+    <div><small>model calls</small><b class="magenta" id="cModel">0</b></div>
+    <div><small>human</small><b class="yellow" id="cHuman">0</b></div>
+  </div>
+</header>
+
+<div class="controls">
+  <input type="text" id="src" placeholder="runs/….events.jsonl  ·  or  live:https://…/api/runs/<id>/events">
+  <button id="loadBtn">load</button>
+  <input type="file" id="file" accept=".jsonl,.json,.txt" style="display:none"><button id="fileBtn">file…</button>
+  <button id="playBtn">▶ play</button>
+  <label>tempo <input type="range" id="tempo" min="0" max="100" value="55"> <span id="tempoVal">×</span></label>
+  <input type="range" id="scrub" min="0" max="0" value="0">
+  <span id="pos" style="color:var(--dim)">0 / 0</span>
+  <span id="liveFlag"></span>
+</div>
+
+<main>
+  <section class="panel" id="stream"><h2>event stream <em id="streamMeta">—</em></h2><div id="streamBody"></div></section>
+  <section class="panel" id="stage">
+    <canvas id="cv"></canvas>
+    <div class="hero">
+      <b id="hero1">0</b>
+      <div class="l2" id="hero2">observations</div>
+      <div class="l3" id="hero3">—</div>
+      <div class="l4" id="hero4"></div>
+    </div>
+  </section>
+  <aside id="actors">
+    <div class="card teal" id="cardCode"><span class="tag">decides the sure ones</span>
+      <div class="row"><svg viewBox="0 0 32 32"><rect x="4" y="4" width="24" height="24" rx="3" fill="none" stroke="currentColor" stroke-width="2"/><path d="M10 13l-3 3 3 3M22 13l3 3-3 3M18 10l-4 12" stroke="currentColor" stroke-width="2" fill="none"/></svg><span class="num" id="nCode">0</span></div>
+      <div><div class="name">→ code</div><div class="foot" id="fCode">deterministic probes · triage · provenance</div></div></div>
+    <div class="card magenta" id="cardModel"><span class="tag">semantic boundary</span>
+      <div class="row"><svg viewBox="0 0 32 32"><path d="M16 3l11 6.5v13L16 29 5 22.5v-13z" fill="none" stroke="currentColor" stroke-width="2"/><path d="M16 3v26M5 9.5l11 6.5 11-6.5" stroke="currentColor" stroke-width="2" fill="none"/></svg><span class="num" id="nModel">0</span></div>
+      <div><div class="name">→ semantic compiler</div><div class="foot" id="fModel">bounded evidence in · small decision space out</div></div></div>
+    <div class="card orange" id="cardVerify"><span class="tag">blocks unsupported claims</span>
+      <div class="row"><svg viewBox="0 0 32 32"><circle cx="16" cy="16" r="12" fill="none" stroke="currentColor" stroke-width="2"/><path d="M8 8l16 16" stroke="currentColor" stroke-width="2"/></svg><span class="num" id="nVerify">0</span></div>
+      <div><div class="name">→ verify</div><div class="foot" id="fVerify">claims blocked · nothing unsupported is published</div></div></div>
+    <div class="card yellow" id="cardHuman"><span class="tag">presses the button</span>
+      <div class="row"><svg viewBox="0 0 32 32"><circle cx="16" cy="11" r="5" fill="none" stroke="currentColor" stroke-width="2"/><path d="M6 28c1-6 5-9 10-9s9 3 10 9" fill="none" stroke="currentColor" stroke-width="2"/></svg><span class="num" id="nHuman">0</span></div>
+      <div><div class="name">→ you</div><div class="foot" id="fHuman">needs-review · approvals only</div></div></div>
+  </aside>
+</main>
+
+<div class="bottom">
+  <section class="panel"><h2>decision stream <em>time · subject · stage · verdict · actor</em></h2><table id="decisions"><colgroup><col style="width:72px"><col><col style="width:84px"><col style="width:130px"><col style="width:92px"></colgroup><tbody id="decisionsBody"></tbody></table></section>
+  <section class="panel bars"><div class="big"><span id="bigN">0</span><small id="bigL">events tonight</small></div><div id="funnel"></div></section>
+</div>
+<div class="bottom2">
+  <section class="panel"><h2>event rate <em>last 60 ticks</em></h2><canvas class="mini" id="spark"></canvas></section>
+  <section class="panel"><h2>surfaces <em id="gridMeta">one dot = 1 surface</em></h2><div class="grid" id="grid"></div></section>
+  <section class="panel"><h2>sites <em id="siteMeta">0</em></h2><canvas class="mini" id="sites"></canvas></section>
+  <section class="panel"><h2>who had to think</h2><div class="legend" id="legend"></div></section>
+</div>
+<footer><span id="footL">theatre v1 · art/theatre-event/v1</span><span id="footR"></span></footer>
+
+<script>
+// ---------- colour semantics ----------
+const DROP = new Set(["pass","inapplicable","skipped","merged","dropped","discovered","supported","explained","persisting","resolved","end","start","written","selected"]);
+const HOT  = new Set(["violation","finding","new"]);
+const WARN = new Set(["incomplete","needs-review","blocked","rule-changed","not-comparable","partial","cancelled"]);
+function cls(e){
+  if(e.actor==="human"||e.verdict==="escalated") return "yellow";
+  if(e.actor==="small-model"||e.actor==="large-model") return "magenta";
+  if(HOT.has(e.verdict)) return "pink";
+  if(WARN.has(e.verdict)) return "orange";
+  if(DROP.has(e.verdict)) return "teal";
+  return "white";
+}
+const CSS = getComputedStyle(document.documentElement);
+const COL = c => CSS.getPropertyValue("--"+c).trim();
+
+// ---------- state ----------
+let events=[], cursor=0, playing=false, live=false, es=null, pollTimer=null;
+let S; function reset(){ S={ n:0,obs:0,find:0,review:0,model:0,human:0,verify:0,code:0,
+  stage:{}, verdict:{}, sites:{}, surfaces:{}, run:"", start:null, last:null, ticks:[], threads:[], rate:[], rateT:0, usd:0, tokens:0 }; }
+reset();
+const $=id=>document.getElementById(id);
+
+function apply(e, animate){
+  S.n++; S.last=e; if(!S.start) S.start=e.ts; if(e.run) S.run=e.run;
+  S.stage[e.stage]=(S.stage[e.stage]||0)+1;
+  const key=e.stage+":"+e.verdict; S.verdict[key]=(S.verdict[key]||0)+1;
+  if(e.subject.kind==="observation"&&e.stage==="probe") S.obs++;
+  if(e.stage==="triage"&&e.verdict==="finding") S.find++;
+  if(e.stage==="interpret"&&e.verdict==="needs-review") S.review++;
+  if(e.actor==="small-model"||e.actor==="large-model") S.model++;
+  else if(e.actor==="human") S.human++; else S.code++;
+  if(e.stage==="verify"&&e.verdict==="blocked") S.verify++;
+  if(e.cost){ if(e.cost.usd) S.usd+=e.cost.usd; if(e.cost.tokens) S.tokens+=e.cost.tokens; }
+  const site=e.subject.site||(e.subject.kind==="site"?e.subject.id:null);
+  if(site){ const s=S.sites[site]||(S.sites[site]={ev:0,find:0,review:0,done:false}); s.ev++; if(e.stage==="triage"&&e.verdict==="finding") s.find++; if(e.verdict==="needs-review") s.review++; if(e.stage==="report") s.done=true; }
+  if(e.subject.kind==="surface"&&e.stage==="scout"&&(e.verdict==="selected")) S.surfaces[e.subject.id]="sel";
+  if(e.subject.kind==="surface"&&e.stage==="probe") S.surfaces[e.subject.id]="probed";
+  // arc tick
+  const c=cls(e); const w = e.subject.kind==="observation"?1: e.subject.kind==="surface"?1.6 : e.subject.kind==="finding"?2.4 : e.subject.kind==="claim"?1.4 : 3;
+  S.ticks.push({c, w, k:e.subject.kind, stage:e.stage});
+  if(animate){
+    const important = e.subject.kind==="finding" || e.subject.kind==="site" || e.actor==="human" || e.actor!=="code" || (e.stage==="verify"&&e.verdict==="blocked");
+    if(important) S.threads.push({c, born:performance.now(), idx:S.ticks.length-1, lane:S.ticks.length, label:(e.verdict+" · "+(e.subject.id.split("/").pop())).slice(0,30), life:1500});
+    else if(Math.random()<0.12) S.threads.push({c, born:performance.now(), idx:S.ticks.length-1, lane:S.ticks.length, label:null, life:450});
+  }
+  if(animate) pushLine(e), pushRow(e);
+  if(animate && e.actor==="human") flash("cardHuman");
+  if(animate && (e.actor==="small-model"||e.actor==="large-model")) flash("cardModel");
+}
+function flash(id){ const el=$(id); el.classList.add("flash"); setTimeout(()=>el.classList.remove("flash"),350); }
+
+// ---------- stream + table ----------
+const streamBody=$("streamBody"); const MAXL=26;
+function pushLine(e){
+  const d=document.createElement("div"); d.className="ln";
+  const t=e.ts.slice(11,23);
+  d.innerHTML=`<span style="color:var(--mute)">${t}</span> <span class="chip c-${cls(e)}">${e.verdict}</span><span class="t-white">${esc(e.subject.id)}</span> <span style="color:var(--dim)">${esc(e.detail||"")}</span>`;
+  streamBody.appendChild(d); while(streamBody.children.length>MAXL) streamBody.firstChild.remove();
+}
+const tbl=$("decisionsBody"); const MAXR=9;
+function pushRow(e){
+  const tr=document.createElement("tr"); const c=cls(e);
+  tr.innerHTML=`<td class="t">${relT(e.ts)}</td><td><span class="chip c-${c}">${esc(e.subject.kind)}</span>${esc(e.subject.id.split("/").slice(-2).join("/"))}</td><td class="v">${e.stage}</td><td class="r t-${c}">→ ${e.verdict}</td><td class="a">${e.actor}</td>`;
+  [...tbl.querySelectorAll("tr.latest")].forEach(r=>r.classList.remove("latest"));
+  if(c!=="teal") tr.classList.add("latest");
+  tbl.appendChild(tr); while(tbl.children.length>MAXR) tbl.firstChild.remove();
+}
+function relT(ts){ if(!S.start) return ""; const s=(new Date(ts)-new Date(S.start))/1000; return s.toFixed(2)+"s"; }
+const esc=s=>String(s).replace(/[&<>]/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;"}[m]));
+
+// ---------- numbers ----------
+const fmt=n=>n.toLocaleString("en-US");
+function renderNumbers(){
+  $("cEvents").textContent=fmt(S.n); $("cObs").textContent=fmt(S.obs); $("cFind").textContent=fmt(S.find);
+  $("cReview").textContent=fmt(S.review); $("cModel").textContent=fmt(S.model); $("cHuman").textContent=fmt(S.human);
+  $("nCode").textContent=fmt(S.code); $("nModel").textContent=fmt(S.model); $("nVerify").textContent=fmt(S.verify); $("nHuman").textContent=fmt(S.human);
+  $("fModel").textContent = S.model? `${fmt(S.tokens)} tokens · $${S.usd.toFixed(3)}` : "no model call so far · aiCalls 0";
+  $("fCode").textContent = `${pct(S.code,S.n)} of all decisions · no model needed`;
+  $("runName").textContent=S.run||"no run loaded";
+  const sitesDone=Object.values(S.sites).filter(s=>s.done).length, sitesN=Object.keys(S.sites).length;
+  // hero
+  const phase = S.n===0?"idle": S.last.stage;
+  if(S.find===0){ $("hero1").textContent=fmt(S.obs); $("hero2").textContent="observations"; $("hero3").textContent=S.obs?`${pct(S.verdict["probe:pass"]+S.verdict["probe:inapplicable"]||0,S.obs+(S.verdict["probe:pass"]||0)+(S.verdict["probe:inapplicable"]||0))} silent · code`:"—"; }
+  else { $("hero1").textContent=fmt(S.find); $("hero2").textContent=`findings from ${fmt(S.obs)} observations`; $("hero3").textContent=`${fmt(S.review)} need a human · ${fmt(S.model)} model calls`; }
+  $("hero4").textContent = S.start? `${elapsed()} elapsed · ${sitesDone}/${sitesN} sites reported · ${phase}` : "load a run →";
+  // funnel
+  const rows=[["discovered",S.verdict["scout:discovered"]||0,"teal"],["selected",S.verdict["scout:selected"]||0,"teal"],["observations",S.obs,"white"],["findings",S.find,"pink"],["needs review",S.review,"orange"],["claims blocked",S.verify,"orange"],["human decisions",S.human,"yellow"],["model calls",S.model,"magenta"]];
+  const max=Math.max(1,...rows.map(r=>r[1]));
+  $("funnel").innerHTML=rows.map(r=>`<div class="bar"><span style="color:var(--dim)">${r[0]}</span><i><b style="width:${100*r[1]/max}%;background:var(--${r[2]})"></b></i><span>${fmt(r[1])}</span></div>`).join("");
+  $("bigN").textContent=fmt(S.n); $("bigL").textContent=`events · ${sitesN} sites`;
+  // legend
+  const L=[["teal","code",`${fmt(S.code)} decisions · if-statements, axe, hashes`],["magenta","semantic compiler",`${fmt(S.model)} bounded calls`],["orange","verify",`${fmt(S.verify)} claims blocked`],["yellow","you",`${fmt(S.human)} decisions`]];
+  $("legend").innerHTML=L.map(l=>`<div><i style="background:var(--${l[0]})"></i><div>${l[1]}<small>${l[2]}</small></div></div>`).join("")+`<div style="color:var(--dim);margin-top:4px">${S.n? `smart models saw ${fmt(S.model)} of ${fmt(S.n)} events`:""}</div>`;
+  // grid
+  const ids=Object.keys(S.surfaces); $("grid").innerHTML=ids.map(id=>`<i style="background:${S.surfaces[id]==="probed"?COL("teal"):COL("mute")}" title="${esc(id)}"></i>`).join(""); $("gridMeta").textContent=`${ids.filter(i=>S.surfaces[i]==="probed").length} / ${ids.length} probed`;
+  $("siteMeta").textContent=`${sitesDone} / ${sitesN} reported`;
+  $("footR").textContent=S.n?`events ${fmt(S.n)} · obs ${fmt(S.obs)} · findings ${fmt(S.find)} · review ${fmt(S.review)} · model ${fmt(S.model)} · you ${fmt(S.human)}`:"";
+  $("pos").textContent=`${cursor} / ${events.length}`; $("scrub").max=events.length; if(!scrubbing) $("scrub").value=cursor;
+}
+const pct=(a,b)=> b? Math.round(100*a/b)+"%":"0%";
+function elapsed(){ if(!S.last) return "0s"; const s=(new Date(S.last.ts)-new Date(S.start))/1000; return s<90? s.toFixed(1)+"s" : Math.floor(s/60)+"m "+Math.round(s%60)+"s"; }
+
+// ---------- canvas: arc + threads ----------
+const cv=$("cv"), ctx=cv.getContext("2d");
+function sizeCanvas(c){ const r=c.getBoundingClientRect(); const dpr=devicePixelRatio||1; if(c.width!==r.width*dpr||c.height!==r.height*dpr){ c.width=r.width*dpr; c.height=r.height*dpr; c.getContext("2d").setTransform(dpr,0,0,dpr,0,0);} return r; }
+function drawArc(now){
+  const r=sizeCanvas(cv); const W=r.width,H=r.height; ctx.clearRect(0,0,W,H);
+  const cx=W*0.22, cy=H/2, R=Math.min(H*0.41, W*0.58); const a0=-Math.PI*0.33, a1=Math.PI*0.33;
+  // faint rails
+  ctx.strokeStyle="#23232a"; ctx.lineWidth=1; ctx.beginPath(); ctx.arc(cx,cy,R,a0,a1); ctx.stroke();
+  ctx.beginPath(); ctx.arc(cx,cy,R+64,a0,a1); ctx.stroke();
+  const cap = Math.max(events.length||0, S.ticks.length, 400);
+  const N=S.ticks.length;
+  for(let i=0;i<N;i++){
+    const t=S.ticks[i]; const a=a0+(a1-a0)*(i/cap); const len= 8+ t.w*9 + (t.k==="site"?26:0);
+    const x0=cx+Math.cos(a)*R, y0=cy+Math.sin(a)*R;
+    ctx.strokeStyle=COL(t.c); ctx.globalAlpha= t.c==="teal"?0.55:1; ctx.lineWidth= t.k==="observation"?1:1.6;
+    ctx.beginPath(); ctx.moveTo(x0,y0); ctx.lineTo(cx+Math.cos(a)*(R+len), cy+Math.sin(a)*(R+len)); ctx.stroke();
+  }
+  ctx.globalAlpha=1;
+  // threads from the stream panel edge to their tick
+  S.threads=S.threads.filter(th=>now-th.born<th.life);
+  for(const th of S.threads){
+    const p=(now-th.born)/th.life; const a=a0+(a1-a0)*(th.idx/cap);
+    const x1=cx+Math.cos(a)*R, y1=cy+Math.sin(a)*R; const lane=th.lane%6; const x0=-6, y0= lane<3 ? H*0.10+lane*22 : H*0.78+(lane-3)*22;
+    const mx=(x0+x1)/2, my=(y0+y1)/2;
+    ctx.strokeStyle=COL(th.c); ctx.globalAlpha=(1-p)*0.9; ctx.lineWidth=th.c==="teal"?0.6:1.2;
+    ctx.beginPath(); ctx.moveTo(x0,y0); ctx.quadraticCurveTo(mx,my,x1,y1); ctx.stroke();
+    if(th.label){ const q=0.62+0.38*Math.min(1,p*1.6); const bx=(1-q)*(1-q)*x0+2*(1-q)*q*mx+q*q*x1, by=(1-q)*(1-q)*y0+2*(1-q)*q*my+q*q*y1;
+      ctx.font="10px "+CSS.getPropertyValue("--mono"); const tw=ctx.measureText(th.label).width+8;
+      ctx.fillStyle=COL(th.c); ctx.fillRect(bx-tw/2,by-8,tw,14); ctx.fillStyle="#0b0b0d"; ctx.fillText(th.label,bx-tw/2+4,by+3); }
+  }
+  ctx.globalAlpha=1;
+  // stage labels along arc
+  ctx.fillStyle="#3a3a44"; ctx.font="9px "+CSS.getPropertyValue("--mono");
+  const stages=["scout","probe","triage","interpret","verify","report","watch"];
+  let acc=0; for(const s of stages){ const n=S.stage[s]||0; if(!n) continue; const a=a0+(a1-a0)*((acc+n/2)/cap); acc+=n; ctx.save(); ctx.translate(cx+Math.cos(a)*(R+74), cy+Math.sin(a)*(R+74)); ctx.rotate(a+Math.PI/2); ctx.fillText(s,-ctx.measureText(s).width/2,0); ctx.restore(); }
+}
+// sparkline
+const sp=$("spark"), sctx=sp.getContext("2d");
+function drawSpark(){ const r=sizeCanvas(sp); const W=r.width,H=r.height; sctx.clearRect(0,0,W,H); const d=S.rate.slice(-60); if(d.length<2) return; const max=Math.max(1,...d);
+  sctx.strokeStyle=COL("pink"); sctx.lineWidth=1.4; sctx.beginPath(); d.forEach((v,i)=>{ const x=10+(W-20)*i/(59), y=H-12-(H-28)*v/max; i?sctx.lineTo(x,y):sctx.moveTo(x,y); }); sctx.stroke();
+  sctx.fillStyle="#6b6b76"; sctx.font="10px "+CSS.getPropertyValue("--mono"); sctx.fillText(`peak ${max}/tick · avg ${(d.reduce((a,b)=>a+b,0)/d.length).toFixed(1)}`,10,H-2); }
+// sites ring
+const sc=$("sites"), scx=sc.getContext("2d");
+function drawSites(){ const r=sizeCanvas(sc); const W=r.width,H=r.height; scx.clearRect(0,0,W,H); const ids=Object.keys(S.sites); if(!ids.length) return;
+  const cx=W/2, cy=H/2+4, R=Math.min(W,H)/2-22;
+  ids.forEach((id,i)=>{ const s=S.sites[id]; const a=-Math.PI/2+2*Math.PI*i/ids.length; const x=cx+Math.cos(a)*R, y=cy+Math.sin(a)*R;
+    scx.fillStyle= s.done?COL("teal"): s.review?COL("orange"): s.find?COL("pink"):"#3a3a44"; scx.beginPath(); scx.arc(x,y,4+Math.min(8,s.find/2),0,7); scx.fill();
+    scx.fillStyle="#6b6b76"; scx.font="9px "+CSS.getPropertyValue("--mono"); const lab=id.split("-").pop(); scx.fillText(lab, x-scx.measureText(lab).width/2, y+18); }); }
+
+// ---------- playback ----------
+let lastFrame=performance.now(), carry=0, scrubbing=false;
+function tempoEPS(){ const v=+$("tempo").value; return Math.round(Math.pow(10, 0.3+v/100*2.6)); } // 2 … ~800 events/s
+function frame(now){
+  const dt=(now-lastFrame)/1000; lastFrame=now;
+  let applied=0;
+  if(playing && !live && cursor<events.length){
+    carry+=dt*tempoEPS(); const n=Math.floor(carry); carry-=n;
+    for(let i=0;i<n&&cursor<events.length;i++){ apply(events[cursor++],true); applied++; }
+    if(cursor>=events.length){ playing=false; $("playBtn").textContent="↺ replay"; }
+  }
+  S.rateT+=dt; S._acc=(S._acc||0)+applied; if(S.rateT>0.25){ S.rate.push(S._acc); S._acc=0; S.rateT=0; if(S.rate.length>120) S.rate.shift(); }
+  renderNumbers(); drawArc(now); drawSpark(); drawSites();
+  requestAnimationFrame(frame);
+}
+requestAnimationFrame(frame);
+$("tempo").oninput=()=>$("tempoVal").textContent=`${tempoEPS()} ev/s`; $("tempo").oninput();
+$("playBtn").onclick=()=>{ if(live) return; if(cursor>=events.length){ seek(0); } playing=!playing; $("playBtn").textContent=playing?"❚❚ pause":"▶ play"; };
+$("scrub").addEventListener("input",()=>{ scrubbing=true; seek(+$("scrub").value); });
+$("scrub").addEventListener("change",()=>{ scrubbing=false; });
+function seek(i){ reset(); streamBody.innerHTML=""; tbl.innerHTML=""; cursor=0; while(cursor<i) apply(events[cursor++],false); // show tail of the stream
+  for(let k=Math.max(0,cursor-MAXL);k<cursor;k++) pushLine(events[k]); for(let k=Math.max(0,cursor-MAXR);k<cursor;k++) pushRow(events[k]); }
+
+// ---------- feeds ----------
+function parseJSONL(text){ return text.split(/\r?\n/).filter(Boolean).map((l,i)=>{ try{ return JSON.parse(l);}catch(e){ console.warn("bad line",i); return null; } }).filter(Boolean); }
+async function loadSrc(src){
+  stopLive(); if(!src) return;
+  if(src.startsWith("live:")){ startLive(src.slice(5)); return; }
+  const res=await fetch(src,{cache:"no-store"}); events=parseJSONL(await res.text()); $("streamMeta").textContent=`${events.length} events · ${src.split("/").pop()}`;
+  seek(0); playing=true; $("playBtn").textContent="❚❚ pause";
+}
+function startLive(url){
+  live=true; events=[]; reset(); streamBody.innerHTML=""; tbl.innerHTML=""; cursor=0; $("liveFlag").className="live"; $("liveFlag").textContent="live"; $("streamMeta").textContent=url;
+  const onEv=e=>{ events.push(e); cursor=events.length; apply(e,true); };
+  if(/\.jsonl(\?|$)/.test(url)){ // growing file: poll
+    let seen=0; const poll=async()=>{ try{ const t=await (await fetch(url,{cache:"no-store"})).text(); const all=parseJSONL(t); for(;seen<all.length;seen++) onEv(all[seen]); }catch(err){ console.warn(err);} }; poll(); pollTimer=setInterval(poll,2000);
+  } else { es=new EventSource(url); es.onmessage=m=>{ try{ onEv(JSON.parse(m.data)); }catch(err){} }; es.onerror=()=>{ $("liveFlag").textContent="live · reconnecting"; }; }
+}
+function stopLive(){ live=false; $("liveFlag").className=""; $("liveFlag").textContent=""; if(es){es.close();es=null;} if(pollTimer){clearInterval(pollTimer);pollTimer=null;} }
+$("loadBtn").onclick=()=>loadSrc($("src").value.trim());
+$("src").addEventListener("keydown",e=>{ if(e.key==="Enter") loadSrc($("src").value.trim()); });
+$("fileBtn").onclick=()=>$("file").click();
+$("file").onchange=async()=>{ const f=$("file").files[0]; if(!f) return; stopLive(); events=parseJSONL(await f.text()); $("streamMeta").textContent=`${events.length} events · ${f.name}`; seek(0); playing=true; $("playBtn").textContent="❚❚ pause"; };
+const q=new URLSearchParams(location.search);
+if(q.get("live")) { $("src").value="live:"+q.get("live"); startLive(q.get("live")); }
+else if(q.get("src")) { $("src").value=q.get("src"); loadSrc(q.get("src")); }
+else { $("src").value="runs/zh-small-pilot-2026-09-26.events.jsonl"; loadSrc($("src").value).catch(()=>{ $("streamMeta").textContent="serve the folder over http, or pick a file…"; }); }
+if(q.get("tempo")){ $("tempo").value=q.get("tempo"); $("tempo").oninput(); }
+</script>
+</body>
+</html>

@@ -1,0 +1,46 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "art/theatre-event/v1",
+  "title": "Run Theatre event",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["ts", "run", "stage", "actor", "subject", "verdict"],
+  "properties": {
+    "ts": { "type": "string", "format": "date-time" },
+    "run": { "type": "string", "minLength": 1 },
+    "stage": { "enum": ["run", "scout", "probe", "triage", "interpret", "verify", "report", "watch"] },
+    "actor": { "enum": ["code", "small-model", "large-model", "human"] },
+    "subject": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["kind", "id"],
+      "properties": {
+        "kind": { "enum": ["run", "site", "surface", "observation", "finding", "claim"] },
+        "id": { "type": "string", "minLength": 1 },
+        "site": { "type": "string" }
+      }
+    },
+    "verdict": {
+      "enum": [
+        "start", "end", "partial", "cancelled",
+        "discovered", "selected", "skipped",
+        "pass", "violation", "incomplete", "inapplicable", "blocked",
+        "merged", "finding", "dropped",
+        "explained", "needs-review", "escalated",
+        "supported",
+        "written",
+        "new", "persisting", "resolved", "rule-changed", "not-comparable"
+      ]
+    },
+    "detail": { "type": "string", "maxLength": 200 },
+    "cost": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "ms": { "type": "number", "minimum": 0 },
+        "usd": { "type": "number", "minimum": 0 },
+        "tokens": { "type": "integer", "minimum": 0 }
+      }
+    }
+  }
+}
