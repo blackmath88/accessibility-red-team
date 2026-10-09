@@ -43,16 +43,18 @@
   .t-teal{color:var(--teal)} .t-pink{color:var(--pink)} .t-orange{color:var(--orange)} .t-yellow{color:var(--yellow)} .t-magenta{color:var(--magenta)} .t-white{color:var(--white)}
 
   #reader{display:flex;flex-direction:column;contain:size}
-  #readerTitle{padding:5px 10px;color:var(--white);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;border-bottom:1px solid var(--line)}
+  #readerTitle{padding:5px 10px;color:var(--white);white-space:nowrap;overflow:hidden;border-bottom:1px solid var(--line);display:flex;gap:6px;align-items:center}
+  #readerTitle i{width:7px;height:7px;border-radius:50%;flex:none} #readerTitle b{overflow:hidden;text-overflow:ellipsis;font-weight:700} #readerTitle em{margin-left:auto;font-style:normal;color:var(--mute);font-size:10px}
   #readerBody{flex:1;overflow:hidden;padding:6px 0;min-height:0}
-  .rr{display:grid;grid-template-columns:36% 1fr auto;gap:8px;padding:1px 10px;white-space:nowrap;line-height:1.5}
-  .rr span{overflow:hidden;text-overflow:ellipsis}
-  .rr .sl{color:var(--mute)} .rr .sn{color:var(--dim);transition:color .5s,background .5s;border-radius:2px}
-  .rr.teal .sn{color:var(--teal)} .rr.pink .sn{color:var(--pink);background:#2a1119} .rr.orange .sn{color:var(--orange);background:#2a1d10}
-  .rr .bd{font-size:10px;border:1px solid var(--mute);border-radius:2px;padding:0 4px;color:var(--dim)}
-  .rr.pink .bd{color:var(--pink);border-color:var(--pink)} .rr.orange .bd{color:var(--orange);border-color:var(--orange)}
-  .rr.pink .bd.solid{background:var(--pink);color:#0b0b0d} .rr.orange .bd.solid{background:var(--orange);color:#0b0b0d}
-  #crawler{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
+  .rr{display:grid;grid-template-columns:30px 1fr;gap:8px;padding:1px 10px 1px 4px;white-space:nowrap;line-height:1.75}
+  .rr .ln{color:var(--mute);text-align:right;font-size:10px} .rr .tx{overflow:hidden;text-overflow:ellipsis;color:var(--dim)}
+  .rr.h .tx{color:var(--pink);font-weight:700} .rr .ro{color:var(--mute)} .rr .sl{display:none;color:var(--mute);margin-left:8px;font-size:10px} .rr.cur .sl{display:inline}
+  .w{padding:0 2px;margin-right:3px;border:1px solid transparent;border-radius:2px}
+  .rr.read .w{border-color:#24594a;color:var(--ink)} .rr.teal .w{border-color:var(--teal);color:var(--teal)}
+  .rr.pink .w{border-color:var(--pink);background:#3a1220;color:var(--pink)} .rr.pink.solid .w{background:var(--pink);color:#0b0b0d}
+  .rr.orange .w{border-color:var(--orange);background:#3a2410;color:var(--orange)} .rr.orange.solid .w{background:var(--orange);color:#0b0b0d}
+  .rr.cc .w{color:#6a3a48!important} .rr.nn .w{font-style:italic}
+  #crawler{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;font-family:var(--mono)}
   body.crawlOff #crawler{display:none}
   #stage{position:relative}
   canvas{display:block;width:100%;height:100%}
@@ -130,8 +132,8 @@
 </div>
 
 <main>
-  <section class="panel" id="reader"><h2>reader <em id="streamMeta">—</em></h2><div id="readerTitle">—</div><div id="readerBody"></div>
-    <svg id="crawler" aria-hidden="true" focusable="false"><g id="crawlG"></g></svg></section>
+  <section class="panel" id="reader"><h2>reader <em id="streamMeta">—</em></h2><div id="readerTitle"><i style="background:var(--pink)"></i><i style="background:var(--yellow)"></i><i style="background:var(--teal)"></i><b id="rdName">—</b><em id="rdPage"></em></div><div id="readerBody"></div>
+    <svg id="crawler" aria-hidden="true" focusable="false"><g id="crawlRep"></g><rect id="crawlBox" fill="none" stroke-dasharray="3 3"/><g id="crawlG"></g></svg></section>
   <section class="panel" id="stage">
     <canvas id="cv"></canvas>
     <div class="hero">
@@ -222,57 +224,83 @@ function apply(e, animate){
 function flash(id){ const el=$(id); el.classList.add("flash"); setTimeout(()=>el.classList.remove("flash"),350); }
 
 // ---------- stream + table ----------
-// ---------- reader: the page being probed, with the crawler drawn on the material it reads ----------
+// ---------- reader: the page as a screen reader would announce it; the crawler is the element's structure ----------
 const probeOf=e=>(e.detail||"").split(" · ")[0];
+const ROLE={a:"link",button:"button",img:"image",svg:"image",nav:"navigation",input:"field",select:"field",textarea:"field",label:"label",li:"list item",ul:"list",ol:"list",table:"table",th:"table header",td:"cell",tr:"row",form:"form",header:"banner",footer:"contentinfo",main:"main",p:"text",html:"document",body:"document",iframe:"frame",video:"media",audio:"media",meta:"metadata",title:"title"};
+const partsOf=sel=>sel.match(/(?:[^\s>\[]+|\[[^\]]*\])+/g)||[];
+function roleOf(sel){ const last=partsOf(sel).at(-1)||"", r=/\[role="?([a-z]+)/.exec(last), t=/^([a-z][a-z0-9]*)/.exec(last); if(r) return r[1]; if(!t) return "group"; const h=/^h([1-6])$/.exec(t[1]); return h?"heading "+h[1]:ROLE[t[1]]||t[1]; }
 function readerApply(e, animate){
   const rd=S.rd, now=performance.now();
   if(e.subject.kind==="surface"&&((e.stage==="scout"&&e.verdict==="selected")||e.stage==="probe")){
-    if(rd.url!==e.subject.id){ rd.url=e.subject.id; rd.rows=new Map(); rd.gen=++GEN; rd.cur=null; }
+    if(rd.url!==e.subject.id){ rd.url=e.subject.id; rd.rows=new Map(); rd.gen=++GEN; rd.cur=null; rd.n=0; const u=new URL(e.subject.id); rd.rows.set("##",{hdr:true,n:++rd.n,sel:"##",snip:`## ${u.hostname.replace(/^www\./,"")} · ${u.pathname}`,res:[]});
+      const site=Object.keys(S.surfaces).filter(k=>k.startsWith(u.origin)); rd.page=`surface ${site.indexOf(e.subject.id)+1} / ${site.length}`; }
     rd.mode="reading"; rd.label="crawler · reading"; return;
   }
   if(e.at&&e.stage==="probe"&&e.subject.id.startsWith(rd.url.replace(/\/$/,""))){
     const sel=e.at.selector, pid=probeOf(e); let row=rd.rows.get(sel);
-    if(!row){ row={sel,snip:e.at.snippet||"",probe:pid,col:"",solid:false,t:0,el:null}; rd.rows.set(sel,row); if(rd.rows.size>150) rd.rows.delete(rd.rows.keys().next().value); }
-    if(e.verdict==="violation"){ row.col="pink"; row.probe=pid; } else if(e.verdict==="incomplete"&&row.col!=="pink"){ row.col="orange"; row.probe=pid; } else if(animate) row.t=now;
-    if(rd.hold<now){ rd.cur=sel; rd.label=`crawler · probing ${pid}`; } rd.mode="reading"; rd.readT=now; return;
+    if(!row){ row={sel,n:++rd.n,snip:e.at.snippet||"",probe:pid,col:"",solid:false,res:[],el:null}; rd.rows.set(sel,row); if(rd.rows.size>150) rd.rows.delete([...rd.rows.keys()][1]); }
+    if(e.verdict==="violation"){ row.col="pink"; row.probe=pid; } else if(e.verdict==="incomplete"&&row.col!=="pink"){ row.col="orange"; row.probe=pid; }
+    row.read=true; row.res=[...row.res,e.verdict==="violation"?"pink":e.verdict==="incomplete"?"orange":"teal"].slice(-3);
+    if(rd.hold<now){ rd.cur=sel; rd.label=`crawler · probing ${pid.replace(/^axe\./,"")}`; } rd.mode="reading"; rd.readT=now; return;
   }
   if(e.stage==="triage"&&e.verdict==="finding"){ const pid=probeOf(e); rd.rows.forEach(r=>{ if(r.probe===pid&&r.col) r.solid=true; }); return; }
   if(e.stage==="verify"&&e.verdict==="blocked"){
     const pid=(e.subject.id.split("/")[1]||"").split(":")[0]; const row=[...rd.rows.values()].find(r=>r.probe===pid);
-    if(row&&animate){ rd.cur=row.sel; rd.hold=rd.alert=now+900; rd.label=`crawler · blocked ${pid}`; } return;
+    if(row&&animate){ rd.cur=row.sel; rd.hold=rd.alert=now+900; rd.label=`crawler · blocked ${pid.replace(/^axe\./,"")}`; } return;
   }
   if(e.stage==="report"&&e.verdict==="written"){ rd.mode="gone"; return; }
   if(e.stage==="run"&&e.verdict!=="start"){ rd.mode="stopped"; rd.label="crawler · stopped"; }
 }
-const readerBody=$("readerBody"), crawlG=$("crawlG"), RM=matchMedia("(prefers-reduced-motion: reduce)");
-// 7 nodes: a centre and a ring of six; edges centre→ring and ring→ring. No face, no legs.
-const NODES=[[0,0],...[0,1,2,3,4,5].map(i=>[Math.cos(i*Math.PI/3)*11,Math.sin(i*Math.PI/3)*11])];
-const EDGES=[[0,1],[0,2],[0,3],[0,4],[0,5],[0,6],[1,2],[2,3],[3,4],[4,5],[5,6],[6,1]];
-crawlG.innerHTML=EDGES.map(()=>`<line stroke-width="1"/>`).join("")+NODES.map((_,i)=>`<circle r="${i?1.8:2.4}"/>`).join("")+`<text x="20" y="4" font-size="10" stroke="#111114" stroke-width="4" paint-order="stroke"></text>`;
-const cLines=[...crawlG.querySelectorAll("line")], cDots=[...crawlG.querySelectorAll("circle")], cText=crawlG.querySelector("text");
-let cx=-40, cy=40, cOp=0, lastR=performance.now();
+const readerBody=$("readerBody"), crawlG=$("crawlG"), crawlRep=$("crawlRep"), crawlBox=$("crawlBox"), RM=matchMedia("(prefers-reduced-motion: reduce)");
+crawlG.innerHTML=Array(14).fill('<line stroke-width="1.4"/>').join("")+Array(8).fill('<circle/>').join("")+'<rect rx="2" height="13"/><text font-size="10" font-weight="700" fill="#0b0b0d"></text>';
+crawlRep.innerHTML=Array(10).fill('<line stroke-width=".7" stroke-dasharray="2 3"/>').join("");
+const cL=[...crawlG.querySelectorAll("line")], cD=[...crawlG.querySelectorAll("circle")], cTag=crawlG.querySelector("rect"), cTxt=crawlG.querySelector("text"), cRep=[...crawlRep.children];
+const hash=s=>{ let h=2166136261; for(const c of s) h=Math.imul(h^c.charCodeAt(0),16777619); return ()=>((h=Math.imul(h^h>>>15,2246822507)>>>0)/4294967296); };
+// Shape from data: element node, its selector ancestors as a ragged chain up-left, latest probe results jutting right.
+function shapeOf(row){
+  const rnd=hash(row.sel), anc=partsOf(row.sel).slice(0,-1).slice(-4), N=[{x:0,y:0,c:"white",r:4.2}], E=[];
+  let px=0, py=0; anc.forEach((_,i)=>{ px-=24+rnd()*30; py-=12+rnd()*26; N.push({x:px,y:py,c:"teal",r:3}); E.push([i===0?0:N.length-2,N.length-1,i%2?"pink":"teal"]); });
+  row.res.forEach((c,i)=>{ const a=-0.7+i*0.75+rnd()*0.3, l=36+rnd()*30; N.push({x:Math.cos(a)*l,y:Math.sin(a)*l,c,r:3.2}); E.push([0,N.length-1,c]); });
+  while(N.length<7){ const a=rnd()*6.28, l=26+rnd()*34; N.push({x:Math.cos(a)*l,y:Math.sin(a)*l,c:N.length%2?"pink":"teal",r:2.4}); E.push([N.length===2?0:N.length-2,N.length-1,N.length%2?"pink":"teal"]); }
+  for(let i=3;i<N.length&&E.length<14;i+=2) E.push([i,i-2,i%4===1?"pink":"teal"]); // cross-strands: a web, not a stick
+  return {N:N.slice(0,8),E:E.filter(([a,b])=>a<8&&b<8).slice(0,14)};
+}
+let ax=-60, ay=40, aOp=0, tagW=120, lastR=performance.now(); const NP=Array.from({length:8},()=>({x:0,y:0,o:0}));
 function renderReader(now){
   const rd=S.rd, dt=Math.min(.1,(now-lastR)/1000); lastR=now;
-  if(readerBody.dataset.gen!==String(rd.gen)){ readerBody.innerHTML=""; readerBody.dataset.gen=rd.gen; rd.rows.forEach(r=>r.el=null); $("readerTitle").textContent=rd.url||"—"; }
+  if(readerBody.dataset.gen!==String(rd.gen)){ readerBody.innerHTML=""; readerBody.dataset.gen=rd.gen; rd.rows.forEach(r=>r.el=null); $("rdName").textContent=rd.url?rd.url.replace(/^https?:\/\//,""):"—"; $("rdPage").textContent=rd.page||""; }
   rd.rows.forEach(r=>{
-    if(!r.el){ r.el=document.createElement("div"); r.el.innerHTML=`<span class="sl">${esc(r.sel)}</span><span class="sn">${esc(r.snip||"·")}</span><span class="bd"></span>`; readerBody.appendChild(r.el); }
-    const c=r.col||(now-r.t<700?"teal":""), k=`rr ${c}|${r.solid}|${r.probe}`;
-    if(r.el._k!==k){ r.el._k=k; r.el.className="rr "+c; const b=r.el.lastChild; b.textContent=r.col?r.probe.replace(/^axe\./,""):""; b.style.display=r.col?"":"none"; b.classList.toggle("solid",r.solid); }
+    if(!r.el){ r.el=document.createElement("div"); readerBody.appendChild(r.el); }
+    const nn=!r.snip&&r.col==="pink"&&/name|alt|label|title|empty/.test(r.probe), k=[r.read,r.col,r.solid,nn,rd.cur===r.sel].join("|");
+    if(r.el._k===k) return; r.el._k=k;
+    const txt=r.hdr?esc(r.snip):`<span class="ro">${esc(roleOf(r.sel))} · </span>`+(nn?'<span class="w">(no accessible name)</span>':(r.snip||"·").split(" ").slice(0,16).map(w=>`<span class="w">${esc(w)}</span>`).join(""));
+    r.el.className=["rr",r.hdr?"h":"",r.read?"read":"",r.col,r.solid?"solid":"",nn?"nn":"",r.probe==="axe.color-contrast"?"cc":"",rd.cur===r.sel?"cur":""].join(" ");
+    r.el.innerHTML=`<span class="ln">${r.n}</span><span class="tx">${txt}${r.hdr?"":`<span class="sl">${esc(r.sel)}</span>`}</span>`;
   });
   if(document.body.classList.contains("crawlOff")) return;
-  const row=rd.rows.get(rd.cur)?.el, W=$("reader").clientWidth;
-  let tx=24, ty=readerBody.offsetTop+16, top=1;
-  if(row){ const want=row.offsetTop-readerBody.offsetTop-readerBody.clientHeight/2; readerBody.scrollTop+=RM.matches?want-readerBody.scrollTop:(want-readerBody.scrollTop)*Math.min(1,dt*6);
-    tx=row.children[1].offsetLeft+28; ty=row.offsetTop-readerBody.scrollTop+row.offsetHeight/2; }
-  if(rd.mode==="gone"){ tx=W+40; top=0; } if(rd.mode==="idle") top=0;
-  const k=RM.matches?1:1-Math.exp(-dt*7); cx+=(tx-cx)*k; cy+=(ty-cy)*k; cOp+=(top-cOp)*k;
-  const jit=!RM.matches&&rd.mode==="reading"&&now-rd.readT<600, alert=rd.alert>now;
-  const P=NODES.map(([x,y],i)=>jit?[x+Math.sin(now/90+i*1.7)*1.1,y+Math.cos(now/110+i*2.3)*1.1]:[x,y]);
-  const edge=alert?COL("orange"):rd.mode==="stopped"?COL("dim"):COL("teal");
-  crawlG.setAttribute("transform",`translate(${cx.toFixed(1)},${cy.toFixed(1)})`); crawlG.setAttribute("opacity",cOp.toFixed(2));
-  cLines.forEach((l,i)=>{ const [a,b]=EDGES[i]; l.setAttribute("x1",P[a][0]); l.setAttribute("y1",P[a][1]); l.setAttribute("x2",P[b][0]); l.setAttribute("y2",P[b][1]); l.setAttribute("stroke",edge); l.setAttribute("stroke-opacity",alert?1:.6); });
-  cDots.forEach((d,i)=>{ d.setAttribute("cx",P[i][0]); d.setAttribute("cy",P[i][1]); d.setAttribute("fill",rd.mode==="stopped"?COL("dim"):COL("teal")); });
-  cText.textContent=rd.label; cText.setAttribute("fill",alert?COL("orange"):COL("dim"));
+  const rowO=rd.rows.get(rd.cur), row=rowO?.el, W=$("reader").clientWidth, alert=rd.alert>now, stop=rd.mode==="stopped";
+  let tx=W*0.55, ty=readerBody.offsetTop+30, top=rd.mode==="idle"?0:1;
+  if(row){ const want=row.offsetTop-readerBody.offsetTop-readerBody.clientHeight*0.55; readerBody.scrollTop+=RM.matches?want-readerBody.scrollTop:(want-readerBody.scrollTop)*Math.min(1,dt*6);
+    const tx0=row.lastChild; tx=Math.max(70,Math.min(W-30-tagW*1.35, tx0.offsetLeft+Math.min(tx0.scrollWidth,W)*0.5+30)); ty=row.offsetTop-readerBody.scrollTop+row.offsetHeight/2;
+    crawlBox.setAttribute("x",row.offsetLeft+2); crawlBox.setAttribute("y",ty-row.offsetHeight/2-1); crawlBox.setAttribute("width",W-8); crawlBox.setAttribute("height",row.offsetHeight+2); }
+  if(rd.mode==="gone"){ tx=W+90; top=0; }
+  crawlBox.setAttribute("stroke",alert?COL("orange"):COL("teal")); crawlBox.setAttribute("opacity",row&&!stop&&rd.mode!=="gone"?.55:0);
+  const k=RM.matches?1:1-Math.exp(-dt*6); ax+=(tx-ax)*k; ay+=(ty-ay)*k; aOp+=(top-aOp)*k;
+  const sh=rowO&&!rowO.hdr?shapeOf(rowO):{N:[{x:0,y:0,c:"white",r:3}],E:[]}, jit=!RM.matches&&!stop&&rd.mode==="reading";
+  NP.forEach((p,i)=>{ const n=sh.N[i], m=RM.matches?1:1-Math.exp(-dt*9); p.x+=((n?.x??0)-p.x)*m; p.y+=((n?.y??0)-p.y)*m; p.o+=((n?1:0)-p.o)*m;
+    const jx=jit?Math.sin(now/70+i*1.9)*1.6:0, jy=jit?Math.cos(now/83+i*2.7)*1.6:0, d=cD[i];
+    d.setAttribute("cx",(p.x+jx).toFixed(1)); d.setAttribute("cy",(p.y+jy).toFixed(1)); d.setAttribute("r",n?.r??1.5); d.setAttribute("opacity",p.o.toFixed(2));
+    d.setAttribute("fill",stop?COL("dim"):i===0&&alert?COL("orange"):COL(n?.c??"dim")); p.jx=jx; p.jy=jy; });
+  cL.forEach((l,i)=>{ const e=sh.E[i]; if(!e){ l.setAttribute("opacity",0); return; } const [a,b,c]=e, A=NP[a], B=NP[b];
+    l.setAttribute("x1",A.x+A.jx); l.setAttribute("y1",A.y+A.jy); l.setAttribute("x2",B.x+B.jx); l.setAttribute("y2",B.y+B.jy);
+    l.setAttribute("stroke",stop?COL("dim"):alert?COL("orange"):COL(c)); l.setAttribute("opacity",Math.min(A.o,B.o).toFixed(2)); });
+  crawlG.setAttribute("transform",`translate(${ax.toFixed(1)},${ay.toFixed(1)}) scale(1.35)`); crawlG.setAttribute("opacity",aOp.toFixed(2));
+  cTxt.textContent=rd.label; cTxt.setAttribute("x",12); cTxt.setAttribute("y",-12); const tw=rd.label?cTxt.getComputedTextLength()+8:0; tagW=tw||tagW;
+  cTag.setAttribute("x",8); cTag.setAttribute("y",-22); cTag.setAttribute("width",tw); cTag.setAttribute("fill",stop?COL("dim"):alert?COL("orange"):COL("teal"));
+  // repetition: one edge from the element to every other visible line failing the same probe
+  const reps=rowO&&rowO.col&&!stop?[...rd.rows.values()].filter(r=>r!==rowO&&r.el&&r.probe===rowO.probe&&r.col):[];
+  cRep.forEach((l,i)=>{ const r=reps[i]; if(!r){ l.setAttribute("opacity",0); return; } const y=r.el.offsetTop-readerBody.scrollTop+r.el.offsetHeight/2;
+    l.setAttribute("x1",ax); l.setAttribute("y1",ay); l.setAttribute("x2",r.el.lastChild.offsetLeft+40); l.setAttribute("y2",y); l.setAttribute("stroke",COL(r.col)); l.setAttribute("opacity",(aOp*.8).toFixed(2)); });
 }
 $("crawlBtn").onclick=()=>{ const off=document.body.classList.toggle("crawlOff"); $("crawlBtn").setAttribute("aria-pressed",String(!off)); $("crawlBtn").textContent=off?"crawler ○":"crawler ◉"; };
 const tbl=$("decisionsBody"); const MAXR=9;
