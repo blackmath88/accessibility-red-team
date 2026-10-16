@@ -1,6 +1,17 @@
+<!-- BEGIN public-repo-header -->
+<div align="center">
+
 # Accessibility Red Team
 
-### Find barriers. Preserve evidence. Track what changes.
+**Find barriers. Preserve evidence. Track what changes.**
+
+<a href="https://github.com/blackmath88/accessibility-red-team/actions/workflows/verify.yml"><img alt="Checks" src="https://github.com/blackmath88/accessibility-red-team/actions/workflows/verify.yml/badge.svg?branch=main"></a>
+<a href="https://github.com/blackmath88/accessibility-red-team"><img alt="Primary language: TypeScript" src="https://img.shields.io/badge/language-TypeScript-526078?style=flat"></a>
+<a href="https://github.com/blackmath88/accessibility-red-team/tree/main/docs"><img alt="Documentation" src="https://img.shields.io/badge/docs-guide-16796f?style=flat"></a>
+<a href="https://github.com/blackmath88/accessibility-red-team/commits/main"><img alt="Last commit" src="https://img.shields.io/github/last-commit/blackmath88/accessibility-red-team?style=flat&amp;color=737373"></a>
+
+</div>
+<!-- END public-repo-header -->
 
 An accessibility assessment toolkit for exploring Swiss public-sector websites. It combines scoped discovery, automated probes, bounded keyboard journeys and traceable reports so reviewers can distinguish findings from questions that still need human judgment.
 
