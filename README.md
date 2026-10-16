@@ -1,168 +1,76 @@
 # Accessibility Red Team
 
-An evidence-first observatory for the accessibility of Swiss public-sector websites.
+### Find barriers. Preserve evidence. Track what changes.
 
-The project borrows the operating model of a security red-team scanner — reconnaissance, scoped probes, evidence, triage, verification and repeat scanning — but applies it to accessibility in a deliberately non-adversarial way.
+An accessibility assessment toolkit for exploring Swiss public-sector websites. It combines scoped discovery, automated probes, bounded keyboard journeys and traceable reports so reviewers can distinguish findings from questions that still need human judgment.
 
-## Product thesis
+**[Try the recorded run](#start-with-a-recorded-run) · [Run a probe](#run-a-probe) · [Architecture](docs/ARCHITECTURE.md) · [Evidence model](docs/REQUIREMENT_CAPABILITY_EVIDENCE.md)**
 
-> Find representative public-service surfaces, test what can be tested reproducibly, explain a small number of useful improvements, and measure whether accessibility improves over time.
+![Accessibility Red Team: observations feed evidence and coverage records, then traceable reports, comparisons and human review.](.github/media/evidence-flow.svg)
 
-The system is not a WCAG certification service. Automated checks can establish some facts and identify things that need review; they cannot prove full conformance.
+*Evidence flow, not an application screenshot. Explore the real recorded run through the replay instructions below.*
 
-## Pipeline
+> **Research and engineering prototype.** Automated results support investigation and remediation. They do not certify WCAG conformance or establish legal applicability. The deterministic scanner works without an LLM.
 
-```text
-Registry
-  ↓
-SCOUT      discover and select representative surfaces
-  ↓
-PROBE      run deterministic accessibility probes
-  ↓
-TRIAGE     normalize, deduplicate and prioritize evidence
-  ↓
-INTERPRET  turn evidence into useful human-facing explanations
-  ↓
-VERIFY     ensure every published claim is supported
-  ↓
-REPORT     municipality report + machine-readable result
-  ↓
-WATCH      compare runs and track change over time
-```
+## Start with a recorded run
 
-See [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) for the architecture plan and the open-source systems it borrows from.
-
-
-## Engineering principle: minimum AI
-
-The core scanner is designed to work **without an LLM**. Deterministic code owns discovery policy, capture, accessibility probes, provenance, verification and longitudinal comparison.
-
-AI is added only at unresolved semantic boundaries as a **typed semantic compiler**: bounded evidence in, a small legal decision space out. Open-ended agentic planning is an exceptional escalation path, not the default architecture.
-
-See [docs/SEMANTIC_COMPILER.md](docs/SEMANTIC_COMPILER.md) and [ADR-0011](docs/adr/0011-minimum-ai-semantic-compiler.md).
-
-
-## First executable slice
-
-Slice 0 is scaffolded as a deterministic single-page probe.
+Explore the pipeline before installing the scanner. From a fresh clone, use Python 3:
 
 ```bash
-npm install
+git clone https://github.com/blackmath88/accessibility-red-team.git
+cd accessibility-red-team
+python3 -m http.server 8080 --bind 127.0.0.1
+```
+
+Open **[Run Theatre on localhost](http://127.0.0.1:8080/theatre/theatre.html?src=runs/zh-small-pilot-2026-10-09.events.jsonl)**. Press play, pause, or scrub through the recording. The theatre displays event evidence and the stages that produced it. [Replay controls and format](theatre/README.md).
+
+## What you can do
+
+| Task | Result |
+|---|---|
+| Probe a page | Accessibility observations, a screenshot and run metadata |
+| Explore representative site surfaces | A bounded discovery record for subsequent assessment |
+| Run opt-in journeys | Keyboard focus, skip-link, expanded-control and dialog observations |
+| Build a report | Findings linked to evidence and an explicit requirement profile |
+| Compare reports | New, persisting, resolved or non-comparable findings |
+| Inspect an assessment | Recorded pipeline events in Run Theatre |
+
+The repository also contains an operator UI and a Cloudflare control plane. Their configuration and deployment are separate from the local scanner: see [control-plane setup](cloudflare/README.md) and [architecture](docs/CONTROL_CENTER_ARCHITECTURE.md).
+
+## Run a probe
+
+Use **Node.js 20+** and npm. Select a public target you are authorised to assess; the example below makes network requests to `example.com`.
+
+```bash
+npm ci
 npm run playwright:install
 npm run check
 npm run scan -- https://example.com --out runs/example
 ```
 
-A run writes:
+The run writes `manifest.json`, `snapshot.json`, `probe-results.json`, `summary.json`, `coverage.json` and `page.png`. Inspect `coverage.json` for what the tooling can assess and what remains outside its scope.
 
-```text
-manifest.json
-snapshot.json
-probe-results.json
-summary.json
-coverage.json
-page.png
-```
+For reports, jurisdiction profiles, comparisons and optional journeys, use the [scanner guide](.github/SCANNER_GUIDE.md). Start with the recorded replay if you only want to explore the interface without contacting a target.
 
-The manifest records `aiCalls: 0`. Accessibility results retain axe's separate violation / incomplete / pass / inapplicable states and normalize WCAG criterion tags without claiming full WCAG conformance.
+## Evidence before conclusions
 
-`coverage.json` records the scanner's own epistemic boundary: per-criterion deterministic, behavioral, semantic and human-review capability. It intentionally does not publish a fake aggregate “percent of accessibility automated” score. See [docs/REQUIREMENT_CAPABILITY_EVIDENCE.md](docs/REQUIREMENT_CAPABILITY_EVIDENCE.md).
+- axe violations, incomplete results, passes and inapplicable checks remain distinct.
+- Journey outcomes are kept separate from standards findings.
+- A profile supplies an explicit interpretation context; a canton profile does not establish municipal applicability.
+- Scanner or profile changes can make two runs non-comparable.
+- Safe journeys do not submit forms, authenticate, upload, pay or intentionally write server state.
 
-See [docs/BUILD_PLAN.md](docs/BUILD_PLAN.md) for the staged implementation plan.
+AI is optional and bounded at semantic interpretation edges. It is not the authority for scope, control flow or a conformance verdict. [Design rationale](docs/SEMANTIC_COMPILER.md).
 
+## Find your next step
 
-## Provenance-aware report
+| Need | Read |
+|---|---|
+| Scanner commands and report outputs | [Scanner guide](.github/SCANNER_GUIDE.md) |
+| What a finding can legitimately claim | [Requirement capability and evidence](docs/REQUIREMENT_CAPABILITY_EVIDENCE.md) |
+| Behavioural probe boundaries | [Safe journeys](docs/SAFE_JOURNEYS.md) |
+| Recorded field work | [Field validation](docs/FIELD_VALIDATION.md) |
+| How the project is organised | [Architecture](docs/ARCHITECTURE.md) |
+| Contribution and verification | [Contributing](CONTRIBUTING.md) |
 
-After a scan, build a deterministic report using an explicit jurisdiction profile:
-
-```bash
-npm run report -- runs/example \
-  --profile requirements/profiles/ch.federal.yml
-```
-
-This writes `report.json` and `report.html`. For mapped findings the report exposes:
-
-```text
-observed evidence
-→ WCAG criterion
-→ applicable jurisdiction profile
-→ incorporating/adopting source
-→ authority class
-→ requirement strength
-```
-
-The report generator makes no LLM calls. Cantonal profiles currently exist for Zürich, Bern and Basel-Stadt administrations; they must not be used to claim municipality-level applicability without a municipal/cantonal source establishing that scope.
-
-
-## Longitudinal comparison
-
-Compare two site reports without an LLM:
-
-```bash
-npm run watch -- \
-  runs/previous/report.json \
-  runs/current/report.json \
-  --out runs/watch.json
-```
-
-Finding lifecycle states:
-
-```text
-NEW
-PERSISTING
-RESOLVED
-RULE_CHANGED
-NOT_COMPARABLE
-```
-
-Profile changes fail comparability closed. Probe versions are retained in triaged findings so a scanner upgrade is not silently presented as a change in the website.
-
-## Real-site Scout corpus
-
-`benchmarks/sites.yml` contains the initial Swiss discovery corpus (Ausserberg, Kanton Zürich, Stadt Zürich). Run it manually with:
-
-```bash
-npm run benchmark:scout
-```
-
-The first recorded baseline is stored in `benchmarks/baselines/scout-2026-09-25.json`. The GitHub real-site workflow is manual-only to avoid repeatedly crawling public sites on normal development pushes.
-
-
-## Safe journeys
-
-Behavioral accessibility probes are opt-in:
-
-```bash
-npm run journey -- https://example.ch --out runs/example-journey
-```
-
-or add `--journeys` to an audit.
-
-The first bounded journeys cover keyboard focus traces, skip links, aria-expanded controls and dialog focus behavior. They do not submit forms, follow external links or intentionally write server state.
-
-See [docs/SAFE_JOURNEYS.md](docs/SAFE_JOURNEYS.md).
-
-
-## Journey-aware reports and WATCH
-
-New audits write site report v2. Behavioral journey evidence is displayed separately from deterministic WCAG/provenance findings.
-
-WATCH supports legacy report v1 and report v2. Journey outcome changes are tracked independently:
-
-```text
-INCOMPLETE → PASS
-= OUTCOME_CHANGED
-```
-
-rather than being presented as a resolved standards violation.
-
-The first controlled journey baseline is documented in [docs/ZH_JOURNEY_PILOT.md](docs/ZH_JOURNEY_PILOT.md).
-
-
-## Build observatory
-
-Repository-level build state is observed with [Observstory](https://github.com/blackmath88/observstory).
-
-It tracks GitHub activity across six project lanes and reconciles it with a small declared coordination state. This is separate from the accessibility-domain observatory (cohorts, reports, WATCH and candidate catalogue).
-
-See [docs/OBSERVATORY.md](docs/OBSERVATORY.md).
+**Reuse:** a repository-wide code license has not yet been declared. The [dependency attribution](docs/OPEN_SOURCE.md) documents upstream components; it does not license this project's own code.
