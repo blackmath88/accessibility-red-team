@@ -20,6 +20,43 @@ const ALLOW: Decision = { allow: true };
 export type RequestFacts = { url: string; method: string; resourceType: string; isRedirectTarget?: boolean };
 export type ResponseFacts = { url: string; status: number; headers: Record<string, string>; resourceType: string };
 
+// Parses an IPv6 literal (any textual form, including a dotted-quad tail) into eight 16-bit groups, or null.
+function ipv6Groups(address: string): number[] | null {
+  if (isIP(address) !== 6) return null;
+  let text = address.toLowerCase().split("%")[0]!;
+  const tail = /(\d+\.\d+\.\d+\.\d+)$/.exec(text)?.[1];
+  if (tail) {
+    const [a, b, c, d] = tail.split(".").map(Number) as [number, number, number, number];
+    text = text.slice(0, text.length - tail.length) + ((a << 8) | b).toString(16) + ":" + ((c << 8) | d).toString(16);
+  }
+  const [head, rest] = text.split("::");
+  const left = head ? head.split(":") : [];
+  const right = rest === undefined ? [] : rest ? rest.split(":") : [];
+  const fill = rest === undefined ? [] : Array(8 - left.length - right.length).fill("0") as string[];
+  const groups = [...left, ...fill, ...right].map((group) => parseInt(group, 16));
+  return groups.length === 8 && groups.every((group) => Number.isInteger(group) && group >= 0 && group <= 0xffff) ? groups : null;
+}
+
+const quad = (high: number, low: number) => `${high >> 8}.${high & 255}.${low >> 8}.${low & 255}`;
+
+// src/scope.ts treats IPv4-mapped (::ffff:a.b.c.d), NAT64 (64:ff9b::/96) and 6to4 (2002::/16) literals as public even when they embed a
+// private IPv4 address. That module is production code and is not edited here; this stricter check unwraps those forms first, and
+// refuses forms that can carry an arbitrary IPv4 address (local-use NAT64, Teredo, IPv4-compatible) outright.
+export function isPublicAddress(address: string): boolean {
+  const groups = ipv6Groups(address);
+  if (!groups) return isPublicIp(address);
+  const [g0, g1, g2, g3, g4, g5, g6, g7] = groups as [number, number, number, number, number, number, number, number];
+  const v4 = (high: number, low: number) => isPublicIp(quad(high, low));
+  if (g0 === 0 && g1 === 0 && g2 === 0 && g3 === 0 && g4 === 0 && g5 === 0xffff) return v4(g6, g7); // ::ffff:0:0/96 mapped
+  if (g0 === 0 && g1 === 0 && g2 === 0 && g3 === 0 && g4 === 0xffff && g5 === 0) return v4(g6, g7); // ::ffff:0:0:0/96 SIIT
+  if (g0 === 0x64 && g1 === 0xff9b && g2 === 0 && g3 === 0 && g4 === 0 && g5 === 0) return v4(g6, g7); // 64:ff9b::/96 NAT64
+  if (g0 === 0x64 && g1 === 0xff9b && g2 === 1) return false; // 64:ff9b:1::/48 local-use NAT64
+  if (g0 === 0x2002) return v4(g1, g2) && isPublicIp(address); // 2002::/16 6to4 embeds the IPv4 in bits 16-47
+  if (g0 === 0x2001 && g1 === 0) return false; // 2001::/32 Teredo
+  if (g0 === 0 && g1 === 0 && g2 === 0 && g3 === 0 && g4 === 0 && g5 === 0) return false; // ::/96 IPv4-compatible, unspecified, loopback
+  return isPublicIp(address);
+}
+
 function bareHost(url: URL): string {
   return url.hostname.replace(/^\[|\]$/g, "").toLowerCase();
 }
@@ -47,12 +84,12 @@ export class SessionPolicy {
     if (this.config.mode !== "public") return ALLOW;
     const host = bareHost(url);
     if (METADATA_HOSTS.has(host) || host === "localhost" || host.endsWith(".local") || host.endsWith(".internal")) return deny("private_destination", `internal or metadata host ${host}`);
-    if (isIP(host)) return isPublicIp(host) ? ALLOW : deny("private_destination", `non-public address ${host}`);
+    if (isIP(host)) return isPublicAddress(host) ? ALLOW : deny("private_destination", `non-public address ${host}`);
     let pending = this.resolved.get(host);
     if (!pending) {
       pending = this.resolver(host).then((addresses) => {
         if (!addresses.length) return deny("private_destination", `${host} did not resolve`);
-        const bad = addresses.find((address) => !isPublicIp(address));
+        const bad = addresses.find((address) => !isPublicAddress(address));
         return bad ? deny("private_destination", `${host} resolves to non-public address ${bad}`) : ALLOW;
       }).catch(() => deny("private_destination", `${host} could not be resolved`));
       this.resolved.set(host, pending);
