@@ -64,6 +64,12 @@ test("dated paths are not news when they are forms, services, archives or have n
   assert.equal(kindOf("https://example.ch/2024/04/"), "unknown");
   assert.equal(kindOf("https://example.ch/2024/04/15/"), "unknown");
   assert.equal(kindOf("https://example.ch/2024/04/page/2/"), "unknown");
+  assert.equal(kindOf("https://example.ch/2024/04/page"), "unknown", "a bare page segment is an archive pager, not a slug");
+  assert.equal(kindOf("https://example.ch/2024/04/page/"), "unknown");
+  assert.equal(kindOf("https://example.ch/2024/04/index.html"), "unknown", "a file name is not a post slug");
+  assert.equal(kindOf("https://example.ch/2024/04/bericht.pdf"), "unknown");
+  assert.equal(kindOf("https://example.ch/wp-content/uploads/2024/04/x.pdf"), "unknown", "media uploads are not posts");
+  assert.equal(kindOf("https://example.ch/wp-content/uploads/2024/04/foto-sommerfest.jpg"), "unknown");
   assert.equal(kindOf("https://example.ch/2024/04/rueckblick/", { title: "Archiv 2024" }), "unknown");
   assert.equal(kindOf("https://example.ch/2024/steuern/rechner"), "service");
 });

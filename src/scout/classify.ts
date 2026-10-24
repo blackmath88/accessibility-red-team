@@ -8,9 +8,10 @@ const SERVICE_TERMS = /dienstleistung|service|schalter|verwaltung|bewilligung|ab
 const DIRECTORY_TERMS = /dienstleistungen|services|online-schalter|themen|a-z|verzeichnis|übersicht|uebersicht/i;
 const SEARCH_TERMS = /(?:^|[\s/\-_])(suche|search)(?:$|[\s/\-_.])/i;
 const ARTICLE_TERMS = /news|aktuell|mitteilung|artikel|meldung|veranstaltung/i;
-// CMS-dated post path: /YYYY/MM/<slug> or /YYYY/MM/DD/<slug>. Needs a real slug, so /2024/04/, /2024/04/15/ and
-// /2024/04/page/2/ (archives) and year-only paths like /2024/steuern/formular do not match.
-const DATED_POST_PATH = /\/(?:19|20)\d{2}\/(?:0[1-9]|1[0-2])\/(?:(?:0[1-9]|[12]\d|3[01])\/)?(?!page\/)(?=[^/]*[a-z])[^/]+/i;
+// CMS-dated post path: /YYYY/MM/<slug> or /YYYY/MM/DD/<slug>. Needs a real slug, so /2024/04/, /2024/04/15/,
+// /2024/04/page, /2024/04/page/2/ (archives) and year-only paths like /2024/steuern/formular do not match. A slug with a file
+// extension (/2024/04/index.html, /2024/04/x.pdf) is a file, not a post, and media under /uploads/YYYY/MM/ is never a post.
+const DATED_POST_PATH = /(?<!\/uploads)\/(?:19|20)\d{2}\/(?:0[1-9]|1[0-2])\/(?:(?:0[1-9]|[12]\d|3[01])\/)?(?!page(?:\/|$))(?![^/]*\.[a-z0-9]{2,5}(?:\/|$))(?=[^/]*[a-z])[^/]+/i;
 const ARCHIVE_TERMS = /archiv/i;
 
 const pathOf = (url: string) => { try { return new URL(url).pathname; } catch { return url; } };
