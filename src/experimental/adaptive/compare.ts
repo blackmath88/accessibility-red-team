@@ -1,6 +1,8 @@
 // Comparison of two sealed arms against fixture ground truth. Machine-readable JSON plus a readable markdown rendering.
 // "Verified" means: matched to a seeded defect in the fixture's ground truth. Findings with no match are reported as false
 // alarms only within the categories ground truth speaks about; everything else is listed as out of scope, not judged.
+import { readFile } from "node:fs/promises";
+import { isAbsolute, join, relative, resolve } from "node:path";
 import { z } from "zod";
 import { readArm, type ArmFinding, type ArmSummary } from "./arms.js";
 import type { ObserverReport } from "./observer.js";
@@ -57,7 +59,41 @@ function truthStates(states: string[]): string[] {
   return [...out];
 }
 
-function score(summary: ArmSummary, truth: Truth, sealRootSha256: string): ArmScore {
+type Json = unknown;
+const asRecord = (value: Json): Record<string, unknown> | null => (value && typeof value === "object" && !Array.isArray(value) ? value as Record<string, unknown> : null);
+
+// An evidence ref is "<file inside the sealed arm dir>#<fragment>". It resolves only when that file exists, parses, and holds the record the
+// fragment names: arm B "evidence.json#<evidenceId>", arm A "probe-results.json#<probeId>/<nodeIndex>" or "journey-results.json#<journeyId>".
+export async function evidenceRefResolves(dir: string, ref: string): Promise<boolean> {
+  const hash = ref.indexOf("#");
+  if (hash <= 0) return false;
+  const file = ref.slice(0, hash);
+  const fragment = ref.slice(hash + 1);
+  const full = resolve(dir, file);
+  const rel = relative(resolve(dir), full);
+  if (isAbsolute(file) || rel.startsWith("..") || !fragment) return false;
+  let json: Json;
+  try { json = JSON.parse(await readFile(full, "utf8")) as Json; } catch { return false; }
+  if (file.endsWith("evidence.json")) return Array.isArray(json) && json.some((record) => asRecord(record)?.["id"] === fragment);
+  if (file.endsWith("probe-results.json")) {
+    const [probeId, nodeIndex] = fragment.split("/");
+    const row = Array.isArray(json) ? json.map(asRecord).find((record) => record?.["probeId"] === probeId) : null;
+    const nodes = row?.["nodes"];
+    return Array.isArray(nodes) && /^\d+$/.test(nodeIndex ?? "") && Number(nodeIndex) < nodes.length;
+  }
+  if (file.endsWith("journey-results.json")) {
+    const results = asRecord(json)?.["results"];
+    return Array.isArray(results) && results.some((result) => asRecord(result)?.["journeyId"] === fragment);
+  }
+  return false;
+}
+
+async function evidenceRefsResolve(dir: string, summary: ArmSummary): Promise<boolean> {
+  const refs = summary.findings.filter((finding) => TRUTH_CATEGORIES.has(finding.category)).flatMap((finding) => finding.occurrences.map((occurrence) => occurrence.evidenceRef));
+  return (await Promise.all(refs.map((ref) => evidenceRefResolves(dir, ref)))).every(Boolean);
+}
+
+function score(summary: ArmSummary, truth: Truth, sealRootSha256: string, evidenceRefsResolved: boolean): ArmScore {
   const surfaces = [...new Set(summary.surfaces.map((surface) => surface.path))];
   const inScope = summary.findings.filter((finding) => TRUTH_CATEGORIES.has(finding.category));
   const verified = new Map<string, ArmFinding[]>();
@@ -88,7 +124,7 @@ function score(summary: ArmSummary, truth: Truth, sealRootSha256: string): ArmSc
       occurrences: occurrences.length,
       withTargetIdentity: occurrences.filter((occurrence) => occurrence.hasTarget).length,
       withScreenshot: occurrences.filter((occurrence) => occurrence.hasScreenshot).length,
-      evidenceRefsResolved: occurrences.every((occurrence) => occurrence.evidenceRef.length > 0),
+      evidenceRefsResolved,
     },
     needsReview: summary.needsReview.length,
     deniedActions: denied,
@@ -102,9 +138,9 @@ function score(summary: ArmSummary, truth: Truth, sealRootSha256: string): ArmSc
 
 export async function compareFixture(fixture: FixtureName, dirA: string, dirB: string, observer: ObserverReport): Promise<FixtureComparison> {
   const truth = await loadTruth(fixture);
-  const [a, b] = await Promise.all([readArm(dirA), readArm(dirB)]);
-  const A = score(a.summary, truth, a.seal.rootSha256);
-  const B = score(b.summary, truth, b.seal.rootSha256);
+  const [a, b] = await Promise.all([readArm(dirA, "A"), readArm(dirB, "B")]);
+  const A = score(a.summary, truth, a.seal.rootSha256, await evidenceRefsResolve(dirA, a.summary));
+  const B = score(b.summary, truth, b.seal.rootSha256, await evidenceRefsResolve(dirB, b.summary));
   const only = <T>(x: T[], y: T[]) => x.filter((item) => !y.includes(item));
   const dynamicAdvantage = {
     surfacesOnlyB: only(B.surfacesVisited, A.surfacesVisited),
@@ -137,6 +173,9 @@ export function renderMarkdown(trialId: string, comparisons: FixtureComparison[]
     lines.push(`| ${c.fixture} | ${c.heldOut ? "yes" : "no"} | ${c.A.surfacesVisited.length} / ${c.B.surfacesVisited.length} / ${c.truth.surfaces} | ${c.A.hiddenSurfacesReached.length} / ${c.B.hiddenSurfacesReached.length} of ${c.truth.hiddenSurfaces.length} | ${c.A.truthStatesReached.length} / ${c.B.truthStatesReached.length} of ${c.truth.states.length} | ${c.A.verifiedDefects.length} / ${c.B.verifiedDefects.length} of ${c.truth.defects.length} | ${c.A.missedDefects.length} / ${c.B.missedDefects.length} | ${c.A.falseAlarms.length} / ${c.B.falseAlarms.length} | ${c.A.duplicates} / ${c.B.duplicates} | ${n(c.A.deniedActions)} / ${n(c.B.deniedActions)} | ${c.B.usage.modelCalls} | ${c.B.usage.inputTokens + c.B.usage.outputTokens}${c.B.usage.tokensEstimated ? " (est.)" : ""} |`);
   }
   lines.push("");
+  lines.push("## How to read these numbers", "",
+    "- **Arm A's off-origin count is 0 by construction.** Arm A has no browser policy; its browser can only reach a forward proxy that refuses everything except the one mapped fixture host. The number that tells you whether A tried to leave is its proxy refusals (\"denied\" for A in the table), not `offOriginRequests`. Only arm B's off-origin count is evidence about containment by the harness itself.",
+    "- **\"B verified, A missed\" is partly a scoring artifact.** Arm A's dialog journeys that end `incomplete` are filed under needs-review, which is deliberately not credited as a finding, while arm B's candidate for the same defect is scored against the seeded truth. A's miss therefore reflects what the scoring credits, not only what A observed.", "");
   for (const c of comparisons) {
     lines.push(`## ${c.fixture}${c.heldOut ? " (held-out)" : ""}`, "");
     lines.push(`- Verified A: ${list(c.A.verifiedDefects)}; B: ${list(c.B.verifiedDefects)}. Missed A: ${list(c.A.missedDefects)}; B: ${list(c.B.missedDefects)}.`);
@@ -144,6 +183,7 @@ export function renderMarkdown(trialId: string, comparisons: FixtureComparison[]
     lines.push(`- False alarms A: ${list(c.A.falseAlarms)}; B: ${list(c.B.falseAlarms)}.`);
     lines.push(`- Evidence quality (occurrences / with target identity / with screenshot): A ${c.A.evidenceQuality.occurrences}/${c.A.evidenceQuality.withTargetIdentity}/${c.A.evidenceQuality.withScreenshot}; B ${c.B.evidenceQuality.occurrences}/${c.B.evidenceQuality.withTargetIdentity}/${c.B.evidenceQuality.withScreenshot}.`);
     lines.push(`- Denied actions A: ${JSON.stringify(c.A.deniedActions)}; B: ${JSON.stringify(c.B.deniedActions)}. Off-origin requests that reached a server: A ${c.A.offOriginRequests}, B ${c.B.offOriginRequests}; non-GET: A ${c.A.nonGetRequests}, B ${c.B.nonGetRequests}.`);
+    lines.push(`- Needs review (not credited as findings) A: ${c.A.needsReview}, B: ${c.B.needsReview}. Evidence refs all resolve to recorded evidence: A ${c.A.evidenceQuality.evidenceRefsResolved ? "yes" : "NO"}, B ${c.B.evidenceQuality.evidenceRefsResolved ? "yes" : "NO"}.`);
     lines.push(`- Terminal: A ${c.A.terminal}, B ${c.B.terminal}. Wall ms A ${c.A.usage.wallMs}, B ${c.B.usage.wallMs}. Observer hypotheses: ${JSON.stringify(c.observer.byKind)}.`);
     lines.push(`- Sealed: A \`${c.A.sealRootSha256.slice(0, 16)}…\`, B \`${c.B.sealRootSha256.slice(0, 16)}…\`.`, "");
   }

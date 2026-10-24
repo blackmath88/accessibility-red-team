@@ -3,7 +3,8 @@ import { appendFile, mkdtemp, readFile, rm, unlink, writeFile } from "node:fs/pr
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { after, before, describe, it } from "node:test";
-import { runArmA, runArmB, sealArm, SealError, verifySeal } from "../src/experimental/adaptive/arms.js";
+import { evidenceRefResolves } from "../src/experimental/adaptive/compare.js";
+import { readArm, runArmA, runArmB, sealArm, SealError, verifySeal } from "../src/experimental/adaptive/arms.js";
 import { runTrial, type TrialResult } from "../src/experimental/adaptive/cli.js";
 import { HypothesisSchema, observe } from "../src/experimental/adaptive/observer.js";
 import { FakeProvider } from "../src/experimental/adaptive/providers/fake.js";
@@ -44,6 +45,40 @@ describe("arm sealing", () => {
       await unlink(join(dir, "session", "denials.json"));
       await assert.rejects(verifySeal(dir), /missing: session\/denials.json/);
     } finally { await rm(dir, { recursive: true, force: true }); }
+  });
+});
+
+describe("evidence refs and arm identity", () => {
+  it("evidenceRefsResolved is computed: real refs from both arms resolve, invented ones do not", async () => {
+    for (const fixture of ["menu-dialog", "skip-links"] as const) {
+      const c = by(fixture);
+      assert.equal(c.B.evidenceQuality.evidenceRefsResolved, true, `${fixture} B`);
+      assert.equal(c.A.evidenceQuality.evidenceRefsResolved, true, `${fixture} A`);
+    }
+    const { summary: b } = await readArm(join(trial.dir, "menu-dialog", "B"), "B");
+    const realB = b.findings[0]!.occurrences[0]!.evidenceRef;
+    const dirB = join(trial.dir, "menu-dialog", "B");
+    assert.equal(await evidenceRefResolves(dirB, realB), true);
+    assert.equal(await evidenceRefResolves(dirB, "session/evidence.json#ev_does_not_exist"), false, "unknown evidence id");
+    assert.equal(await evidenceRefResolves(dirB, "session/nope.json#ev_1"), false, "missing file");
+    assert.equal(await evidenceRefResolves(dirB, "../A/arm.json#x"), false, "outside the arm directory");
+    assert.equal(await evidenceRefResolves(dirB, "x"), false, "no fragment");
+    const { summary: a } = await readArm(join(trial.dir, "skip-links", "A"), "A");
+    const realA = a.findings.find((finding) => finding.category === "skip_link_broken")!.occurrences[0]!.evidenceRef;
+    const dirA = join(trial.dir, "skip-links", "A");
+    assert.equal(await evidenceRefResolves(dirA, realA), true);
+    assert.equal(await evidenceRefResolves(dirA, realA.replace(/#.*/, "#no-such-journey")), false, "unknown journey id");
+    assert.equal(await evidenceRefResolves(dirA, "surface-0/probe-results.json#axe.nope/0"), false, "unknown probe");
+  });
+  it("readArm refuses an arm sealed or summarised as the other arm", async () => {
+    await readArm(join(trial.dir, "skip-links", "A"), "A");
+    await assert.rejects(readArm(join(trial.dir, "skip-links", "A"), "B"), SealError);
+    await assert.rejects(readArm(join(trial.dir, "skip-links", "B"), "A"), SealError);
+  });
+  it("the readable comparison states the proxy-containment and scoring caveats", async () => {
+    const md = await readFile(join(trial.dir, "comparison.md"), "utf8").catch(() => "");
+    assert.match(md, /off-origin count is 0 by construction/);
+    assert.match(md, /scoring artifact/);
   });
 });
 
