@@ -124,6 +124,9 @@ const INIT_SCRIPT = `(() => {
   document.addEventListener("submit", (event) => { event.preventDefault(); event.stopImmediatePropagation(); report("form_submit", event.target && event.target.action); }, true);
   HTMLFormElement.prototype.submit = function () { report("form_submit", this.action); };
   HTMLFormElement.prototype.requestSubmit = function () { report("form_submit", this.action); };
+  // Defence in depth: the sandbox browser is launched without the SharedWorker feature at all (see launchSandboxBrowser). Page request
+  // interception does not cover SharedWorker traffic, so the constructor must not exist; this stub covers a browser launched elsewhere.
+  Object.defineProperty(window, "SharedWorker", { value: function SharedWorker() { report("shared_worker", ""); throw new DOMException("SharedWorker is disabled", "SecurityError"); }, configurable: false, writable: false });
 })();`;
 
 type FetchPaused = {
@@ -146,9 +149,15 @@ export class BrowserGuard {
   async install(): Promise<void> {
     await this.context.exposeBinding("__artPolicy", (_source, kind: unknown, detail: unknown) => {
       if (kind === "popup") this.record({ source: "browser_policy", reason: "popup_blocked", detail: `window.open(${String(detail)}) was neutralised`, url: null });
+      else if (kind === "shared_worker") this.record({ source: "browser_policy", reason: "worker_blocked", detail: "SharedWorker construction was refused", url: null });
       else if (kind === "form_submit") this.record({ source: "browser_policy", reason: "form_submit_blocked", detail: `form submission to ${String(detail)} was neutralised`, url: null });
     });
     await this.context.addInitScript(INIT_SCRIPT);
+    // WebSockets are not interceptable through Fetch, so they are refused outright: deny-all, and never connected to the real server.
+    await this.context.routeWebSocket(() => true, (ws) => {
+      this.record({ source: "browser_policy", reason: "websocket", detail: "a WebSocket connection was refused", url: null });
+      void ws.close({ code: 1008, reason: "refused by harness" }).catch(() => undefined);
+    });
     this.context.on("page", (page) => {
       if (this.opening || this.ours.has(page)) return;
       this.record({ source: "browser_policy", reason: "popup_blocked", detail: "a new page/window was opened and closed", url: null });
@@ -207,7 +216,9 @@ export class BrowserGuard {
 
 // Disposable browser: no profile, no connected session. Fixture hosts can be mapped to loopback; everything else does not resolve.
 export async function launchSandboxBrowser(options: { hostMappings?: Record<string, string> } = {}): Promise<Browser> {
-  const args = ["--block-new-web-contents", "--disable-features=IsolateOrigins,site-per-process", "--disable-site-isolation-trials"];
+  // SharedWorker network traffic is invisible to Playwright's page-level request interception (and a browser-level CDP auto-attach cannot be
+  // driven through Playwright's CDPSession), so the feature is removed from the browser instead of being filtered.
+  const args = ["--block-new-web-contents", "--disable-blink-features=SharedWorker", "--disable-features=IsolateOrigins,site-per-process", "--disable-site-isolation-trials"];
   if (options.hostMappings) {
     const rules = Object.entries(options.hostMappings).map(([host, address]) => `MAP ${host} ${address}`);
     args.push(`--host-resolver-rules=${[...rules, "MAP * ~NOTFOUND"].join(", ")}`);

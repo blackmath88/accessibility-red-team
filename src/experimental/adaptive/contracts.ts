@@ -209,7 +209,7 @@ export type StoredCandidate = z.infer<typeof StoredCandidateSchema>;
 export const DenialReasonSchema = z.enum([
   "origin_not_allowed", "url_not_discovered", "activation_not_safe", "unknown_target_ref", "forbidden_action_type", "invalid_action_fields",
   "scheme_not_allowed", "redirect_off_allowlist", "subrequest_off_allowlist", "private_destination", "non_get_request",
-  "popup_blocked", "download_blocked", "file_chooser_blocked", "form_submit_blocked", "response_too_large", "surface_limit",
+  "popup_blocked", "download_blocked", "file_chooser_blocked", "form_submit_blocked", "response_too_large", "surface_limit", "websocket", "worker_blocked", "websocket",
 ]);
 export type DenialReason = z.infer<typeof DenialReasonSchema>;
 

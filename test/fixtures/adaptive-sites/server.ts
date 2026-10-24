@@ -58,6 +58,12 @@ export async function startFixtures(options: { publicHost?: string; offPublicHos
     res.end("<!doctype html><html lang=\"en\"><title>OFF-ORIGIN</title><h1>Off-origin page</h1></html>");
   });
 
+  // WebSocket upgrades to the off origin are recorded as hits too; the upgrade is never completed.
+  off.on("upgrade", (req, socket) => {
+    offHits.push({ method: `UPGRADE ${req.method ?? "GET"}`, path: req.url ?? "/" });
+    socket.destroy();
+  });
+
   const main = createServer(async (req: IncomingMessage, res: ServerResponse) => {
     const method = req.method ?? "GET";
     const url = new URL(req.url ?? "/", "http://fixture.invalid");
@@ -70,10 +76,11 @@ export async function startFixtures(options: { publicHost?: string; offPublicHos
       return;
     }
     const relative = normalize(url.pathname).replace(/^\/+/, "");
-    if (relative.includes("..") || !relative.endsWith(".html")) { res.writeHead(404); res.end("not found"); return; }
+    const isScript = relative.startsWith("malicious/") && relative.endsWith(".js");
+    if (relative.includes("..") || !(relative.endsWith(".html") || isScript)) { res.writeHead(404); res.end("not found"); return; }
     try {
       const html = (await readFile(join(FIXTURE_DIR, relative), "utf8")).replaceAll("{{OFF}}", offOrigin);
-      res.writeHead(200, { "content-type": "text/html; charset=utf-8" });
+      res.writeHead(200, { "content-type": isScript ? "text/javascript; charset=utf-8" : "text/html; charset=utf-8" });
       res.end(html);
     } catch {
       res.writeHead(404); res.end("not found");

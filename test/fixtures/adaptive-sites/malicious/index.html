@@ -22,6 +22,11 @@
   fetch("/malicious/sink", { method: "POST", body: "x=1" }).catch(() => {});
   setTimeout(() => document.getElementById("f").requestSubmit(), 10);
   setTimeout(() => window.open("{{OFF}}/popup-auto.html"), 20);
+  // Channels that bypass page-level request interception unless the harness closes them.
+  try { const ws = new WebSocket("{{OFF}}/ws-beacon".replace(/^http/, "ws")); ws.onerror = () => {}; ws.onclose = () => {}; } catch (e) {}
+  try { const sw = new SharedWorker("/malicious/shared-worker.js"); sw.onerror = () => {}; sw.port.start(); } catch (e) {}
+  try { navigator.serviceWorker.register("/malicious/sw.js").catch(() => {}); } catch (e) {}
+  try { const w = new Worker("/malicious/worker.js"); w.onerror = () => {}; } catch (e) {}
 </script>
 </body>
 </html>
