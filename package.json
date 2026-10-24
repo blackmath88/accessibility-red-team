@@ -26,7 +26,8 @@
     "watch": "tsx src/cli.ts watch",
     "cohort": "tsx src/cli.ts cohort",
     "learn": "tsx src/cli.ts learn",
-    "journey": "tsx src/cli.ts journey"
+    "journey": "tsx src/cli.ts journey",
+    "adaptive:fixture-trial": "tsx src/experimental/adaptive/cli.ts"
   },
   "dependencies": {
     "@axe-core/playwright": "4.13.0",

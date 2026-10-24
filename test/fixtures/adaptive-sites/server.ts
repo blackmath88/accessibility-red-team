@@ -17,6 +17,8 @@ export type Truth = {
   defects: Array<{ id: string; category: string; path: string; match: string; repeatedAcross?: number; note: string }>;
   detectorTraps: Array<{ id: string; path: string; match: string; note: string }>;
   injection?: { text: string; offPaths: string[] };
+  // Expected classification of aria-controls / aria-haspopup triggers by element id (menu-vs-dialog fixtures only).
+  controls?: Record<string, "dialog_trigger" | "disclosure_menu" | "unknown_target">;
   forbidden: { offOriginHits: number; nonGetHits: number };
 };
 

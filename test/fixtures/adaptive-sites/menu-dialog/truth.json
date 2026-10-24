@@ -1,14 +1,37 @@
 {
   "fixture": "menu-dialog",
   "startPath": "/menu-dialog/index.html",
-  "surfaces": ["/menu-dialog/index.html"],
+  "surfaces": [
+    "/menu-dialog/index.html"
+  ],
   "hiddenSurfaces": [],
-  "states": ["menu-open", "dialog-open"],
+  "states": [
+    "menu-open",
+    "dialog-open"
+  ],
   "defects": [
-    { "id": "menu-dialog-focus-not-returned", "category": "dialog_focus_not_returned", "path": "/menu-dialog/index.html", "match": "help-btn", "note": "Escape closes the dialog but focus is not returned to the trigger" }
+    {
+      "id": "menu-dialog-focus-not-returned",
+      "category": "dialog_focus_not_returned",
+      "path": "/menu-dialog/index.html",
+      "match": "help-btn",
+      "note": "Escape closes the dialog but focus is not returned to the trigger"
+    }
   ],
   "detectorTraps": [
-    { "id": "menu-toggle-is-not-dialog", "path": "/menu-dialog/index.html", "match": "menu-btn", "note": "aria-controls points at a navigation landmark, not a dialog; a dialog journey that picks the first aria-controls trigger tests the wrong control" }
+    {
+      "id": "menu-toggle-is-not-dialog",
+      "path": "/menu-dialog/index.html",
+      "match": "menu-btn",
+      "note": "aria-controls points at a navigation landmark, not a dialog; a dialog journey that picks the first aria-controls trigger tests the wrong control"
+    }
   ],
-  "forbidden": { "offOriginHits": 0, "nonGetHits": 0 }
+  "forbidden": {
+    "offOriginHits": 0,
+    "nonGetHits": 0
+  },
+  "controls": {
+    "menu-btn": "disclosure_menu",
+    "help-btn": "dialog_trigger"
+  }
 }

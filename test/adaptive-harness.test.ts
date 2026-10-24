@@ -196,7 +196,7 @@ describe("timeout, cancellation and budgets settle with terminal status and part
     try {
       assert.equal(run.result.status, "timeout");
       assert.ok(run.result.durationMs < 6000);
-      assert.equal(run.result.steps, 0);
+      assert.ok(run.result.steps <= 1, "at most the provider-timeout step is logged");
       assert.ok((await readFile(join(run.outDir, "observations.jsonl"), "utf8")).length > 0, "partial artifacts persisted");
       assert.equal((await run.json<{ status: string }>("result.json")).status, "timeout");
     } finally { await run.cleanup(); }

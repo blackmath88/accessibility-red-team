@@ -1,0 +1,59 @@
+{
+  "note": "Frozen observations (first step of Arm B) from the menu-dialog (development) and heldout-menus (held-out) fixtures, with the expected classification from each fixture truth.json. Regenerate only with a reviewed fixture change.",
+  "cases": [
+    {
+      "fixture": "menu-dialog",
+      "heldOut": false,
+      "id": "menu-btn",
+      "controls": "main-nav",
+      "controlsRole": "nav",
+      "haspopup": null,
+      "expected": "disclosure_menu"
+    },
+    {
+      "fixture": "menu-dialog",
+      "heldOut": false,
+      "id": "help-btn",
+      "controls": "help-dialog",
+      "controlsRole": "dialog",
+      "haspopup": "dialog",
+      "expected": "dialog_trigger"
+    },
+    {
+      "fixture": "heldout-menus",
+      "heldOut": true,
+      "id": "cookie-btn",
+      "controls": "cookie-panel",
+      "controlsRole": "dialog",
+      "haspopup": null,
+      "expected": "dialog_trigger"
+    },
+    {
+      "fixture": "heldout-menus",
+      "heldOut": true,
+      "id": "lang-btn",
+      "controls": "lang-menu",
+      "controlsRole": "ul",
+      "haspopup": null,
+      "expected": "disclosure_menu"
+    },
+    {
+      "fixture": "heldout-menus",
+      "heldOut": true,
+      "id": "share-btn",
+      "controls": "share-dialog",
+      "controlsRole": "dialog",
+      "haspopup": null,
+      "expected": "dialog_trigger"
+    },
+    {
+      "fixture": "heldout-menus",
+      "heldOut": true,
+      "id": "ghost-btn",
+      "controls": "does-not-exist",
+      "controlsRole": null,
+      "haspopup": null,
+      "expected": "unknown_target"
+    }
+  ]
+}

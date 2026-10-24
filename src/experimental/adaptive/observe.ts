@@ -44,6 +44,7 @@ const OBSERVE_SRC = `(args) => {
     for (let i = 0; n && n.nodeType === 1 && i < 4; i += 1) {
       let s = n.tagName.toLowerCase();
       if (n.id) { parts.unshift(s + "#" + n.id); break; }
+      if (typeof n.className === "string" && n.className.trim()) s += "." + n.className.trim().split(/\\s+/).slice(0, 2).join(".");
       const p = n.parentElement;
       if (p) s += ":nth-child(" + (Array.from(p.children).indexOf(n) + 1) + ")";
       parts.unshift(s); n = p;

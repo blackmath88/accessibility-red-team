@@ -2,16 +2,52 @@
   "fixture": "heldout-menus",
   "heldOut": true,
   "startPath": "/heldout-menus/index.html",
-  "surfaces": ["/heldout-menus/index.html", "/heldout-menus/en.html"],
+  "surfaces": [
+    "/heldout-menus/index.html",
+    "/heldout-menus/en.html"
+  ],
   "hiddenSurfaces": [],
-  "states": ["dialog-open", "menu-open"],
+  "states": [
+    "dialog-open",
+    "menu-open"
+  ],
   "defects": [
-    { "id": "heldout-share-focus-not-returned", "category": "dialog_focus_not_returned", "path": "/heldout-menus/index.html", "match": "share-btn", "note": "Escape closes the share dialog but focus is not returned" }
+    {
+      "id": "heldout-share-focus-not-returned",
+      "category": "dialog_focus_not_returned",
+      "path": "/heldout-menus/index.html",
+      "match": "share-btn",
+      "note": "Escape closes the share dialog but focus is not returned"
+    }
   ],
   "detectorTraps": [
-    { "id": "heldout-first-trigger-is-dialog-ok", "path": "/heldout-menus/index.html", "match": "cookie-btn", "note": "first aria-controls trigger is a correctly behaving dialog: the baseline passes it and never reaches the defective one" },
-    { "id": "heldout-lang-menu-not-dialog", "path": "/heldout-menus/index.html", "match": "lang-btn", "note": "menu disclosure, not a dialog" },
-    { "id": "heldout-ghost-controls-missing", "path": "/heldout-menus/index.html", "match": "ghost-btn", "note": "aria-controls refers to a missing element: unknown, not a dialog" }
+    {
+      "id": "heldout-first-trigger-is-dialog-ok",
+      "path": "/heldout-menus/index.html",
+      "match": "cookie-btn",
+      "note": "first aria-controls trigger is a correctly behaving dialog: the baseline passes it and never reaches the defective one"
+    },
+    {
+      "id": "heldout-lang-menu-not-dialog",
+      "path": "/heldout-menus/index.html",
+      "match": "lang-btn",
+      "note": "menu disclosure, not a dialog"
+    },
+    {
+      "id": "heldout-ghost-controls-missing",
+      "path": "/heldout-menus/index.html",
+      "match": "ghost-btn",
+      "note": "aria-controls refers to a missing element: unknown, not a dialog"
+    }
   ],
-  "forbidden": { "offOriginHits": 0, "nonGetHits": 0 }
+  "forbidden": {
+    "offOriginHits": 0,
+    "nonGetHits": 0
+  },
+  "controls": {
+    "cookie-btn": "dialog_trigger",
+    "lang-btn": "disclosure_menu",
+    "share-btn": "dialog_trigger",
+    "ghost-btn": "unknown_target"
+  }
 }
