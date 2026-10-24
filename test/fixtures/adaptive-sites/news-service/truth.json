@@ -1,0 +1,13 @@
+{
+  "fixture": "news-service",
+  "startPath": "/news-service/index.html",
+  "surfaces": ["/news-service/index.html", "/news-service/2026-03-12-strassensperrung.html", "/news-service/2026-02-27-wahlen.html", "/news-service/dienstleistungen.html", "/news-service/formular-umzug.html"],
+  "hiddenSurfaces": ["/news-service/dienstleistungen.html", "/news-service/formular-umzug.html"],
+  "hiddenReason": "The Dienstleistungen link is attached to the DOM only when the menu button is activated.",
+  "states": ["menu-open"],
+  "defects": [
+    { "id": "news-plz-unlabeled", "category": "missing_accessible_name", "path": "/news-service/formular-umzug.html", "match": "plz", "note": "PLZ input has only a placeholder" }
+  ],
+  "detectorTraps": [],
+  "forbidden": { "offOriginHits": 0, "nonGetHits": 0 }
+}

@@ -1,0 +1,29 @@
+<!doctype html>
+<html lang="de">
+<head><meta charset="utf-8"><title>Verband Beispiel – Held-out</title><meta name="viewport" content="width=device-width, initial-scale=1"></head>
+<body>
+<header>
+  <button id="cookie-btn" type="button" aria-controls="cookie-panel" aria-expanded="false">Cookie-Einstellungen</button>
+  <button id="lang-btn" type="button" aria-controls="lang-menu" aria-expanded="false">Sprache</button>
+  <button id="share-btn" type="button" aria-controls="share-dialog" aria-expanded="false">Teilen</button>
+  <button id="ghost-btn" type="button" aria-controls="does-not-exist" aria-expanded="false">Mehr</button>
+</header>
+<ul id="lang-menu" hidden><li><a href="/heldout-menus/en.html">English</a></li></ul>
+<div id="cookie-panel" role="dialog" aria-label="Cookie-Einstellungen" hidden><p>Einstellungen</p><button id="cookie-close" type="button">Schliessen</button></div>
+<div id="share-dialog" role="dialog" aria-label="Teilen" hidden><p>Seite teilen</p><button id="share-close" type="button">Schliessen</button></div>
+<main id="main"><h1>Verband</h1><p>Held-out Variante: Dialog-Auslöser stehen vor dem Menü, ein Auslöser verweist auf ein nicht vorhandenes Element.</p></main>
+<script>
+  function wire(btnId, boxId, closeId, returnFocus) {
+    const btn = document.getElementById(btnId), box = document.getElementById(boxId), close = document.getElementById(closeId);
+    const set = (open) => { box.hidden = !open; btn.setAttribute("aria-expanded", String(open)); };
+    btn.addEventListener("click", () => { set(true); if (close) close.focus(); });
+    document.addEventListener("keydown", (e) => { if (e.key === "Escape" && !box.hidden) { set(false); if (returnFocus) btn.focus(); else document.activeElement.blur(); } });
+  }
+  wire("cookie-btn", "cookie-panel", "cookie-close", true);
+  // Seeded defect: the share dialog does not return focus to its trigger.
+  wire("share-btn", "share-dialog", "share-close", false);
+  const lang = document.getElementById("lang-btn"), menu = document.getElementById("lang-menu");
+  lang.addEventListener("click", () => { const open = lang.getAttribute("aria-expanded") === "true"; lang.setAttribute("aria-expanded", String(!open)); menu.hidden = open; });
+</script>
+</body>
+</html>

@@ -1,0 +1,26 @@
+<!doctype html>
+<html lang="de">
+<head><meta charset="utf-8"><title>Stadt Beispiel – Menü und Dialog</title><meta name="viewport" content="width=device-width, initial-scale=1"></head>
+<body>
+<a href="#main" class="skip">Zum Hauptinhalt springen</a>
+<header>
+  <button id="menu-btn" type="button" aria-expanded="false" aria-controls="main-nav">Menü</button>
+  <button id="help-btn" type="button" aria-haspopup="dialog" aria-controls="help-dialog">Hilfe</button>
+</header>
+<nav id="main-nav" aria-label="Hauptnavigation" hidden><ul><li><a href="/menu-dialog/index.html">Start</a></li></ul></nav>
+<div id="help-dialog" role="dialog" aria-modal="true" aria-label="Hilfe" hidden>
+  <p>Hilfe zur Seite.</p>
+  <button id="help-close" type="button">Schliessen</button>
+</div>
+<main id="main"><h1>Willkommen</h1><p>Beispielseite mit einem Navigationsmenü und einem Dialog.</p></main>
+<script>
+  const menuBtn = document.getElementById("menu-btn"), nav = document.getElementById("main-nav");
+  menuBtn.addEventListener("click", () => { const open = menuBtn.getAttribute("aria-expanded") === "true"; menuBtn.setAttribute("aria-expanded", String(!open)); nav.hidden = open; });
+  const helpBtn = document.getElementById("help-btn"), dlg = document.getElementById("help-dialog"), close = document.getElementById("help-close");
+  helpBtn.addEventListener("click", () => { dlg.hidden = false; close.focus(); });
+  // Seeded defect: Escape closes the dialog but focus is dropped to the body instead of returning to the trigger.
+  document.addEventListener("keydown", (e) => { if (e.key === "Escape" && !dlg.hidden) { dlg.hidden = true; document.activeElement.blur(); } });
+  close.addEventListener("click", () => { dlg.hidden = true; helpBtn.focus(); });
+</script>
+</body>
+</html>
