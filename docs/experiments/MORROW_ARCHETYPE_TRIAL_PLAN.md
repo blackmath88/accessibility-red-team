@@ -42,14 +42,15 @@ Input, one per candidate:
     {"kind": "title", "value": "…", "sourceRef": "E1:ch-zh-bachs/surface.json#/surfaces/1/title"},
     {"kind": "signals", "value": "depth=1 hasForm=true pdfLinks=1", "sourceRef": "E1:ch-zh-bachs/surface.json#/surfaces/1"}
   ],
-  "decisionSpace": ["home", "service", "form", "directory", "article", "unknown"],
+  "decisionSpace": ["home", "service", "article", "directory", "form", "search", "document", "external_handoff", "special_app", "unknown"],
   "instruction": "Classify the page archetype from the evidence only. Return unknown if the evidence does not decide it."
 }
 ```
 
+- `decisionSpace` is exactly `SurfaceKindSchema` (`src/scout/contracts.ts`), so humans, both baselines and the model share one label space.
 - The deterministic label and `reason` are **withheld** so the model is not anchored to them.
 - `unknown` is an explicit member of the decision space. `requiresHumanReview: true` is also treated as UNKNOWN.
-- The output adds `confidence` (`high`, `medium` or `low`) inside `rationale` as a first token, or in an extended schema. Settling which is an implementation choice for the handoff.
+- Self-reported confidence is not used for scoring. If it is collected at all, it is a secondary column only.
 - **Model output is stored separately** under `evaluation/runs/archetype-trial-v1/model/`. It is never written into `surface.json`, findings or reports.
 
 ## Treating website content as untrusted
@@ -70,16 +71,16 @@ Input, one per candidate:
 
 ## Model, endpoint and limits
 
-Readiness was verified on 2026-10-24 on host `nzxt`. No completion was sent.
+Readiness was verified on 2026-10-24 on the local inference workstation. No completion was sent.
 
-Whether `nzxt` is "Nebuchadnezzar" is **not verified**. Weavr's documented Nebu address (`100.100.19.54`) is nzxt's own tailnet IP, and `observatory-worker.service` runs there. But E3's `run-metadata.json` records `host: null`, and the milestone doc speaks of a separate "remote copy". Confirm this before the run, and record the host in the run metadata.
+Whether that workstation is "Nebuchadnezzar" is **not verified**. Weavr's documented Nebu address resolves to this workstation's own tailnet address, and the observatory worker service runs there. But E3's `run-metadata.json` records `host: null`, and the milestone doc speaks of a separate "remote copy". Confirm this before the run, and record the host in the run metadata.
 
 | Item | Value |
 |---|---|
-| Endpoint | Raw llama-server `http://127.0.0.1:11435/v1/chat/completions` (local only, no token) |
+| Endpoint | The Morrow host's raw llama.cpp `llama-server`, OpenAI-compatible `/v1/chat/completions`, bound to loopback only |
 | Model | `Qwen3-14B-Q4_K_M.gguf`, alias `qwen3-14b-q4_k_m`, llama.cpp `7ab4ee7`, SYCL on Arc Pro B60 |
 | Context | 32768 per slot, 1 slot (calls run one at a time) |
-| Not via | Morrow governed API (`:8766`) or garage relay (`:8765`). Their `service.env` still points at a legacy ollama `qwen3:1.7b` / 8192 context, and the relay accepts only `text`/`json_object`. |
+| Not via | The Morrow governed API or the garage relay. The Morrow service configuration still names a legacy ollama `qwen3:1.7b` model with an 8192 context, and the relay accepts only `text`/`json_object` response formats. |
 
 - **Model-identity check:** assert `model` in every response equals `qwen3-14b-q4_k_m`, and record the GGUF sha256 once per run.
 - **Preflight (first gated action):** one request with `response_format: json_schema`. If it is rejected, fall back to `json_object` and validate with zod. Either way, every output passes `validateSemanticDecision`.
@@ -91,10 +92,12 @@ Whether `nzxt` is "Nebuchadnezzar" is **not verified**. Weavr's documented Nebu 
 
 ## Success and stop criteria
 
+A **false-confidence error** is any label that is wrong against the human label and is neither `unknown` nor `requiresHumanReview`. The same definition applies to Baseline A, Baseline B and the model. Items where the human reviewers disagree are excluded from scoring and listed separately.
+
 The model is only useful if, against human labels, **all** of these hold relative to Baseline B:
 
 1. Accuracy on non-home items is at least Baseline B's.
-2. **False-confidence errors** (wrong label, not `unknown`, marked high confidence) are no more than Baseline B's wrong non-`unknown` labels, and are 0 on the Bachs/Maschwanden cases.
+2. False-confidence errors are no more than Baseline B's, and 0 on the Bachs/Maschwanden cases.
 3. 0 out-of-space decisions, 0 cited references that were not supplied, and 0 canary failures.
 4. Repeat agreement is at least 95% across the 3 runs.
 5. p95 latency is under 10 s per item.
