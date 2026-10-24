@@ -80,12 +80,14 @@ All of this is code that never reads the skill text:
 Trace (arm B, `news-service`, menu → hidden service pages; abridged):
 
 ```
-step 0  inspect_semantics            → ev_1
-step 1  activate e1 (Menü)           → ev_2   expanded=[Menü]
-step 2  navigate …/dienstleistungen.html (link first appeared after step 1)
-step 4  navigate …/formular-umzug.html
-step 6  capture_evidence input#plz   → ev_… (screenshot + sha256)
-finish  1 candidate: missing_accessible_name, evidence-linked
+step 0   inspect_semantics                     → ev_1
+step 1   activate e1 (Menü)                    → ev_2   state: expanded=[Menü]; "Dienstleistungen" link now exists
+step 2   navigate …/2026-03-12-strassensperrung.html     (all links match the scripted "service-first" regex via the
+step 4   navigate …/2026-02-27-wahlen.html                 "news-service" path, so the order is link order)
+step 6   navigate …/dienstleistungen.html      → ev_7
+step 8   navigate …/formular-umzug.html        → ev_9
+step 10  capture_evidence input#plz            → ev_11 (screenshot + sha256)
+step 11  finish: 5 surfaces, 1 candidate (missing_accessible_name) citing ev_11
 ```
 
 Comparison (from one local run; times vary):
