@@ -77,4 +77,6 @@ test("dated paths are not news when they are forms, services, archives or have n
 test("dated slug without form signals is an article, including day-based paths", () => {
   assert.equal(kindOf("https://example.ch/2024/04/15/neuer-gemeindeschreiber/"), "article");
   assert.equal(kindOf("https://example.ch/2019/11/sommerfest-rueckblick"), "article");
+  assert.equal(kindOf("https://example.ch/news/2024/04/strassensperrung.html"), "article", "CMS page extensions are still post slugs");
+  assert.equal(kindOf("https://example.ch/2024/04/15/wahlresultate.php"), "article");
 });
