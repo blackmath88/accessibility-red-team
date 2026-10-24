@@ -1,5 +1,6 @@
 import assert from "node:assert/strict";
-import { request } from "node:http";
+import { createServer, request } from "node:http";
+import type { AddressInfo } from "node:net";
 import { connect } from "node:net";
 import { after, before, describe, it } from "node:test";
 import { startContainmentProxy, type ContainmentProxy } from "../src/experimental/adaptive/containment.js";
@@ -37,6 +38,26 @@ describe("containment proxy", () => {
     assert.deepEqual(fixtures.offHits, []);
     assert.ok(fixtures.hits.every((hit) => hit.method === "GET"), "the refused POST never reached the fixture server");
     assert.equal(proxy.refused.length, 3);
+  });
+
+  it("forwards only end-to-end GET headers, never proxy credentials or body framing", async () => {
+    let seen: Record<string, unknown> = {};
+    const upstream = createServer((req, res) => { seen = { ...req.headers }; res.end("ok"); });
+    await new Promise<void>((resolve) => upstream.listen(0, "127.0.0.1", resolve));
+    const origin = `http://127.0.0.1:${(upstream.address() as AddressInfo).port}`;
+    const own = await startContainmentProxy([origin]);
+    try {
+      const status = await new Promise<number>((resolve, reject) => {
+        const req = request({ host: "127.0.0.1", port: new URL(own.url).port, path: `${origin}/x`, method: "GET",
+          headers: { host: new URL(origin).host, accept: "text/html", "proxy-authorization": "Basic c2VjcmV0", "x-secret": "1", "transfer-encoding": "chunked" } },
+        (res) => { res.resume(); resolve(res.statusCode ?? 0); });
+        req.on("error", reject);
+        req.end();
+      });
+      assert.equal(status, 200);
+      assert.equal(seen.accept, "text/html");
+      for (const name of ["proxy-authorization", "x-secret", "transfer-encoding", "content-length"]) assert.equal(seen[name], undefined, name);
+    } finally { await own.close(); await new Promise<void>((resolve) => upstream.close(() => resolve())); }
   });
 
   it("only accepts http origins", async () => {
