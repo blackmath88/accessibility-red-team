@@ -56,14 +56,30 @@ const SurfaceFile = z.object({ schema: z.literal("art/accessibility-surface/v1")
 
 export type EvidenceFile = { path: string; json: unknown };
 
+// Site derivation from a path relative to the evidence root, first match wins:
+//   1. `.../sites/<site>/...`            frozen pilot layout (the segment after the first `sites`)
+//   2. `.../<site>/surfaces/...`         cohort layout (the segment directly before the first `surfaces`)
+//   3. `<site>/<file>` (exactly 2 parts) cohort per-site files such as `<site>/surface.json`
+// Anything else is `(single-site run)`, including a root-level `surfaces/...` or `surface.json`.
+// Rule 3 assumes the caller passes paths relative to the evidence root (as readEvidenceFiles does).
 export function siteOf(path: string): string {
-  const parts = path.split(/[\\/]/);
-  const i = parts.indexOf("sites");
-  return i >= 0 && parts[i + 1] ? parts[i + 1]! : "(single-site run)";
+  const parts = path.split(/[\\/]/).filter(Boolean);
+  const sitesAt = parts.indexOf("sites");
+  if (sitesAt >= 0 && parts[sitesAt + 1]) return parts[sitesAt + 1]!;
+  const surfacesAt = parts.indexOf("surfaces");
+  if (surfacesAt > 0) return parts[surfacesAt - 1]!;
+  if (parts.length === 2) return parts[0]!;
+  return "(single-site run)";
+}
+
+// Observatory probe ids carry an `axe.` prefix; the modality table and baseline axe results use bare rule ids.
+// Shared with src/routing/route.ts semantics: strip once, here.
+export function normalizeRuleId(id: string): string {
+  return id.replace(/^axe\./, "");
 }
 
 export function modalityOf(ruleId: string): Modality {
-  return AXE_INCOMPLETE_MODALITY[ruleId] ?? "unclassified";
+  return AXE_INCOMPLETE_MODALITY[normalizeRuleId(ruleId)] ?? "unclassified";
 }
 
 export function buildCensus(files: EvidenceFile[], generatedAt = new Date().toISOString()) {
@@ -74,6 +90,7 @@ export function buildCensus(files: EvidenceFile[], generatedAt = new Date().toIS
   const scanned = { baseline_axe: 0, observatory_probe: 0, journey: 0, surface: 0, skipped: 0 };
 
   const addAxe = (source: Source, site: string, ruleId: string, nodes: number) => {
+    ruleId = normalizeRuleId(ruleId); // observatory `axe.x` and baseline `x` count as the same rule
     const key = `${source}\u0000${ruleId}`;
     const entry = axe.get(key) ?? { results: 0, nodes: 0, sites: new Set<string>() };
     entry.results += 1; entry.nodes += nodes; entry.sites.add(site); axe.set(key, entry);
