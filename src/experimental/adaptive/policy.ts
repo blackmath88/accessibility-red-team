@@ -254,7 +254,7 @@ export class BrowserGuard {
 }
 
 // Disposable browser: no profile, no connected session. Fixture hosts can be mapped to loopback; everything else does not resolve.
-export async function launchSandboxBrowser(options: { hostMappings?: Record<string, string> } = {}): Promise<Browser> {
+export async function launchSandboxBrowser(options: { hostMappings?: Record<string, string>; proxyServer?: string } = {}): Promise<Browser> {
   // SharedWorker network traffic is invisible to Playwright's page-level request interception (and a browser-level CDP auto-attach cannot be
   // driven through Playwright's CDPSession), so the feature is removed from the browser instead of being filtered.
   const args = ["--block-new-web-contents", "--disable-blink-features=SharedWorker", "--disable-features=IsolateOrigins,site-per-process", "--disable-site-isolation-trials"];
@@ -262,7 +262,9 @@ export async function launchSandboxBrowser(options: { hostMappings?: Record<stri
     const rules = Object.entries(options.hostMappings).map(([host, address]) => `MAP ${host} ${address}`);
     args.push(`--host-resolver-rules=${[...rules, "MAP * ~NOTFOUND"].join(", ")}`);
   }
-  return chromium.launch({ headless: true, args });
+  // With a proxy (see containment.ts) every request, including loopback and worker traffic, must pass the proxy: Playwright adds
+  // `<-loopback>` to the bypass list so loopback is not exempt.
+  return chromium.launch({ headless: true, args, ...(options.proxyServer ? { proxy: { server: options.proxyServer } } : {}) });
 }
 
 export const CONTEXT_OPTIONS = {

@@ -13,7 +13,8 @@ import {
   type PolicyDenial, type SessionConfig, type SessionConfigInput, type SessionResult, type StoredCandidate, type TerminalStatus, type TraceStep,
 } from "./contracts.js";
 import { ELEMENT_SELECTOR, observePage, type LastActivated } from "./observe.js";
-import { BrowserGuard, CONTEXT_OPTIONS, SessionPolicy, classifyActivation, launchSandboxBrowser, type RecordDenial, type Resolver } from "./policy.js";
+import { BrowserGuard, CONTEXT_OPTIONS, SessionPolicy, classifyActivation, type RecordDenial, type Resolver } from "./policy.js";
+import { launchContainedBrowser, type ContainedBrowser } from "./containment.js";
 import { ProviderError, type ModelProvider } from "./provider.js";
 import { OBSERVATION_MARKER } from "./providers/fake.js";
 
@@ -442,10 +443,10 @@ export async function runSession(options: RunSessionOptions): Promise<SessionRes
   const timer = setTimeout(() => session.abort("timeout"), config.limits.maxWallMs);
   timer.unref();
 
-  const ownsBrowser = !options.browser;
-  let browser: Browser | null = null;
+  // A caller-supplied browser must already be contained (tests and arm B use launchContainedBrowser); otherwise the session owns one.
+  let owned: ContainedBrowser | null = null;
   try {
-    browser = options.browser ?? await launchSandboxBrowser();
+    const browser: Browser = options.browser ?? (owned = await launchContainedBrowser(config.allowedOrigins)).browser;
     await session.run(browser);
   } catch (error) {
     if (!session.cause) { session.status = "error"; session.reason = firstLine(error); }
@@ -457,7 +458,7 @@ export async function runSession(options: RunSessionOptions): Promise<SessionRes
       session.reason = session.cause === "timeout" ? `maxWallMs ${config.limits.maxWallMs} elapsed` : "cancelled by caller";
     }
     await session.closeContext();
-    if (ownsBrowser) await browser?.close().catch(() => undefined);
+    await owned?.close();
   }
 
   const result = SessionResultSchema.parse({

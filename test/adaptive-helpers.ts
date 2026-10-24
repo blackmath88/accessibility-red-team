@@ -6,14 +6,16 @@ import type { Browser } from "playwright";
 import { DEFAULT_FIXTURE_LIMITS, type Limits, type Observation, type PolicyDenial, type SessionConfigInput } from "../src/experimental/adaptive/contracts.js";
 import { runSession } from "../src/experimental/adaptive/executor.js";
 import type { ModelProvider } from "../src/experimental/adaptive/provider.js";
-import { launchSandboxBrowser } from "../src/experimental/adaptive/policy.js";
+import { launchContainedBrowser, type ContainmentProxy } from "../src/experimental/adaptive/containment.js";
 import { startFixtures, type Fixtures } from "./fixtures/adaptive-sites/server.js";
 
-export type Harness = { browser: Browser; fixtures: Fixtures; close(): Promise<void> };
+export type Harness = { browser: Browser; fixtures: Fixtures; proxy: ContainmentProxy; close(): Promise<void> };
 
+// The test browser runs behind the same containment proxy as a real fixture session: only the fixture origin is reachable.
 export async function startHarness(): Promise<Harness> {
-  const [browser, fixtures] = await Promise.all([launchSandboxBrowser(), startFixtures()]);
-  return { browser, fixtures, close: async () => { await browser.close(); await fixtures.close(); } };
+  const fixtures = await startFixtures();
+  const contained = await launchContainedBrowser([fixtures.origin]).catch(async (error) => { await fixtures.close(); throw error; });
+  return { browser: contained.browser, fixtures, proxy: contained.proxy, close: async () => { await contained.close(); await fixtures.close(); } };
 }
 
 export function fixtureConfig(harness: Harness, path: string, limits: Partial<Limits> = {}, sessionId = "test"): SessionConfigInput {

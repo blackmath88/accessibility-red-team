@@ -30,10 +30,15 @@ agent in a browser) and different safeguards. This ADR neither relies on nor arg
      page session; each request is decided against an exact-origin allowlist, and anything off it is failed
      (`subrequest_off_allowlist`, `redirect_off_allowlist`, `origin_not_allowed`). Dedicated workers are covered by the
      same interception (verified by test). Non-GET/HEAD requests are refused.
-   - *Channels the interception cannot see* are closed instead of filtered: WebSockets are refused outright with
-     `context.routeWebSocket` (deny-all, never connected); SharedWorker is removed from the browser
-     (`--disable-blink-features=SharedWorker`, plus an init-script stub as defence in depth); service workers are blocked
-     by the browser context. Tests drive each channel against an off-origin server and assert it is never reached.
+   - *Network boundary*: the sandbox browser's only network path is a deny-by-default loopback forward proxy
+     (`containment.ts`) that forwards plain GET/HEAD to the allowed fixture origin and refuses everything else, including
+     CONNECT tunnels (how Chrome carries `ws://` through a proxy) and upgrades. This is what stops traffic that page-level
+     interception cannot see, such as a WebSocket opened inside a dedicated worker.
+   - *Page-level layers on top* record denials and close channels early: WebSockets from pages and frames are refused with
+     `context.routeWebSocket` (a per-page mock, so it does not cover workers; the proxy does); SharedWorker is removed from
+     the browser (`--disable-blink-features=SharedWorker`, plus an init-script stub); service workers are blocked by the
+     browser context. Tests drive each channel, including a worker WebSocket, against an off-origin server that records
+     requests and upgrades, and assert it is never reached.
    - *Page behaviour*: form submission, `window.open` and new pages are neutralised; downloads and file choosers are
      cancelled; there is no typing action; activation is limited to controls passing an extended version of the existing
      safety rules; a fresh disposable context per session; hard budgets (steps, model calls, tokens, response bytes,
@@ -86,5 +91,5 @@ change.
 - **Residual risks of fixture mode:** the observation and activation classifiers run in the page's main world
   (`observePage`, `classifyActivation`), so a hostile page can spoof the DOM they read (for example make a risky control look
   safe, or hide one). The network layer, not the classifiers, is the boundary: even a mis-classified click cannot reach an
-  off-allowlist origin, send a non-GET request or open a WebSocket. A page can also forge the enum-only browser-policy
+  off-allowlist origin, send a non-GET request or open a WebSocket, because the containment proxy refuses it. A page can also forge the enum-only browser-policy
   denials by calling the harness binding; they carry no page text but are not proof that the harness refused something.

@@ -50,7 +50,12 @@ All of this is code that never reads the skill text:
   link-local and metadata destinations (including `169.254.169.254`), IPv4-mapped / NAT64 / 6to4 literals embedding such
   addresses (`isPublicAddress`, stricter than `src/scope.ts`) and hostnames resolving to them are refused. It stays off until
   DNS is pinned for the browser (cache expiry, host mappings, site isolation) and the owner approves it.
-- **Channels page interception cannot see**: WebSockets are refused (`websocket` denial, never connected), SharedWorker is
+- **Network boundary**: every request from the sandbox browser goes through a deny-by-default loopback proxy
+  (`containment.ts`; GET/HEAD to the allowed fixture origin only; CONNECT and upgrades refused). Arm B and the tests run behind
+  it, and `runSession` launches one when no browser is supplied. It is the layer that stops a dedicated worker's WebSocket,
+  which no page-level control sees; proxy refusals appear in arm B's denials as `containment_proxy`.
+- **Channels page interception cannot see**: WebSockets from pages and frames are refused (`websocket` denial, never
+  connected; `routeWebSocket` is a per-page mock and does not reach workers, the proxy does), SharedWorker is
   removed from the sandbox browser (`--disable-blink-features=SharedWorker`; an init-script stub is a second layer and records
   `worker_blocked`), service workers are blocked on the context. A browser-level CDP auto-attach to worker targets was tried
   first and cannot be driven through Playwright's `CDPSession`, so the feature is removed instead of filtered.

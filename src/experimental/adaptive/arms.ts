@@ -17,7 +17,7 @@ import { scanUrl } from "../../scan.js";
 import { portOf, startFixtureProxy, startFixtures, type FixtureName } from "../../../test/fixtures/adaptive-sites/server.js";
 import { DEFAULT_FIXTURE_LIMITS, type EvidenceRecord, type PolicyDenial, type SessionResult, type StoredCandidate } from "./contracts.js";
 import { codeSha, runSession, sha256 } from "./executor.js";
-import { launchSandboxBrowser } from "./policy.js";
+import { launchContainedBrowser, type ContainedBrowser } from "./containment.js";
 import type { ModelProvider } from "./provider.js";
 import { FakeProvider } from "./providers/fake.js";
 import { exploratoryScript } from "./scripted-policy.js";
@@ -293,14 +293,14 @@ export async function runArmB(fixture: FixtureName, truthStartPath: string, opti
   const { outDir } = options;
   await mkdir(outDir, { recursive: true });
   const fixtures = await startFixtures();
-  const ownsBrowser = !options.browser;
-  let browser: Browser | null = options.browser ?? null;
+  let contained: ContainedBrowser | null = null;
   const provider = options.provider ?? new FakeProvider(exploratoryScript());
   let result: SessionResult;
   const sessionDir = join(outDir, "session");
   try {
     // Launched inside the try so that a launch failure still closes the fixture servers.
-    browser ??= await launchSandboxBrowser();
+    // Arm B's own browser sits behind a containment proxy for the fixture origin, so worker and WebSocket traffic cannot leave either.
+    const browser = options.browser ?? (contained = await launchContainedBrowser([fixtures.origin])).browser;
     result = await runSession({
       config: {
         schema: "art/adaptive-session/v1", sessionId: `${fixture}-B`, startUrl: `${fixtures.origin}${truthStartPath}`, allowedOrigins: [fixtures.origin], mode: "fixture", publicTargets: [],
@@ -309,7 +309,7 @@ export async function runArmB(fixture: FixtureName, truthStartPath: string, opti
       provider, outDir: sessionDir, browser, codeSha: options.codeSha,
     });
   } finally {
-    if (ownsBrowser) await browser?.close().catch(() => undefined);
+    await contained?.close();
     await fixtures.close();
   }
 
@@ -337,7 +337,10 @@ export async function runArmB(fixture: FixtureName, truthStartPath: string, opti
     states, components: [...new Set(evidence.filter((item) => item.kind === "activate" || item.kind === "capture_evidence").map((item) => `${item.kind}:${pathOf(item.url)}:${item.target?.selectorHint ?? "-"}`))],
     findings, needsReview: [], outOfScope: { axeViolationRules: [], journeyViolations: [] },
     rejectedCandidates: result.rejectedCandidateCount,
-    denials: denials.map((denial) => ({ source: denial.source, reason: denial.reason, detail: denial.detail, url: denial.url })),
+    denials: [
+      ...denials.map((denial) => ({ source: denial.source, reason: denial.reason, detail: denial.detail, url: denial.url })),
+      ...(contained?.proxy.refused ?? []).map((entry) => ({ source: "containment_proxy", reason: "refused_by_proxy", detail: entry, url: null })),
+    ],
     usage: { wallMs: result.durationMs, modelCalls: result.modelCalls, inputTokens: result.usage.inputTokens, outputTokens: result.usage.outputTokens, tokensEstimated: result.usage.estimated, cost: "unavailable" },
     journeys: [],
     contained: { offOriginRequests: fixtures.offHits.length, nonGetRequests: fixtures.hits.filter((hit) => hit.method !== "GET" && hit.method !== "HEAD").length },

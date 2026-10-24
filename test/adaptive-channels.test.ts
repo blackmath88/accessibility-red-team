@@ -25,6 +25,8 @@ describe("page channels that bypass page-level request interception are closed",
       const reasons = new Set(run.denials.map((denial) => denial.reason));
       assert.ok(reasons.has("websocket"), "WebSocket refusal recorded");
       assert.ok(reasons.has("worker_blocked"), "SharedWorker refusal recorded");
+      // The dedicated worker's WebSocket is invisible to page-level controls; the containment proxy is what refuses it.
+      assert.ok(harness.proxy.refused.some((entry) => entry.startsWith("CONNECT ") || entry.startsWith("UPGRADE ")), `worker WebSocket refused by the proxy: ${JSON.stringify(harness.proxy.refused)}`);
     } finally { await run.cleanup(); }
   });
 
