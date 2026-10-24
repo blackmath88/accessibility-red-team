@@ -22,6 +22,7 @@ export const SKILL_PATH = join(HERE, "skill", "adaptive-a11y-skill.v1.md");
 export const SKILL_VERSION = "adaptive-a11y-skill/v1";
 const REPO_ROOT = resolve(HERE, "..", "..", "..");
 const MAX_DENIALS = 10;
+const MAX_BROWSER_DENIAL_RECORDS = 200;
 const MAX_CONSECUTIVE_UNKNOWN = 2;
 
 export const sha256 = (data: string | Buffer) => createHash("sha256").update(data).digest("hex");
@@ -116,12 +117,16 @@ class Session {
     this.ac.abort();
   }
 
+  // Browser-policy denials can be provoked in bulk by the page itself, so they are capped; the overflow is counted, not stored.
+  droppedBrowserDenials = 0;
+
   readonly deny = (input: Parameters<RecordDenial>[0]): PolicyDenial => {
     const denial: PolicyDenial = {
       id: `den_${this.denials.length + 1}`, step: this.step, timestamp: new Date().toISOString(), source: input.source, reason: input.reason,
       detail: input.detail.slice(0, 400), url: input.url, attemptedAction: input.attemptedAction ?? null,
     };
-    this.denials.push(denial);
+    if (input.source === "browser_policy" && this.denials.filter((item) => item.source === "browser_policy").length >= MAX_BROWSER_DENIAL_RECORDS) this.droppedBrowserDenials += 1;
+    else this.denials.push(denial);
     return denial;
   };
 
@@ -132,6 +137,7 @@ class Session {
   }
 
   async run(browser: Browser): Promise<void> {
+    if (this.config.mode === "public") throw new Error(PUBLIC_MODE_DISABLED);
     this.context = await browser.newContext(CONTEXT_OPTIONS);
     this.ac.signal.addEventListener("abort", () => { void this.context?.close().catch(() => undefined); }, { once: true });
     const guard = new BrowserGuard(this.context, this.policy, (input) => { this.deny(input); });
@@ -175,7 +181,8 @@ class Session {
     const observed = await observePage({
       page: this.page, policy: this.policy, step: this.step, lastActivated: this.lastActivated,
       evidence: this.evidence.map((item) => ({ id: item.id, step: item.step, kind: item.kind })),
-      denials: this.denials.map((denial) => ({ id: denial.id, reason: denial.reason, detail: denial.detail })),
+      // Browser-policy details can carry page-chosen text (hostnames, paths), so the model only ever sees a harness-authored line for them.
+      denials: this.denials.map((denial) => ({ id: denial.id, reason: denial.reason, detail: denial.source === "browser_policy" ? `refused by the browser policy (${denial.reason})` : denial.detail })),
       budget: {
         stepsLeft: limits.maxSteps - this.step, modelCallsLeft: limits.maxModelCalls - this.modelCalls,
         wallMsLeft: Math.max(0, limits.maxWallMs - (Date.now() - this.startedAtMs)), surfacesLeft: limits.maxSurfaces - this.surfaces.size,
@@ -413,8 +420,13 @@ function asRecord(value: unknown): Record<string, unknown> | null {
   return value && typeof value === "object" && !Array.isArray(value) ? value as Record<string, unknown> : null;
 }
 
+export const PUBLIC_MODE_DISABLED = "adaptive public mode is disabled pending hardening and owner approval; only fixture mode (loopback fixtures) can run";
+
 export async function runSession(options: RunSessionOptions): Promise<SessionResult> {
   const config = SessionConfigSchema.parse(options.config);
+  // The public-mode decision functions stay (and stay unit-tested) but nothing may start a public session: DNS is resolved by this process
+  // and not pinned for the browser, the resolution cache never expires, no host mappings are supplied and site isolation is disabled.
+  if (config.mode === "public") throw new Error(PUBLIC_MODE_DISABLED);
   const skillText = await readFile(SKILL_PATH, "utf8");
   const pinned: PinnedVersions = {
     codeSha: options.codeSha ?? codeSha(), skillVersion: SKILL_VERSION, skillSha256: sha256(skillText),
@@ -453,7 +465,7 @@ export async function runSession(options: RunSessionOptions): Promise<SessionRes
     durationMs: Date.now() - startedAtMs, steps: session.trace.length, modelCalls: session.modelCalls, usage: session.usage,
     responseBytes: session.policy.responseBytes, cost: "unavailable", surfacesVisited: [...session.surfaces], statesVisited: [...session.states],
     evidenceCount: session.evidence.length, candidateCount: session.candidates.filter((item) => item.status === "candidate").length,
-    rejectedCandidateCount: session.candidates.filter((item) => item.status === "rejected").length, denialCount: session.denials.length,
+    rejectedCandidateCount: session.candidates.filter((item) => item.status === "rejected").length, denialCount: session.denials.length + session.droppedBrowserDenials,
     pinned, finishSummary: session.finishSummary,
     artifacts: ["result.json", "trace.jsonl", "observations.jsonl", "evidence.json", "denials.json", "candidates.json"],
   });

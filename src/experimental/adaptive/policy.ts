@@ -184,10 +184,12 @@ export class BrowserGuard {
   constructor(private readonly context: BrowserContext, private readonly policy: SessionPolicy, private readonly record: RecordDenial) {}
 
   async install(): Promise<void> {
-    await this.context.exposeBinding("__artPolicy", (_source, kind: unknown, detail: unknown) => {
-      if (kind === "popup") this.record({ source: "browser_policy", reason: "popup_blocked", detail: `window.open(${String(detail)}) was neutralised`, url: null });
+    // Any page can call this binding with arbitrary arguments, so nothing the page passes is ever recorded: only the kind is read, against a
+    // closed set, and the recorded detail is a fixed harness-authored string. Volume is capped by the session (see Session.deny).
+    await this.context.exposeBinding("__artPolicy", (_source, kind: unknown) => {
+      if (kind === "popup") this.record({ source: "browser_policy", reason: "popup_blocked", detail: "window.open was neutralised", url: null });
       else if (kind === "shared_worker") this.record({ source: "browser_policy", reason: "worker_blocked", detail: "SharedWorker construction was refused", url: null });
-      else if (kind === "form_submit") this.record({ source: "browser_policy", reason: "form_submit_blocked", detail: `form submission to ${String(detail)} was neutralised`, url: null });
+      else if (kind === "form_submit") this.record({ source: "browser_policy", reason: "form_submit_blocked", detail: "a form submission was neutralised", url: null });
     });
     await this.context.addInitScript(INIT_SCRIPT);
     // WebSockets are not interceptable through Fetch, so they are refused outright: deny-all, and never connected to the real server.
