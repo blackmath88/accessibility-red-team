@@ -2,11 +2,18 @@ import { createHash } from "node:crypto";
 import type { Page } from "playwright";
 import type { SurfaceKind } from "./contracts.js";
 
-const FORM_TERMS = /formular|form|antrag|gesuch|meldung|anmeld|kontakt/i;
-const SERVICE_TERMS = /dienstleistung|service|schalter|verwaltung|bewilligung|abfall|umzug|steuer|gemeinde/i;
+// `gesuch(?!t)`: Gesuch/Baugesuch/Gesuche, but not "gesucht" (wanted ads).
+const FORM_TERMS = /formular|form|antrag|gesuch(?!t)|meldung|anmeld|kontakt/i;
+const SERVICE_TERMS = /dienstleistung|service|schalter|verwaltung|bewilligung|abfall|umzug|steuer/i; // "gemeinde" is deliberately absent: it is in nearly every municipal page title
 const DIRECTORY_TERMS = /dienstleistungen|services|online-schalter|themen|a-z|verzeichnis|übersicht|uebersicht/i;
 const SEARCH_TERMS = /(?:^|[\s/\-_])(suche|search)(?:$|[\s/\-_.])/i;
 const ARTICLE_TERMS = /news|aktuell|mitteilung|artikel|meldung|veranstaltung/i;
+// CMS-dated post path: /YYYY/MM/<slug> or /YYYY/MM/DD/<slug>. Needs a real slug, so /2024/04/, /2024/04/15/ and
+// /2024/04/page/2/ (archives) and year-only paths like /2024/steuern/formular do not match.
+const DATED_POST_PATH = /\/(?:19|20)\d{2}\/(?:0[1-9]|1[0-2])\/(?:(?:0[1-9]|[12]\d|3[01])\/)?(?!page\/)(?=[^/]*[a-z])[^/]+/i;
+const ARCHIVE_TERMS = /archiv/i;
+
+const pathOf = (url: string) => { try { return new URL(url).pathname; } catch { return url; } };
 
 export function classifyBySignals(input: {
   url: string;
@@ -42,6 +49,12 @@ export function classifyBySignals(input: {
 
   if (SERVICE_TERMS.test(haystack)) {
     return { kind: "service", reason: "public-service wording" };
+  }
+
+  // A dated slug alone is not news: it must also carry no form fields and no archive wording. Form-like and
+  // service-like wording was already decided above, so a dated service page keeps its service kind.
+  if (DATED_POST_PATH.test(pathOf(input.url)) && input.substantiveFormFields === 0 && !ARCHIVE_TERMS.test(haystack)) {
+    return { kind: "article", reason: "dated post path without form signals" };
   }
 
   if (ARTICLE_TERMS.test(haystack)) {
