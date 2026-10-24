@@ -45,8 +45,18 @@ All of this is code that never reads the skill text:
 
 - **Origins**: exact-origin allowlist for model-chosen navigation, every redirect hop, popups and frames. In fixture mode
   subrequests off the allowlist are blocked too (`subrequest_off_allowlist`).
-- **Public mode** is disabled unless exact `publicTargets` are listed; it additionally blocks loopback, RFC1918,
-  link-local and metadata destinations (including `169.254.169.254`) and hostnames resolving to them.
+- **Public mode is disabled at runtime**: `runSession` throws before starting a browser. The config schema and the
+  destination decision functions remain (and are unit-tested): exact `publicTargets` are required and loopback, RFC1918,
+  link-local and metadata destinations (including `169.254.169.254`), IPv4-mapped / NAT64 / 6to4 literals embedding such
+  addresses (`isPublicAddress`, stricter than `src/scope.ts`) and hostnames resolving to them are refused. It stays off until
+  DNS is pinned for the browser (cache expiry, host mappings, site isolation) and the owner approves it.
+- **Channels page interception cannot see**: WebSockets are refused (`websocket` denial, never connected), SharedWorker is
+  removed from the sandbox browser (`--disable-blink-features=SharedWorker`; an init-script stub is a second layer and records
+  `worker_blocked`), service workers are blocked on the context. A browser-level CDP auto-attach to worker targets was tried
+  first and cannot be driven through Playwright's `CDPSession`, so the feature is removed instead of filtered.
+- **Page-writable channel**: `window.__artPolicy` is callable by any page. Only a closed set of kinds is read, the recorded
+  detail is fixed harness text, browser-policy denial records are capped at 200 per session (overflow only counted), and the
+  model sees a harness-authored line for them instead of the stored detail.
 - **No writes**: non-GET/HEAD requests are blocked; `form.submit/requestSubmit/submit` events are neutralised and
   recorded; there is no typing action at all; file choosers and downloads are cancelled; `window.open` and new pages are
   neutralised and closed.
@@ -122,6 +132,12 @@ observer existed and added its `controls` truth map afterwards. No rule or check
 - Arm A's scout sampling collapses structurally identical pages, so it sees fewer occurrences of a repeated component.
 - DOM-derived accessible names approximate the accname algorithm; visual claims (contrast, focus visibility) are out of
   scope for text-only configurations.
-- DNS is resolved by the harness process in public mode, so DNS rebinding between check and use is a residual risk.
+- Public mode cannot run (see above). Its known gaps: DNS is resolved by the harness process and cached without expiry, the
+  browser resolves independently, no host mappings are supplied and site isolation is disabled.
+- `observePage` and `classifyActivation` execute in the page's main world, so a hostile page can spoof what they read. The
+  network layer is the boundary, not these classifiers.
+- Reading the comparison: arm A's `offOriginRequests` is 0 by construction (its proxy refusals are the real signal), and A's
+  `incomplete` dialog journeys go to `needsReview`, which is not credited, so "B verified, A missed" is partly a scoring
+  artifact.
 - The skill file is read from disk by `tsx`; it is not copied by `npm run build`.
 - Cost is `unavailable` everywhere: no priced model is used.

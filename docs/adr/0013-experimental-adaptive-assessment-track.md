@@ -24,13 +24,28 @@ agent in a browser) and different safeguards. This ADR neither relies on nor arg
 
 1. A **separate, sandboxed experimental track** lives entirely under `src/experimental/adaptive/` (plus `test/`
    fixtures and `docs/experiments/`). Nothing outside `src/experimental/` imports it; a test enforces that.
-2. Browser tools are permitted **only** inside that track, and only **bounded by deterministic enforcement that does not
-   depend on the prompt**: origin allowlist for navigation, redirects, popups and subrequests; private/metadata
-   destination blocking in public mode; refusal of form submission, typing, uploads, downloads, non-GET requests and
-   login/payment-like controls; activation limited to controls passing an extended version of the existing safety
-   rules; a fresh disposable browser context per session; hard budgets (steps, model calls, tokens, response bytes,
-   wall clock); cancellation that closes the context and persists partial artifacts. Skill text is guidance, never the
-   boundary.
+2. Browser tools are permitted **only** inside that track, and only in **fixture mode** (loopback / `*.test` fixture servers,
+   which is the only mode that can start). What is enforced, in ordinary code outside the prompt, and how:
+   - *Page and frame requests*, including redirects, run through Chrome DevTools Protocol `Fetch` interception on the
+     page session; each request is decided against an exact-origin allowlist, and anything off it is failed
+     (`subrequest_off_allowlist`, `redirect_off_allowlist`, `origin_not_allowed`). Dedicated workers are covered by the
+     same interception (verified by test). Non-GET/HEAD requests are refused.
+   - *Channels the interception cannot see* are closed instead of filtered: WebSockets are refused outright with
+     `context.routeWebSocket` (deny-all, never connected); SharedWorker is removed from the browser
+     (`--disable-blink-features=SharedWorker`, plus an init-script stub as defence in depth); service workers are blocked
+     by the browser context. Tests drive each channel against an off-origin server and assert it is never reached.
+   - *Page behaviour*: form submission, `window.open` and new pages are neutralised; downloads and file choosers are
+     cancelled; there is no typing action; activation is limited to controls passing an extended version of the existing
+     safety rules; a fresh disposable context per session; hard budgets (steps, model calls, tokens, response bytes,
+     wall clock); cancellation closes the context and persists partial artifacts.
+   - *Page-writable harness channel*: a page can call the harness binding, so nothing a page passes is recorded or shown
+     to the model; browser-policy denial records are fixed harness-authored text and are capped.
+
+   **Public mode is disabled.** Its decision functions (private, loopback, link-local, metadata and embedded-IPv4 destination
+   checks) are kept and unit-tested, but `runSession` refuses to start a public session until the known gaps are closed
+   (resolution is done by the harness process and not pinned for the browser, the resolution cache never expires, no host
+   mappings are supplied, site isolation is off) **and** the owner approves it. The allowlist and subrequest rules above are
+   therefore claimed for fixture mode only. Skill text is guidance, never the boundary.
 3. Model output is data: a validated action union chosen from a legal-action list derived from the current
    observation, executed by ordinary code. No generated code, selectors, shell or URLs outside the discovered,
    allowlisted set. No silent retries, no escalation, no fallback provider.
@@ -61,3 +76,15 @@ change.
 - Known residual risks are documented in `docs/experiments/ADAPTIVE_HARNESS.md` (for example DNS rebinding in public
   mode, DOM-derived accessible names, and a baseline arm that has no policy layer of its own).
 - A live pilot, a real provider adapter in CI, or any production use each require their own decision.
+
+## Known follow-ups
+
+- **Separate production fix, not part of this track:** `src/scope.ts` `isPublicIp` treats some IPv4-mapped, NAT64 (`64:ff9b::/96`)
+  and 6to4 (`2002::/16`) IPv6 literals as public although they embed private or loopback IPv4 addresses (for example
+  `::ffff:a9fe:a9fe`, the hex form that URL parsing produces for `[::ffff:169.254.169.254]`). The experimental path works around
+  it with a stricter check (`isPublicAddress`); `scope.ts` itself is unchanged and should be fixed on its own review.
+- **Residual risks of fixture mode:** the observation and activation classifiers run in the page's main world
+  (`observePage`, `classifyActivation`), so a hostile page can spoof the DOM they read (for example make a risky control look
+  safe, or hide one). The network layer, not the classifiers, is the boundary: even a mis-classified click cannot reach an
+  off-allowlist origin, send a non-GET request or open a WebSocket. A page can also forge the enum-only browser-policy
+  denials by calling the harness binding; they carry no page text but are not proof that the harness refused something.
