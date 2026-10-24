@@ -48,7 +48,7 @@ export async function validateCandidate(input: { dev: { fixture: FixtureName; A:
   const report = await observe(input.dev.A, input.dev.B);
   const detector = report.hypotheses.find((hypothesis) => hypothesis.kind === "detector_error");
   const check = report.hypotheses.find((hypothesis) => hypothesis.kind === "candidate_regression_check");
-  const a = (await readArm(input.dev.A)).summary;
+  const a = (await readArm(input.dev.A, "A")).summary;
   const dialog = a.journeys.flatMap((journey) => journey.results).find((result) => (result as { kind?: string }).kind === "dialog") as { outcome?: string; evidence?: Array<{ before?: { id?: string } }> } | undefined;
   const wrongTrigger = dialog?.evidence?.[0]?.before?.id ?? null;
   const dev = await classes(input.dev.B, devTruth);
@@ -61,7 +61,7 @@ export async function validateCandidate(input: { dev: { fixture: FixtureName; A:
     const truth = await loadTruth(input.heldOut.fixture);
     const held = await classes(input.heldOut.B, truth);
     const heldReport = await observe(input.heldOut.A, input.heldOut.B);
-    const heldA = (await readArm(input.heldOut.A)).summary;
+    const heldA = (await readArm(input.heldOut.A, "A")).summary;
     const heldDialog = heldA.journeys.flatMap((journey) => journey.results).find((result) => (result as { kind?: string }).kind === "dialog") as { outcome?: string } | undefined;
     heldOut = {
       fixture: input.heldOut.fixture, cases: held.cases, passed: held.cases.every((entry) => entry.ok),

@@ -294,11 +294,13 @@ export async function runArmB(fixture: FixtureName, truthStartPath: string, opti
   await mkdir(outDir, { recursive: true });
   const fixtures = await startFixtures();
   const ownsBrowser = !options.browser;
-  const browser = options.browser ?? await launchSandboxBrowser();
+  let browser: Browser | null = options.browser ?? null;
   const provider = options.provider ?? new FakeProvider(exploratoryScript());
   let result: SessionResult;
   const sessionDir = join(outDir, "session");
   try {
+    // Launched inside the try so that a launch failure still closes the fixture servers.
+    browser ??= await launchSandboxBrowser();
     result = await runSession({
       config: {
         schema: "art/adaptive-session/v1", sessionId: `${fixture}-B`, startUrl: `${fixtures.origin}${truthStartPath}`, allowedOrigins: [fixtures.origin], mode: "fixture", publicTargets: [],
@@ -307,7 +309,7 @@ export async function runArmB(fixture: FixtureName, truthStartPath: string, opti
       provider, outDir: sessionDir, browser, codeSha: options.codeSha,
     });
   } finally {
-    if (ownsBrowser) await browser.close().catch(() => undefined);
+    if (ownsBrowser) await browser?.close().catch(() => undefined);
     await fixtures.close();
   }
 
@@ -344,7 +346,10 @@ export async function runArmB(fixture: FixtureName, truthStartPath: string, opti
   return summary;
 }
 
-export async function readArm(dir: string): Promise<{ seal: Seal; summary: ArmSummary }> {
+export async function readArm(dir: string, expected?: ArmId): Promise<{ seal: Seal; summary: ArmSummary }> {
   const seal = await verifySeal(dir);
-  return { seal, summary: ArmSummarySchema.parse(JSON.parse(await readFile(join(dir, "arm.json"), "utf8"))) };
+  if (expected && seal.arm !== expected) throw new SealError(`${dir} is sealed as arm ${seal.arm}, expected arm ${expected}`);
+  const summary = ArmSummarySchema.parse(JSON.parse(await readFile(join(dir, "arm.json"), "utf8")));
+  if (expected && summary.arm !== expected) throw new SealError(`${dir} holds arm ${summary.arm}, expected arm ${expected}`);
+  return { seal, summary };
 }

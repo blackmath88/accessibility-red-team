@@ -43,7 +43,7 @@ async function jsonl<T>(path: string): Promise<T[]> {
 const pathOf = (url: string) => { try { return new URL(url).pathname; } catch { return url; } };
 
 export async function observe(dirA: string, dirB: string): Promise<ObserverReport> {
-  const [a, b] = await Promise.all([readArm(dirA), readArm(dirB)]);
+  const [a, b] = await Promise.all([readArm(dirA, "A"), readArm(dirB, "B")]);
   const observations = (await jsonl<unknown>(join(dirB, "session", "observations.jsonl"))).map((line) => ObservationSchema.parse(line));
   const trace = await jsonl<Trace>(join(dirB, "session", "trace.jsonl"));
   const hypotheses: Hypothesis[] = [];
