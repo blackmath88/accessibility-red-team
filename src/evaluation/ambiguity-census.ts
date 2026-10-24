@@ -59,16 +59,19 @@ export type EvidenceFile = { path: string; json: unknown };
 // Site derivation from a path relative to the evidence root, first match wins:
 //   1. `.../sites/<site>/...`            frozen pilot layout (the segment after the first `sites`)
 //   2. `.../<site>/surfaces/...`         cohort layout (the segment directly before the first `surfaces`)
-//   3. `<site>/<file>` (exactly 2 parts) cohort per-site files such as `<site>/surface.json`
+//   3. `<site>/surface.json` (exactly 2 parts, a known per-site filename). Any other two-part path, e.g. `surface_01/probe-results.json`,
+//      is a per-surface file of a single-site run, not a site.
 // Anything else is `(single-site run)`, including a root-level `surfaces/...` or `surface.json`.
 // Rule 3 assumes the caller passes paths relative to the evidence root (as readEvidenceFiles does).
+const PER_SITE_FILES = new Set(["surface.json"]);
+
 export function siteOf(path: string): string {
   const parts = path.split(/[\\/]/).filter(Boolean);
   const sitesAt = parts.indexOf("sites");
   if (sitesAt >= 0 && parts[sitesAt + 1]) return parts[sitesAt + 1]!;
   const surfacesAt = parts.indexOf("surfaces");
   if (surfacesAt > 0) return parts[surfacesAt - 1]!;
-  if (parts.length === 2) return parts[0]!;
+  if (parts.length === 2 && PER_SITE_FILES.has(parts[1]!)) return parts[0]!;
   return "(single-site run)";
 }
 

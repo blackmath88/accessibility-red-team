@@ -97,3 +97,15 @@ test("prefixed and bare rule ids merge and classify identically", () => {
   ]);
   assert.deepEqual(census.axeIncomplete.rules.map((r) => [r.source, r.ruleId, r.modality]), [["baseline_axe", "color-contrast", "visual_rendering"], ["observatory_probe", "color-contrast", "visual_rendering"]]);
 });
+
+test("siteOf does not turn a per-surface directory of a single-site run into a site", () => {
+  assert.equal(siteOf("surface_01/probe-results.json"), "(single-site run)");
+  assert.equal(siteOf("surface_01/journey-results.json"), "(single-site run)");
+  assert.equal(siteOf("baseline-axe/axe-results.json"), "(single-site run)");
+  assert.equal(siteOf("ch-zh-bachs/surface.json"), "ch-zh-bachs", "the known per-site file still resolves");
+  const census = buildCensus([
+    { path: "surface_01/probe-results.json", json: [probe("axe.color-contrast", "incomplete", 2)] },
+    { path: "surface_02/probe-results.json", json: [probe("axe.color-contrast", "incomplete", 1)] },
+  ]);
+  assert.equal(census.sites, 1, "both surfaces belong to the one unnamed site");
+});
