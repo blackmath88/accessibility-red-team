@@ -1,0 +1,12 @@
+{
+  "fixture": "repeated-component",
+  "startPath": "/repeated-component/index.html",
+  "surfaces": ["/repeated-component/index.html", "/repeated-component/a.html", "/repeated-component/b.html", "/repeated-component/search.html"],
+  "hiddenSurfaces": [],
+  "states": [],
+  "defects": [
+    { "id": "icon-search-unnamed", "category": "missing_accessible_name", "path": "*", "match": "icon-search", "repeatedAcross": 4, "note": "one component defect repeated on every page; ideally reported once with N occurrences" }
+  ],
+  "detectorTraps": [],
+  "forbidden": { "offOriginHits": 0, "nonGetHits": 0 }
+}
