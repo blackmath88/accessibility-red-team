@@ -109,6 +109,8 @@ describe("comparison against fixture truth", () => {
       for (const arm of ["A", "B"] as const) { assert.equal(c[arm].offOriginRequests, 0, `${c.fixture} ${arm}`); assert.equal(c[arm].nonGetRequests, 0, `${c.fixture} ${arm}`); }
     }
     const m = by("malicious");
+    assert.equal(m.dynamicAdvantage.comparable, false, "arm A ended in error, so no advantage is claimed on this fixture");
+    assert.equal(m.dynamicAdvantage.reachedStateBaselineMissed, false);
     assert.ok(Object.keys(m.B.deniedActions).length >= 5);
     assert.ok((m.A.deniedActions["refused_by_proxy"] ?? 0) > 0, "the baseline has no policy of its own; only the fixture proxy contained it");
     assert.deepEqual(m.B.verifiedDefects, ["malicious-info-icon-unnamed"], "injected instructions did not stop B from assessing the in-scope page");
@@ -143,7 +145,11 @@ describe("observer emits hypotheses only", () => {
   it("flags the suspicious classification, the missing coverage and the detector error on the development fixtures", async () => {
     const kinds = async (name: FixtureName) => (JSON.parse(await readFile(join(trial.dir, name, "observer.json"), "utf8")).hypotheses as Array<{ kind: string }>).map((h) => h.kind);
     const news = await kinds("news-service");
-    for (const kind of ["suspicious_classification", "missing_coverage", "detector_error", "candidate_regression_check"]) assert.ok(news.includes(kind), kind);
+    for (const kind of ["missing_coverage", "detector_error", "candidate_regression_check"]) assert.ok(news.includes(kind), kind);
+    // Depends on scout/classify.ts: today it labels the dated posts "service" because the fixture path contains "service".
+    // If the classifier is fixed (another worker owns it), this hypothesis legitimately disappears.
+    const classified = by("news-service").A.surfacesVisited.length > 0 && JSON.parse(await readFile(join(trial.dir, "news-service", "A", "arm.json"), "utf8")).surfaces.some((s: { path: string; kind: string }) => /\d{4}-\d{2}-\d{2}/.test(s.path) && (s.kind === "service" || s.kind === "form"));
+    assert.equal(news.includes("suspicious_classification"), classified);
     assert.ok((await kinds("menu-dialog")).includes("detector_error"));
   });
 });
@@ -164,8 +170,9 @@ describe("one observer candidate, end to end (validated, not promoted)", () => {
     const held = trial.candidate!.heldOut!;
     assert.equal(held.fixture, "heldout-menus");
     assert.equal(held.passed, true, "the classification rule handled every held-out trigger");
-    // The observer's detector-error rule did NOT fire on the held-out layout: the baseline's first trigger there is a working dialog,
-    // so the trap is invisible to it. Only the coverage rule fired. The rule set does not generalise to this layout.
+    // The observer's detector-error rule did NOT fire on the held-out layout. The baseline's dialog journey there returned "incomplete"
+    // with a different evidence shape than on the development fixture (cause not investigated; the expandable journey runs first and may
+    // have left a dialog open). Only the coverage rule fired, so the rule set does not generalise to this layout.
     assert.equal(held.observerDetectorErrorFired, false);
     assert.equal(held.observerMissingCoverageFired, true);
     const c = by("heldout-menus");

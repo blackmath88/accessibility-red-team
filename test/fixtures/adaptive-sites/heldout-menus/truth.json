@@ -25,7 +25,7 @@
       "id": "heldout-first-trigger-is-dialog-ok",
       "path": "/heldout-menus/index.html",
       "match": "cookie-btn",
-      "note": "first aria-controls trigger is a correctly behaving dialog: the baseline passes it and never reaches the defective one"
+      "note": "first aria-controls trigger is a correctly behaving dialog; a baseline that exercises only the first trigger never reaches the defective one"
     },
     {
       "id": "heldout-lang-menu-not-dialog",

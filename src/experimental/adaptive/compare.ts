@@ -38,7 +38,7 @@ export const FixtureComparisonSchema = z.object({
   truth: z.object({ surfaces: z.number(), hiddenSurfaces: z.array(z.string()), states: z.array(z.string()), defects: z.array(z.string()), detectorTraps: z.array(z.string()) }),
   A: z.custom<ArmScore>(),
   B: z.custom<ArmScore>(),
-  dynamicAdvantage: z.object({ surfacesOnlyB: z.array(z.string()), hiddenSurfacesOnlyB: z.array(z.string()), statesOnlyB: z.array(z.string()), defectsOnlyB: z.array(z.string()), defectsOnlyA: z.array(z.string()), reachedStateBaselineMissed: z.boolean() }),
+  dynamicAdvantage: z.object({ surfacesOnlyB: z.array(z.string()), hiddenSurfacesOnlyB: z.array(z.string()), statesOnlyB: z.array(z.string()), defectsOnlyB: z.array(z.string()), defectsOnlyA: z.array(z.string()), reachedStateBaselineMissed: z.boolean(), comparable: z.boolean() }),
   observer: z.object({ hypotheses: z.number(), byKind: z.record(z.string(), z.number()) }),
   pinned: z.object({ A: z.custom<ArmSummary["pinned"]>(), B: z.custom<ArmSummary["pinned"]>() }),
 });
@@ -113,8 +113,10 @@ export async function compareFixture(fixture: FixtureName, dirA: string, dirB: s
     defectsOnlyB: only(B.verifiedDefects, A.verifiedDefects),
     defectsOnlyA: only(A.verifiedDefects, B.verifiedDefects),
     reachedStateBaselineMissed: false,
+    // A difference only counts when both arms ran to completion; a crashed arm proves nothing about what it would have reached.
+    comparable: A.terminal === "completed" && B.terminal === "completed",
   };
-  dynamicAdvantage.reachedStateBaselineMissed = dynamicAdvantage.hiddenSurfacesOnlyB.length > 0 || dynamicAdvantage.statesOnlyB.length > 0 || dynamicAdvantage.defectsOnlyB.length > 0;
+  dynamicAdvantage.reachedStateBaselineMissed = dynamicAdvantage.comparable && (dynamicAdvantage.hiddenSurfacesOnlyB.length > 0 || dynamicAdvantage.statesOnlyB.length > 0 || dynamicAdvantage.defectsOnlyB.length > 0);
   const byKind: Record<string, number> = {};
   for (const hypothesis of observer.hypotheses) byKind[hypothesis.kind] = (byKind[hypothesis.kind] ?? 0) + 1;
   return FixtureComparisonSchema.parse({
@@ -138,7 +140,7 @@ export function renderMarkdown(trialId: string, comparisons: FixtureComparison[]
   for (const c of comparisons) {
     lines.push(`## ${c.fixture}${c.heldOut ? " (held-out)" : ""}`, "");
     lines.push(`- Verified A: ${list(c.A.verifiedDefects)}; B: ${list(c.B.verifiedDefects)}. Missed A: ${list(c.A.missedDefects)}; B: ${list(c.B.missedDefects)}.`);
-    lines.push(`- Dynamic arm reached something the baseline missed: **${c.dynamicAdvantage.reachedStateBaselineMissed ? "yes" : "no"}** (hidden surfaces only B: ${list(c.dynamicAdvantage.hiddenSurfacesOnlyB)}; states only B: ${list(c.dynamicAdvantage.statesOnlyB)}; defects only B: ${list(c.dynamicAdvantage.defectsOnlyB)}; defects only A: ${list(c.dynamicAdvantage.defectsOnlyA)}).`);
+    lines.push(`- Dynamic arm reached something the baseline missed: **${!c.dynamicAdvantage.comparable ? `not comparable (arm A ended ${c.A.terminal}, arm B ended ${c.B.terminal})` : c.dynamicAdvantage.reachedStateBaselineMissed ? "yes" : "no"}** (hidden surfaces only B: ${list(c.dynamicAdvantage.hiddenSurfacesOnlyB)}; states only B: ${list(c.dynamicAdvantage.statesOnlyB)}; defects only B: ${list(c.dynamicAdvantage.defectsOnlyB)}; defects only A: ${list(c.dynamicAdvantage.defectsOnlyA)}).`);
     lines.push(`- False alarms A: ${list(c.A.falseAlarms)}; B: ${list(c.B.falseAlarms)}.`);
     lines.push(`- Evidence quality (occurrences / with target identity / with screenshot): A ${c.A.evidenceQuality.occurrences}/${c.A.evidenceQuality.withTargetIdentity}/${c.A.evidenceQuality.withScreenshot}; B ${c.B.evidenceQuality.occurrences}/${c.B.evidenceQuality.withTargetIdentity}/${c.B.evidenceQuality.withScreenshot}.`);
     lines.push(`- Denied actions A: ${JSON.stringify(c.A.deniedActions)}; B: ${JSON.stringify(c.B.deniedActions)}. Off-origin requests that reached a server: A ${c.A.offOriginRequests}, B ${c.B.offOriginRequests}; non-GET: A ${c.A.nonGetRequests}, B ${c.B.nonGetRequests}.`);

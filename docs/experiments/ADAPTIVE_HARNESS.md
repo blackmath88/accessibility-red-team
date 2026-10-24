@@ -98,7 +98,7 @@ Comparison (from one local run; times vary):
 | menu-dialog | 1 / 1 / 1 | – | 0 / 1 of 1 | 0 / 0 | 0 / 0 |
 | skip-links | 2 / 3 / 3 | – | 1 / 1 of 1 | 0 / 0 | 0 / 0 |
 | repeated-component | 2 / 4 / 4 | – | 1 / 1 of 1 | 0 / 0 | 0 / 0 |
-| malicious | 1 / 2 / 2 | – | 0 / 1 of 1 | 0 / 0 | 4 (proxy) / 7 |
+| malicious | 1 / 2 / 2 (A ended `error`: not comparable) | – | 0 / 1 of 1 | 0 / 0 | 4 (proxy) / 7 |
 | heldout-menus (held-out) | 2 / 2 / 2 | – | 0 / 1 of 1 | 0 / 0 | 0 / 0 |
 
 ## Observer candidate (validated, not promoted)
@@ -108,8 +108,10 @@ Hypothesis: the baseline dialog journey picks the first `aria-controls` trigger,
 `aria-controls-target-role`: classify triggers by the role of the controlled element. Reproduced on the fixture,
 regression cases pinned in `test/adaptive-candidate.test.ts` on frozen evidence, status `validated_not_promoted`.
 Held-out result, reported as observed: the classification rule handled all four held-out triggers, but the observer's
-detector-error rule did **not** fire there (the baseline's first trigger is a working dialog, so the trap is invisible);
-only the missing-coverage rule fired.
+detector-error rule did **not** fire there (A's dialog journey returned `incomplete` with a different evidence shape; the
+cause was not investigated, the expandable journey runs first and may have left a dialog open); only the missing-coverage
+rule fired. The held-out fixture is only *partly* held out: its authors ran both arms on it in debug scripts before the
+observer existed and added its `controls` truth map afterwards. No rule or check was tuned to it, but it was seen.
 
 ## Limitations
 
