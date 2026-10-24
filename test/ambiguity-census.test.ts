@@ -61,3 +61,39 @@ test("census is deterministic and conservative about unknown rules and layouts",
   assert.equal(siteOf("sites/ch-zh-uster/deterministic-observatory/surface.json"), "ch-zh-uster");
   assert.equal(siteOf("surfaces/s1/probe-results.json"), "(single-site run)");
 });
+
+// PR #40 review defects: cohort runs use <root>/<site>/surfaces/... and observatory probe ids carry an `axe.` prefix.
+const cohortFiles = () => ["ch-a", "ch-b", "ch-c"].flatMap((site) => [
+  { path: `${site}/surface.json`, json: { schema: "art/accessibility-surface/v1", surfaces: [{ kind: "home" }, { kind: "service" }] } },
+  { path: `${site}/surfaces/surface_01/probe-results.json`, json: [probe("axe.color-contrast", "incomplete", 5), probe("axe.label-content-name-mismatch", "incomplete", 2), probe("axe.image-alt", "violation", 3)] },
+  { path: `${site}/surfaces/surface_01/journey-results.json`, json: { results: [journey("skip-link.same-page", "incomplete", "x")] } },
+]);
+
+test("siteOf recognises sites/<site>, <site>/surfaces/... and <site>/<file> layouts", () => {
+  assert.equal(siteOf("ch-zh-bachs/surfaces/surface_01/probe-results.json"), "ch-zh-bachs");
+  assert.equal(siteOf("ch-zh-bachs/surface.json"), "ch-zh-bachs");
+  assert.equal(siteOf("sites/ch-a/deterministic-observatory/surfaces/s1/probe-results.json"), "ch-a", "sites/ wins over the surfaces rule");
+  assert.equal(siteOf("surface.json"), "(single-site run)");
+  assert.equal(siteOf("surfaces/s1/probe-results.json"), "(single-site run)");
+  assert.equal(siteOf("ch-zh-bachs\\surfaces\\s1\\probe-results.json"), "ch-zh-bachs");
+});
+
+test("cohort layout yields one site per municipality and the axe. prefix does not hide modality", () => {
+  const census = buildCensus(cohortFiles(), "t");
+  assert.equal(census.sites, 3, "was 1 (all sites collapsed into '(single-site run)')");
+  const rules = census.axeIncomplete.rules.map((r) => [r.ruleId, r.modality, r.sites]);
+  assert.deepEqual(rules, [["color-contrast", "visual_rendering", 3], ["label-content-name-mismatch", "text_semantic", 3]]);
+  assert.equal(census.axeIncomplete.observatoryByModality.unclassified.nodes, 0, "was 100% unclassified");
+  assert.equal(census.semanticReentry.frequencyGateMet, true);
+  assert.deepEqual(census.surfaces, { selected: 6, byKind: { home: 3, service: 3 }, unknownShare: 0 }, "surfaces.selected stays the per-surface.json sum");
+});
+
+test("prefixed and bare rule ids merge and classify identically", () => {
+  assert.equal(modalityOf("axe.color-contrast"), "visual_rendering");
+  assert.equal(modalityOf("axe.some-future-rule"), "unclassified");
+  const census = buildCensus([
+    { path: "sites/x/a/axe-results.json", json: { incomplete: [{ id: "color-contrast", nodes: [{}] }] } },
+    { path: "sites/x/b/probe-results.json", json: [probe("axe.color-contrast", "incomplete", 2)] },
+  ]);
+  assert.deepEqual(census.axeIncomplete.rules.map((r) => [r.source, r.ruleId, r.modality]), [["baseline_axe", "color-contrast", "visual_rendering"], ["observatory_probe", "color-contrast", "visual_rendering"]]);
+});

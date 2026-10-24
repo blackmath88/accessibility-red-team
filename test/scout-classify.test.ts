@@ -36,3 +36,39 @@ test("classifies dense service directories", () => {
 test("uses unknown instead of forcing a guess", () => {
   assert.equal(classifyBySignals(base).kind, "unknown");
 });
+
+const kindOf = (url: string, over: Partial<typeof base> = {}) =>
+  classifyBySignals({ ...base, url, pathDepth: new URL(url).pathname.split("/").filter(Boolean).length, ...over }).kind;
+
+test("Bachs 'gesucht' news post is an article, not a form", () => {
+  assert.equal(kindOf("https://bachs.ch/2024/04/gesucht-betreuungsperson-asylsuchende/", {
+    title: "Gesucht: Betreuungsperson Asylsuchende – Offizielle Seite der Gemeinde Bachs",
+  }), "article");
+  // the two defects separately: the substring and the municipality name in the title
+  assert.equal(kindOf("https://example.ch/stelle", { title: "Gesucht: Hauswart" }), "unknown");
+  assert.equal(kindOf("https://example.ch/stelle", { title: "Offizielle Seite der Gemeinde Bachs" }), "unknown");
+});
+
+test("real application forms still classify as form", () => {
+  assert.equal(kindOf("https://example.ch/baugesuch", { title: "Baugesuch einreichen" }), "form");
+  assert.equal(kindOf("https://example.ch/verwaltung/onlineschalter/anmeldeformular"), "form");
+  assert.equal(kindOf("https://example.ch/gesuche", { title: "Gesuche" }), "form");
+});
+
+test("dated paths are not news when they are forms, services, archives or have no slug", () => {
+  assert.equal(kindOf("https://example.ch/2024/steuern/formular"), "form");
+  assert.equal(kindOf("https://example.ch/2023/03/baugesuch-formular/"), "form");
+  assert.equal(kindOf("https://example.ch/2023/03/kontakt/", { substantiveFormFields: 4 }), "form");
+  assert.equal(kindOf("https://example.ch/2024/04/steuererklaerung-frist/"), "service", "service wording wins over the date");
+  assert.equal(kindOf("https://example.ch/2024/04/offene-stelle/", { substantiveFormFields: 1 }), "unknown", "any form field blocks the date rule");
+  assert.equal(kindOf("https://example.ch/2024/04/"), "unknown");
+  assert.equal(kindOf("https://example.ch/2024/04/15/"), "unknown");
+  assert.equal(kindOf("https://example.ch/2024/04/page/2/"), "unknown");
+  assert.equal(kindOf("https://example.ch/2024/04/rueckblick/", { title: "Archiv 2024" }), "unknown");
+  assert.equal(kindOf("https://example.ch/2024/steuern/rechner"), "service");
+});
+
+test("dated slug without form signals is an article, including day-based paths", () => {
+  assert.equal(kindOf("https://example.ch/2024/04/15/neuer-gemeindeschreiber/"), "article");
+  assert.equal(kindOf("https://example.ch/2019/11/sommerfest-rueckblick"), "article");
+});
