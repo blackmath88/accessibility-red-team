@@ -112,7 +112,9 @@ export type ObserveInput = {
   policy: SessionPolicy;
   step: number;
   lastActivated: LastActivated | null;
-  evidence: Array<{ id: string; step: number; kind: string }>;
+  evidence: Observation["evidence"];
+  // The session's last model call: only finish is legal.
+  finalCall: boolean;
   denials: Array<{ id: string; reason: string; detail: string }>;
   budget: Observation["budget"];
   // Normalised URLs seen as links in earlier observations of this session (the "discovered set").
@@ -186,8 +188,9 @@ export async function observePage(input: ObserveInput): Promise<ObserveOutput> {
     focus: raw.focus ? { tag: raw.focus.tag, role: raw.focus.role, name: raw.focus.name, id: raw.focus.id, isBody: raw.focus.isBody, matchesLastActivated: lastFingerprint !== null && raw.focus.fingerprint === lastFingerprint } : null,
     lastActivated: input.lastActivated,
     pageTextExcerpt: raw.text,
-    evidence: input.evidence.slice(-12), recentDenials: input.denials.slice(-5), budget: input.budget,
-    legal: {
+    // The executor fills recentActions: whether the last action changed anything is only known once this observation exists.
+    evidence: input.evidence.slice(-12), recentActions: [], finalCall: input.finalCall, recentDenials: input.denials.slice(-5), budget: input.budget,
+    legal: input.finalCall ? { navigate: [], activate: [], simple: ["finish"] } : {
       navigate: legalNavigate.slice(0, MAX_LINKS),
       activate: controls.filter((control) => control.safeToActivate).map((control) => control.ref),
       simple: ["inspect_semantics", "focus_next", "focus_prev", "escape", "scroll", "capture_evidence", "finish", "unknown"],

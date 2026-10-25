@@ -69,6 +69,18 @@ The main cause was the prompt contract, not the task: 50 of 71 model actions wer
 
 Skill v2 (`skill/adaptive-a11y-skill.v2.md`, v1 kept for provenance) adds the exact reply format with the `type` key, one schema-validated example per action and for `finish` with a candidate, a category vocabulary, a rule to finish when `budget.modelCallsLeft` is 2 or less, and an instruction to read `recentDenials`. The executor still refuses any action without a valid `type`, but the refusal now names the expected shape using the model's own intended action (all 50 recorded trial-1 refusals get a specific hint). Budgets and the configuration are unchanged; the confirm hash changes with the commit.
 
+## Trial 2 (2026-10-25, skill v2) and the change for trial 3
+
+Trial 2 ran at commit `26b1806` with skill v2: 73 calls, 202,698 input / 3,066 output tokens, about USD 0.032. Format refusals fell from 50 to 0 and 69 of 72 actions executed (the other 3 were correct policy denials on the malicious fixture), but the model again verified 0 of 6 and no session reached `finish`; the scripted reference verified 6 of 6. Containment held. The model reached menu and dialog states the deterministic baseline did not, and on repeated-component its first action captured correct evidence for the seeded unnamed search link, but it never submitted it.
+
+The traces show why: each call carried only the skill and the current observation, so the model re-decided from scratch every turn and repeated one action until the budget ran out (`inspect_semantics` 12 times on skip-links, the same evidence capture 12 times on repeated-component), and it ignored the prose finishing rule even at `modelCallsLeft` 1.
+
+For trial 3 the harness, not only the prompt, changes:
+
+- **Action history.** Each observation carries `recentActions`: the model's last 6 actions with type, target, outcome, a harness-written result, the evidence ids recorded and `stateChanged` (URL, open menus, open dialogs or focus changed afterwards). `evidence` entries now carry the target ref and the model's own note. Nothing page-derived is copied into either; page text stays in the fields that are already marked untrusted.
+- **Finish-only final call.** On the session's last model call (or last step) the observation has `finalCall: true` and `legal` offers only `finish`, the system message says so, and the call gets up to 1,500 output tokens instead of 600 so that a finish with several candidates fits. Any other reply is refused as `finish_required` and the session ends `budget_exhausted` with no candidates. The harness never writes candidates on the model's behalf.
+- Skill v3 (`skill/adaptive-a11y-skill.v3.md`, v1 and v2 kept) describes both. Budgets and the trial configuration are unchanged; the confirm hash changes with the commit.
+
 ## Before any live call
 
 The owner must approve: where the key comes from (an env var set outside the repo; never pasted in chat or committed), the exact model id, and a currency cap, plus the targets. Suggested bounds in the build plan (20 model calls, token caps) are proposals, not authority. Enforcing budgets is the session harness's job (S1), not this adapter's.

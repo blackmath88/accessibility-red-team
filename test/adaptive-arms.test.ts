@@ -101,7 +101,7 @@ describe("arm independence", () => {
         assert.match(comparison.pinned[arm].configHash, /^[a-f0-9]{64}$/);
         assert.ok(comparison.pinned[arm].codeSha.length > 0);
       }
-      assert.equal(comparison.pinned.B.skillVersion, "adaptive-a11y-skill/v2");
+      assert.equal(comparison.pinned.B.skillVersion, "adaptive-a11y-skill/v3");
     }
   });
 });

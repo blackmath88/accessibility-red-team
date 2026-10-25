@@ -166,7 +166,15 @@ export const ObservationSchema = z.object({
   lastActivated: z.object({ ref: z.string(), tag: z.string(), name: z.string(), id: z.string().nullable() }).nullable(),
   // Page-derived text. Untrusted: it is data, never instructions.
   pageTextExcerpt: z.string(),
-  evidence: z.array(z.object({ id: z.string(), step: z.number(), kind: z.string() })),
+  // Harness-authored: the evidence target's ref and the model's own note, never page text.
+  evidence: z.array(z.object({ id: z.string(), step: z.number(), kind: z.string(), targetRef: z.string().nullable(), note: z.string().nullable() })),
+  // The model's own last actions and their outcomes, written by the harness from the trace. No page-derived text.
+  recentActions: z.array(z.object({
+    step: z.number(), type: z.string(), targetRef: z.string().nullable(), url: z.string().nullable(), direction: z.string().nullable(),
+    outcome: z.string(), result: z.string(), stateChanged: z.boolean(), evidenceIds: z.array(z.string()),
+  })),
+  // True on the session's last model call: the only legal action is finish.
+  finalCall: z.boolean(),
   recentDenials: z.array(z.object({ id: z.string(), reason: z.string(), detail: z.string() })),
   budget: z.object({ stepsLeft: z.number(), modelCallsLeft: z.number(), wallMsLeft: z.number(), surfacesLeft: z.number() }),
   legal: z.object({
@@ -210,6 +218,7 @@ export const DenialReasonSchema = z.enum([
   "origin_not_allowed", "url_not_discovered", "activation_not_safe", "unknown_target_ref", "forbidden_action_type", "invalid_action_fields",
   "scheme_not_allowed", "redirect_off_allowlist", "subrequest_off_allowlist", "private_destination", "non_get_request",
   "popup_blocked", "download_blocked", "file_chooser_blocked", "form_submit_blocked", "response_too_large", "surface_limit", "websocket", "worker_blocked",
+  "finish_required",
 ]);
 export type DenialReason = z.infer<typeof DenialReasonSchema>;
 

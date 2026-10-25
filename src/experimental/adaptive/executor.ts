@@ -19,8 +19,8 @@ import { ProviderError, type ModelProvider } from "./provider.js";
 import { OBSERVATION_MARKER } from "./providers/fake.js";
 
 const HERE = dirname(fileURLToPath(import.meta.url));
-export const SKILL_PATH = join(HERE, "skill", "adaptive-a11y-skill.v2.md");
-export const SKILL_VERSION = "adaptive-a11y-skill/v2";
+export const SKILL_PATH = join(HERE, "skill", "adaptive-a11y-skill.v3.md");
+export const SKILL_VERSION = "adaptive-a11y-skill/v3";
 const REPO_ROOT = resolve(HERE, "..", "..", "..");
 const MAX_DENIALS = 10;
 const MAX_BROWSER_DENIAL_RECORDS = 200;
@@ -103,6 +103,16 @@ function parseDecision(text: string): Decision {
   return { ok: true, raw: decision.data.action };
 }
 
+// The model's own recent actions, shown back to it so that it does not re-decide every turn from scratch. Everything here is
+// harness-authored or the model's own output; page-derived text (element names, landed URLs, error text) never goes in.
+const HISTORY_LENGTH = 6;
+// The final call must fit a finish with several candidates; ordinary calls stay short.
+const OUTPUT_PER_CALL = 600;
+const OUTPUT_FINAL_CALL = 1500;
+type HistoryEntry = Observation["recentActions"][number] & { changeKeyBefore: string; changed: boolean | null };
+
+const ownText = (value: unknown): string | null => typeof value === "string" ? value.slice(0, 160) : null;
+
 export function stateKey(observation: Observation, normalize: (url: string) => string): string {
   const expanded = observation.controls.filter((control) => control.expanded === "true").map((control) => control.name || control.ref).sort();
   const dialogs = observation.dialogs.filter((dialog) => dialog.visible).length;
@@ -133,6 +143,7 @@ class Session {
   private elements = new Map<string, ElementFacts>();
   private observation!: Observation;
   private consecutiveUnknown = 0;
+  private readonly history: HistoryEntry[] = [];
   private readonly startedAtMs = Date.now();
 
   constructor(readonly config: SessionConfig, private readonly options: RunSessionOptions, private readonly skillText: string) {
@@ -208,9 +219,10 @@ class Session {
     if (this.denials.filter((denial) => denial.source === "executor_validation").length >= MAX_DENIALS) return this.end("denial_limit", `${MAX_DENIALS} refused model actions`);
 
     const startedAt = new Date().toISOString();
+    const finalCall = limits.maxModelCalls - this.modelCalls === 1 || limits.maxSteps - this.step === 1;
     const observed = await observePage({
-      page: this.page, policy: this.policy, step: this.step, lastActivated: this.lastActivated,
-      evidence: this.evidence.map((item) => ({ id: item.id, step: item.step, kind: item.kind })),
+      page: this.page, policy: this.policy, step: this.step, lastActivated: this.lastActivated, finalCall,
+      evidence: this.evidence.map((item) => ({ id: item.id, step: item.step, kind: item.kind, targetRef: item.target?.ref ?? null, note: ownText(item.note) })),
       // Browser-policy details can carry page-chosen text (hostnames, paths), so the model only ever sees a harness-authored line for them.
       denials: this.denials.map((denial) => ({ id: denial.id, reason: denial.reason, detail: denial.source === "browser_policy" ? `refused by the browser policy (${denial.reason})` : denial.detail })),
       budget: {
@@ -221,13 +233,19 @@ class Session {
     });
     this.observation = observed.observation;
     this.elements = observed.elements;
+    // Focus is part of the change key so that focus_next / escape count as changes; it is compared, never shown.
+    const changeKey = `${stateKey(this.observation, (url) => this.policy.normalize(url))} | focus=${JSON.stringify(this.observation.focus)}`;
+    const previous = this.history.at(-1);
+    if (previous && previous.changed === null) previous.changed = previous.changeKeyBefore !== changeKey;
+    this.observation.recentActions = this.history.slice(-HISTORY_LENGTH).map(({ changeKeyBefore: _key, changed, ...entry }) => ({ ...entry, stateChanged: changed ?? false }));
     for (const url of observed.discoveredNow) this.discovered.add(url);
     this.states.add(stateKey(this.observation, (url) => this.policy.normalize(url)));
     const observationJson = JSON.stringify(this.observation);
     await appendFile(join(this.outDir, "observations.jsonl"), observationJson + "\n");
 
+    const finalLine = finalCall ? `\n\nThis is your final reply in this session. The only legal action is finish: {"action": {"type": "finish", "verdict": "...", "summary": "...", "candidates": [...]}, "rationale": "..."}.` : "";
     const messages = [
-      { role: "system" as const, content: `${this.skillText}\n\nReply with exactly one JSON object: {"action": {"type": "<action type>", ...fields}, "rationale": "..."}. The action name goes in "type".` },
+      { role: "system" as const, content: `${this.skillText}\n\nReply with exactly one JSON object: {"action": {"type": "<action type>", ...fields}, "rationale": "..."}. The action name goes in "type".${finalLine}` },
       { role: "user" as const, content: `${OBSERVATION_MARKER}\n${observationJson}` },
     ];
     const inputEstimate = messages.reduce((sum, message) => sum + estimateTokens(message.content), 0);
@@ -246,7 +264,7 @@ class Session {
     let response;
     try {
       response = await this.options.provider.complete({
-        messages, maxOutputTokens: Math.min(600, outputLeft), temperature: 0, responseFormat: "json_object",
+        messages, maxOutputTokens: Math.min(finalCall ? OUTPUT_FINAL_CALL : OUTPUT_PER_CALL, outputLeft), temperature: 0, responseFormat: "json_object",
         timeoutMs: Math.max(100, Math.min(30_000, limits.maxWallMs - (Date.now() - this.startedAtMs))), signal: this.ac.signal,
       });
     } catch (error) {
@@ -268,6 +286,7 @@ class Session {
 
     const decision = parseDecision(response.text);
     if (!decision.ok) {
+      this.remember(null, "invalid_output", "reply was not valid JSON in the required shape", changeKey);
       record.outcome = "invalid_output"; record.detail = decision.reason;
       await this.log(record);
       return this.end("invalid_model_output", decision.reason);
@@ -279,6 +298,7 @@ class Session {
     if (!checked.ok) {
       const denial = this.deny({ source: "executor_validation", reason: checked.reason, detail: checked.detail, url: checked.url ?? null, attemptedAction: asRecord(decision.raw) });
       record.outcome = "denied"; record.detail = `${denial.reason}: ${denial.detail}`;
+      this.remember(decision.raw, "denied", `refused: ${denial.reason}`, changeKey);
     } else {
       record.action = checked.action as Record<string, unknown>;
       this.consecutiveUnknown = checked.action.type === "unknown" ? this.consecutiveUnknown + 1 : 0;
@@ -286,10 +306,13 @@ class Session {
         record.detail = await this.execute(checked.action);
         record.outcome = checked.action.type === "finish" ? "finished" : this.denials.length > denialsBefore ? "denied" : "executed";
         if (checked.action.type === "finish") keepGoing = false;
+        const evidenceNow = this.evidence.slice(evidenceBefore).map((item) => item.id);
+        this.remember(checked.action, record.outcome, record.outcome === "denied" ? `refused: ${this.denials.at(-1)!.reason}` : evidenceNow.length ? `done; recorded ${evidenceNow.join(", ")}` : "done", changeKey, evidenceNow);
       } catch (error) {
         if (this.ac.signal.aborted) return false;
         record.detail = `action failed: ${firstLine(error)}`;
         record.outcome = this.denials.length > denialsBefore ? "denied" : "executed";
+        this.remember(checked.action, record.outcome, "the action failed in the browser", changeKey);
       }
       if (keepGoing && this.consecutiveUnknown >= MAX_CONSECUTIVE_UNKNOWN) { this.end("completed", "two consecutive unknown actions"); keepGoing = false; }
     }
@@ -297,12 +320,28 @@ class Session {
     record.denialIds = this.denials.slice(denialsBefore).map((item) => item.id);
     await this.log(record);
     await this.flush();
+    if (keepGoing && finalCall) {
+      const limit = limits.maxModelCalls - this.modelCalls === 0 ? `maxModelCalls ${limits.maxModelCalls}` : `maxSteps ${limits.maxSteps}`;
+      return this.end("budget_exhausted", `${limit} reached; the final call did not finish`);
+    }
     return keepGoing;
+  }
+
+  private remember(raw: unknown, outcome: string, result: string, changeKeyBefore: string, evidenceIds: string[] = []): void {
+    const action = raw && typeof raw === "object" ? raw as Record<string, unknown> : {};
+    const type = typeof action["type"] === "string" && (ACTION_TYPES as readonly string[]).includes(action["type"]) ? action["type"] : "malformed";
+    this.history.push({
+      step: this.step, type, targetRef: ownText(action["targetRef"]), url: ownText(action["url"]), direction: ownText(action["direction"]),
+      outcome, result, stateChanged: false, evidenceIds, changeKeyBefore, changed: null,
+    });
   }
 
   // Validates the chosen action against the schema AND the legal-action list derived from the current observation.
   private async validate(raw: unknown): Promise<Checked> {
     const type = raw && typeof raw === "object" ? (raw as { type?: unknown }).type : undefined;
+    if (this.observation.finalCall && type !== "finish") {
+      return { ok: false, reason: "finish_required", detail: `final call: the only legal action is finish, e.g. {"action": ${ACTION_EXAMPLES["finish"]}, "rationale": "..."}` };
+    }
     if (typeof type !== "string" || !(ACTION_TYPES as readonly string[]).includes(type)) {
       return { ok: false, reason: "forbidden_action_type", detail: actionFormatHint(raw) };
     }
