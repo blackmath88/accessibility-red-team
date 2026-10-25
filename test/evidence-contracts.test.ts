@@ -5,7 +5,7 @@ import assert from "node:assert/strict";
 import { readFileSync, readdirSync } from "node:fs";
 import * as c from "../src/evidence/contracts.js";
 import { decidePublication, type PublicationInput } from "../src/evidence/policy.js";
-import { resolveCase } from "../src/evidence/cases.js";
+import { resolveCase, type CaseResolutionContext, type VersionCompatibility } from "../src/evidence/cases.js";
 import { entryDigest, type ReviewerDecision } from "../src/catalogue/contracts.js";
 import { runSkipLinkProbe, skipLinkEntry, skipLinkDigests } from "../src/catalogue/registry.js";
 import { applyReviewerDecision, evaluateGate, type ValidationRecord } from "../src/promotion/gate.js";
@@ -51,6 +51,27 @@ function humanInput(mode: "manual" | "assisted" = "assisted"): PublicationInput 
 }
 function retest(assessment: c.AssessmentResult | null, status: c.CaseRetest["execution_status"] = "completed") {
   return c.CaseRetestSchema.parse({ schema: "art/case-retest/v1", retestId: "unit-retest", execution_status: status, assessment });
+}
+
+function caseIdentity(record: c.FindingCase | c.AssessmentResult): VersionCompatibility["from"] {
+  return { probeId: record.probeId!, implementationVersion: record.implementationVersion!, entryDigest: record.entryDigest!, implementationDigest: record.implementationDigest!, claimVersion: record.claimVersion };
+}
+function compatibility(original: c.FindingCase, assessment: c.AssessmentResult): VersionCompatibility {
+  return { from: caseIdentity(original), to: caseIdentity(assessment), reviewerId: "unit-reviewer", decidedAt: assessment.executedAt, synthetic: false, note: "Simulated reviewed compatibility only; no real sign-off." };
+}
+function resolutionContext(assessment: c.AssessmentResult, original = findingCase()): CaseResolutionContext {
+  // claimVersion binds assessment ID and outcome too, so a new retest needs explicit review.
+  const run = c.ProbeExecutionSchema.parse({ ...c.ProbeExecutionSchema.parse(sample("execution")),
+    executionId: assessment.executionId ?? "missing", probeId: assessment.probeId, subjectId: assessment.subjectId,
+    obligationId: assessment.obligationId, implementationVersion: assessment.implementationVersion,
+    entryDigest: assessment.entryDigest, implementationDigest: assessment.implementationDigest,
+    outcome: assessment.outcome, evidenceRefs: assessment.evidenceRefs, environment: assessment.environment,
+    executedAt: assessment.executedAt,
+  });
+  return { execution: run, verifiedEvidenceRefs: assessment.evidenceRefs, compatibleVersions: [compatibility(original, assessment)] };
+}
+function resolveComparable(assessment: c.AssessmentResult) {
+  return resolveCase(findingCase(), retest(assessment), resolutionContext(assessment));
 }
 
 const schemas = {
@@ -268,7 +289,7 @@ test("end-to-end hypothesis → fresh reproduction → candidate gate → review
 test("case resolution requires a comparable evidenced pass and returns a new history snapshot", () => {
   const original = findingCase();
   const input = retest(automated({ assessmentId: "pass-retest", outcome: "pass" }));
-  const resolved = resolveCase(original, input);
+  const resolved = resolveCase(original, input, resolutionContext(input.assessment!, original));
   assert.equal(resolved.disposition, "resolved");
   assert.equal(original.disposition, "open");
   assert.notEqual(resolved, original);
@@ -289,14 +310,14 @@ test("omitted, skipped and blocked retests remain not_retested even with a pass 
 
 test("each non-passing retest and missing/unverified evidence remains unresolved", () => {
   for (const outcome of ["violation", "inapplicable", "incomplete", "error"] as const) {
-    assert.equal(resolveCase(findingCase(), retest(automated({ outcome }))).disposition, "unresolved");
+    assert.equal(resolveComparable(automated({ outcome })).disposition, "unresolved");
   }
-  assert.equal(resolveCase(findingCase(), retest(automated({ outcome: "pass", evidenceRefs: [] }))).disposition, "unresolved");
+  assert.equal(resolveComparable(automated({ outcome: "pass", evidenceRefs: [] })).disposition, "unresolved");
   for (const patch of [{ verification: "unreviewed" as const }, { author: { kind: "model" as const, id: "model" } }, { executionId: null }, { assessment_mode: "manual" as const }]) {
-    assert.equal(resolveCase(findingCase(), retest(automated({ outcome: "pass", ...patch }))).disposition, "unresolved");
+    assert.equal(resolveComparable(automated({ outcome: "pass", ...patch })).disposition, "unresolved");
   }
   const record = automated({ outcome: "pass" });
-  assert.equal(resolveCase(findingCase(), retest({ ...record, claimVersion: "0".repeat(64) })).disposition, "unresolved");
+  assert.equal(resolveComparable({ ...record, claimVersion: "0".repeat(64) }).disposition, "unresolved");
 });
 
 test("different subject/obligation/probe or incompatible version is non_comparable", () => {
@@ -310,8 +331,74 @@ test("implementation compatibility must be explicitly supplied and is directiona
   const original = findingCase();
   const input = retest(automated({ outcome: "pass", implementationVersion: "next" }));
   assert.equal(resolveCase(original, input).disposition, "non_comparable");
-  assert.equal(resolveCase(original, input, [{ from: original.implementationVersion!, to: "next" }]).disposition, "resolved");
-  assert.equal(resolveCase(original, input, [{ from: "next", to: original.implementationVersion! }]).disposition, "non_comparable");
+  assert.equal(resolveCase(original, input, resolutionContext(input.assessment!, original)).disposition, "resolved");
+  assert.equal(resolveCase(original, input, { ...resolutionContext(input.assessment!, original), compatibleVersions: [{ ...compatibility(original, input.assessment!), from: caseIdentity(input.assessment!), to: caseIdentity(original) }] }).disposition, "non_comparable");
+});
+
+test("case resolution rejects nonexistent or mismatched immutable executions", () => {
+  const assessment = automated({ outcome: "pass" });
+  const input = retest(assessment);
+  const context = resolutionContext(assessment);
+  const run = c.ProbeExecutionSchema.parse(context.execution);
+  for (const execution of [undefined, { executionId: assessment.executionId }, ...[
+    { executionId: "nonexistent" }, { probeId: "other" }, { subjectId: "other" }, { obligationId: "other" },
+    { implementationVersion: "other" }, { entryDigest: "0".repeat(64) }, { implementationDigest: "0".repeat(64) },
+    { outcome: "violation" }, { evidenceRefs: [] }, { executedAt: "2026-10-25T19:00:00.000Z" },
+    { environment: { ...run.environment, browserVersion: "other" } },
+    { author: { kind: "model", id: "model" } }, { provenance: { ...run.provenance, integrity: "unverified" } },
+  ].map((patch) => ({ ...run, ...patch }))]) {
+    const result = resolveCase(findingCase(), input, { ...context, execution });
+    assert.equal(result.disposition, "unresolved");
+    assert.ok(result.resolutionReasons.includes("Missing or mismatched immutable probe execution."));
+  }
+});
+
+test("case resolution requires trusted receipts for every evidence ref", () => {
+  const assessment = automated({ outcome: "pass", evidenceRefs: [
+    { ref: "fabricated://claimed-dom", sha256: "a".repeat(64) },
+    { ref: "fabricated://claimed-result", sha256: "b".repeat(64) },
+  ] });
+  const context = resolutionContext(assessment);
+  for (const verifiedEvidenceRefs of [undefined, [], [assessment.evidenceRefs[0]!], assessment.evidenceRefs.map((ref) => ({ ...ref, sha256: "0".repeat(64) }))]) {
+    const result = resolveCase(findingCase(), retest(assessment), { ...context, verifiedEvidenceRefs });
+    assert.equal(result.disposition, "unresolved");
+    assert.ok(result.resolutionReasons.some((reason) => reason.includes("integrity-verification receipt")));
+  }
+  assert.equal(resolveCase(findingCase(), retest(assessment), context).disposition, "resolved");
+});
+
+test("same-version changed entry, implementation or claim is non_comparable", () => {
+  const original = findingCase();
+  const baseline = automated();
+  assert.equal(original.claimVersion, baseline.claimVersion);
+  // Keep the old claimVersion too: digest comparison must not rely on a recomputed claim hash.
+  for (const field of ["entryDigest", "implementationDigest"] as const) {
+    const assessment = { ...baseline, [field]: "0".repeat(64) };
+    assert.equal(resolveCase(original, retest(assessment)).disposition, "non_comparable", field);
+  }
+  for (const patch of [{ entryDigest: "0".repeat(64) }, { implementationDigest: "0".repeat(64) }, { claim: "Broader claim semantics" }]) {
+    const assessment = automated(patch);
+    assert.equal(assessment.implementationVersion, original.implementationVersion);
+    const result = resolveCase(original, retest(assessment), { execution: resolutionContext(assessment).execution, verifiedEvidenceRefs: assessment.evidenceRefs });
+    assert.equal(result.disposition, "non_comparable");
+    assert.ok(result.resolutionReasons.some((reason) => reason.includes("claim version")));
+  }
+});
+
+test("compatibility requires a non-synthetic reviewed record naming both complete identities", () => {
+  const original = findingCase();
+  const assessment = automated({ outcome: "pass", entryDigest: "a".repeat(64), implementationDigest: "b".repeat(64), implementationVersion: "next" });
+  const context = resolutionContext(assessment);
+  const reviewed = compatibility(original, assessment);
+  for (const record of [
+    { from: original.implementationVersion, to: "next" }, { ...reviewed, synthetic: true },
+    { ...reviewed, reviewerId: "" }, { ...reviewed, from: { ...reviewed.from, claimVersion: "0".repeat(64) } },
+    { ...reviewed, to: { ...reviewed.to, implementationDigest: "0".repeat(64) } },
+    { ...reviewed, from: reviewed.to, to: reviewed.from },
+  ]) {
+    assert.equal(resolveCase(original, retest(assessment), { ...context, compatibleVersions: [record as VersionCompatibility] }).disposition, "non_comparable");
+  }
+  assert.equal(resolveCase(original, retest(assessment), context).disposition, "resolved");
 });
 
 test("real local probe evidence flows through candidate validation to review-required publication", async () => {

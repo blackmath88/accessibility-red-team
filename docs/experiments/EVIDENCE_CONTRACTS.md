@@ -20,7 +20,7 @@ service or migration is implemented in this packet.
 | `Hypothesis` (`art/hypothesis/v1`) | Source, suspected barrier, falsifying test, subject/obligation, creation time and author; no finding or publication authority |
 | `ReproducedObservation` (`art/reproduced-observation/v1`) | Hypothesis link, observation/context IDs, fresh-context status, subject/obligation, timestamp and integrity-addressed evidence |
 | `HumanAdjudication` (`art/human-adjudication/v1`) | Reviewer ID, human author, decision/time, exact assessment ID and claim/evidence digests, synthetic flag and note |
-| `FindingCase` (`art/finding-case/v1`) | Stable case ID and obligation identity, linked assessment/adjudication/retest IDs and longitudinal disposition |
+| `FindingCase` (`art/finding-case/v1`) | Stable case ID and subject/obligation identity, originating probe/version, entry/implementation digests and claimVersion, linked assessment/adjudication/retest IDs, longitudinal disposition and resolutionReasons |
 | `CaseRetest` (`art/case-retest/v1`) | Distinct completed/skipped/blocked execution status and optional assessment; these are not extra JourneyOutcomes |
 
 Manual/assisted assessments can have null probe and execution identities, allowing
@@ -104,25 +104,56 @@ current inputs before applying `approve_trusted`. A missing, ineligible, fabrica
 or stale gate returns `not applied: validation gate not eligible_for_review`.
 Synthetic records still return `not applied: synthetic reviewer record`.
 A non-synthetic matching `reject` retires the entry; `needs_changes` keeps it
-candidate. The gate itself still never changes maturity.
+candidate. The gate itself still never changes maturity. Its exported immutable
+`reviewedChallengeOracles` binds missing_target=violation, working_main=pass,
+no_recognizable_link=inapplicable, non_main_target=incomplete and
+malformed_fragment=incomplete. The reviewed independent role-main/German-link
+structure explicitly expects pass (a pass-or-violation oracle, never an error or
+abstention). A submitted expectation differing from its category oracle blocks
+eligibility even if actual and expected agree. At least one oracle-matched
+violation and one oracle-matched pass are mandatory, so all-error sets and
+relabelled positive-detection challenges cannot authorize trusted approval.
 
 ## Case resolution
 
-`src/evidence/cases.ts` returns a new case snapshot; previous IDs and snapshots
-remain available to a future append-only store. A completed retest can resolve a
-case only when it tests the same subject, obligation and probe with the same or
-explicitly compatible implementation version, reports `pass`, and has valid,
-version-consistent evidence provenance from a non-unreviewed, system-authored
-automated assessment linked to a tool execution. Version compatibility defaults to exact
-equality; optional directional pairs are trusted policy configuration, not inferred
-from semver or asserted by a model/retest record.
+`src/evidence/cases.ts` returns a new case snapshot with `resolutionReasons`;
+previous IDs and snapshots remain available to a future append-only store.
+`FindingCase` records the originating `probeId`, `implementationVersion`,
+`entryDigest`, `implementationDigest` and `claimVersion`. A completed retest is
+comparable only for the same subject/obligation and exact originating identity,
+or a caller-supplied reviewed compatibility record naming both complete old and
+new identities. Matching implementation versions alone does not establish
+comparability when entry, implementation bytes or claim semantics change.
+
+`resolveCase(case, retest, context)` accepts trusted `compatibleVersions` policy
+records with directional `from`/`to` identities, `reviewerId`, `decidedAt`,
+`synthetic: false` and a review note. Both identities include probe ID,
+implementation version, both digests and claimVersion. Bare version pairs,
+synthetic reviews, incomplete identities and reversed records cannot establish
+compatibility. These records must come from the caller's reviewed policy store,
+never from a model or retest's assertions. Because the existing claimVersion
+also binds assessment ID and outcome, a new assessment or violation-to-pass
+retest normally needs an explicit reviewed compatibility record; this repair
+does not weaken that hash contract or infer semantic equivalence.
+
+Resolution additionally requires a `pass` from a non-unreviewed, system-authored
+automated assessment with valid claim/evidence provenance. Trusted caller context
+must supply an immutable `ProbeExecution` in `execution` matching execution ID,
+probe ID/version, subject, obligation, outcome, entry/implementation digests,
+environment, timestamp and evidenceVersion. Execution provenance must be known
+and verified, and its author must be a system. Every evidence locator/digest
+must also match a caller-supplied `verifiedEvidenceRefs` integrity receipt, using
+the same trust boundary as `decidePublication`. A self-asserted execution ID or
+`integrity: verified` label cannot resolve a case. The pure function performs no
+artifact I/O or receipt authentication; real execution and integrity stores must
+establish the caller inputs.
 
 | Retest | New disposition |
 | --- | --- |
 | Missing, skipped, blocked or no assessment | not_retested |
-| Different subject/obligation/probe, absent detector identity or incompatible implementation version | non_comparable |
-| Comparable completed violation/incomplete/inapplicable/error or pass without valid evidence | unresolved |
-| Comparable completed evidenced pass | resolved |
+| Different subject/obligation, absent detector identity, or changed identity/claimVersion without exact reviewed compatibility | non_comparable |
+| Comparable completed violation/incomplete/inapplicable/error, or pass without matching execution, trusted receipts or valid evidence | unresolved, with reasons |
+| Comparable completed evidenced pass with exact execution and trusted receipts | resolved |
 
 `not_retested` and `non_comparable` remain distinct. Absence from a sample, a
 blocked task, or an omitted sibling cannot resolve a case. Manual barriers with
@@ -180,6 +211,27 @@ false but observes true. It reproduces on an archived exact base
 No adaptive source or test changed in this packet. All added evidence tests and
 the promotion repair pass; the existing failure prevents claiming a completely
 green repository suite.
+
+## R1 focused repair verification
+
+This repair starts from exact base `7d42e8f042d5a0a55698d90b97a838de35620966`.
+Only the bounded evidence contracts, promotion gate, related tests, synthetic
+case sample and their documentation changed.
+
+| Finding | Repair and new regression tests |
+| --- | --- |
+| R1.1: self-labelled category outcomes allowed promotion | Exported reviewed category oracles, required matched violation/pass coverage and recomputed approval gate; `reviewed category oracles reject changing both expected and actual`; `all-error and relabelled positive coverage cannot authorize trusted approval` |
+| R1.2: self-asserted retest metadata resolved cases | Required matching immutable execution and trusted receipts for every ref, with resolution reasons; `case resolution rejects nonexistent or mismatched immutable executions`; `case resolution requires trusted receipts for every evidence ref` |
+| R1.3: version equality hid detector/claim changes | Stored originating digests and claimVersion and required complete exact identities or explicit directional non-synthetic reviewed compatibility; `same-version changed entry, implementation or claim is non_comparable`; `compatibility requires a non-synthetic reviewed record naming both complete identities` |
+
+All verification commands below completed with exit 0 for this focused repair:
+
+| Command | Result |
+| --- | --- |
+| `npm ci` | Completed once, exit 0 |
+| `npm run build` | Passed, exit 0 |
+| `npx tsx --test --test-force-exit test/evidence-*.test.ts test/catalogue-*.test.ts test/promotion-*.test.ts test/skip-link-*.test.ts test/journeys.test.ts` | 55 tests passed, 0 failed/cancelled/skipped/todo, exit 0 |
+| `python3 .github/check-public-docs.py` | PASS: 3 entry documents, 23 local link/image targets, exit 0 |
 
 ## Production callers remain unconnected
 

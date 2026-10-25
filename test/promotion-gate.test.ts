@@ -2,7 +2,7 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import { entryDigest, implementationDigest, isTrustedEligible, type ProbeDigests, type ReviewerDecision } from "../src/catalogue/contracts.js";
 import { skipLinkEntry, skipLinkDigests } from "../src/catalogue/registry.js";
-import { applyReviewerDecision, challengeCounts, evaluateGate, requiredChallengeCategories, type ValidationRecord } from "../src/promotion/gate.js";
+import { applyReviewerDecision, challengeCounts, evaluateGate, reviewedChallengeOracles, requiredChallengeCategories, type ValidationRecord } from "../src/promotion/gate.js";
 import { challengeCases } from "./fixtures/skip-link-probe/cases.js";
 
 // These records exercise pure policy branches; they are synthetic unit inputs.
@@ -166,4 +166,31 @@ test("trusted approval requires an eligible gate bound to the same validation re
   const stale = eligibleGate();
   stale.result.binding.implementationDigest = implementationDigest("other implementation");
   denied(stale);
+});
+
+
+test("reviewed category oracles reject changing both expected and actual", () => {
+  for (const category of requiredChallengeCategories) {
+    const input = record();
+    const item = input.cases.find((item) => item.category === category)!;
+    item.expected = item.actual = reviewedChallengeOracles[category] === "pass" ? "violation" : "pass";
+    const result = evaluateGate(skipLinkEntry, input, skipLinkDigests());
+    assert.equal(result.verdict, "insufficient_evidence", category);
+    assert.ok(result.reasons.some((reason) => reason.includes(`reviewed ${category} oracle`)));
+    assert.equal(applyReviewerDecision(skipLinkEntry, review(skipLinkDigests(), false), skipLinkDigests(), { validationRecord: input, result }).applied, false);
+  }
+});
+
+test("all-error and relabelled positive coverage cannot authorize trusted approval", () => {
+  const allError = record();
+  allError.cases.forEach((item) => { item.expected = item.actual = "error"; });
+  const noPositive = record();
+  noPositive.cases.filter((item) => item.category === "missing_target").forEach((item) => { item.expected = item.actual = "pass"; });
+  for (const input of [allError, noPositive]) {
+    const result = evaluateGate(skipLinkEntry, input, skipLinkDigests());
+    assert.equal(result.verdict, "insufficient_evidence");
+    assert.ok(result.reasons.includes("Missing matched violation challenge."));
+    if (input === allError) assert.ok(result.reasons.includes("Missing matched pass challenge."));
+    assert.equal(applyReviewerDecision(skipLinkEntry, review(skipLinkDigests(), false), skipLinkDigests(), { validationRecord: input, result }).applied, false);
+  }
 });

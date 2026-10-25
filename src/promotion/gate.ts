@@ -14,6 +14,17 @@ export const requiredChallengeCategories = [
   "missing_target", "working_main", "no_recognizable_link", "non_main_target", "malformed_fragment", "independent_structure",
 ] as const;
 
+// Reviewed fixture oracle: changing a submitted expectation cannot redefine coverage.
+// The independent role=main/German-link structure is reviewed as a passing target.
+export const reviewedChallengeOracles = Object.freeze({
+  missing_target: "violation",
+  working_main: "pass",
+  no_recognizable_link: "inapplicable",
+  non_main_target: "incomplete",
+  malformed_fragment: "incomplete",
+  independent_structure: "pass",
+} as const);
+
 export const ChallengeCaseSchema = z.object({
   caseId: z.string().min(1),
   category: z.enum(requiredChallengeCategories),
@@ -65,6 +76,15 @@ function evaluateValidation(entry: ProbeEntry, validationRecord: ValidationRecor
 
   const missing = requiredChallengeCategories.filter((category) => !record.cases.some((item) => item.category === category));
   const reasons: string[] = [];
+  for (const item of record.cases) {
+    if (item.expected !== reviewedChallengeOracles[item.category]) {
+      reasons.push(`Challenge ${item.caseId} expected ${item.expected} differs from reviewed ${item.category} oracle ${reviewedChallengeOracles[item.category]}.`);
+    }
+  }
+  for (const outcome of ["violation", "pass"] as const) {
+    if (!record.cases.some((item) => item.expected === reviewedChallengeOracles[item.category]
+      && item.expected === outcome && item.actual === outcome)) reasons.push(`Missing matched ${outcome} challenge.`);
+  }
   if (missing.length) reasons.push(`Missing challenge categories: ${missing.join(", ")}.`);
   if (new Set(record.cases.map((item) => item.caseId)).size !== record.cases.length) reasons.push("Duplicate challenge case IDs.");
   if (counts.unsupported) reasons.push(`${counts.unsupported} unsupported or unexpected non-claim outcome(s).`);

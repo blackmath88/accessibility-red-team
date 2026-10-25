@@ -86,7 +86,16 @@ complete expected/actual case record, digests and gate output as diagnostics.
 The gate also rejects changed digests or any FP/FN, and returns
 `insufficient_evidence` for missing challenge categories, unsupported/unexpected
 errors, reused contexts, duplicate case IDs or missing independent provenance.
-The gate is pure and never changes entry maturity.
+The gate is pure and never changes entry maturity. The gate module exports
+immutable `reviewedChallengeOracles`: missing_target=violation, working_main=pass,
+no_recognizable_link=inapplicable, non_main_target=incomplete,
+malformed_fragment=incomplete, and independent_structure=pass for the reviewed
+role-main/German-link structure. The independent expected outcome is explicitly
+a pass; it cannot be relabelled to an error, abstention or violation by a submitted
+record. Any category expectation that differs from this reviewed oracle blocks
+eligibility even when actual is changed to match. Eligibility also requires at
+least one matched violation and one matched pass; all-error sets and relabelled
+missing-target evidence cannot authorize an approve_trusted decision.
 
 ## Review binding and legacy vocabulary
 
