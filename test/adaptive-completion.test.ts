@@ -137,8 +137,8 @@ describe("incremental candidates", () => {
   });
 
   it("repeat reports of the same category and target are duplicates, not double-counted, including at finish", async () => {
-    const r = await run("/skip-links/broken.html", ({ call }) => {
-      if (call === 0) return { action: { type: "capture_evidence", note: "skip link" } };
+    const r = await run("/skip-links/broken.html", ({ call, observation }) => {
+      if (call === 0) return { action: { type: "capture_evidence", note: "skip link", targetRef: observation!.skipLinks[0]!.ref } };
       if (call === 1 || call === 2) return { action: { type: "report_candidate", candidate: finding("ev_1") } };
       return finish("complete", [finding("ev_1"), finding("ev_1", "missing_accessible_name")]);
     }, INCREMENTAL);
@@ -149,6 +149,20 @@ describe("incremental candidates", () => {
       ]);
       assert.equal(r.result.candidateCount, 2);
       assert.equal(r.result.rejectedCandidateCount, 0);
+    } finally { await r.cleanup(); }
+  });
+
+  it("two distinct findings citing untargeted evidence on one page both stay candidates (review M3)", async () => {
+    const r = await run("/news-service/formular-umzug.html", ({ call }) => {
+      if (call === 0) return { action: { type: "capture_evidence", note: "postcode field has no name" } };
+      if (call === 1) return { action: { type: "capture_evidence", note: "town field has no name" } };
+      if (call === 2) return { action: { type: "report_candidate", candidate: { ...finding("ev_1", "missing_accessible_name"), claim: "The postcode field has no name." } } };
+      if (call === 3) return { action: { type: "report_candidate", candidate: { ...finding("ev_2", "missing_accessible_name"), claim: "The town field has no name." } } };
+      return finish("inconclusive");
+    }, INCREMENTAL);
+    try {
+      assert.deepEqual((await r.candidates()).map((item) => item.status), ["candidate", "candidate"]);
+      assert.equal(r.result.candidateCount, 2);
     } finally { await r.cleanup(); }
   });
 

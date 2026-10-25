@@ -528,7 +528,7 @@ class Session {
         : { id, step: this.step, status: "candidate", rejection: null, finding: parsed.data };
       if (!missing.length && this.condition.incrementalCandidates) {
         const key = this.candidateKey(parsed.data);
-        const original = this.candidates.find((item) => item.status === "candidate" && this.candidateKey(item.finding as CandidateFinding) === key);
+        const original = key === null ? undefined : this.candidates.find((item) => item.status === "candidate" && this.candidateKey(item.finding as CandidateFinding) === key);
         if (original) stored = { ...stored, status: "duplicate", duplicateOf: original.id };
       }
     }
@@ -536,12 +536,16 @@ class Session {
     return stored;
   }
 
-  // Category plus the cited evidence targets (selector hint, else the page URL). Refs shift between observations, so they are not used.
-  private candidateKey(finding: CandidateFinding): string {
-    const targets = finding.observationRefs.map((ref) => {
-      const item = this.evidence.find((record) => record.id === ref);
-      return item?.target?.selectorHint ?? `page:${this.policy.normalize(item?.url ?? ref)}`;
-    });
+  // Category plus the cited evidence targets' selector hints. Refs shift between observations, so they are not used. When any cited
+  // record has no target, two findings cannot be told apart safely (two unnamed fields on one page would collapse), so there is no
+  // key and the candidate is never marked a duplicate.
+  private candidateKey(finding: CandidateFinding): string | null {
+    const targets: string[] = [];
+    for (const ref of finding.observationRefs) {
+      const hint = this.evidence.find((record) => record.id === ref)?.target?.selectorHint;
+      if (!hint) return null;
+      targets.push(hint);
+    }
     return `${finding.category}|${[...new Set(targets)].sort().join(",")}`;
   }
 
