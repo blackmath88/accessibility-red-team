@@ -52,6 +52,11 @@ const canonical = (value: unknown): string => JSON.stringify(value, (_key, v: un
 
 // The hash binds a live run to the exact configuration and code that the dry run showed.
 export function confirmHashOf(config: LiveTrialConfig, sha: string): string {
+  return confirmHashFor(config, sha);
+}
+
+// The same binding for any validated configuration (used by the frontier benchmark dry run).
+export function confirmHashFor(config: unknown, sha: string): string {
   return createHash("sha256").update(`${canonical(config)}\n${sha}`).digest("hex").slice(0, 16);
 }
 

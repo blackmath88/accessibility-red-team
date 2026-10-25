@@ -71,10 +71,10 @@ agent in a browser) and different safeguards. This ADR neither relies on nor arg
 |---|---|
 | Authorisation to *build* the experiment (offline harness, localhost fixtures, mock-provider tests, draft PR) | Given by the owner on 2026-10-24. |
 | Approval of *this ADR* as the standing decision for the track | **Not given.** Status stays Proposed until a reviewer accepts it. |
-| Permission to run a *live trial* (real model, paid API, any non-fixture target) | **Not given.** Needs a separate approval naming credential source, model, spend cap and exact targets. |
+| Permission to run a *live trial* (real model, paid API, any non-fixture target) | Three fixture-only live trials with a real model have since been run (2026-10-25; recorded in docs/experiments/ADAPTIVE_MISTRAL.md, trials 1–3). Any further live run, and any non-fixture target, still needs a separate approval naming credential source, model, spend cap and exact targets. |
 
-Building the harness does not imply the other two. No live model call and no public-site scan is performed by this
-change.
+Building the harness does not imply the other two. The change that introduced this ADR made no live model call and no
+public-site scan; the later fixture-only live trials are recorded in docs/experiments/ADAPTIVE_MISTRAL.md.
 
 ## Consequences
 

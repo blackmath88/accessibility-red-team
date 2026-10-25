@@ -1,0 +1,29 @@
+{
+  "schema": "art/adaptive-frontier-benchmark-config/v1",
+  "status": "dry run only; placeholders must be replaced by the owner before any confirm hash exists",
+  "provider": "mistral",
+  "apiKeyEnv": "ADAPTIVE_MISTRAL_API_KEY",
+  "baseUrl": "https://api.mistral.ai",
+  "models": {
+    "baseline": {
+      "model": "mistral-small-2603",
+      "pricing": { "currency": "USD", "inputPerMillion": 0.15, "outputPerMillion": 0.6, "source": "https://docs.mistral.ai/models/mistral-small-4-0-26-03", "checkedOn": "2026-10-25" }
+    },
+    "stronger": {
+      "model": "OWNER_SUPPLIED_PINNED_MODEL_ID",
+      "pricing": { "currency": "USD", "inputPerMillion": null, "outputPerMillion": null, "source": "OWNER_SUPPLIED", "checkedOn": "OWNER_SUPPLIED" }
+    }
+  },
+  "conditions": [
+    { "id": "A", "label": "historical tester (condition A, skill v3)", "model": "baseline", "condition": { "schema": "art/adaptive-condition/v1", "ledgerVisible": false, "completionAccounting": false, "incrementalCandidates": false, "selector": "model" } },
+    { "id": "B", "label": "same model, ledger visible + completion accounting", "model": "baseline", "condition": { "schema": "art/adaptive-condition/v1", "ledgerVisible": true, "completionAccounting": true, "incrementalCandidates": true, "selector": "model" } },
+    { "id": "C", "label": "stronger pinned model, same ledger and tools as B", "model": "stronger", "condition": { "schema": "art/adaptive-condition/v1", "ledgerVisible": true, "completionAccounting": true, "incrementalCandidates": true, "selector": "model" } },
+    { "id": "D", "label": "deterministic scheduler + rule table, no model", "model": null, "condition": { "schema": "art/adaptive-condition/v1", "ledgerVisible": true, "completionAccounting": true, "incrementalCandidates": true, "selector": "scheduler" } }
+  ],
+  "fixtures": ["skip-links", "news-service", "menu-dialog", "dev-k1", "dev-k2", "dev-k3"],
+  "fixtureSplit": "development",
+  "repeats": 5,
+  "session": { "maxSteps": 24, "maxModelCalls": 12, "maxInputTokens": 120000, "maxOutputTokens": 4000, "maxWallMs": 180000, "maxSurfaces": 8 },
+  "totalBudget": { "currency": "USD", "maxSpend": null },
+  "outRoot": "runs/frontier-benchmark"
+}

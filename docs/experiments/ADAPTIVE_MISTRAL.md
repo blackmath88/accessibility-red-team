@@ -1,6 +1,6 @@
 # Adaptive track: Mistral adapter (S3, mocked)
 
-Status: implemented and tested against a fake `fetch` only. **No real call has been made, and none is authorised** until the owner approves the credential source, the model and a spend cap (build plan, S3).
+Status: implemented and tested against a fake `fetch`. Three fixture-only live trials have been run with the real model (2026-10-25, trials 1–3 below; loopback fixtures only, under the trial budgets recorded there). No other real call has been made. Any further live call, including the frontier benchmark (docs/experiments/FRONTIER_BENCHMARK.md), needs its own owner approval of credential source, model, spend cap and targets.
 
 Code: `src/experimental/adaptive/providers/mistral.ts` implements `ModelProvider` from `src/experimental/adaptive/provider.ts`. Tests: `test/adaptive-mistral.test.ts`. Nothing outside `src/experimental/` imports it.
 
@@ -34,7 +34,7 @@ Every request sends its messages to Mistral's API (`api.mistral.ai` by default, 
 - Response shape was written from the public chat-completions format, not from a live response. Array-style message content (multi-part) is rejected as `malformed_response`.
 - Pricing, rate limits and whether the pinned model accepts the parameters used are unknown.
 
-## Fixture trial with the real model (prepared, not yet run)
+## Fixture trial with the real model (run three times; see trials 1–3)
 
 Runner: `src/experimental/adaptive/live-trial.ts`, configuration `src/experimental/adaptive/trials/mistral-fixture-trial.v1.json`, script `npm run adaptive:mistral-fixture-trial`. Tests: `test/adaptive-live-trial.test.ts` (no network).
 
