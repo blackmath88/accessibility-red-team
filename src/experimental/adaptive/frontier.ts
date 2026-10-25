@@ -18,6 +18,7 @@ type Control = Observation["controls"][number];
 type Target = { id: string | null; name: string; selectorHint: string };
 
 const NOT_APPLICABLE = "not applicable: no skip link observed on this page";
+const MAX_DROPPED_KEYS = 5000;
 const DIALOG_ROLES = new Set(["dialog", "alertdialog"]);
 
 // A control's identity across observations. Refs (eN) are DOM-index based and shift, so they are never used here.
@@ -35,7 +36,9 @@ export class Frontier {
   private readonly states = new Map<string, FrontierState>(); // by stateKey
   private readonly obligations = new Map<string, FrontierObligation>(); // by page|probe|subject
   private readonly truncated = { pages: false, states: false, obligations: false };
-  private readonly dropped = { pages: 0, states: 0, obligations: 0 };
+  // Keys refused by a bound. The same link or control is re-offered every turn, so drops are counted once per key; the sets are capped too.
+  private readonly droppedKeys = { pages: new Set<string>(), states: new Set<string>(), obligations: new Set<string>() };
+  private droppedOverflow = { pages: 0, states: 0, obligations: 0 };
   private readonly clipping: FrontierLedger["modelVisibleClipping"] = [];
   private lastPageId: string | null = null;
   private skipRefs = new Set<string>();
@@ -51,10 +54,17 @@ export class Frontier {
     private readonly bounds: FrontierBounds = DEFAULT_FRONTIER_BOUNDS,
   ) {}
 
+  private drop(kind: keyof Frontier["droppedKeys"], key: string): void {
+    this.truncated[kind] = true;
+    const keys = this.droppedKeys[kind];
+    if (keys.has(key)) return;
+    if (keys.size < MAX_DROPPED_KEYS) keys.add(key); else this.droppedOverflow[kind] += 1;
+  }
+
   private addPage(url: string, discovery: FrontierPage["discovery"]): FrontierPage | null {
     const known = this.pages.get(url);
     if (known) return known;
-    if (this.pages.size >= this.bounds.maxPages) { this.truncated.pages = true; this.dropped.pages += 1; return null; }
+    if (this.pages.size >= this.bounds.maxPages) { this.drop("pages", url); return null; }
     const page: FrontierPage = { id: `p${this.pages.size + 1}`, url, discovery, modelVisible: false, firstModelVisibleStep: null, visited: false, firstVisitedStep: null };
     this.pages.set(url, page);
     this.addObligation(page.id, null, "semantics", null, true);
@@ -65,7 +75,7 @@ export class Frontier {
   private addObligation(pageId: string, stateId: string | null, probe: FrontierProbe, subject: string | null, known: boolean): void {
     const key = `${pageId}|${probe}|${subject ?? ""}`;
     if (this.obligations.has(key)) return;
-    if (this.obligations.size >= this.bounds.maxObligations) { this.truncated.obligations = true; this.dropped.obligations += 1; return; }
+    if (this.obligations.size >= this.bounds.maxObligations) { this.drop("obligations", key); return; }
     this.obligations.set(key, {
       id: `o${this.obligations.size + 1}`, pageId, stateId, probe, subject, applicability: known ? "known" : "unknown", status: "pending", evidenceIds: [], reason: null,
     });
@@ -130,7 +140,7 @@ export class Frontier {
     const key = stateKey(observation, this.normalize);
     let state = this.states.get(key);
     if (!state) {
-      if (this.states.size >= this.bounds.maxStates) { this.truncated.states = true; this.dropped.states += 1; }
+      if (this.states.size >= this.bounds.maxStates) this.drop("states", key);
       else {
         const focus = observation.focus ? (observation.focus.isBody ? "body" : observation.focus.id ? `#${observation.focus.id}` : `${observation.focus.tag}|${observation.focus.name}`) : null;
         state = {
@@ -192,7 +202,8 @@ export class Frontier {
     const count = (status: FrontierObligation["status"]) => obligations.filter((item) => item.status === status).length;
     return FrontierLedgerSchema.parse({
       schema: "art/adaptive-frontier/v1", sessionId: this.sessionId, condition: this.condition, updatedAtStep: this.updatedAtStep,
-      bounds: this.bounds, truncated: this.truncated, dropped: this.dropped, modelVisibleClipping: this.clipping,
+      bounds: this.bounds, truncated: this.truncated,
+      dropped: Object.fromEntries((["pages", "states", "obligations"] as const).map((kind) => [kind, this.droppedKeys[kind].size + this.droppedOverflow[kind]])), modelVisibleClipping: this.clipping,
       pages: [...this.pages.values()], states: [...this.states.values()], obligations,
       completion: {
         remaining: count("pending"),

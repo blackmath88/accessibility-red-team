@@ -7,7 +7,7 @@ import { DEFAULT_CONDITION, ExplorationConditionSchema, FrontierLedgerSchema, ty
 import { runSession } from "../src/experimental/adaptive/executor.js";
 import { Frontier } from "../src/experimental/adaptive/frontier.js";
 import { FakeProvider, type FakeScript } from "../src/experimental/adaptive/providers/fake.js";
-import { fixtureConfig, linkTo, runInTemp, startHarness, type Harness } from "./adaptive-helpers.js";
+import { fixtureConfig, linkTo, refById, runInTemp, startHarness, type Harness } from "./adaptive-helpers.js";
 
 let harness: Harness;
 before(async () => { harness = await startHarness(); });
@@ -151,6 +151,47 @@ describe("frontier ledger provenance", () => {
   });
 });
 
+describe("frontier ledger state probes", () => {
+  it("a menu activation executes the disclosure obligation and the link it reveals is attributed to it", async () => {
+    const script: FakeScript = ({ call, observation }) => call === 0
+      ? { action: { type: "activate", targetRef: refById(observation, "menu-toggle") } }
+      : { action: { type: "finish", verdict: "inconclusive", summary: "", candidates: [] } };
+    const run = await runInTemp(harness, new FakeProvider(script), "/news-service/index.html");
+    try {
+      const ledger = await ledgerOf(run.outDir);
+      const start = pageBy(ledger, "/index.html");
+      const toggle = ledger.obligations.find((item) => item.probe === "disclosure_toggle" && item.subject === "#menu-toggle")!;
+      assert.equal(toggle.pageId, start.id);
+      assert.equal(toggle.status, "executed");
+      assert.deepEqual(toggle.evidenceIds, ["ev_1"]);
+      assert.deepEqual(pageBy(ledger, "/dienstleistungen.html").discovery, { kind: "revealed", onPage: start.id, step: 1, afterAction: "activate", afterStep: 0 });
+      const opened = ledger.states.find((state) => state.preconditions.expandedControls.length > 0)!;
+      assert.equal(opened.transition?.type, "activate");
+      assert.equal(opened.transition?.step, 0);
+      await assertProvenance(ledger, run.outDir);
+    } finally { await run.cleanup(); }
+  });
+
+  it("the dialog obligation needs both the opening activation and a later Escape, and says nothing about pass or fail", async () => {
+    const script: FakeScript = ({ call, observation }) => {
+      if (call === 0) return { action: { type: "activate", targetRef: refById(observation, "help-btn") } };
+      if (call === 1) return { action: { type: "escape" } };
+      return { action: { type: "finish", verdict: "complete", summary: "focus returns correctly", candidates: [] } };
+    };
+    const run = await runInTemp(harness, new FakeProvider(script), "/menu-dialog/index.html");
+    try {
+      const ledger = await ledgerOf(run.outDir);
+      const dialog = ledger.obligations.find((item) => item.probe === "dialog_focus_return" && item.subject === "#help-btn")!;
+      assert.equal(dialog.applicability, "known");
+      assert.equal(dialog.status, "executed");
+      assert.deepEqual(dialog.evidenceIds, ["ev_1", "ev_2"]);
+      assert.equal(ledger.obligations.find((item) => item.probe === "disclosure_toggle" && item.subject === "#menu-btn")!.status, "pending");
+      assert.ok(!("passed" in dialog) && !("verdict" in dialog));
+      await assertProvenance(ledger, run.outDir);
+    } finally { await run.cleanup(); }
+  });
+});
+
 describe("frontier ledger bounds and model text", () => {
   const observation = (url: string, links: string[]): Observation => ({
     step: 0, url, title: "", lang: null, timestamp: "", headings: [], landmarks: [], controls: [], skipLinks: [], dialogs: [], focus: null, lastActivated: null,
@@ -161,9 +202,12 @@ describe("frontier ledger bounds and model text", () => {
 
   it("drops pages and obligations past the bounds and says so", () => {
     const frontier = new Frontier("b", DEFAULT_CONDITION, (url) => url, { maxPages: 2, maxStates: 1, maxObligations: 3 });
-    const links = ["http://f.test/a", "http://f.test/b", "http://f.test/c", "http://f.test/d"];
-    frontier.observe({ step: 0, observation: observation("http://f.test/", links), discoveredNow: links, previous: null });
-    frontier.observe({ step: 1, observation: observation("http://f.test/a", []), discoveredNow: [], previous: { type: "navigate", targetRef: null, step: 0 } });
+    const links = ["/a", "/b", "/c", "/d"];
+    frontier.observe({ step: 0, observation: observation("/", links), discoveredNow: links, previous: null });
+    frontier.observe({ step: 1, observation: observation("/a", []), discoveredNow: [], previous: { type: "navigate", targetRef: null, step: 0 } });
+    // The same over-bound links and states offered again are not counted again.
+    frontier.observe({ step: 2, observation: observation("/", links), discoveredNow: links, previous: { type: "navigate", targetRef: null, step: 1 } });
+    frontier.observe({ step: 3, observation: observation("/a", []), discoveredNow: [], previous: { type: "navigate", targetRef: null, step: 2 } });
     const ledger = frontier.snapshot();
     assert.equal(ledger.pages.length, 2);
     assert.deepEqual(ledger.truncated, { pages: true, states: true, obligations: true });
@@ -173,8 +217,8 @@ describe("frontier ledger bounds and model text", () => {
 
   it("a denial for a URL the model made up never creates a page", () => {
     const frontier = new Frontier("d", DEFAULT_CONDITION, (url) => url);
-    frontier.observe({ step: 0, observation: observation("http://f.test/", []), discoveredNow: [], previous: null });
-    frontier.recordDenials([{ id: "den_1", step: 0, timestamp: "", source: "executor_validation", reason: "url_not_discovered", detail: "", url: "http://f.test/secret", attemptedAction: { type: "navigate", url: "http://f.test/secret" } }]);
+    frontier.observe({ step: 0, observation: observation("/", []), discoveredNow: [], previous: null });
+    frontier.recordDenials([{ id: "den_1", step: 0, timestamp: "", source: "executor_validation", reason: "url_not_discovered", detail: "", url: "/secret", attemptedAction: { type: "navigate", url: "/secret" } }]);
     const ledger = frontier.snapshot();
     assert.equal(ledger.pages.length, 1);
     assert.equal(ledger.completion.byStatus.blocked, 0);
