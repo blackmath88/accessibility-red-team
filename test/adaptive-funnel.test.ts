@@ -53,6 +53,21 @@ describe("funnel scoring", () => {
     } finally { await rm(outDir, { recursive: true, force: true }); }
   });
 
+  it("a skip-link finding citing untargeted inspect_semantics evidence is credited without the href in any note (re-review R1)", async () => {
+    const outDir = await mkdtemp(join(tmpdir(), "art-adaptive-"));
+    const script: FakeScript = ({ call, observation }) => {
+      if (call === 0) return { action: { type: "navigate", url: linkTo(observation, "/broken.html") } };
+      if (call === 1) return { action: { type: "inspect_semantics" } };
+      return { action: { type: "finish", verdict: "complete", summary: "", candidates: [{ category: "skip_link_broken", claim: "The skip link goes nowhere.", observationRefs: ["ev_2"], reproductionSteps: ["Open the page"], limitations: ["DOM summary"], proposedDeterministicCheck: "skip link target exists" }] } };
+    };
+    try {
+      await runSession({ config: fixtureConfig(harness, "/skip-links/index.html"), provider: new FakeProvider(script), outDir, browser: harness.browser, codeSha: "test" });
+      const row = await scoreSession(outDir, await loadTruth("skip-links"), "A", DEFAULT_CONDITION);
+      assert.deepEqual(row.defects[0]!.interpretation, { interpreted: true, reported: true });
+      assert.equal(row.defects[0]!.credited, true);
+    } finally { await rm(outDir, { recursive: true, force: true }); }
+  });
+
   it("a refused navigation is not 'selected' (review n4)", async () => {
     const outDir = await mkdtemp(join(tmpdir(), "art-adaptive-"));
     const script: FakeScript = ({ call, observation }) => call === 0

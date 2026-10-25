@@ -45,12 +45,17 @@ export type SessionFunnel = {
 };
 
 // When cited evidence targets a skip link, its href (recorded in the evidence's own skip-link facts) joins the locator, so credit
-// depends on what was probed and cited, not on whether a note happens to repeat the href.
+// depends on what was probed and cited, not on whether a note happens to repeat the href. Untargeted evidence (inspect_semantics,
+// capture without targetRef) contributes the hrefs of the skip links its facts record as defective: the same facts every condition sees.
+type SkipFact = { ref?: unknown; href?: unknown; targetExists?: unknown; targetIsMain?: unknown };
 function skipHref(record: EvidenceRecord): string {
   const skipLinks = record.domFacts["skipLinks"];
-  if (!record.target || !Array.isArray(skipLinks)) return "";
-  const hit = skipLinks.find((entry) => entry && typeof entry === "object" && (entry as { ref?: unknown }).ref === record.target!.ref) as { href?: unknown } | undefined;
-  return typeof hit?.href === "string" ? hit.href : "";
+  if (!Array.isArray(skipLinks)) return "";
+  const facts = skipLinks.filter((entry): entry is SkipFact => Boolean(entry) && typeof entry === "object");
+  const hrefs = record.target
+    ? facts.filter((fact) => fact.ref === record.target!.ref)
+    : facts.filter((fact) => fact.targetExists === false || fact.targetIsMain === false);
+  return hrefs.map((fact) => fact.href).filter((href): href is string => typeof href === "string").join(" ");
 }
 
 const pathOf = (url: string) => { try { return new URL(url).pathname; } catch { return url.split("#")[0]!; } };

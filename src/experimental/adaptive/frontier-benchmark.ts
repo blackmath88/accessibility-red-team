@@ -1,4 +1,4 @@
-// Paired frontier benchmark: configuration and DRY RUN ONLY. Prints the plan for conditions A, B, C, D over fixtures x repeats and
+// Paired frontier benchmark: configuration and DRY RUN ONLY. Prints the plan for conditions A, hidden, B, C, D over fixtures x repeats and
 // refuses to produce a confirm hash while any owner-supplied value is missing. There is no live path in this file: --live is refused.
 // It reads no environment variables and makes no network call.
 //   npm run adaptive:frontier-benchmark [-- --config <path>]

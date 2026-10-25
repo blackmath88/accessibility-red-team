@@ -159,3 +159,8 @@ Pending owner decisions:
 - approval of any live run, and a live runner for it, which does not exist yet;
 - the held-out seed after code freeze;
 - whether the rule table is an acceptable mechanism.
+
+Known limits to close before any paid comparison is scored (from the focused re-review at `df6dd54`; none can occur on the current development fixtures, which have at most 5 pages and far fewer than 80 links):
+- the scheduler recomputes the sampling scope from the compact view, which is bounded at 25 pages; on larger sites it can undercount visited pages and pick an out-of-scope page. Fix: a harness-authored `inScope` flag per view page;
+- the "reachable" scope follows what each condition was shown: a page clipped from `legal.navigate` but listed in B's compact view counts as reachable for B and not for A or the control. This is intended, but premature-completion rates should be read with it in mind;
+- `scoreSession` refuses a mismatching label only when the caller passes the expected condition; `renderComparison` does not yet assert that every row under one label has the same recorded condition.
