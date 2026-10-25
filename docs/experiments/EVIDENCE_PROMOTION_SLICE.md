@@ -26,3 +26,35 @@ under proposed [ADR-0014](../adr/0014-exploration-adjudication-promotion.md).
 | Production report path | Unchanged | Not connected to the policy in this slice |
 
 Details of what each packet implemented, mocked or left unconnected are recorded in the packet sections below.
+
+## Packet outcomes
+
+| Packet | Commits | Result | Detail |
+|---|---|---|---|
+| 1 Replay and accounting audit | c492b3a | Implemented with synthetic inputs; historical replay blocked | [DECISION_REPLAY.md](DECISION_REPLAY.md) |
+| 2 Typed skip-link probe and gate | af29f88, ace766e (gate repair) | Implemented; entry remains `candidate` | [SKIP_LINK_SAME_PAGE.md](../catalogue/SKIP_LINK_SAME_PAGE.md) |
+| 3 Evidence and publication contracts | a249079 | Pure policy implemented; production callers unconnected | [EVIDENCE_CONTRACTS.md](EVIDENCE_CONTRACTS.md) |
+
+## Implemented, mocked and live-observed
+
+- Implemented and exercised locally: skip-link extraction and malformed-fragment abstention, the typed catalogue
+  entry, digest-bound review gate, evidence records, publication and retest policy, replay manifest and accounting.
+- Browser-observed on local fixtures only: six skip-link challenge cases in fresh Chromium contexts
+  (0 false positives, 0 false negatives, 3 abstentions), and contained localhost frontier continuations.
+- Mocked: every model response (fake provider), all reviewer records and evidence receipts, and both replay
+  decision packets (`synthetic_local_smoke`). No real human sign-off exists, and the probe is not trusted.
+- Not performed: paid or live model calls, public scans, report/watch/export wiring, outreach, merge or deployment.
+
+## Combined checks on the integrated branch
+
+| Command | Result |
+|---|---|
+| `npm run build` | Pass |
+| `npm test` | 305 pass, 1 fail. `adaptive-arms.test.ts:147` also fails 18/1 on unmodified main e7e0fc9 |
+| `python3 .github/check-public-docs.py` | Pass |
+| `npx tsx src/experimental/adaptive/replay/dry-run.ts` | 120 fake requests; 120 next-action and 120 interpretation scores; no quality claim |
+| `npm run adaptive:frontier-local` | Completed with scripted stand-ins and the scheduler; no model calls |
+| `npm run adaptive:frontier-benchmark` | Refused by design (exit 2): the stronger model, its pricing and the budget are owner-supplied and missing |
+
+`npm test` on this host can keep its handles open after the adaptive-arms setup hook passes 120 s under parallel
+load. A run without competing load finishes normally.
