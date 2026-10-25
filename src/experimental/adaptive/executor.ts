@@ -322,7 +322,8 @@ class Session {
     await this.flush();
     if (keepGoing && finalCall) {
       const limit = limits.maxModelCalls - this.modelCalls === 0 ? `maxModelCalls ${limits.maxModelCalls}` : `maxSteps ${limits.maxSteps}`;
-      return this.end("budget_exhausted", `${limit} reached; the final call did not finish`);
+      const refused = this.denials.length > denialsBefore ? ` (refused: ${this.denials.at(-1)!.reason})` : "";
+      return this.end("budget_exhausted", `${limit} reached; the final call did not finish${refused}`);
     }
     return keepGoing;
   }

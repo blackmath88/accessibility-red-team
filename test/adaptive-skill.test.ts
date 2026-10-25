@@ -140,7 +140,7 @@ describe("action history and the finish-only final call", () => {
       assert.doesNotMatch(provider.requests[1]!.messages[0]!.content, /This is your final reply/);
       assert.equal(run.denials.at(-1)?.reason, "finish_required");
       assert.equal(run.result.status, "budget_exhausted");
-      assert.match(run.result.reason, /maxModelCalls 3 reached; the final call did not finish/);
+      assert.match(run.result.reason, /maxModelCalls 3 reached; the final call did not finish \(refused: finish_required\)/);
       assert.deepEqual(await run.json<unknown[]>("candidates.json"), []);
     } finally { await run.cleanup(); }
   });
