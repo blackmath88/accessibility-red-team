@@ -118,6 +118,13 @@ export const ActionSchema = z.discriminatedUnion("type", [
 export type Action = z.infer<typeof ActionSchema>;
 export const ACTION_TYPES = ["inspect_semantics", "navigate", "focus_next", "focus_prev", "activate", "escape", "scroll", "capture_evidence", "finish", "unknown"] as const;
 
+// Condition flag incrementalCandidates only: one candidate reported mid-session, validated like a finish candidate. ACTION_TYPES and
+// ActionSchema stay as they were so that condition A's refusal texts and history labels are unchanged.
+export const ReportCandidateActionSchema = strict({ type: z.literal("report_candidate"), candidate: z.unknown() });
+export const ActionV4Schema = z.discriminatedUnion("type", [...ActionSchema.options, ReportCandidateActionSchema]);
+export type ActionV4 = z.infer<typeof ActionV4Schema>;
+export const ACTION_TYPES_V4 = [...ACTION_TYPES, "report_candidate"] as const;
+
 export const ModelDecisionSchema = strict({
   action: z.unknown(),
   rationale: z.string().max(600).optional(),
@@ -182,6 +189,16 @@ export const ObservationSchema = z.object({
     activate: z.array(z.string()),
     simple: z.array(z.string()),
   }),
+  // Condition flag ledgerVisible only; absent otherwise, so condition A's observation bytes are unchanged. Harness-authored: page ids,
+  // canonical URLs that are visited or in legal.navigate, probe names, statuses, harness reasons, evidence ids, current-turn refs.
+  frontier: z.object({
+    pages: z.array(z.object({ id: z.string(), url: z.string(), visited: z.boolean(), current: z.boolean() })),
+    outstanding: z.array(z.object({ id: z.string(), pageId: z.string(), probe: z.string(), status: z.string(), applicability: z.string(), targetRef: z.string().nullable(), reason: z.string().nullable() })),
+    outcomes: z.array(z.object({ id: z.string(), pageId: z.string(), probe: z.string(), evidenceIds: z.array(z.string()) })),
+    remaining: z.number(),
+    truncated: z.object({ pages: z.boolean(), outstanding: z.boolean(), outcomes: z.boolean(), ledger: z.boolean() }),
+    dropped: z.object({ pages: z.number(), outstanding: z.number(), outcomes: z.number() }),
+  }).optional(),
 });
 export type Observation = z.infer<typeof ObservationSchema>;
 
@@ -208,8 +225,10 @@ export type EvidenceRecord = z.infer<typeof EvidenceRecordSchema>;
 export const StoredCandidateSchema = z.strictObject({
   id: nonEmpty,
   step: z.number().int().nonnegative(),
-  status: z.enum(["candidate", "rejected"]),
+  // "duplicate" and duplicateOf only occur with condition flag incrementalCandidates.
+  status: z.enum(["candidate", "rejected", "duplicate"]),
   rejection: z.string().nullable(),
+  duplicateOf: z.string().optional(),
   finding: z.unknown(),
 });
 export type StoredCandidate = z.infer<typeof StoredCandidateSchema>;
@@ -284,6 +303,9 @@ export const SessionResultSchema = z.strictObject({
   pinned: PinnedVersionsSchema,
   finishSummary: z.string().nullable(),
   artifacts: z.array(z.string()),
+  // Provenance of the comparison condition; completion is null unless condition flag completionAccounting is on.
+  condition: z.lazy(() => ExplorationConditionSchema),
+  completion: z.lazy(() => CompletionSchema).nullable(),
 });
 export type SessionResult = z.infer<typeof SessionResultSchema>;
 
@@ -300,10 +322,14 @@ export const ExplorationConditionSchema = z.strictObject({
   // Persist candidate findings turn by turn instead of only at finish.
   incrementalCandidates: z.boolean(),
   selector: z.enum(["model", "scheduler"]),
+  // Declared scope for completion accounting: per discovery source (the page a link was found on), only the first N pages in
+  // discovery order count. Never chosen by URL or link text. Pages past N are listed as sampled-out exclusions.
+  sampling: z.strictObject({ maxPagesPerSource: z.number().int().min(2).max(200) }).default({ maxPagesPerSource: 6 }),
 });
 export type ExplorationCondition = z.infer<typeof ExplorationConditionSchema>;
 export const DEFAULT_CONDITION: ExplorationCondition = {
   schema: "art/adaptive-condition/v1", ledgerVisible: false, completionAccounting: false, incrementalCandidates: false, selector: "model",
+  sampling: { maxPagesPerSource: 6 },
 };
 
 // ---------------------------------------------------------------- frontier ledger
@@ -376,3 +402,17 @@ export const FrontierLedgerSchema = z.strictObject({
   }),
 });
 export type FrontierLedger = z.infer<typeof FrontierLedgerSchema>;
+
+// Controller's completion record (condition flag completionAccounting). Separate from TerminalStatus: finish is only a proposal.
+export const CompletionSchema = z.strictObject({
+  outcome: z.enum(["complete_within_scope", "partial", "blocked", "exhausted", "cancelled"]),
+  reason: z.string(),
+  proposal: z.enum(["complete", "inconclusive"]).nullable(),
+  scope: z.strictObject({ maxPagesPerSource: z.number().int(), reachable: z.literal("visited or model-visible") }),
+  pending: z.array(z.strictObject({ obligationId: z.string(), pageId: z.string(), url: z.string(), probe: FrontierProbeSchema, applicability: z.enum(["known", "unknown"]) })),
+  pendingTruncated: z.number().int(),
+  blocked: z.number().int(),
+  exclusions: z.array(z.strictObject({ obligationId: z.string(), reason: z.string() })),
+  exclusionsTruncated: z.number().int(),
+});
+export type Completion = z.infer<typeof CompletionSchema>;

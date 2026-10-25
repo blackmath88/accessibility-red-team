@@ -4,12 +4,27 @@
 // Deliberately not a universal state graph, and pages that look alike are never assumed to behave alike.
 import {
   FrontierLedgerSchema, type EvidenceRecord, type ExplorationCondition, type FrontierLedger, type FrontierObligation, type FrontierPage,
-  type FrontierProbe, type FrontierState, type Observation, type PolicyDenial, type TerminalStatus,
+  type Completion, type FrontierProbe, type FrontierState, type Observation, type PolicyDenial, type TerminalStatus,
 } from "./contracts.js";
-import { stateKey } from "./executor.js";
+import { stateKey } from "./state.js";
 
 export type FrontierBounds = FrontierLedger["bounds"];
 export const DEFAULT_FRONTIER_BOUNDS: FrontierBounds = { maxPages: 200, maxStates: 400, maxObligations: 2000 };
+// Size of the compact view shown to the model (condition flag ledgerVisible). The full ledger is always in frontier.json.
+export type CompactBounds = { pages: number; outstanding: number; outcomes: number };
+export const DEFAULT_COMPACT_BOUNDS: CompactBounds = { pages: 25, outstanding: 40, outcomes: 20 };
+const MAX_COMPLETION_LIST = 50;
+
+export type CompactView = NonNullable<Observation["frontier"]>;
+// Per-turn record of what the compact view showed and left out: cut by the compact bound, or not shown because the page is
+// neither visited nor in this turn's legal.navigate (a link that disappeared when a menu closed, for example).
+export type CompactLog = {
+  step: number;
+  shown: { pages: string[]; outstanding: string[]; outcomes: string[] };
+  clipped: { pages: string[]; outstanding: string[]; outcomes: string[] };
+  notLegal: { pages: string[]; obligations: string[] };
+  ledgerTruncated: boolean;
+};
 
 // The model action that ran just before an observation; it is the transition identity of any state or link that observation reveals.
 export type Transition = { type: string; targetRef: string | null; step: number };
@@ -46,12 +61,16 @@ export class Frontier {
   private openDialog: { pageId: string; subject: string; evidenceId: string } | null = null;
   private updatedAtStep = 0;
   private terminal: { status: TerminalStatus; reason: string } | null = null;
+  // Control subject -> ref in the latest observation, so the compact view can point at a control without naming it.
+  private currentRefs = new Map<string, string>();
+  private currentUrl = "";
 
   constructor(
     private readonly sessionId: string,
     private readonly condition: ExplorationCondition,
     private readonly normalize: (url: string) => string,
     private readonly bounds: FrontierBounds = DEFAULT_FRONTIER_BOUNDS,
+    private readonly compactBounds: CompactBounds = DEFAULT_COMPACT_BOUNDS,
   ) {}
 
   private drop(kind: keyof Frontier["droppedKeys"], key: string): void {
@@ -96,6 +115,8 @@ export class Frontier {
     const { step, observation, previous } = input;
     this.updatedAtStep = step;
     const url = this.normalize(observation.url);
+    this.currentUrl = url;
+    this.currentRefs = new Map(observation.controls.filter((control) => probeFor(control)).map((control) => [subjectOf(control), control.ref]));
     const page = this.pages.get(url) ?? this.addPage(url, this.pages.size === 0
       ? { kind: "start", step }
       : this.lastPageId && previous
@@ -191,6 +212,93 @@ export class Frontier {
         if (obligation.pageId === page.id && obligation.status === "pending") { obligation.status = "blocked"; obligation.reason = `navigation refused: ${denial.reason} (${denial.id})`; }
       }
     }
+  }
+
+  // The compact view for the model. Only pages that are visited or legal to navigate to this turn are shown; nothing page-derived
+  // beyond those canonical URLs (subjects and state preconditions carry element names, so they stay in frontier.json).
+  compact(observation: Observation): { view: CompactView; log: CompactLog } {
+    const legal = new Set(observation.legal.navigate.map((url) => this.normalize(url)));
+    const all = [...this.pages.values()];
+    const eligible = all.filter((page) => page.visited || legal.has(page.url));
+    const rank = (page: FrontierPage) => page.url === this.currentUrl ? 0 : page.visited ? 2 : 1;
+    const ordered = [...eligible].sort((a, b) => rank(a) - rank(b) || Number(a.id.slice(1)) - Number(b.id.slice(1)));
+    const pagesShown = ordered.slice(0, this.compactBounds.pages);
+    const shownIds = new Set(pagesShown.map((page) => page.id));
+    const pageRank = new Map(ordered.map((page, index) => [page.id, index]));
+    const obligations = [...this.obligations.values()];
+    const outstandingAll = obligations.filter((item) => (item.status === "pending" || item.status === "blocked") && shownIds.has(item.pageId))
+      .sort((a, b) => pageRank.get(a.pageId)! - pageRank.get(b.pageId)! || Number(a.id.slice(1)) - Number(b.id.slice(1)));
+    const outstanding = outstandingAll.slice(0, this.compactBounds.outstanding);
+    const outcomesAll = obligations.filter((item) => item.status === "executed");
+    const outcomes = outcomesAll.slice(-this.compactBounds.outcomes);
+    const current = this.pages.get(this.currentUrl);
+    const notLegalPages = all.filter((page) => !page.visited && !legal.has(page.url));
+    const notLegalIds = new Set(notLegalPages.map((page) => page.id));
+    const view: CompactView = {
+      pages: pagesShown.map((page) => ({ id: page.id, url: page.url, visited: page.visited, current: page.url === this.currentUrl })),
+      outstanding: outstanding.map((item) => ({
+        id: item.id, pageId: item.pageId, probe: item.probe, status: item.status, applicability: item.applicability,
+        targetRef: item.subject && current?.id === item.pageId ? this.currentRefs.get(item.subject) ?? null : null, reason: item.reason,
+      })),
+      outcomes: outcomes.map((item) => ({ id: item.id, pageId: item.pageId, probe: item.probe, evidenceIds: item.evidenceIds })),
+      remaining: obligations.filter((item) => item.status === "pending").length,
+      truncated: {
+        pages: pagesShown.length < ordered.length, outstanding: outstanding.length < outstandingAll.length, outcomes: outcomes.length < outcomesAll.length,
+        ledger: this.truncated.pages || this.truncated.states || this.truncated.obligations,
+      },
+      dropped: { pages: ordered.length - pagesShown.length, outstanding: outstandingAll.length - outstanding.length, outcomes: outcomesAll.length - outcomes.length },
+    };
+    const ids = <T extends { id: string }>(items: T[]) => items.map((item) => item.id);
+    const log: CompactLog = {
+      step: observation.step,
+      shown: { pages: ids(pagesShown), outstanding: ids(outstanding), outcomes: ids(outcomes) },
+      clipped: { pages: ids(ordered.slice(this.compactBounds.pages)), outstanding: ids(outstandingAll.slice(this.compactBounds.outstanding)), outcomes: ids(outcomesAll.slice(0, outcomesAll.length - outcomes.length)) },
+      notLegal: { pages: ids(notLegalPages), obligations: ids(obligations.filter((item) => item.status === "pending" && notLegalIds.has(item.pageId))) },
+      ledgerTruncated: view.truncated.ledger,
+    };
+    return { view, log };
+  }
+
+  // Controller-side completion (condition flag completionAccounting). The model's finish verdict is only the proposal.
+  // Exhausted covers both budget_exhausted and timeout (the wall-clock budget). An error terminal is never complete.
+  completion(input: { status: TerminalStatus; cancelled: boolean; proposal: Completion["proposal"]; maxPagesPerSource: number }): Completion {
+    // Declared scope: the first N pages per discovery source, in discovery (page id) order.
+    const inScope = new Set<string>();
+    const perSource = new Map<string, number>();
+    for (const page of this.pages.values()) {
+      const source = page.discovery.kind === "start" ? "start" : page.discovery.onPage;
+      const seen = perSource.get(source) ?? 0;
+      perSource.set(source, seen + 1);
+      if (seen < input.maxPagesPerSource) inScope.add(page.id);
+    }
+    const byId = new Map([...this.pages.values()].map((page) => [page.id, page]));
+    const pending: Completion["pending"] = [];
+    const exclusions: Completion["exclusions"] = [];
+    let blocked = 0;
+    for (const item of this.obligations.values()) {
+      const page = byId.get(item.pageId)!;
+      if (item.status === "executed") continue;
+      if (item.status === "blocked") { blocked += 1; exclusions.push({ obligationId: item.id, reason: item.reason ?? "blocked" }); continue; }
+      if (item.status === "deferred") { exclusions.push({ obligationId: item.id, reason: item.reason ?? "deferred" }); continue; }
+      if (!inScope.has(page.id)) { exclusions.push({ obligationId: item.id, reason: `sampled out: beyond the first ${input.maxPagesPerSource} pages from its discovery source` }); continue; }
+      if (!page.visited && !page.modelVisible) { exclusions.push({ obligationId: item.id, reason: "not reachable: never visited and never in legal.navigate" }); continue; }
+      pending.push({ obligationId: item.id, pageId: page.id, url: page.url, probe: item.probe, applicability: item.applicability });
+    }
+    const truncated = this.truncated.pages || this.truncated.states || this.truncated.obligations;
+    let outcome: Completion["outcome"];
+    let reason: string;
+    if (input.cancelled) { outcome = "cancelled"; reason = "cancelled by caller"; }
+    else if (input.status === "budget_exhausted" || input.status === "timeout") { outcome = "exhausted"; reason = `session ended by a budget (${input.status}) with ${pending.length} relevant obligation(s) pending`; }
+    else if (pending.length) { outcome = "partial"; reason = `${pending.length} relevant reachable obligation(s) still pending`; }
+    else if (truncated) { outcome = "partial"; reason = "the ledger hit a bound; dropped work is unaccounted for"; }
+    else if (blocked) { outcome = "blocked"; reason = `every remaining obligation (${blocked}) was blocked by policy`; }
+    else if (input.status === "completed") { outcome = "complete_within_scope"; reason = "no relevant reachable obligation is pending"; }
+    else { outcome = "partial"; reason = `session ended with ${input.status}`; }
+    return {
+      outcome, reason, proposal: input.proposal, scope: { maxPagesPerSource: input.maxPagesPerSource, reachable: "visited or model-visible" },
+      pending: pending.slice(0, MAX_COMPLETION_LIST), pendingTruncated: Math.max(0, pending.length - MAX_COMPLETION_LIST), blocked,
+      exclusions: exclusions.slice(0, MAX_COMPLETION_LIST), exclusionsTruncated: Math.max(0, exclusions.length - MAX_COMPLETION_LIST),
+    };
   }
 
   setTerminal(status: TerminalStatus, reason: string): void {
