@@ -13,7 +13,7 @@ Each run takes an `ExplorationCondition` (`art/adaptive-condition/v1`) on the ru
 |---|---|---|
 | `ledgerVisible` | observation has no `frontier` key | bounded `frontier` field plus `frontier-shown.jsonl` |
 | `completionAccounting` | `result.completion` is `null` | controller classifies completion from the ledger |
-| `incrementalCandidates` | `report_candidate` is refused as an unknown type | `report_candidate` is legal; duplicates are recorded as such |
+| `incrementalCandidates` | `report_candidate` is refused as an unknown type | `report_candidate` is legal; duplicates are recorded as such, but only when every cited evidence record has a target (findings citing untargeted evidence are never collapsed) |
 | `selector` | `model` | `scheduler`: the deterministic scheduler drives the session (condition D); needs `ledgerVisible`, `incrementalCandidates` and the scheduler provider |
 
 - **Condition A** has all flags off. It loads skill v3 and sends the same prompts as trial 3. Its only artifact differences are `frontier.json` and the `condition` / `completion: null` fields in `result.json`.
@@ -23,7 +23,7 @@ Each run takes an `ExplorationCondition` (`art/adaptive-condition/v1`) on the ru
   - B and the control share both, so a difference between B and the control is due to visibility. A difference between A and the control is due to the shared repairs.
 - **B:** all three flags on, same model as A.
 - **C:** the same as B, with a stronger pinned model.
-- **D:** the deterministic scheduler with all three flags on. It differs from B only in the selector and in using the rule table for interpretation.
+- **D:** the deterministic scheduler with all three flags on. It differs from B only in the selector and in using the rule table for interpretation. It sees the same information as B's model: it picks pages only from that turn's compact view (with `discoveredOn` as its sampling source) and keeps no memory of pages the view no longer shows.
 
 A mislabelled run is refused:
 - `selector: "scheduler"` with any other provider;
@@ -40,18 +40,22 @@ Arm B's `configHash` includes the condition whenever it is not condition A, so h
 - An obligation becomes executed only through an evidence record of a probing action on that page. Navigation is not a probe, visited is not tested, and tested is not passed.
 - Policy denials of a navigation to a known page mark that page's obligations as blocked. A URL the model invents never becomes a page.
 
+## Compact view (ledgerVisible)
+
+The compact view lists, within its bounds, the current page, discovered pages not yet visited (while surfaces remain and the page is in the sampling scope), pages legal this turn and visited pages. Unvisited pages are included because their URLs were shown to the model when they were discovered, and the executor accepts any discovered URL. Each page carries `discoveredOn` (the id of the page its link was first seen on). Outstanding obligations are listed for every shown page, so a model on a sibling page still sees the unvisited siblings' pending work. A page shown in the compact view counts as model-visible.
+
 ## Completion accounting
 
 A finish verdict is stored as `completion.proposal`. The controller decides `completion.outcome`:
 - `cancelled`: the caller aborted the run.
-- `exhausted`: `budget_exhausted` or `timeout` ended the session.
+- `exhausted`: `budget_exhausted` or `timeout` ended the session, or the surface cap kept work out of reach (a `surface_limit` refusal, or a page never offered once no surfaces were left, counted as `surfaceCapped`). The surface cap is a budget, so attempting the page and not attempting it get the same label.
 - `partial`: relevant reachable obligations are still pending, or the ledger hit a bound, or the session ended with an error.
-- `blocked`: nothing relevant is pending, but at least one obligation was blocked by policy.
+- `blocked`: nothing relevant is pending, but at least one obligation was blocked by a policy other than the surface cap.
 - `complete_within_scope`: none of the above, and the session ended normally.
 
 **Relevant reachable** means:
 - the obligation is pending, whatever its applicability (an unvisited page's skip-link check is `unknown` and still counts);
-- its page was visited or listed in `legal.navigate`;
+- its page was visited, listed in `legal.navigate`, or shown in the compact view;
 - its page is within the declared sampling scope.
 
 **Sampling rule** (`condition.sampling.maxPagesPerSource`, default 6, minimum 2): per discovery source (the page a link was first seen on), only the first N pages in discovery order count. Pages are never chosen by URL or link text. Pages past N, unreachable pages, deferred obligations and blocked obligations are listed in `completion.exclusions` with reasons. Both lists are bounded and report truncation counts.
@@ -61,7 +65,7 @@ Accounting does not force exploration: hard caps on steps, calls, tokens, wall t
 ## Model-visible omissions
 
 - `frontier.json` lists turns where `legal.navigate` showed fewer pages than the navigable links (`modelVisibleClipping`).
-- With `ledgerVisible`, `frontier-shown.jsonl` records for every turn what the compact view showed, what its bounds clipped, and which discovered pages were neither visited nor legal that turn.
+- With `ledgerVisible`, `frontier-shown.jsonl` records for every turn what the compact view showed, what its bounds clipped, and which discovered pages it did not show (unvisited, and either no surfaces left or outside the sampling scope).
 
 ## Deterministic scheduler (`frontier-scheduler/v1`, scheduler.ts)
 
@@ -94,25 +98,30 @@ The rules are capped at 6 findings per page. Each finding is captured on its ele
 ## Scoring funnel (`frontier-funnel/v1`, funnel.ts, evaluator only)
 
 Each seeded defect instance is scored separately:
-- **Exploration:** discovered, model-visible, selected, visited, relevant probe executed (taken from the ledger).
-- **Interpretation:** interpreted (a candidate of the right category on the page), then evidence-backed reported (an accepted candidate matched by compare.ts's rule: category, path and locator).
+- **Exploration:** discovered, model-visible, selected (a navigation to the page that the executor carried out; refused attempts do not count), visited, relevant probe executed (taken from the ledger).
+  - "Probe executed" for a skip link means the static target facts (`targetExists`, `targetIsMain`) were recorded by `inspect_semantics` or `capture_evidence`, the same facts every condition sees. It does not mean the skip link was followed. Dialog obligations match the defect's control exactly.
+- **Interpretation:** interpreted (a candidate of the right category on the page), then evidence-backed reported (an accepted candidate matched by compare.ts's rule: category, path and locator). When cited evidence targets a skip link, its href, taken from that evidence's own skip-link facts, joins the locator, so credit does not depend on the note's wording.
+
+The funnel reads the condition and sampling from the run's `result.json` and refuses a caller label whose expected condition disagrees.
 
 **Credited** requires both the probe and the report. A start page counts as visible and selected.
 
 Also scored per session:
-- premature completion: proposal `complete` while `classifyCompletion` says otherwise (the same pure function the controller uses);
+- premature completion: proposal `complete` while `classifyCompletion` says otherwise (the same pure function the controller uses). D proposes `complete` only when no obligation is pending anywhere in the ledger, so its premature-completion rate is about 0 by construction. Compare that rate across model conditions, not against D;
 - page, state and probe coverage;
 - duplicates;
 - denied actions by reason.
 
-Accepted findings that match no seeded defect are **unadjudicated**: neither verified nor false positives. They need blinded adjudication. Runs on the malicious fixture, and errored runs, are marked not comparable.
+Accepted findings that match no seeded defect are **unadjudicated**: neither verified nor false positives. They need blinded adjudication.
+
+**Comparability rule:** sessions that end `completed`, `budget_exhausted` or `timeout` (all budget ends) are comparable. Sessions that end in `error`, `provider_error`, `invalid_model_output`, `denial_limit` or `cancelled`, and every run on the malicious fixture, are not comparable. The comparison reports the number of non-comparable sessions per condition next to recall, so a condition that fails more often cannot look better on a comparable subset unnoticed.
 
 There is no credit for a visit without its probe, for self-reported coverage, or for duplicates. Ground truth is read only by the evaluator, after a session.
 
 ## Fixtures
 
 Development fixtures (`test/fixtures/adaptive-sites/variants.ts`), all labelled **development**:
-- `skip-links`, `news-service`, `menu-dialog` (existing);
+- `skip-links`, `news-service`, `menu-dialog` (existing). These are **leaky**: their URLs and link text reveal the defect (for example a link named after the broken skip link). Models can read that; the scheduler does not. They are listed as `leakyFixtures` in the benchmark config, flagged `[LEAKY]` in the plan, and given their own subtotal in the comparison, separate from the neutral variants;
 - `dev-k1`: the trial-3 sibling pattern with neutral names. Four siblings; the broken skip link is the third in discovery order.
 - `dev-k2`: a different structure, a nav with two siblings. An unnamed icon button is on the first, a skip link whose target exists but is not main on the second. A named button is a control.
 - `dev-k3`: one page with a disclosure and two dialog triggers built from the same template. The first returns focus; the second drops it.
@@ -129,7 +138,16 @@ The stand-ins all use the scripted explorer. It does not read the frontier and p
 
 ## Live benchmark (dry run only; pending owner approval)
 
-`npm run adaptive:frontier-benchmark` reads `src/experimental/adaptive/trials/frontier-benchmark.v1.json`: conditions A, B, C, D over fixtures × repeats (shipped as 6 development fixtures × 5 repeats × 4 conditions = 120 sessions). It prints the plan, reads no environment variable, makes no network call, and has no live path (`--live` is refused).
+`npm run adaptive:frontier-benchmark` reads `src/experimental/adaptive/trials/frontier-benchmark.v1.json`: conditions A, hidden, B, C, D over fixtures × repeats (shipped as 6 development fixtures × 5 repeats × 5 conditions = 150 sessions). The ledger-hidden control is included so that A→B gains can be split into the shared repairs (A→hidden) and visibility (hidden→B). It prints the plan, reads no environment variable, makes no network call, and has no live path (`--live` is refused).
+
+Each condition id is bound to its flags, selector and model slot:
+- A: all flags off, baseline;
+- hidden: ledger off, accounting and `report_candidate` on, baseline;
+- B: all on, baseline;
+- C: all on, stronger;
+- D: all on, scheduler, no model.
+
+Ids must be unique, the stronger model must differ from the baseline, and every leaky fixture must be declared. A mislabelled plan gets no confirm hash.
 
 It refuses to produce a confirm hash while any of these remain:
 - condition C's model id (`OWNER_SUPPLIED_PINNED_MODEL_ID`; dated ids only, no `-latest`);
