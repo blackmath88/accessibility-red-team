@@ -75,16 +75,33 @@ describe("completion accounting: finish is a proposal", () => {
     } finally { await r.cleanup(); }
   });
 
-  it("with every remaining obligation refused by policy the outcome is blocked, and unreachable pages are excluded", async () => {
+  it("work kept out by the surface cap is exhausted, not blocked or unreachable (review m6)", async () => {
     const steps = [() => ({ type: "inspect_semantics" }), (o: Observation) => ({ type: "navigate", url: linkTo(o, "/valid.html") })];
     const r = await run("/skip-links/index.html", ({ call, observation }) => call < steps.length ? { action: steps[call]!(observation!) } : finish(), ACCOUNTING, { limits: { maxSurfaces: 1 } });
     try {
       const completion = r.result.completion!;
-      assert.equal(completion.outcome, "blocked", JSON.stringify(completion));
-      assert.equal(completion.blocked, 2);
-      assert.ok(completion.exclusions.some((item) => /surface_limit/.test(item.reason)));
-      assert.ok(completion.exclusions.some((item) => /^not reachable/.test(item.reason)), "broken.html was never offered or visited");
+      assert.equal(completion.outcome, "exhausted", JSON.stringify(completion));
+      assert.equal(completion.blocked, 0);
+      assert.equal(completion.surfaceCapped, 4, "valid.html refused at the cap, broken.html never offered: two obligations each");
+      assert.ok(completion.exclusions.every((item) => !/^not reachable/.test(item.reason)));
     } finally { await r.cleanup(); }
+  });
+
+  it("an obligation refused by a non-budget policy is blocked", () => {
+    const frontier = new Frontier("b", ACCOUNTING, (url) => url);
+    const base: Observation = {
+      step: 0, url: "/", title: "", lang: null, timestamp: "", headings: [], landmarks: [], controls: [], skipLinks: [], dialogs: [], focus: null, lastActivated: null,
+      links: [{ ref: "e0", name: "", hasAccessibleName: false, href: "/a", visible: true, sameOrigin: true, navigable: true, denyReason: null, selectorHint: "a" }],
+      pageTextExcerpt: "", evidence: [], recentActions: [], finalCall: false, recentDenials: [], budget: { stepsLeft: 1, modelCallsLeft: 1, wallMsLeft: 1, surfacesLeft: 1 },
+      legal: { navigate: ["/a"], activate: [], simple: [] },
+    };
+    frontier.observe({ step: 0, observation: base, discoveredNow: ["/a"], previous: null });
+    frontier.recordEvidence([{ id: "ev_1", sessionId: "b", step: 0, timestamp: "", url: "/", kind: "inspect_semantics", target: null, pre: { url: "/" }, post: {}, domFacts: { skipLinks: [] }, screenshot: null, note: null }]);
+    frontier.recordDenials([{ id: "den_1", step: 0, timestamp: "", source: "executor_validation", reason: "redirect_off_allowlist", detail: "", url: "/a", attemptedAction: { type: "navigate", url: "/a" } }]);
+    const completion = frontier.completion({ status: "completed", cancelled: false, proposal: "complete", maxPagesPerSource: 6 });
+    assert.equal(completion.outcome, "blocked");
+    assert.equal(completion.blocked, 2);
+    assert.equal(completion.surfaceCapped, 0);
   });
 
   it("the sampling rule keeps the first N pages per discovery source in discovery order and excludes the rest", () => {

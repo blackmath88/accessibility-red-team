@@ -387,6 +387,8 @@ export const FrontierLedgerSchema = z.strictObject({
   sessionId: z.string(),
   condition: ExplorationConditionSchema,
   updatedAtStep: z.number().int().nonnegative(),
+  // First step at which no surfaces were left; pages not reached after that were kept out by a budget, not by policy.
+  surfaceCapReachedAtStep: z.number().int().nonnegative().nullable(),
   bounds: z.strictObject({ maxPages: z.number().int(), maxStates: z.number().int(), maxObligations: z.number().int() }),
   truncated: z.strictObject({ pages: z.boolean(), states: z.boolean(), obligations: z.boolean() }),
   dropped: z.strictObject({ pages: z.number().int(), states: z.number().int(), obligations: z.number().int() }),
@@ -414,6 +416,8 @@ export const CompletionSchema = z.strictObject({
   pending: z.array(z.strictObject({ obligationId: z.string(), pageId: z.string(), url: z.string(), probe: FrontierProbeSchema, applicability: z.enum(["known", "unknown"]) })),
   pendingTruncated: z.number().int(),
   blocked: z.number().int(),
+  // Obligations kept out of reach by the surface cap (a surface_limit refusal, or a page never offered once no surfaces were left).
+  surfaceCapped: z.number().int(),
   exclusions: z.array(z.strictObject({ obligationId: z.string(), reason: z.string() })),
   exclusionsTruncated: z.number().int(),
 });

@@ -60,6 +60,7 @@ export class Frontier {
   // An activated dialog trigger waiting for its escape; cleared by any other activation.
   private openDialog: { pageId: string; subject: string; evidenceId: string } | null = null;
   private updatedAtStep = 0;
+  private surfaceCapReachedAtStep: number | null = null;
   private terminal: { status: TerminalStatus; reason: string } | null = null;
   // Control subject -> ref in the latest observation, so the compact view can point at a control without naming it.
   private currentRefs = new Map<string, string>();
@@ -114,6 +115,7 @@ export class Frontier {
   observe(input: { step: number; observation: Observation; discoveredNow: string[]; previous: Transition | null }): void {
     const { step, observation, previous } = input;
     this.updatedAtStep = step;
+    if (observation.budget.surfacesLeft <= 0 && this.surfaceCapReachedAtStep === null) this.surfaceCapReachedAtStep = step;
     const url = this.normalize(observation.url);
     this.currentUrl = url;
     this.currentRefs = new Map(observation.controls.filter((control) => probeFor(control)).map((control) => [subjectOf(control), control.ref]));
@@ -227,6 +229,8 @@ export class Frontier {
     const rank = (page: FrontierPage) => page.url === this.currentUrl ? 0 : page.visited ? 2 : 1;
     const ordered = [...eligible].sort((a, b) => rank(a) - rank(b) || Number(a.id.slice(1)) - Number(b.id.slice(1)));
     const pagesShown = ordered.slice(0, this.compactBounds.pages);
+    // A page listed in the compact view was shown to the model, as much as one in legal.navigate.
+    for (const page of pagesShown) if (!page.modelVisible) { page.modelVisible = true; page.firstModelVisibleStep = observation.step; }
     const shownIds = new Set(pagesShown.map((page) => page.id));
     const pageRank = new Map(ordered.map((page, index) => [page.id, index]));
     const obligations = [...this.obligations.values()];
@@ -277,7 +281,7 @@ export class Frontier {
     const obligations = [...this.obligations.values()];
     const count = (status: FrontierObligation["status"]) => obligations.filter((item) => item.status === status).length;
     return FrontierLedgerSchema.parse({
-      schema: "art/adaptive-frontier/v1", sessionId: this.sessionId, condition: this.condition, updatedAtStep: this.updatedAtStep,
+      schema: "art/adaptive-frontier/v1", sessionId: this.sessionId, condition: this.condition, updatedAtStep: this.updatedAtStep, surfaceCapReachedAtStep: this.surfaceCapReachedAtStep,
       bounds: this.bounds, truncated: this.truncated,
       dropped: Object.fromEntries((["pages", "states", "obligations"] as const).map((kind) => [kind, this.droppedKeys[kind].size + this.droppedOverflow[kind]])), modelVisibleClipping: this.clipping,
       pages: [...this.pages.values()], states: [...this.states.values()], obligations,
@@ -302,13 +306,18 @@ export function classifyCompletion(ledger: FrontierLedger, input: CompletionInpu
   const pending: Completion["pending"] = [];
   const exclusions: Completion["exclusions"] = [];
   let blocked = 0;
+  let surfaceCapped = 0;
+  const capped = ledger.surfaceCapReachedAtStep !== null;
   for (const item of ledger.obligations) {
     const page = byId.get(item.pageId)!;
     if (item.status === "executed") continue;
+    // The surface cap is a budget: refusals at the cap and pages it kept out of reach count toward exhausted, not blocked or unreachable.
+    if (item.status === "blocked" && /surface_limit/.test(item.reason ?? "")) { surfaceCapped += 1; exclusions.push({ obligationId: item.id, reason: `surface cap: ${item.reason}` }); continue; }
     if (item.status === "blocked") { blocked += 1; exclusions.push({ obligationId: item.id, reason: item.reason ?? "blocked" }); continue; }
     if (item.status === "deferred") { exclusions.push({ obligationId: item.id, reason: item.reason ?? "deferred" }); continue; }
     if (!inScope.has(page.id)) { exclusions.push({ obligationId: item.id, reason: `sampled out: beyond the first ${input.maxPagesPerSource} pages from its discovery source` }); continue; }
-    if (!page.visited && !page.modelVisible) { exclusions.push({ obligationId: item.id, reason: "not reachable: never visited and never in legal.navigate" }); continue; }
+    if (!page.visited && !page.modelVisible && capped) { surfaceCapped += 1; exclusions.push({ obligationId: item.id, reason: "surface cap: never offered after the surface cap was reached" }); continue; }
+    if (!page.visited && !page.modelVisible) { exclusions.push({ obligationId: item.id, reason: "not reachable: never visited and never shown to the model" }); continue; }
     pending.push({ obligationId: item.id, pageId: page.id, url: page.url, probe: item.probe, applicability: item.applicability });
   }
   const truncated = ledger.truncated.pages || ledger.truncated.states || ledger.truncated.obligations;
@@ -318,12 +327,13 @@ export function classifyCompletion(ledger: FrontierLedger, input: CompletionInpu
   else if (input.status === "budget_exhausted" || input.status === "timeout") { outcome = "exhausted"; reason = `session ended by a budget (${input.status}) with ${pending.length} relevant obligation(s) pending`; }
   else if (pending.length) { outcome = "partial"; reason = `${pending.length} relevant reachable obligation(s) still pending`; }
   else if (truncated) { outcome = "partial"; reason = "the ledger hit a bound; dropped work is unaccounted for"; }
+  else if (surfaceCapped) { outcome = "exhausted"; reason = `the surface cap kept ${surfaceCapped} obligation(s) out of reach`; }
   else if (blocked) { outcome = "blocked"; reason = `every remaining obligation (${blocked}) was blocked by policy`; }
   else if (input.status === "completed") { outcome = "complete_within_scope"; reason = "no relevant reachable obligation is pending"; }
   else { outcome = "partial"; reason = `session ended with ${input.status}`; }
   return {
     outcome, reason, proposal: input.proposal, scope: { maxPagesPerSource: input.maxPagesPerSource, reachable: "visited or model-visible" },
-    pending: pending.slice(0, MAX_COMPLETION_LIST), pendingTruncated: Math.max(0, pending.length - MAX_COMPLETION_LIST), blocked,
+    pending: pending.slice(0, MAX_COMPLETION_LIST), pendingTruncated: Math.max(0, pending.length - MAX_COMPLETION_LIST), blocked, surfaceCapped,
     exclusions: exclusions.slice(0, MAX_COMPLETION_LIST), exclusionsTruncated: Math.max(0, exclusions.length - MAX_COMPLETION_LIST),
   };
 }
