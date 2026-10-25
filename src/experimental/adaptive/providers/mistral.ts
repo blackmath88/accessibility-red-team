@@ -88,6 +88,8 @@ export class MistralProvider implements ModelProvider {
           headers: { "content-type": "application/json", accept: "application/json", authorization: `Bearer ${key}` },
           body: JSON.stringify(body),
           signal: controller.signal,
+          // A redirect could carry the Authorization header somewhere else; it is an error instead.
+          redirect: "error",
         });
         text = await res.text();
       } catch {

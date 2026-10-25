@@ -4,6 +4,7 @@ import type { AddressInfo } from "node:net";
 import { connect } from "node:net";
 import { after, before, describe, it } from "node:test";
 import { startContainmentProxy, type ContainmentProxy } from "../src/experimental/adaptive/containment.js";
+import { browserEnv } from "../src/experimental/adaptive/policy.js";
 import { startFixtures, type Fixtures } from "./fixtures/adaptive-sites/server.js";
 
 let fixtures: Fixtures;
@@ -98,6 +99,24 @@ describe("containment proxy", () => {
       assert.equal(own.refused.length, 200);
       assert.equal(own.refusedTotal(), 250);
     } finally { await own.close(); }
+  });
+
+  it("keeps working when the upstream answers with Connection: keep-alive", async () => {
+    const upstream = createServer((_req, res) => { res.writeHead(200, { connection: "keep-alive", "content-length": "2" }); res.end("ok"); });
+    await new Promise<void>((resolve) => upstream.listen(0, "127.0.0.1", resolve));
+    const origin = `http://127.0.0.1:${(upstream.address() as AddressInfo).port}`;
+    const own = await startContainmentProxy([origin]);
+    const get = () => new Promise<number>((resolve, reject) => {
+      const req = request({ host: "127.0.0.1", port: new URL(own.url).port, path: `${origin}/k`, headers: { host: new URL(origin).host } }, (res) => { res.resume(); resolve(res.statusCode ?? 0); });
+      req.on("error", reject); req.end();
+    });
+    try { assert.deepEqual([await get(), await get(), await get()], [200, 200, 200]); }
+    finally { await own.close(); upstream.closeAllConnections(); await new Promise<void>((resolve) => upstream.close(() => resolve())); }
+  });
+
+  it("the sandbox browser's environment has no secret-looking variables", () => {
+    const env = browserEnv({ PATH: "/bin", HOME: "/h", ADAPTIVE_MISTRAL_API_KEY: "s", GITHUB_TOKEN: "t", AWS_SECRET_ACCESS_KEY: "x", DB_PASSWORD: "p" });
+    assert.deepEqual(env, { PATH: "/bin", HOME: "/h" });
   });
 
   it("only accepts http origins", async () => {

@@ -39,6 +39,7 @@ test("success maps request and response, pins the model and records parameters",
   const sent = JSON.parse(calls[0]!.init.body as string);
   assert.deepEqual(sent, { model: "mistral-small-2506", messages: [{ role: "user", content: "hi" }], max_tokens: 32, temperature: 0.2, stream: false, response_format: { type: "json_object" } });
   assert.equal((calls[0]!.init.headers as Record<string, string>).authorization, `Bearer ${KEY}`);
+  assert.equal(calls[0]!.init.redirect, "error", "a redirect must not carry the Authorization header elsewhere");
   assert.equal(res.text, "hello");
   assert.equal(res.requestedModel, "mistral-small-2506");
   assert.equal(res.returnedModel, "mistral-small-2506");

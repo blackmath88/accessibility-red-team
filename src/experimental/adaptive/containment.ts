@@ -42,7 +42,7 @@ export async function startContainmentProxy(allowedOrigins: string[]): Promise<C
       res.writeHead(403, { "content-type": "text/plain" }); res.end("refused by containment proxy");
       return;
     }
-    const forward = httpRequest({ host: upstream.hostname, port: upstream.port, path: target.pathname + target.search, method: req.method, headers: forwardedHeaders(req.headers, target.host) }, (up) => {
+    const forward = httpRequest({ host: upstream.hostname, port: upstream.port, path: target.pathname + target.search, method: req.method, headers: forwardedHeaders(req.headers, target.host), agent: false }, (up) => {
       res.writeHead(up.statusCode ?? 502, responseHeaders(up.headers));
       up.pipe(res);
       // A truncated upstream body must end the client response instead of leaving it open.

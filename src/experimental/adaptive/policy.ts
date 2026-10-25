@@ -268,7 +268,14 @@ export async function launchSandboxBrowser(options: { hostMappings?: Record<stri
   // (where TURN-over-TCP arrives as CONNECT and is refused). The bypass list is explicit so loopback is proxied regardless of
   // Playwright's own default (which an environment variable can switch off).
   if (options.proxyServer) args.push("--force-webrtc-ip-handling-policy=disable_non_proxied_udp");
-  return chromium.launch({ headless: true, args, ...(options.proxyServer ? { proxy: { server: options.proxyServer, bypass: "<-loopback>" } } : {}) });
+  return chromium.launch({ headless: true, args, env: browserEnv(process.env), ...(options.proxyServer ? { proxy: { server: options.proxyServer, bypass: "<-loopback>" } } : {}) });
+}
+
+// The browser renders hostile pages, so it gets no credentials: variables whose names look like secrets are removed from its environment.
+export function browserEnv(env: NodeJS.ProcessEnv): Record<string, string> {
+  const out: Record<string, string> = {};
+  for (const [name, value] of Object.entries(env)) if (value !== undefined && !/KEY|TOKEN|SECRET|PASSWORD|CREDENTIAL|AUTH/i.test(name)) out[name] = value;
+  return out;
 }
 
 export const CONTEXT_OPTIONS = {

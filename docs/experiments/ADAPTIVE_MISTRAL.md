@@ -50,7 +50,8 @@ Runner: `src/experimental/adaptive/live-trial.ts`, configuration `src/experiment
 **Limits (all hard, enforced in code, not by the prompt).**
 - Per session (executor): 12 model calls, 24 steps, 120,000 input / 4,000 output tokens, 180 s, 8 surfaces; at most 600 output tokens and 30 s per call.
 - Whole trial (`BudgetedProvider`): 73 calls (6 fixtures × 12 + 1 preflight), 720,000 input / 24,016 output tokens, 25 min wall clock, at least 1.1 s between calls, spend cap USD 0.50. Before each call the worst case (input estimate × 1.5 plus the full requested output) is checked against every cap and the call is refused if it could break one. Failed calls and calls without reported usage count at their reserved worst case.
-- Worst-case spend if every token cap is used: USD 0.1224. The config schema rejects any configuration whose worst case exceeds its spend cap.
+- Planned maximum spend (token caps × configured prices): USD 0.1224. Input is reserved per call as an estimate, so the last call can overshoot the input cap slightly; the USD 0.50 cap then refuses further calls. The config schema rejects any configuration whose planned maximum exceeds its spend cap.
+- The scripted reference runs first, under the same arm B limits, and the trial wall clock starts after it. The browser gets no environment variables that look like secrets; the Mistral adapter refuses redirects.
 - No retries, temperature 0, `json_object`, one fixture at a time.
 
 **Procedure.**

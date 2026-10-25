@@ -33,7 +33,7 @@ const firstLine = (error: unknown) => (error instanceof Error ? error.message : 
 export function codeSha(): string {
   const git = (args: string[]) => execFileSync("git", args, { cwd: REPO_ROOT, encoding: "utf8", stdio: ["ignore", "pipe", "ignore"] }).trim();
   try {
-    return git(["status", "--porcelain", "--", "src", "package.json"]) ? `${git(["rev-parse", "HEAD"])}+dirty` : git(["rev-parse", "HEAD"]);
+    return git(["status", "--porcelain", "--", "src", "package.json", "package-lock.json", "test/fixtures/adaptive-sites"]) ? `${git(["rev-parse", "HEAD"])}+dirty` : git(["rev-parse", "HEAD"]);
   } catch {
     return "unknown";
   }

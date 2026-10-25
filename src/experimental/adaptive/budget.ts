@@ -35,7 +35,8 @@ const estimateTokens = (request: ModelRequest) => Math.ceil(request.messages.red
 export const costOf = (pricing: Pricing, inputTokens: number, outputTokens: number) =>
   (inputTokens * pricing.inputPerMillion + outputTokens * pricing.outputPerMillion) / 1_000_000;
 
-// The most a trial can cost if every cap is used to the full.
+// Planned maximum: every token cap used to the full at configured prices. Input is reserved per call as an estimate (chars/4 x 1.5),
+// so the final call's real input can overshoot the input cap slightly; the spend cap then refuses every further call.
 export const worstCaseSpend = (pricing: Pricing, budget: TrialBudget) => costOf(pricing, budget.maxInputTokens, budget.maxOutputTokens);
 
 export class BudgetedProvider implements ModelProvider {

@@ -41,7 +41,7 @@ export const LiveTrialConfigSchema = z.strictObject({
   outRoot: z.string().min(1),
 }).superRefine((config, ctx) => {
   if (worstCaseSpend(config.pricing, config.trial) > config.trial.maxSpend) {
-    ctx.addIssue({ code: "custom", path: ["trial"], message: `worst-case spend ${worstCaseSpend(config.pricing, config.trial).toFixed(4)} ${config.pricing.currency} exceeds maxSpend ${config.trial.maxSpend}; lower the token caps or raise the cap deliberately` });
+    ctx.addIssue({ code: "custom", path: ["trial"], message: `planned max spend ${worstCaseSpend(config.pricing, config.trial).toFixed(4)} ${config.pricing.currency} exceeds maxSpend ${config.trial.maxSpend}; lower the token caps or raise the cap deliberately` });
   }
 });
 export type LiveTrialConfig = z.infer<typeof LiveTrialConfigSchema>;
@@ -72,10 +72,10 @@ export function plan(config: LiveTrialConfig, env: Record<string, string | undef
     `  fixtures             ${config.fixtures.join(", ")} (loopback only, behind the containment proxy)`,
     `  per session          ${s.maxModelCalls} model calls, ${s.maxSteps} steps, ${s.maxInputTokens} input / ${s.maxOutputTokens} output tokens, ${s.maxWallMs} ms, ${s.maxSurfaces} surfaces`,
     `  whole trial (hard)   ${t.maxCalls} calls, ${t.maxInputTokens} input / ${t.maxOutputTokens} output tokens, ${t.maxWallMs} ms, ${t.maxSpend} ${p.currency} spend cap, >= ${t.minCallIntervalMs} ms between calls`,
-    `  worst-case spend     ${worst.toFixed(4)} ${p.currency} if every token cap is used (estimate from configured prices, not an invoice)`,
+    `  planned max spend    ${worst.toFixed(4)} ${p.currency} = token caps x configured prices (input is reserved as an estimate, so the final call can overshoot slightly; the ${t.maxSpend} ${p.currency} cap stops further calls)`,
     `  preflight            ${config.preflight ? `yes: 1 call, ${PREFLIGHT_OUTPUT_TOKENS} output tokens, checks json_object and the returned model id; trial aborts if either fails` : "no"}`,
     `  data sent            fixture page text, DOM summaries and the skill prompt go to ${new URL(config.baseUrl).host} (third party); no screenshots`,
-    `  outputs              ${config.outRoot}/<id>/real-model (model results), ${config.outRoot}/<id>/scripted-reference (scripted, no model), report.md, ledger.json`,
+    `  outputs              ${config.outRoot}/<id>/real-model (model results), ${config.outRoot}/<id>/scripted-reference (scripted, no model, same arm B limits), report.md, ledger.json`,
     "",
     keyPresent ? `To run exactly this: npm run adaptive:mistral-fixture-trial -- --live --confirm ${confirmHash}` : `Set ${config.apiKeyEnv} first (see docs/experiments/ADAPTIVE_MISTRAL.md); the confirm hash is ${confirmHash}.`,
   ];
@@ -109,14 +109,17 @@ export async function runLive(options: LiveRunOptions): Promise<LiveRunResult> {
   const dir = resolve(config.outRoot, id);
   await mkdir(dir, { recursive: true });
   const mistral = new MistralProvider({ apiKeyEnv: config.apiKeyEnv, model: config.model, baseUrl: config.baseUrl, env, ...(options.fetch ? { fetch: options.fetch } : {}) });
-  const budgeted = new BudgetedProvider(mistral, config.pricing, config.trial);
+  // Both runs get the same arm B limits, so a difference between them is not a difference in budget.
+  const armBLimits = { limits: { maxSurfaces: config.session.maxSurfaces, maxWallMs: config.session.maxWallMs }, sessionLimits: { maxSteps: config.session.maxSteps, maxModelCalls: config.session.maxModelCalls, maxInputTokens: config.session.maxInputTokens, maxOutputTokens: config.session.maxOutputTokens } };
   await writeFile(join(dir, "provenance.json"), JSON.stringify({ schema: "art/adaptive-live-trial/v1", id, codeSha: sha, confirmHash: expected, config, startedAt: new Date().toISOString(), note: "real-model results are in real-model/; scripted-reference/ contains no model output" }, null, 2));
 
   let preflight: Record<string, unknown> | null = null;
   let real: TrialResult | null = null;
   let aborted: string | null = null;
   // The scripted reference never calls the model; it runs at the same code so the two can be compared side by side.
-  const scripted = await runTrial({ outRoot: dir, id: "scripted-reference", fixtures: config.fixtures, concurrency: 1, title: "Scripted reference (NOT model results)" });
+  const scripted = await runTrial({ outRoot: dir, id: "scripted-reference", fixtures: config.fixtures, concurrency: 1, title: "Scripted reference (NOT model results)", armB: () => armBLimits });
+  // Created after the scripted reference so that the trial wall clock covers only the model's own work.
+  const budgeted = new BudgetedProvider(mistral, config.pricing, config.trial);
   try {
     if (config.preflight) {
       const response = await budgeted.complete({
@@ -135,7 +138,7 @@ export async function runLive(options: LiveRunOptions): Promise<LiveRunResult> {
         outRoot: dir, id: "real-model", fixtures: config.fixtures, concurrency: 1,
         title: `Real model ${config.provider}:${config.model}`,
         armBLabel: `adaptive harness driven by the real model ${config.provider}:${config.model} (temperature 0, json_object); cost estimated from configured prices`,
-        armB: () => ({ provider, limits: { maxSurfaces: config.session.maxSurfaces, maxWallMs: config.session.maxWallMs }, sessionLimits: { maxSteps: config.session.maxSteps, maxModelCalls: config.session.maxModelCalls, maxInputTokens: config.session.maxInputTokens, maxOutputTokens: config.session.maxOutputTokens } }),
+        armB: () => ({ provider, ...armBLimits }),
       });
     }
   } catch (error) {
@@ -176,7 +179,7 @@ export function renderLiveReport(input: { config: LiveTrialConfig; id: string; s
   ];
   if (input.real) lines.push(...table(input.real.comparisons), "", ...details(input.real.comparisons), "");
   else lines.push("No real-model results (the trial stopped before arm B ran with the model).", "");
-  lines.push("## Scripted reference (NOT model results)", "", "Arm B here is the scripted explorer with the fake provider. It shows what the harness can reach when driven by a known-good script; it says nothing about any model.", "", ...table(input.scripted.comparisons), "");
+  lines.push("## Scripted reference (NOT model results)", "", "Arm B here is the scripted explorer with the fake provider, under the same arm B limits as the real-model run. It shows what the harness can reach when driven by a known-good script; it says nothing about any model.", "", ...table(input.scripted.comparisons), "");
   if (input.real) {
     lines.push("## Real model vs scripted reference (arm B only)", "");
     for (const r of input.real.comparisons) {
