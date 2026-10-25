@@ -17,12 +17,12 @@ const MAX_COMPLETION_LIST = 50;
 
 export type CompactView = NonNullable<Observation["frontier"]>;
 // Per-turn record of what the compact view showed and left out: cut by the compact bound, or not shown because the page is
-// neither visited nor in this turn's legal.navigate (a link that disappeared when a menu closed, for example).
+// unvisited and either no surfaces remain or it is outside the sampling scope.
 export type CompactLog = {
   step: number;
   shown: { pages: string[]; outstanding: string[]; outcomes: string[] };
   clipped: { pages: string[]; outstanding: string[]; outcomes: string[] };
-  notLegal: { pages: string[]; obligations: string[] };
+  notShown: { pages: string[]; obligations: string[] };
   ledgerTruncated: boolean;
 };
 
@@ -219,7 +219,11 @@ export class Frontier {
   compact(observation: Observation): { view: CompactView; log: CompactLog } {
     const legal = new Set(observation.legal.navigate.map((url) => this.normalize(url)));
     const all = [...this.pages.values()];
-    const eligible = all.filter((page) => page.visited || legal.has(page.url));
+    // Shown: visited pages, pages legal this turn, and discovered unvisited pages while surfaces remain and the page is within the
+    // sampling scope. Their URLs were shown to the model when discovered and the executor accepts any discovered URL.
+    const scope = samplingScope(all, this.condition.sampling.maxPagesPerSource);
+    const inBudget = observation.budget.surfacesLeft > 0;
+    const eligible = all.filter((page) => page.visited || legal.has(page.url) || (inBudget && scope.has(page.id)));
     const rank = (page: FrontierPage) => page.url === this.currentUrl ? 0 : page.visited ? 2 : 1;
     const ordered = [...eligible].sort((a, b) => rank(a) - rank(b) || Number(a.id.slice(1)) - Number(b.id.slice(1)));
     const pagesShown = ordered.slice(0, this.compactBounds.pages);
@@ -232,10 +236,11 @@ export class Frontier {
     const outcomesAll = obligations.filter((item) => item.status === "executed");
     const outcomes = outcomesAll.slice(-this.compactBounds.outcomes);
     const current = this.pages.get(this.currentUrl);
-    const notLegalPages = all.filter((page) => !page.visited && !legal.has(page.url));
-    const notLegalIds = new Set(notLegalPages.map((page) => page.id));
+    const eligibleIds = new Set(eligible.map((page) => page.id));
+    const notShownPages = all.filter((page) => !eligibleIds.has(page.id));
+    const notShownIds = new Set(notShownPages.map((page) => page.id));
     const view: CompactView = {
-      pages: pagesShown.map((page) => ({ id: page.id, url: page.url, visited: page.visited, current: page.url === this.currentUrl })),
+      pages: pagesShown.map((page) => ({ id: page.id, url: page.url, visited: page.visited, current: page.url === this.currentUrl, discoveredOn: page.discovery.kind === "start" ? null : page.discovery.onPage })),
       outstanding: outstanding.map((item) => ({
         id: item.id, pageId: item.pageId, probe: item.probe, status: item.status, applicability: item.applicability,
         targetRef: item.subject && current?.id === item.pageId ? this.currentRefs.get(item.subject) ?? null : null, reason: item.reason,
@@ -253,7 +258,7 @@ export class Frontier {
       step: observation.step,
       shown: { pages: ids(pagesShown), outstanding: ids(outstanding), outcomes: ids(outcomes) },
       clipped: { pages: ids(ordered.slice(this.compactBounds.pages)), outstanding: ids(outstandingAll.slice(this.compactBounds.outstanding)), outcomes: ids(outcomesAll.slice(0, outcomesAll.length - outcomes.length)) },
-      notLegal: { pages: ids(notLegalPages), obligations: ids(obligations.filter((item) => item.status === "pending" && notLegalIds.has(item.pageId))) },
+      notShown: { pages: ids(notShownPages), obligations: ids(obligations.filter((item) => item.status === "pending" && notShownIds.has(item.pageId))) },
       ledgerTruncated: view.truncated.ledger,
     };
     return { view, log };
@@ -292,15 +297,7 @@ export type CompletionInput = { status: TerminalStatus; cancelled: boolean; prop
 // The model's finish verdict is only the proposal.
 // Exhausted covers both budget_exhausted and timeout (the wall-clock budget). An error terminal is never complete.
 export function classifyCompletion(ledger: FrontierLedger, input: CompletionInput): Completion {
-  // Declared scope: the first N pages per discovery source, in discovery (page id) order.
-  const inScope = new Set<string>();
-  const perSource = new Map<string, number>();
-  for (const page of ledger.pages) {
-    const source = page.discovery.kind === "start" ? "start" : page.discovery.onPage;
-    const seen = perSource.get(source) ?? 0;
-    perSource.set(source, seen + 1);
-    if (seen < input.maxPagesPerSource) inScope.add(page.id);
-  }
+  const inScope = samplingScope(ledger.pages, input.maxPagesPerSource);
   const byId = new Map(ledger.pages.map((page) => [page.id, page]));
   const pending: Completion["pending"] = [];
   const exclusions: Completion["exclusions"] = [];
@@ -329,4 +326,17 @@ export function classifyCompletion(ledger: FrontierLedger, input: CompletionInpu
     pending: pending.slice(0, MAX_COMPLETION_LIST), pendingTruncated: Math.max(0, pending.length - MAX_COMPLETION_LIST), blocked,
     exclusions: exclusions.slice(0, MAX_COMPLETION_LIST), exclusionsTruncated: Math.max(0, exclusions.length - MAX_COMPLETION_LIST),
   };
+}
+
+// Declared scope: the first N pages per discovery source (the page a link was first seen on), in discovery (page id) order.
+export function samplingScope(pages: Iterable<FrontierPage>, maxPagesPerSource: number): Set<string> {
+  const inScope = new Set<string>();
+  const perSource = new Map<string, number>();
+  for (const page of [...pages].sort((a, b) => Number(a.id.slice(1)) - Number(b.id.slice(1)))) {
+    const source = page.discovery.kind === "start" ? "start" : page.discovery.onPage;
+    const seen = perSource.get(source) ?? 0;
+    perSource.set(source, seen + 1);
+    if (seen < maxPagesPerSource) inScope.add(page.id);
+  }
+  return inScope;
 }

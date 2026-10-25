@@ -190,9 +190,11 @@ export const ObservationSchema = z.object({
     simple: z.array(z.string()),
   }),
   // Condition flag ledgerVisible only; absent otherwise, so condition A's observation bytes are unchanged. Harness-authored: page ids,
-  // canonical URLs that are visited or in legal.navigate, probe names, statuses, harness reasons, evidence ids, current-turn refs.
+  // canonical URLs that are visited, in legal.navigate, or discovered earlier (in budget and sampling scope), probe names, statuses,
+  // harness reasons, evidence ids, current-turn refs.
   frontier: z.object({
-    pages: z.array(z.object({ id: z.string(), url: z.string(), visited: z.boolean(), current: z.boolean() })),
+    // discoveredOn: id of the page the link was first seen on (null for the start page); the sampling source.
+    pages: z.array(z.object({ id: z.string(), url: z.string(), visited: z.boolean(), current: z.boolean(), discoveredOn: z.string().nullable() })),
     outstanding: z.array(z.object({ id: z.string(), pageId: z.string(), probe: z.string(), status: z.string(), applicability: z.string(), targetRef: z.string().nullable(), reason: z.string().nullable() })),
     outcomes: z.array(z.object({ id: z.string(), pageId: z.string(), probe: z.string(), evidenceIds: z.array(z.string()) })),
     remaining: z.number(),

@@ -203,13 +203,32 @@ describe("compact frontier in the observation", () => {
       assert.ok(first.outstanding.some((item) => item.pageId === "p3" && item.probe === "skip_link" && item.status === "pending"));
       const later = observations[2]!.frontier!;
       assert.deepEqual(later.outcomes.map((item) => [item.probe, item.evidenceIds]), [["semantics", ["ev_1"]]]);
-      for (const page of later.pages) assert.ok(page.visited || observations[2]!.legal.navigate.includes(page.url), page.url);
+      // Visited, legal this turn, or discovered earlier on a known page (the executor accepts any discovered URL).
+      for (const page of later.pages) assert.ok(page.visited || observations[2]!.legal.navigate.includes(page.url) || later.pages.some((other) => other.id === page.discoveredOn), page.url);
       const shown = (await r.lines("frontier-shown.jsonl")) as unknown as CompactLog[];
       assert.deepEqual(shown.map((line) => line.step), [0, 1, 2]);
       assert.ok(r.result.artifacts.includes("frontier-shown.jsonl"));
       // No page text: element names and link text never reach the compact view.
       const text = JSON.stringify(observations.map((observation) => observation.frontier));
       for (const name of observations.flatMap((observation) => observation.links.map((link) => link.name)).filter((name) => name.length > 3)) assert.ok(!text.includes(name), name);
+    } finally { await r.cleanup(); }
+  });
+
+  it("on a sibling page the model still sees the unvisited siblings and their pending work (review M1)", async () => {
+    const seen: Observation[] = [];
+    const r = await run("/dev-k1/index.html", ({ call, observation }) => {
+      seen.push(observation!);
+      return call === 0 ? { action: { type: "navigate", url: linkTo(observation, "/s/a3.html") } } : finish("inconclusive");
+    }, VISIBLE);
+    try {
+      const onSibling = seen[1]!;
+      const siblings = ["/s/f8.html", "/s/m2.html", "/s/q5.html"];
+      for (const suffix of siblings) assert.ok(!onSibling.legal.navigate.some((url) => url.endsWith(suffix)), "precondition: not legal on the sibling page");
+      const shown = onSibling.frontier!.pages.filter((page) => siblings.some((suffix) => page.url.endsWith(suffix)));
+      assert.equal(shown.length, 3);
+      assert.ok(shown.every((page) => !page.visited && page.discoveredOn === "p1"));
+      const target = shown.find((page) => page.url.endsWith("/s/m2.html"))!;
+      assert.ok(onSibling.frontier!.outstanding.some((item) => item.pageId === target.id && item.probe === "skip_link" && item.status === "pending"));
     } finally { await r.cleanup(); }
   });
 
@@ -223,12 +242,13 @@ describe("compact frontier in the observation", () => {
     const frontier = new Frontier("c", VISIBLE, (url) => url, undefined, { pages: 2, outstanding: 2, outcomes: 1 });
     const links = ["/a", "/b", "/c", "/d"];
     frontier.observe({ step: 0, observation: observation("/", links), discoveredNow: links, previous: null });
-    const { view, log } = frontier.compact(observation("/", links, ["/a", "/b", "/c"]));
+    // No surfaces left: unvisited pages that are not legal this turn are not shown.
+    const { view, log } = frontier.compact({ ...observation("/", links, ["/a", "/b", "/c"]), budget: { stepsLeft: 1, modelCallsLeft: 1, wallMsLeft: 1, surfacesLeft: 0 } });
     assert.deepEqual(view.pages.map((page) => page.id), ["p1", "p2"]);
     assert.deepEqual(view.truncated, { pages: true, outstanding: true, outcomes: false, ledger: false });
     assert.equal(view.dropped.pages, 2);
     assert.deepEqual(log.clipped.pages, ["p3", "p4"]);
-    assert.deepEqual(log.notLegal.pages, ["p5"]);
-    assert.ok(log.notLegal.obligations.length > 0);
+    assert.deepEqual(log.notShown.pages, ["p5"]);
+    assert.ok(log.notShown.obligations.length > 0);
   });
 });

@@ -3,7 +3,8 @@
 // it is sent (with the frontier visible) plus its own state. Never fixture truth, file names or text as signals.
 //
 // Frozen ordering (frontier-scheduler/v1):
-//   1. Pages breadth-first in discovery order (page id, compared numerically). The current page is finished before moving on.
+//   1. Pages breadth-first in discovery order (page id, compared numerically), taken only from the pages the compact view shows
+//      this turn. The current page is finished before moving on.
 //   2. Within a page, probes in this order: semantics (which also records skip links), disclosures/menus, dialogs
 //      (activate, check focus-in, Escape, check focus return). Ties by obligation id, i.e. discovery and element order.
 //   3. Sampling: at most condition.sampling.maxPagesPerSource pages per discovery source; surfaces, steps and calls are the
@@ -30,9 +31,6 @@ export class FrontierScheduler implements ModelProvider {
   readonly rulesVersion = RULES_VERSION;
   calls = 0;
 
-  private readonly pageUrl = new Map<string, string>();
-  private readonly pageSource = new Map<string, string | null>();
-  private readonly visited = new Set<string>();
   private readonly skipped = new Set<string>();
   private readonly attempted = new Set<string>();
   private readonly reportedKeys = new Set<string>();
@@ -59,10 +57,6 @@ export class FrontierScheduler implements ModelProvider {
     if (!o || !o.frontier) return { type: "unknown", reason: "the scheduler needs an observation with the frontier visible" };
     const view = o.frontier;
     const current = view.pages.find((page) => page.current)?.id ?? null;
-    for (const page of view.pages) {
-      if (!this.pageUrl.has(page.id)) { this.pageUrl.set(page.id, page.url); this.pageSource.set(page.id, page.current ? null : current); }
-      if (page.visited) this.visited.add(page.id);
-    }
     const last = o.recentActions.at(-1);
     const lastEvidence = last?.evidenceIds ?? [];
     if (this.navigatingTo && this.navigatingTo !== current) this.skipped.add(this.navigatingTo);
@@ -73,19 +67,22 @@ export class FrontierScheduler implements ModelProvider {
       this.awaitingInspect = null;
       if (lastEvidence.length) this.enqueue(current, pageFindings(o, lastEvidence));
     }
-    // On the final call, findings not yet reported go into finish; they are validated exactly like report_candidate.
-    if (o.finalCall) return this.finish(o, lastEvidence);
     if (this.dialog) {
       const dialog = this.dialog;
       if (dialog.stage === "opened") {
         dialog.activateEvidence = lastEvidence;
         this.enqueue(current, dialogOpenedFindings(o, dialog, lastEvidence));
         dialog.stage = "escaped";
-        return { type: "escape" };
+        // On the final call the focus-in check above still counts; Escape cannot run any more.
+        if (!o.finalCall) return { type: "escape" };
+        this.dialog = null;
+      } else {
+        this.dialog = null;
+        this.enqueue(current, dialogClosedFindings(o, { ref: this.refFor(o, dialog.hint) ?? dialog.ref, hint: dialog.hint }, [...dialog.activateEvidence, ...lastEvidence]));
       }
-      this.dialog = null;
-      this.enqueue(current, dialogClosedFindings(o, { ref: this.refFor(o, dialog.hint) ?? dialog.ref, hint: dialog.hint }, [...dialog.activateEvidence, ...lastEvidence]));
     }
+    // On the final call, findings not yet reported go into finish; they are validated exactly like report_candidate.
+    if (o.finalCall) return this.finish(o, lastEvidence);
     if (this.awaitingCapture) {
       const finding = this.awaitingCapture;
       this.awaitingCapture = null;
@@ -116,17 +113,18 @@ export class FrontierScheduler implements ModelProvider {
       return { type: "activate", targetRef: item.targetRef };
     }
 
-    // Next page: lowest unvisited id within the sampling scope, while surfaces remain.
+    // Next page: lowest unvisited id within the sampling scope, while surfaces remain. Only pages the view shows this turn are
+    // candidates (the same information condition B's model gets); the sampling source is the page's discoveredOn.
     if (o.budget.surfacesLeft > 0) {
       const perSource = new Map<string, number>();
-      const ranked = [...this.pageUrl.keys()].sort((a, b) => num(a) - num(b)).filter((id) => {
-        const source = this.pageSource.get(id) ?? "start";
+      const ranked = [...view.pages].sort((a, b) => num(a.id) - num(b.id)).filter((page) => {
+        const source = page.discoveredOn ?? "start";
         const rank = perSource.get(source) ?? 0;
         perSource.set(source, rank + 1);
         return rank < this.options.maxPagesPerSource;
       });
-      const target = ranked.find((id) => !this.visited.has(id) && !this.skipped.has(id) && id !== current);
-      if (target) { this.navigatingTo = target; return { type: "navigate", url: this.pageUrl.get(target)! }; }
+      const target = ranked.find((page) => !page.visited && !this.skipped.has(page.id) && page.id !== current);
+      if (target) { this.navigatingTo = target.id; return { type: "navigate", url: target.url }; }
     }
     return this.finish(o);
   }
