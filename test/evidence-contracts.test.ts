@@ -108,6 +108,10 @@ test("parsed records, nested evidence and arrays are immutable snapshots", () =>
   const snapshot = c.AssessmentResultSchema.parse(source);
   source.evidenceRefs[0].sha256 = "0".repeat(64);
   assert.notEqual(snapshot.evidenceRefs[0]!.sha256, source.evidenceRefs[0].sha256);
+  const { resolutionReasons: _omitted, ...withoutReasons } = JSON.parse(JSON.stringify(findingCase()));
+  const defaulted = c.FindingCaseSchema.parse(withoutReasons);
+  assert.ok(Object.isFrozen(defaulted.resolutionReasons));
+  assert.throws(() => (defaulted.resolutionReasons as string[]).push("injected"), TypeError);
 });
 
 test("assessment axes remain independent and stored eligibility cannot grant authority", () => {

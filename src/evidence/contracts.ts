@@ -116,7 +116,7 @@ export const FindingCaseSchema = z.strictObject({
   entryDigest: DigestSchema.nullable(),
   implementationDigest: DigestSchema.nullable(),
   claimVersion: DigestSchema,
-  resolutionReasons: z.array(IdSchema).readonly().default([]),
+  resolutionReasons: z.array(IdSchema).default([]).readonly(),
   assessmentIds: z.array(IdSchema).readonly(),
   adjudicationIds: z.array(IdSchema).readonly(),
   retestIds: z.array(IdSchema).readonly(),
