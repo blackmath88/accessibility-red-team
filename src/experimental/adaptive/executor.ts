@@ -2,25 +2,35 @@
 // current observation, runs it as ordinary Playwright code (no eval of model text, no generated code), records evidence and
 // enforces hard budgets. No silent retries, no escalation, no fallback provider.
 import { execFileSync } from "node:child_process";
+import type { z } from "zod";
 import { createHash } from "node:crypto";
 import { appendFile, mkdir, readFile, writeFile } from "node:fs/promises";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import type { Browser, BrowserContext, Page } from "playwright";
 import {
-  ActionSchema, ACTION_TYPES, CandidateFindingSchema, ModelDecisionSchema, SessionConfigSchema, SessionResultSchema,
-  type Action, type DenialReason, type ElementFacts, type EvidenceRecord, type Observation, type PinnedVersions,
-  type PolicyDenial, type SessionConfig, type SessionConfigInput, type SessionResult, type StoredCandidate, type TerminalStatus, type TraceStep,
+  ActionSchema, ActionV4Schema, ACTION_TYPES, ACTION_TYPES_V4, CandidateFindingSchema, DEFAULT_CONDITION, ExplorationConditionSchema, ModelDecisionSchema, SessionConfigSchema, SessionResultSchema,
+  type ActionV4 as Action, type Completion, type ExplorationCondition, type DenialReason, type ElementFacts, type EvidenceRecord, type Observation, type PinnedVersions,
+  type CandidateFinding, type PolicyDenial, type SessionConfig, type SessionConfigInput, type SessionResult, type StoredCandidate, type TerminalStatus, type TraceStep,
 } from "./contracts.js";
 import { ELEMENT_SELECTOR, observePage, type LastActivated } from "./observe.js";
 import { BrowserGuard, CONTEXT_OPTIONS, SessionPolicy, classifyActivation, type RecordDenial, type Resolver } from "./policy.js";
 import { isContainedBrowser, launchContainedBrowser, type ContainedBrowser } from "./containment.js";
 import { ProviderError, type ModelProvider } from "./provider.js";
 import { OBSERVATION_MARKER } from "./providers/fake.js";
+import { Frontier } from "./frontier.js";
+import { stateKey } from "./state.js";
 
 const HERE = dirname(fileURLToPath(import.meta.url));
 export const SKILL_PATH = join(HERE, "skill", "adaptive-a11y-skill.v3.md");
 export const SKILL_VERSION = "adaptive-a11y-skill/v3";
+// v4 describes the compact frontier, completion as a proposal and report_candidate. Condition A (all flags off) keeps v3.
+export const SKILL_V4_PATH = join(HERE, "skill", "adaptive-a11y-skill.v4.md");
+export const SKILL_V4_VERSION = "adaptive-a11y-skill/v4";
+export function skillFor(condition: ExplorationCondition): { path: string; version: string } {
+  const flagged = condition.ledgerVisible || condition.completionAccounting || condition.incrementalCandidates;
+  return flagged ? { path: SKILL_V4_PATH, version: SKILL_V4_VERSION } : { path: SKILL_PATH, version: SKILL_VERSION };
+}
 const REPO_ROOT = resolve(HERE, "..", "..", "..");
 const MAX_DENIALS = 10;
 const MAX_BROWSER_DENIAL_RECORDS = 200;
@@ -60,7 +70,25 @@ export type RunSessionOptions = {
   browser?: Browser;
   resolver?: Resolver;
   codeSha?: string;
+  // Comparison condition; omitted means condition A (DEFAULT_CONDITION), the pinned historical executor.
+  condition?: ExplorationConditionInput;
 };
+
+export type ExplorationConditionInput = z.input<typeof ExplorationConditionSchema>;
+
+// Provider id of the deterministic scheduler (scheduler.ts). Defined here so the executor can check labels without importing it.
+export const SCHEDULER_PROVIDER_ID = "frontier-scheduler";
+
+// A run's label must match what drove it: selector "scheduler" only with the scheduler provider, which needs the visible frontier
+// and report_candidate; the scheduler provider never runs under selector "model".
+export function resolveCondition(input: ExplorationConditionInput | undefined, providerId?: string): ExplorationCondition {
+  const condition = ExplorationConditionSchema.parse(input ?? DEFAULT_CONDITION);
+  if (condition.selector === "scheduler") {
+    if (!condition.ledgerVisible || !condition.incrementalCandidates) throw new Error("selector=scheduler needs ledgerVisible and incrementalCandidates");
+    if (providerId !== undefined && providerId !== SCHEDULER_PROVIDER_ID) throw new Error(`selector=scheduler needs the ${SCHEDULER_PROVIDER_ID} provider, not ${providerId}`);
+  } else if (providerId === SCHEDULER_PROVIDER_ID) throw new Error(`the ${SCHEDULER_PROVIDER_ID} provider needs selector=scheduler`);
+  return condition;
+}
 
 type Cause = "cancelled" | "timeout";
 type Checked = { ok: true; action: Action } | { ok: false; reason: DenialReason; detail: string; url?: string };
@@ -74,10 +102,11 @@ const ACTION_EXAMPLES: Record<string, string> = {
   focus_next: '{"type": "focus_next"}', focus_prev: '{"type": "focus_prev"}', activate: '{"type": "activate", "targetRef": "<a ref from legal.activate>"}',
   escape: '{"type": "escape"}', scroll: '{"type": "scroll", "direction": "down"}', capture_evidence: '{"type": "capture_evidence", "targetRef": "<ref>", "note": "<text>"}',
   finish: '{"type": "finish", "verdict": "complete", "summary": "<text>", "candidates": []}', unknown: '{"type": "unknown", "reason": "<text>"}',
+  report_candidate: '{"type": "report_candidate", "candidate": {<one candidate finding>}}',
 };
-export function actionFormatHint(raw: unknown): string {
+export function actionFormatHint(raw: unknown, types: readonly string[] = ACTION_TYPES): string {
   const record = raw && typeof raw === "object" && !Array.isArray(raw) ? raw as Record<string, unknown> : null;
-  const known = (value: unknown): value is string => typeof value === "string" && (ACTION_TYPES as readonly string[]).includes(value);
+  const known = (value: unknown): value is string => typeof value === "string" && types.includes(value);
   let intended: string | undefined;
   let where = "";
   if (record) {
@@ -90,7 +119,7 @@ export function actionFormatHint(raw: unknown): string {
       else if (typeof record["type"] === "string") where = `"${String(record["type"]).slice(0, 40)}" is not an action type`;
     }
   }
-  const allowed = `allowed types: ${ACTION_TYPES.join(", ")}`;
+  const allowed = `allowed types: ${types.join(", ")}`;
   if (intended) return `refused, ${where}; the action name goes in "type". Send {"action": ${ACTION_EXAMPLES[intended]}, "rationale": "..."}`;
   return `refused, ${where || 'the action has no "type"'}; send {"action": {"type": "<action type>", ...fields}, "rationale": "..."}; ${allowed}`;
 }
@@ -113,11 +142,7 @@ type HistoryEntry = Observation["recentActions"][number] & { changeKeyBefore: st
 
 const ownText = (value: unknown): string | null => typeof value === "string" ? value.slice(0, 160) : null;
 
-export function stateKey(observation: Observation, normalize: (url: string) => string): string {
-  const expanded = observation.controls.filter((control) => control.expanded === "true").map((control) => control.name || control.ref).sort();
-  const dialogs = observation.dialogs.filter((dialog) => dialog.visible).length;
-  return `${normalize(observation.url)} | expanded=[${expanded.join(",")}] | dialogs=${dialogs}`;
-}
+export { stateKey };
 
 class Session {
   readonly policy: SessionPolicy;
@@ -129,6 +154,8 @@ class Session {
   readonly states = new Set<string>();
   readonly discovered = new Set<string>();
   readonly usage = { inputTokens: 0, outputTokens: 0, estimated: false };
+  // Written to frontier.json every turn whatever the condition; never part of the observation in condition A.
+  readonly frontier: Frontier;
   modelCalls = 0;
   status: TerminalStatus = "completed";
   reason = "";
@@ -146,8 +173,14 @@ class Session {
   private readonly history: HistoryEntry[] = [];
   private readonly startedAtMs = Date.now();
 
-  constructor(readonly config: SessionConfig, private readonly options: RunSessionOptions, private readonly skillText: string) {
+  finishVerdict: Completion["proposal"] = null;
+  // Action types the model may use under this condition; report_candidate only with incrementalCandidates.
+  private readonly actionTypes: readonly string[];
+
+  constructor(readonly config: SessionConfig, private readonly options: RunSessionOptions, private readonly skillText: string, readonly condition: ExplorationCondition) {
     this.policy = new SessionPolicy(config, options.resolver);
+    this.actionTypes = condition.incrementalCandidates ? ACTION_TYPES_V4 : ACTION_TYPES;
+    this.frontier = new Frontier(config.sessionId, condition, (url) => this.policy.normalize(url));
   }
 
   private get limits() { return this.config.limits; }
@@ -175,6 +208,7 @@ class Session {
     await writeFile(join(this.outDir, "evidence.json"), JSON.stringify(this.evidence, null, 2));
     await writeFile(join(this.outDir, "denials.json"), JSON.stringify(this.denials, null, 2));
     await writeFile(join(this.outDir, "candidates.json"), JSON.stringify(this.candidates, null, 2));
+    await writeFile(join(this.outDir, "frontier.json"), JSON.stringify(this.frontier.snapshot(), null, 2));
   }
 
   async run(browser: Browser): Promise<void> {
@@ -239,6 +273,14 @@ class Session {
     if (previous && previous.changed === null) previous.changed = previous.changeKeyBefore !== changeKey;
     this.observation.recentActions = this.history.slice(-HISTORY_LENGTH).map(({ changeKeyBefore: _key, changed, ...entry }) => ({ ...entry, stateChanged: changed ?? false }));
     for (const url of observed.discoveredNow) this.discovered.add(url);
+    const executedBefore = previous && previous.outcome === "executed" ? { type: previous.type, targetRef: previous.targetRef, step: previous.step } : null;
+    this.frontier.observe({ step: this.step, observation: this.observation, discoveredNow: observed.discoveredNow, previous: executedBefore });
+    // Only with ledgerVisible: otherwise the key is never set, so the observation bytes match condition A.
+    if (this.condition.ledgerVisible) {
+      const compact = this.frontier.compact(this.observation);
+      this.observation.frontier = compact.view;
+      await appendFile(join(this.outDir, "frontier-shown.jsonl"), JSON.stringify(compact.log) + "\n");
+    }
     this.states.add(stateKey(this.observation, (url) => this.policy.normalize(url)));
     const observationJson = JSON.stringify(this.observation);
     await appendFile(join(this.outDir, "observations.jsonl"), observationJson + "\n");
@@ -318,6 +360,8 @@ class Session {
     }
     record.evidenceIds = this.evidence.slice(evidenceBefore).map((item) => item.id);
     record.denialIds = this.denials.slice(denialsBefore).map((item) => item.id);
+    this.frontier.recordEvidence(this.evidence.slice(evidenceBefore));
+    this.frontier.recordDenials(this.denials.slice(denialsBefore));
     await this.log(record);
     await this.flush();
     if (keepGoing && finalCall) {
@@ -330,7 +374,7 @@ class Session {
 
   private remember(raw: unknown, outcome: string, result: string, changeKeyBefore: string, evidenceIds: string[] = []): void {
     const action = raw && typeof raw === "object" ? raw as Record<string, unknown> : {};
-    const type = typeof action["type"] === "string" && (ACTION_TYPES as readonly string[]).includes(action["type"]) ? action["type"] : "malformed";
+    const type = typeof action["type"] === "string" && this.actionTypes.includes(action["type"]) ? action["type"] : "malformed";
     this.history.push({
       step: this.step, type, targetRef: ownText(action["targetRef"]), url: ownText(action["url"]), direction: ownText(action["direction"]),
       outcome, result, stateChanged: false, evidenceIds, changeKeyBefore, changed: null,
@@ -343,10 +387,10 @@ class Session {
     if (this.observation.finalCall && type !== "finish") {
       return { ok: false, reason: "finish_required", detail: `final call: the only legal action is finish, e.g. {"action": ${ACTION_EXAMPLES["finish"]}, "rationale": "..."}` };
     }
-    if (typeof type !== "string" || !(ACTION_TYPES as readonly string[]).includes(type)) {
-      return { ok: false, reason: "forbidden_action_type", detail: actionFormatHint(raw) };
+    if (typeof type !== "string" || !this.actionTypes.includes(type)) {
+      return { ok: false, reason: "forbidden_action_type", detail: actionFormatHint(raw, this.actionTypes) };
     }
-    const parsed = ActionSchema.safeParse(raw);
+    const parsed = (this.condition.incrementalCandidates ? ActionV4Schema : ActionSchema).safeParse(raw);
     if (!parsed.success) return { ok: false, reason: "invalid_action_fields", detail: `${type}: ${parsed.error.issues[0]?.path.join(".") || "action"} ${parsed.error.issues[0]?.message ?? "invalid"}` };
     const action = parsed.data;
     if (action.type === "navigate") {
@@ -456,23 +500,53 @@ class Session {
       case "finish": {
         this.end("completed", `model finished: ${action.verdict}`);
         this.finishSummary = action.summary;
-        for (const raw of action.candidates) {
-          const id = `cand_${this.candidates.length + 1}`;
-          const parsed = CandidateFindingSchema.safeParse(raw);
-          if (!parsed.success) {
-            this.candidates.push({ id, step: this.step, status: "rejected", rejection: `schema: ${parsed.error.issues[0]?.message ?? "invalid"}`.slice(0, 200), finding: raw });
-            continue;
-          }
-          const missing = parsed.data.observationRefs.filter((ref) => !this.evidence.some((item) => item.id === ref));
-          this.candidates.push(missing.length
-            ? { id, step: this.step, status: "rejected", rejection: `unresolved evidence refs: ${missing.join(", ")}`, finding: parsed.data }
-            : { id, step: this.step, status: "candidate", rejection: null, finding: parsed.data });
-        }
+        this.finishVerdict = action.verdict;
+        for (const raw of action.candidates) this.storeCandidate(raw);
         return `finish ${action.verdict}; ${action.candidates.length} candidate(s) submitted`;
+      }
+      case "report_candidate": {
+        // Stored now and flushed at the end of this turn, so a later budget end cannot erase it.
+        const stored = this.storeCandidate(action.candidate);
+        return stored.status === "candidate" ? `recorded ${stored.id}` : stored.status === "duplicate" ? `${stored.id} duplicates ${stored.duplicateOf}` : `${stored.id} rejected: ${stored.rejection}`;
       }
       case "unknown":
         return `unknown: ${action.reason}`;
     }
+  }
+
+  // The one validation path for finish candidates and report_candidate: schema, then evidence refs must resolve. With
+  // incrementalCandidates, a candidate with the same category and the same cited targets as an accepted one is a duplicate.
+  private storeCandidate(raw: unknown): StoredCandidate {
+    const id = `cand_${this.candidates.length + 1}`;
+    const parsed = CandidateFindingSchema.safeParse(raw);
+    let stored: StoredCandidate;
+    if (!parsed.success) stored = { id, step: this.step, status: "rejected", rejection: `schema: ${parsed.error.issues[0]?.message ?? "invalid"}`.slice(0, 200), finding: raw };
+    else {
+      const missing = parsed.data.observationRefs.filter((ref) => !this.evidence.some((item) => item.id === ref));
+      stored = missing.length
+        ? { id, step: this.step, status: "rejected", rejection: `unresolved evidence refs: ${missing.join(", ")}`, finding: parsed.data }
+        : { id, step: this.step, status: "candidate", rejection: null, finding: parsed.data };
+      if (!missing.length && this.condition.incrementalCandidates) {
+        const key = this.candidateKey(parsed.data);
+        const original = key === null ? undefined : this.candidates.find((item) => item.status === "candidate" && this.candidateKey(item.finding as CandidateFinding) === key);
+        if (original) stored = { ...stored, status: "duplicate", duplicateOf: original.id };
+      }
+    }
+    this.candidates.push(stored);
+    return stored;
+  }
+
+  // Category plus the cited evidence targets' selector hints. Refs shift between observations, so they are not used. When any cited
+  // record has no target, two findings cannot be told apart safely (two unnamed fields on one page would collapse), so there is no
+  // key and the candidate is never marked a duplicate.
+  private candidateKey(finding: CandidateFinding): string | null {
+    const targets: string[] = [];
+    for (const ref of finding.observationRefs) {
+      const hint = this.evidence.find((record) => record.id === ref)?.target?.selectorHint;
+      if (!hint) return null;
+      targets.push(hint);
+    }
+    return `${finding.category}|${[...new Set(targets)].sort().join(",")}`;
   }
 
   private digest(): Record<string, unknown> {
@@ -496,18 +570,20 @@ export async function runSession(options: RunSessionOptions): Promise<SessionRes
   // Checked before anything is written: a caller-supplied browser must sit behind the containment proxy.
   if (options.browser && !isContainedBrowser(options.browser)) throw new Error("runSession refuses a browser that was not launched with launchContainedBrowser");
   const config = SessionConfigSchema.parse(options.config);
+  const condition = resolveCondition(options.condition, options.provider.id);
   // The public-mode decision functions stay (and stay unit-tested) but nothing may start a public session: DNS is resolved by this process
   // and not pinned for the browser, the resolution cache never expires, no host mappings are supplied and site isolation is disabled.
   if (config.mode === "public") throw new Error(PUBLIC_MODE_DISABLED);
-  const skillText = await readFile(SKILL_PATH, "utf8");
+  const skill = skillFor(condition);
+  const skillText = await readFile(skill.path, "utf8");
   const pinned: PinnedVersions = {
-    codeSha: options.codeSha ?? codeSha(), skillVersion: SKILL_VERSION, skillSha256: sha256(skillText),
+    codeSha: options.codeSha ?? codeSha(), skillVersion: skill.version, skillSha256: sha256(skillText),
     modelId: options.provider.requestedModel, configHash: configHash(config),
   };
   await mkdir(join(options.outDir, "evidence"), { recursive: true });
   const startedAtMs = Date.now();
   const startedAt = new Date(startedAtMs).toISOString();
-  const session = new Session(config, options, skillText);
+  const session = new Session(config, options, skillText, condition);
 
   const onOuterAbort = () => session.abort("cancelled");
   if (options.signal?.aborted) onOuterAbort(); else options.signal?.addEventListener("abort", onOuterAbort, { once: true });
@@ -531,6 +607,10 @@ export async function runSession(options: RunSessionOptions): Promise<SessionRes
     await session.closeContext();
     await owned?.close();
   }
+  session.frontier.setTerminal(session.status, session.reason);
+  const completion = condition.completionAccounting
+    ? session.frontier.completion({ status: session.status, cancelled: session.cause === "cancelled", proposal: session.finishVerdict, maxPagesPerSource: condition.sampling.maxPagesPerSource })
+    : null;
 
   const result = SessionResultSchema.parse({
     schema: "art/adaptive-result/v1", sessionId: config.sessionId, status: session.status, reason: session.reason, startedAt,
@@ -539,11 +619,13 @@ export async function runSession(options: RunSessionOptions): Promise<SessionRes
     evidenceCount: session.evidence.length, candidateCount: session.candidates.filter((item) => item.status === "candidate").length,
     rejectedCandidateCount: session.candidates.filter((item) => item.status === "rejected").length, denialCount: session.denials.length + session.droppedBrowserDenials,
     pinned, finishSummary: session.finishSummary,
-    artifacts: ["result.json", "trace.jsonl", "observations.jsonl", "evidence.json", "denials.json", "candidates.json"],
+    artifacts: ["result.json", "trace.jsonl", "observations.jsonl", "evidence.json", "denials.json", "candidates.json", "frontier.json", ...(condition.ledgerVisible ? ["frontier-shown.jsonl"] : [])],
+    condition, completion,
   });
   await session.flush();
   await appendFile(join(options.outDir, "trace.jsonl"), "");
   await appendFile(join(options.outDir, "observations.jsonl"), "");
+  if (condition.ledgerVisible) await appendFile(join(options.outDir, "frontier-shown.jsonl"), "");
   await writeFile(join(options.outDir, "result.json"), JSON.stringify(result, null, 2));
   return result;
 }

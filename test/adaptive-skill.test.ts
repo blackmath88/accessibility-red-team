@@ -1,8 +1,8 @@
 import assert from "node:assert/strict";
 import { readFile } from "node:fs/promises";
 import { after, before, describe, it } from "node:test";
-import { ACTION_TYPES, ActionSchema, CandidateFindingSchema, ModelDecisionSchema, type Observation } from "../src/experimental/adaptive/contracts.js";
-import { SKILL_PATH, SKILL_VERSION, actionFormatHint } from "../src/experimental/adaptive/executor.js";
+import { ACTION_TYPES, ACTION_TYPES_V4, ActionSchema, ActionV4Schema, CandidateFindingSchema, DEFAULT_CONDITION, ModelDecisionSchema, type Observation } from "../src/experimental/adaptive/contracts.js";
+import { SKILL_PATH, SKILL_V4_PATH, SKILL_VERSION, actionFormatHint, sha256, skillFor } from "../src/experimental/adaptive/executor.js";
 import { FakeProvider, parseObservation, type FakeScript } from "../src/experimental/adaptive/providers/fake.js";
 import { runInTemp, startHarness, type Harness } from "./adaptive-helpers.js";
 
@@ -33,6 +33,40 @@ describe("skill v3 reply format", () => {
     assert.match(skill, /The action name goes in the key \*\*`type`\*\*/);
     assert.match(skill, /When `finalCall` is `true`, this is your last reply/);
     for (const category of ["missing_accessible_name", "skip_link_broken", "dialog_focus_not_returned"]) assert.ok(skill.includes(`\`${category}\``), category);
+  });
+});
+
+describe("skill v4 (frontier conditions)", () => {
+  it("is selected only when a condition flag is on; condition A keeps v3", () => {
+    assert.deepEqual(skillFor(DEFAULT_CONDITION), { path: SKILL_PATH, version: SKILL_VERSION });
+    for (const flag of ["ledgerVisible", "completionAccounting", "incrementalCandidates"] as const) {
+      assert.deepEqual(skillFor({ ...DEFAULT_CONDITION, [flag]: true }), { path: SKILL_V4_PATH, version: "adaptive-a11y-skill/v4" }, flag);
+    }
+  });
+
+  it("every example is a valid v4 decision, every v4 action type has one, and candidates validate", async () => {
+    const skill = await readFile(SKILL_V4_PATH, "utf8");
+    const seen = new Set<string>();
+    for (const line of jsonLines(skill).filter((item) => !item.includes("<action type>"))) {
+      const action = ActionV4Schema.parse(ModelDecisionSchema.parse(JSON.parse(line)).action);
+      seen.add(action.type);
+      if (action.type === "finish") for (const candidate of action.candidates) CandidateFindingSchema.parse(candidate);
+      if (action.type === "report_candidate") CandidateFindingSchema.parse(action.candidate);
+    }
+    assert.deepEqual([...seen].sort(), [...ACTION_TYPES_V4].sort());
+  });
+
+  it("describes the frontier as optional, finish as a proposal, and carries no host or port", async () => {
+    const skill = await readFile(SKILL_V4_PATH, "utf8");
+    assert.match(skill, /## The frontier \(when present\)/);
+    assert.match(skill, /\*\*Finish is a proposal\.\*\*/);
+    assert.match(skill, /Visiting a page is not testing it/);
+    assert.doesNotMatch(skill, /127\.0|localhost|:\d{2,5}\//);
+  });
+
+  it("leaves skill v3 untouched", async () => {
+    // The pinned hash of skill v3 as used in trial 3; any edit to the file breaks the historical baseline.
+    assert.equal(sha256(await readFile(SKILL_PATH, "utf8")), "54ad045f8cbfae8a210b2318caeb62f31448606eb717055f5446bdef4b6efbf7");
   });
 });
 

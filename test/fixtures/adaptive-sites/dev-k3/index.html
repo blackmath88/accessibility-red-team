@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="de">
+<head><meta charset="utf-8"><title>Termine</title><meta name="viewport" content="width=device-width, initial-scale=1"></head>
+<body>
+<a href="#m" class="skip">Zum Inhalt springen</a>
+<header>
+  <button id="c1" type="button" aria-expanded="false" aria-controls="n1">Bereiche</button>
+  <button id="c2" type="button" aria-haspopup="dialog" aria-controls="d2">Termin buchen</button>
+  <button id="c3" type="button" aria-haspopup="dialog" aria-controls="d3">Hinweise</button>
+</header>
+<nav id="n1" aria-label="Bereiche" hidden><ul><li><a href="/dev-k3/index.html">Start</a></li></ul></nav>
+<div id="d2" role="dialog" aria-modal="true" aria-label="Termin buchen" hidden><p>Termin wählen.</p><button id="x2" type="button">Schliessen</button></div>
+<div id="d3" role="dialog" aria-modal="true" aria-label="Hinweise" hidden><p>Bitte Ausweis mitbringen.</p><button id="x3" type="button">Schliessen</button></div>
+<main id="m"><h1>Termine</h1><p>Termine für Schalterdienste.</p></main>
+<script>
+  const c1 = document.getElementById("c1"), n1 = document.getElementById("n1");
+  c1.addEventListener("click", () => { const open = c1.getAttribute("aria-expanded") === "true"; c1.setAttribute("aria-expanded", String(!open)); n1.hidden = open; });
+  const pairs = [["c2", "d2", "x2", true], ["c3", "d3", "x3", false]];
+  for (const [t, d, x, returnsFocus] of pairs) {
+    const trigger = document.getElementById(t), dialog = document.getElementById(d), close = document.getElementById(x);
+    trigger.addEventListener("click", () => { dialog.hidden = false; close.focus(); });
+    close.addEventListener("click", () => { dialog.hidden = true; trigger.focus(); });
+    // Seeded defect on the second trigger only: Escape drops focus to the body.
+    document.addEventListener("keydown", (e) => { if (e.key === "Escape" && !dialog.hidden) { dialog.hidden = true; if (returnsFocus) trigger.focus(); else document.activeElement.blur(); } });
+  }
+</script>
+</body>
+</html>

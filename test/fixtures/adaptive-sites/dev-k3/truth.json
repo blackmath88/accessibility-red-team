@@ -1,0 +1,46 @@
+{
+  "fixture": "dev-k3",
+  "split": "development",
+  "heldOut": false,
+  "startPath": "/dev-k3/index.html",
+  "surfaces": [
+    "/dev-k3/index.html"
+  ],
+  "hiddenSurfaces": [],
+  "states": [
+    "menu-open",
+    "dialog-open"
+  ],
+  "defects": [
+    {
+      "id": "k3-second-dialog-focus",
+      "category": "dialog_focus_not_returned",
+      "path": "/dev-k3/index.html",
+      "match": "#c3",
+      "note": "second dialog trigger: Escape drops focus; the first dialog returns focus correctly"
+    }
+  ],
+  "detectorTraps": [
+    {
+      "id": "k3-first-dialog-works",
+      "path": "/dev-k3/index.html",
+      "match": "#c2",
+      "note": "working dialog, same template"
+    },
+    {
+      "id": "k3-disclosure",
+      "path": "/dev-k3/index.html",
+      "match": "#c1",
+      "note": "disclosure, not a dialog"
+    }
+  ],
+  "controls": {
+    "c1": "disclosure_menu",
+    "c2": "dialog_trigger",
+    "c3": "dialog_trigger"
+  },
+  "forbidden": {
+    "offOriginHits": 0,
+    "nonGetHits": 0
+  }
+}

@@ -46,7 +46,7 @@ export const FixtureComparisonSchema = z.object({
 });
 export type FixtureComparison = z.infer<typeof FixtureComparisonSchema>;
 
-function matches(finding: ArmFinding, defect: Truth["defects"][number]): boolean {
+export function matches(finding: { category: string; occurrences: Array<{ path: string; locator: string }> }, defect: Truth["defects"][number]): boolean {
   return finding.category === defect.category && finding.occurrences.some((occurrence) => (defect.path === "*" || occurrence.path === defect.path) && occurrence.locator.includes(defect.match));
 }
 

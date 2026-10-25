@@ -15,8 +15,8 @@ import { selectRepresentativeSurfaces } from "../../scout/sample.js";
 import type { DiscoveredPage } from "../../scout/contracts.js";
 import { scanUrl } from "../../scan.js";
 import { portOf, startFixtureProxy, startFixtures, type FixtureName } from "../../../test/fixtures/adaptive-sites/server.js";
-import { DEFAULT_FIXTURE_LIMITS, type EvidenceRecord, type Limits, type PolicyDenial, type SessionResult, type StoredCandidate } from "./contracts.js";
-import { codeSha, runSession, sha256 } from "./executor.js";
+import { DEFAULT_CONDITION, DEFAULT_FIXTURE_LIMITS, ExplorationConditionSchema, type EvidenceRecord, type ExplorationCondition, type Limits, type PolicyDenial, type SessionResult, type StoredCandidate } from "./contracts.js";
+import { SCHEDULER_PROVIDER_ID, codeSha, runSession, sha256, type ExplorationConditionInput } from "./executor.js";
 import { isContainedBrowser, launchContainedBrowser, type ContainedBrowser } from "./containment.js";
 import type { ModelProvider } from "./provider.js";
 import { FakeProvider } from "./providers/fake.js";
@@ -287,7 +287,7 @@ export async function runArmA(fixture: FixtureName, truthStartPath: string, opti
 // ---------------------------------------------------------------- Arm B: adaptive harness with the scripted fake provider
 
 // sessionLimits overrides the executor budgets (model calls, tokens, steps) for arm B's session; maxSurfaces and maxWallMs come from limits.
-export type RunArmBOptions = RunArmOptions & { provider?: ModelProvider; browser?: Browser; sessionLimits?: Partial<Omit<Limits, "maxSurfaces" | "maxWallMs">> };
+export type RunArmBOptions = RunArmOptions & { provider?: ModelProvider; browser?: Browser; sessionLimits?: Partial<Omit<Limits, "maxSurfaces" | "maxWallMs">>; condition?: ExplorationConditionInput };
 
 export async function runArmB(fixture: FixtureName, truthStartPath: string, options: RunArmBOptions): Promise<ArmSummary> {
   const limits = { ...DEFAULT_ARM_LIMITS, ...options.limits };
@@ -309,7 +309,7 @@ export async function runArmB(fixture: FixtureName, truthStartPath: string, opti
         schema: "art/adaptive-session/v1", sessionId: `${fixture}-B`, startUrl: `${fixtures.origin}${truthStartPath}`, allowedOrigins: [fixtures.origin], mode: "fixture", publicTargets: [],
         limits: sessionLimits,
       },
-      provider, outDir: sessionDir, browser, codeSha: options.codeSha,
+      provider, outDir: sessionDir, browser, codeSha: options.codeSha, condition: options.condition,
     });
   } finally {
     await contained?.close();
@@ -330,11 +330,16 @@ export async function runArmB(fixture: FixtureName, truthStartPath: string, opti
       }),
     });
   }
-  const config = { ...limits, sessionLimits };
+  // The condition joins the hash only when it is not condition A, so historical arm B hashes stay comparable.
+  const condition = options.condition ? ExplorationConditionSchema.parse(options.condition) : DEFAULT_CONDITION;
+  const config = JSON.stringify(condition) === JSON.stringify(DEFAULT_CONDITION) ? { ...limits, sessionLimits } : { ...limits, sessionLimits, condition };
+  const implementation = provider.id === "fake" ? "src/experimental/adaptive executor + scripted explorer (fake provider)"
+    : provider.id === SCHEDULER_PROVIDER_ID ? `src/experimental/adaptive executor + deterministic scheduler (${provider.requestedModel}, no model calls)`
+    : `src/experimental/adaptive executor + real model (${provider.id}:${provider.requestedModel})`;
   const states = result.statesVisited;
   const summary: ArmSummary = {
     schema: "art/adaptive-arm/v1", arm: "B", fixture, startPath: truthStartPath,
-    pinned: { codeSha: result.pinned.codeSha, configHash: hashJson(config), implementation: provider.id === "fake" ? "src/experimental/adaptive executor + scripted explorer (fake provider)" : `src/experimental/adaptive executor + real model (${provider.id}:${provider.requestedModel})`, skillVersion: result.pinned.skillVersion, modelId: result.pinned.modelId },
+    pinned: { codeSha: result.pinned.codeSha, configHash: hashJson(config), implementation, skillVersion: result.pinned.skillVersion, modelId: result.pinned.modelId },
     limits, startedAt: result.startedAt, durationMs: result.durationMs, terminal: result.status,
     surfaces: result.surfacesVisited.map((url) => ({ path: pathOf(url), kind: null, classificationReason: null, hasForm: null, substantiveFormFields: null, title: null })),
     states, components: [...new Set(evidence.filter((item) => item.kind === "activate" || item.kind === "capture_evidence").map((item) => `${item.kind}:${pathOf(item.url)}:${item.target?.selectorHint ?? "-"}`))],
