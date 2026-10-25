@@ -1,3 +1,4 @@
+import { createHash } from "node:crypto";
 import { z } from "zod";
 import { JourneyOutcomeSchema } from "../journeys/contracts.js";
 import {
@@ -45,7 +46,7 @@ export function challengeCounts(cases: ChallengeCase[]) {
 }
 
 // Evidence eligibility is deliberately separate from the human review command.
-export function evaluateGate(entry: ProbeEntry, validationRecord: ValidationRecord, digests: ProbeDigests): {
+function evaluateValidation(entry: ProbeEntry, validationRecord: ValidationRecord, digests: ProbeDigests): {
   verdict: "eligible_for_review" | "rejected" | "insufficient_evidence";
   reasons: string[];
 } {
@@ -75,7 +76,26 @@ export function evaluateGate(entry: ProbeEntry, validationRecord: ValidationReco
     : { verdict: "eligible_for_review", reasons: ["All required challenges matched; no false positives, false negatives or unsupported cases. Real human review is still required."] };
 }
 
-export function applyReviewerDecision(entry: ProbeEntry, decision: ReviewerDecision, digests: ProbeDigests): {
+export type GateResult = {
+  verdict: "eligible_for_review" | "rejected" | "insufficient_evidence";
+  reasons: string[];
+  binding: ProbeDigests & { probeId: string; validationRecordDigest: string };
+};
+
+export function evaluateGate(entry: ProbeEntry, validationRecord: ValidationRecord, digests: ProbeDigests): GateResult {
+  return {
+    ...evaluateValidation(entry, validationRecord, digests),
+    binding: {
+      ...digests,
+      probeId: entry.probeId,
+      validationRecordDigest: createHash("sha256").update(JSON.stringify(validationRecord)).digest("hex"),
+    },
+  };
+}
+
+export function applyReviewerDecision(entry: ProbeEntry, decision: ReviewerDecision, digests: ProbeDigests,
+  gate?: { result: GateResult; validationRecord: ValidationRecord },
+): {
   entry: ProbeEntry; applied: boolean; reason: string;
 } {
   const review = ReviewerDecisionSchema.parse(decision);
@@ -84,6 +104,12 @@ export function applyReviewerDecision(entry: ProbeEntry, decision: ReviewerDecis
     || review.implementationDigest !== digests.implementationDigest) {
     return { entry: { ...entry }, applied: false, reason: "not applied: entry/implementation digest mismatch" };
   }
-  const updated = ProbeEntrySchema.parse({ ...entry, review, maturity: review.decision === "approve_trusted" ? "trusted" : "candidate" });
-  return { entry: updated, applied: true, reason: review.decision === "approve_trusted" ? "applied: trusted human approval" : "applied: review requires candidate status" };
+  if (review.decision === "approve_trusted" && (!gate
+    || gate.result.verdict !== "eligible_for_review"
+    || JSON.stringify(gate.result) !== JSON.stringify(evaluateGate(entry, gate.validationRecord, digests)))) {
+    return { entry: { ...entry }, applied: false, reason: "not applied: validation gate not eligible_for_review" };
+  }
+  const maturity = review.decision === "approve_trusted" ? "trusted" : review.decision === "reject" ? "retired" : "candidate";
+  const updated = ProbeEntrySchema.parse({ ...entry, review, maturity });
+  return { entry: updated, applied: true, reason: review.decision === "approve_trusted" ? "applied: trusted human approval" : `applied: review requires ${maturity} status` };
 }
