@@ -63,7 +63,6 @@ export class FrontierScheduler implements ModelProvider {
       if (!this.pageUrl.has(page.id)) { this.pageUrl.set(page.id, page.url); this.pageSource.set(page.id, page.current ? null : current); }
       if (page.visited) this.visited.add(page.id);
     }
-    if (o.finalCall) return this.finish(o);
     const last = o.recentActions.at(-1);
     const lastEvidence = last?.evidenceIds ?? [];
     if (this.navigatingTo && this.navigatingTo !== current) this.skipped.add(this.navigatingTo);
@@ -74,6 +73,8 @@ export class FrontierScheduler implements ModelProvider {
       this.awaitingInspect = null;
       if (lastEvidence.length) this.enqueue(current, pageFindings(o, lastEvidence));
     }
+    // On the final call, findings not yet reported go into finish; they are validated exactly like report_candidate.
+    if (o.finalCall) return this.finish(o, lastEvidence);
     if (this.dialog) {
       const dialog = this.dialog;
       if (dialog.stage === "opened") {
@@ -151,8 +152,13 @@ export class FrontierScheduler implements ModelProvider {
     });
   }
 
-  private finish(o: Observation): Action {
+  private finish(o: Observation, lastEvidence: string[] = []): Action {
+    const candidates = [
+      ...(this.awaitingCapture && lastEvidence.length ? [this.candidate(this.awaitingCapture, lastEvidence)] : []),
+      ...this.queue.filter((finding) => finding.probeEvidence.length).map((finding) => this.candidate(finding, [])),
+    ].slice(0, 20);
+    this.awaitingCapture = null; this.queue = [];
     const done = (o.frontier?.outstanding.length ?? 1) === 0 && o.frontier?.remaining === 0;
-    return { type: "finish", verdict: done ? "complete" : "inconclusive", summary: `${SCHEDULER_VERSION}: frontier exhausted within caps; findings were reported with report_candidate.`, candidates: [] };
+    return { type: "finish", verdict: done ? "complete" : "inconclusive", summary: `${SCHEDULER_VERSION}: frontier exhausted within caps; findings were reported with report_candidate or in this finish.`, candidates };
   }
 }

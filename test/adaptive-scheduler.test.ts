@@ -3,7 +3,7 @@ import { mkdtemp, readFile, rm } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { after, before, describe, it } from "node:test";
-import { DEFAULT_CONDITION, type EvidenceRecord, type ExplorationCondition, type Observation, type StoredCandidate } from "../src/experimental/adaptive/contracts.js";
+import { DEFAULT_CONDITION, type EvidenceRecord, type ExplorationCondition, type Limits, type Observation, type StoredCandidate } from "../src/experimental/adaptive/contracts.js";
 import { runSession } from "../src/experimental/adaptive/executor.js";
 import { FrontierScheduler, SCHEDULER_VERSION } from "../src/experimental/adaptive/scheduler.js";
 import { FakeProvider } from "../src/experimental/adaptive/providers/fake.js";
@@ -15,10 +15,10 @@ after(async () => { await harness.close(); });
 
 export const CONDITION_D: ExplorationCondition = { ...DEFAULT_CONDITION, ledgerVisible: true, completionAccounting: true, incrementalCandidates: true, selector: "scheduler" };
 
-async function runD(path: string) {
+async function runD(path: string, limits: Partial<Limits> = {}) {
   const outDir = await mkdtemp(join(tmpdir(), "art-adaptive-"));
   const provider = new FrontierScheduler({ maxPagesPerSource: CONDITION_D.sampling.maxPagesPerSource });
-  const result = await runSession({ config: fixtureConfig(harness, path), provider, outDir, browser: harness.browser, codeSha: "test", condition: CONDITION_D });
+  const result = await runSession({ config: fixtureConfig(harness, path, limits), provider, outDir, browser: harness.browser, codeSha: "test", condition: CONDITION_D });
   const json = async <T>(name: string) => JSON.parse(await readFile(join(outDir, name), "utf8")) as T;
   return { result, outDir, json, cleanup: () => rm(outDir, { recursive: true, force: true }) };
 }
@@ -51,6 +51,15 @@ describe("deterministic scheduler (condition D)", () => {
     try {
       const found = await accepted(run);
       assert.ok(found.some((item) => item.category === "missing_accessible_name" && item.locators.some((locator) => locator.startsWith("/news-service/formular-umzug.html") && locator.includes("plz"))), JSON.stringify(found));
+    } finally { await run.cleanup(); }
+  });
+
+  it("at the benchmark's 12-call cap, a finding captured just before the forced final call is submitted with finish", async () => {
+    const run = await runD("/news-service/index.html", { maxModelCalls: 12, maxSteps: 24 });
+    try {
+      assert.equal(run.result.modelCalls, 12);
+      const found = await accepted(run);
+      assert.ok(found.some((item) => item.category === "missing_accessible_name" && item.locators.some((locator) => locator.includes("plz"))), JSON.stringify(found));
     } finally { await run.cleanup(); }
   });
 
