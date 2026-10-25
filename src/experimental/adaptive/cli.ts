@@ -3,7 +3,7 @@
 // Localhost fixtures only. No model call, no network beyond 127.0.0.1.
 import { mkdir, writeFile } from "node:fs/promises";
 import { resolve, join } from "node:path";
-import { runArmA, runArmB, sealArm } from "./arms.js";
+import { runArmA, runArmB, sealArm, type RunArmBOptions } from "./arms.js";
 import { validateCandidate, type CandidateValidation } from "./candidate-checks.js";
 import { compareFixture, renderMarkdown, type FixtureComparison } from "./compare.js";
 import { observe } from "./observer.js";
@@ -11,7 +11,10 @@ import { FIXTURE_NAMES, loadTruth, type FixtureName } from "../../../test/fixtur
 
 export type TrialResult = { id: string; dir: string; comparisons: FixtureComparison[]; candidate: CandidateValidation | null };
 
-export async function runTrial(options: { outRoot: string; id?: string; fixtures?: FixtureName[]; concurrency?: number }): Promise<TrialResult> {
+// armB lets a caller (live-trial.ts) give arm B a different provider and budgets; without it arm B is the scripted explorer.
+export type ArmBOverrides = Pick<RunArmBOptions, "provider" | "sessionLimits" | "limits">;
+
+export async function runTrial(options: { outRoot: string; id?: string; fixtures?: FixtureName[]; concurrency?: number; armB?: (fixture: FixtureName) => ArmBOverrides; armBLabel?: string; title?: string }): Promise<TrialResult> {
   const id = options.id ?? new Date().toISOString().replace(/[:.]/g, "-");
   const dir = resolve(options.outRoot, id);
   const fixtures = options.fixtures ?? [...FIXTURE_NAMES];
@@ -24,7 +27,7 @@ export async function runTrial(options: { outRoot: string; id?: string; fixtures
     // Independent arms: separate servers, browsers and directories, run side by side, neither given anything from the other.
     await Promise.all([
       runArmA(fixture, truth.startPath, { outDir: join(base, "A") }),
-      runArmB(fixture, truth.startPath, { outDir: join(base, "B") }),
+      runArmB(fixture, truth.startPath, { ...options.armB?.(fixture), outDir: join(base, "B") }),
     ]);
     await Promise.all([sealArm(join(base, "A"), "A"), sealArm(join(base, "B"), "B")]);
     const report = await observe(join(base, "A"), join(base, "B"));
@@ -49,7 +52,7 @@ export async function runTrial(options: { outRoot: string; id?: string; fixtures
   }
   const ordered = fixtures.map((fixture) => comparisons.get(fixture)!);
   await writeFile(join(dir, "comparison.json"), JSON.stringify({ schema: "art/adaptive-trial/v1", id, comparisons: ordered, candidate }, null, 2));
-  await writeFile(join(dir, "comparison.md"), renderMarkdown(id, ordered, { candidate }));
+  await writeFile(join(dir, "comparison.md"), renderMarkdown(id, ordered, { candidate, ...(options.armBLabel ? { armB: options.armBLabel } : {}), ...(options.title ? { title: options.title } : {}) }));
   return { id, dir, comparisons: ordered, candidate };
 }
 

@@ -164,8 +164,10 @@ export async function compareFixture(fixture: FixtureName, dirA: string, dirB: s
 
 const list = (items: string[]) => (items.length ? items.join(", ") : "–");
 
-export function renderMarkdown(trialId: string, comparisons: FixtureComparison[], extras: { candidate?: unknown } = {}): string {
-  const lines = [`# Adaptive fixture trial \`${trialId}\``, "", "Arm A = existing deterministic scanner + safe journeys. Arm B = adaptive harness with the scripted fake provider (no model, no network). Cost: unavailable (no model priced). Fixture truth is the only source of \"verified\".", ""];
+export const SCRIPTED_ARM_B = "adaptive harness with the scripted fake provider (no model, no network). Cost: unavailable (no model priced)";
+
+export function renderMarkdown(trialId: string, comparisons: FixtureComparison[], extras: { candidate?: unknown; armB?: string; title?: string } = {}): string {
+  const lines = [`# ${extras.title ?? "Adaptive fixture trial"} \`${trialId}\``, "", `Arm A = existing deterministic scanner + safe journeys. Arm B = ${extras.armB ?? SCRIPTED_ARM_B}. Fixture truth is the only source of "verified".`, ""];
   lines.push("| fixture | held-out | surfaces A / B / truth | hidden reached A / B | states A / B | verified A / B | missed A / B | false alarms A / B | duplicates A / B | denied A / B | B model calls | B tokens |");
   lines.push("|---|---|---|---|---|---|---|---|---|---|---|---|");
   for (const c of comparisons) {

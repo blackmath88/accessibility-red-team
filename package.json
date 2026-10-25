@@ -27,15 +27,16 @@
     "cohort": "tsx src/cli.ts cohort",
     "learn": "tsx src/cli.ts learn",
     "journey": "tsx src/cli.ts journey",
-    "adaptive:fixture-trial": "tsx src/experimental/adaptive/cli.ts"
+    "adaptive:fixture-trial": "tsx src/experimental/adaptive/cli.ts",
+    "adaptive:mistral-fixture-trial": "tsx src/experimental/adaptive/live-trial.ts"
   },
   "dependencies": {
     "@axe-core/playwright": "4.13.0",
     "axe-core": "4.13.0",
+    "jose": "^6.2.12",
     "playwright": "1.63.0",
     "yaml": "^2.8.1",
-    "zod": "4.6.5",
-    "jose": "^6.2.12"
+    "zod": "4.6.5"
   },
   "devDependencies": {
     "@types/node": "^24.3.0",
