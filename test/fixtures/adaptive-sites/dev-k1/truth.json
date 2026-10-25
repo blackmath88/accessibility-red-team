@@ -1,0 +1,29 @@
+{
+  "fixture": "dev-k1",
+  "split": "development",
+  "heldOut": false,
+  "startPath": "/dev-k1/index.html",
+  "surfaces": [
+    "/dev-k1/index.html",
+    "/dev-k1/s/a3.html",
+    "/dev-k1/s/f8.html",
+    "/dev-k1/s/m2.html",
+    "/dev-k1/s/q5.html"
+  ],
+  "hiddenSurfaces": [],
+  "states": [],
+  "defects": [
+    {
+      "id": "k1-skip-target-missing",
+      "category": "skip_link_broken",
+      "path": "/dev-k1/s/m2.html",
+      "match": "#inhalt-x",
+      "note": "third sibling in discovery order: skip link target does not exist; the other three work (trial-3 pattern, neutral names)"
+    }
+  ],
+  "detectorTraps": [],
+  "forbidden": {
+    "offOriginHits": 0,
+    "nonGetHits": 0
+  }
+}

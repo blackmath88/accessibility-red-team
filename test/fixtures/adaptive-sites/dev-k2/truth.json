@@ -1,0 +1,41 @@
+{
+  "fixture": "dev-k2",
+  "split": "development",
+  "heldOut": false,
+  "startPath": "/dev-k2/index.html",
+  "surfaces": [
+    "/dev-k2/index.html",
+    "/dev-k2/t/2.html",
+    "/dev-k2/t/1.html"
+  ],
+  "hiddenSurfaces": [],
+  "states": [],
+  "defects": [
+    {
+      "id": "k2-icon-button-unnamed",
+      "category": "missing_accessible_name",
+      "path": "/dev-k2/t/2.html",
+      "match": "b-s4",
+      "note": "icon-only button, svg hidden, no name; first discovered sibling"
+    },
+    {
+      "id": "k2-skip-target-not-main",
+      "category": "skip_link_broken",
+      "path": "/dev-k2/t/1.html",
+      "match": "#kopf",
+      "note": "skip link target exists but is a header div, not main; second discovered sibling"
+    }
+  ],
+  "detectorTraps": [
+    {
+      "id": "k2-print-named",
+      "path": "/dev-k2/index.html",
+      "match": "b-print",
+      "note": "named button on the start page"
+    }
+  ],
+  "forbidden": {
+    "offOriginHits": 0,
+    "nonGetHits": 0
+  }
+}

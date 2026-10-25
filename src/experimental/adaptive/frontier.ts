@@ -259,46 +259,9 @@ export class Frontier {
     return { view, log };
   }
 
-  // Controller-side completion (condition flag completionAccounting). The model's finish verdict is only the proposal.
-  // Exhausted covers both budget_exhausted and timeout (the wall-clock budget). An error terminal is never complete.
-  completion(input: { status: TerminalStatus; cancelled: boolean; proposal: Completion["proposal"]; maxPagesPerSource: number }): Completion {
-    // Declared scope: the first N pages per discovery source, in discovery (page id) order.
-    const inScope = new Set<string>();
-    const perSource = new Map<string, number>();
-    for (const page of this.pages.values()) {
-      const source = page.discovery.kind === "start" ? "start" : page.discovery.onPage;
-      const seen = perSource.get(source) ?? 0;
-      perSource.set(source, seen + 1);
-      if (seen < input.maxPagesPerSource) inScope.add(page.id);
-    }
-    const byId = new Map([...this.pages.values()].map((page) => [page.id, page]));
-    const pending: Completion["pending"] = [];
-    const exclusions: Completion["exclusions"] = [];
-    let blocked = 0;
-    for (const item of this.obligations.values()) {
-      const page = byId.get(item.pageId)!;
-      if (item.status === "executed") continue;
-      if (item.status === "blocked") { blocked += 1; exclusions.push({ obligationId: item.id, reason: item.reason ?? "blocked" }); continue; }
-      if (item.status === "deferred") { exclusions.push({ obligationId: item.id, reason: item.reason ?? "deferred" }); continue; }
-      if (!inScope.has(page.id)) { exclusions.push({ obligationId: item.id, reason: `sampled out: beyond the first ${input.maxPagesPerSource} pages from its discovery source` }); continue; }
-      if (!page.visited && !page.modelVisible) { exclusions.push({ obligationId: item.id, reason: "not reachable: never visited and never in legal.navigate" }); continue; }
-      pending.push({ obligationId: item.id, pageId: page.id, url: page.url, probe: item.probe, applicability: item.applicability });
-    }
-    const truncated = this.truncated.pages || this.truncated.states || this.truncated.obligations;
-    let outcome: Completion["outcome"];
-    let reason: string;
-    if (input.cancelled) { outcome = "cancelled"; reason = "cancelled by caller"; }
-    else if (input.status === "budget_exhausted" || input.status === "timeout") { outcome = "exhausted"; reason = `session ended by a budget (${input.status}) with ${pending.length} relevant obligation(s) pending`; }
-    else if (pending.length) { outcome = "partial"; reason = `${pending.length} relevant reachable obligation(s) still pending`; }
-    else if (truncated) { outcome = "partial"; reason = "the ledger hit a bound; dropped work is unaccounted for"; }
-    else if (blocked) { outcome = "blocked"; reason = `every remaining obligation (${blocked}) was blocked by policy`; }
-    else if (input.status === "completed") { outcome = "complete_within_scope"; reason = "no relevant reachable obligation is pending"; }
-    else { outcome = "partial"; reason = `session ended with ${input.status}`; }
-    return {
-      outcome, reason, proposal: input.proposal, scope: { maxPagesPerSource: input.maxPagesPerSource, reachable: "visited or model-visible" },
-      pending: pending.slice(0, MAX_COMPLETION_LIST), pendingTruncated: Math.max(0, pending.length - MAX_COMPLETION_LIST), blocked,
-      exclusions: exclusions.slice(0, MAX_COMPLETION_LIST), exclusionsTruncated: Math.max(0, exclusions.length - MAX_COMPLETION_LIST),
-    };
+  // Controller-side completion (condition flag completionAccounting); see classifyCompletion.
+  completion(input: CompletionInput): Completion {
+    return classifyCompletion(this.snapshot(), input);
   }
 
   setTerminal(status: TerminalStatus, reason: string): void {
@@ -321,4 +284,49 @@ export class Frontier {
       },
     });
   }
+}
+
+export type CompletionInput = { status: TerminalStatus; cancelled: boolean; proposal: Completion["proposal"]; maxPagesPerSource: number };
+
+// Completion from a ledger snapshot: the controller (condition flag completionAccounting) and the evaluator use the same rule.
+// The model's finish verdict is only the proposal.
+// Exhausted covers both budget_exhausted and timeout (the wall-clock budget). An error terminal is never complete.
+export function classifyCompletion(ledger: FrontierLedger, input: CompletionInput): Completion {
+  // Declared scope: the first N pages per discovery source, in discovery (page id) order.
+  const inScope = new Set<string>();
+  const perSource = new Map<string, number>();
+  for (const page of ledger.pages) {
+    const source = page.discovery.kind === "start" ? "start" : page.discovery.onPage;
+    const seen = perSource.get(source) ?? 0;
+    perSource.set(source, seen + 1);
+    if (seen < input.maxPagesPerSource) inScope.add(page.id);
+  }
+  const byId = new Map(ledger.pages.map((page) => [page.id, page]));
+  const pending: Completion["pending"] = [];
+  const exclusions: Completion["exclusions"] = [];
+  let blocked = 0;
+  for (const item of ledger.obligations) {
+    const page = byId.get(item.pageId)!;
+    if (item.status === "executed") continue;
+    if (item.status === "blocked") { blocked += 1; exclusions.push({ obligationId: item.id, reason: item.reason ?? "blocked" }); continue; }
+    if (item.status === "deferred") { exclusions.push({ obligationId: item.id, reason: item.reason ?? "deferred" }); continue; }
+    if (!inScope.has(page.id)) { exclusions.push({ obligationId: item.id, reason: `sampled out: beyond the first ${input.maxPagesPerSource} pages from its discovery source` }); continue; }
+    if (!page.visited && !page.modelVisible) { exclusions.push({ obligationId: item.id, reason: "not reachable: never visited and never in legal.navigate" }); continue; }
+    pending.push({ obligationId: item.id, pageId: page.id, url: page.url, probe: item.probe, applicability: item.applicability });
+  }
+  const truncated = ledger.truncated.pages || ledger.truncated.states || ledger.truncated.obligations;
+  let outcome: Completion["outcome"];
+  let reason: string;
+  if (input.cancelled) { outcome = "cancelled"; reason = "cancelled by caller"; }
+  else if (input.status === "budget_exhausted" || input.status === "timeout") { outcome = "exhausted"; reason = `session ended by a budget (${input.status}) with ${pending.length} relevant obligation(s) pending`; }
+  else if (pending.length) { outcome = "partial"; reason = `${pending.length} relevant reachable obligation(s) still pending`; }
+  else if (truncated) { outcome = "partial"; reason = "the ledger hit a bound; dropped work is unaccounted for"; }
+  else if (blocked) { outcome = "blocked"; reason = `every remaining obligation (${blocked}) was blocked by policy`; }
+  else if (input.status === "completed") { outcome = "complete_within_scope"; reason = "no relevant reachable obligation is pending"; }
+  else { outcome = "partial"; reason = `session ended with ${input.status}`; }
+  return {
+    outcome, reason, proposal: input.proposal, scope: { maxPagesPerSource: input.maxPagesPerSource, reachable: "visited or model-visible" },
+    pending: pending.slice(0, MAX_COMPLETION_LIST), pendingTruncated: Math.max(0, pending.length - MAX_COMPLETION_LIST), blocked,
+    exclusions: exclusions.slice(0, MAX_COMPLETION_LIST), exclusionsTruncated: Math.max(0, exclusions.length - MAX_COMPLETION_LIST),
+  };
 }
