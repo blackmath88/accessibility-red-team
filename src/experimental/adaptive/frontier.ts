@@ -316,7 +316,8 @@ export function classifyCompletion(ledger: FrontierLedger, input: CompletionInpu
     if (item.status === "blocked") { blocked += 1; exclusions.push({ obligationId: item.id, reason: item.reason ?? "blocked" }); continue; }
     if (item.status === "deferred") { exclusions.push({ obligationId: item.id, reason: item.reason ?? "deferred" }); continue; }
     if (!inScope.has(page.id)) { exclusions.push({ obligationId: item.id, reason: `sampled out: beyond the first ${input.maxPagesPerSource} pages from its discovery source` }); continue; }
-    if (!page.visited && !page.modelVisible && capped) { surfaceCapped += 1; exclusions.push({ obligationId: item.id, reason: "surface cap: never offered after the surface cap was reached" }); continue; }
+    // Once no surfaces are left, no unvisited page can be visited any more, whether or not it was offered or attempted.
+    if (!page.visited && capped) { surfaceCapped += 1; exclusions.push({ obligationId: item.id, reason: "surface cap: unvisited when the surface cap was reached" }); continue; }
     if (!page.visited && !page.modelVisible) { exclusions.push({ obligationId: item.id, reason: "not reachable: never visited and never shown to the model" }); continue; }
     pending.push({ obligationId: item.id, pageId: page.id, url: page.url, probe: item.probe, applicability: item.applicability });
   }

@@ -48,7 +48,7 @@ The compact view lists, within its bounds, the current page, discovered pages no
 
 A finish verdict is stored as `completion.proposal`. The controller decides `completion.outcome`:
 - `cancelled`: the caller aborted the run.
-- `exhausted`: `budget_exhausted` or `timeout` ended the session, or the surface cap kept work out of reach (a `surface_limit` refusal, or a page never offered once no surfaces were left, counted as `surfaceCapped`). The surface cap is a budget, so attempting the page and not attempting it get the same label.
+- `exhausted`: `budget_exhausted` or `timeout` ended the session, or the surface cap kept work out of reach (a `surface_limit` refusal, or any page still unvisited once no surfaces were left, counted as `surfaceCapped`). The surface cap is a budget, so attempting the page and not attempting it get the same label.
 - `partial`: relevant reachable obligations are still pending, or the ledger hit a bound, or the session ended with an error.
 - `blocked`: nothing relevant is pending, but at least one obligation was blocked by a policy other than the surface cap.
 - `complete_within_scope`: none of the above, and the session ended normally.

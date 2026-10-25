@@ -416,7 +416,7 @@ export const CompletionSchema = z.strictObject({
   pending: z.array(z.strictObject({ obligationId: z.string(), pageId: z.string(), url: z.string(), probe: FrontierProbeSchema, applicability: z.enum(["known", "unknown"]) })),
   pendingTruncated: z.number().int(),
   blocked: z.number().int(),
-  // Obligations kept out of reach by the surface cap (a surface_limit refusal, or a page never offered once no surfaces were left).
+  // Obligations kept out of reach by the surface cap (a surface_limit refusal, or a page still unvisited once no surfaces were left).
   surfaceCapped: z.number().int(),
   exclusions: z.array(z.strictObject({ obligationId: z.string(), reason: z.string() })),
   exclusionsTruncated: z.number().int(),

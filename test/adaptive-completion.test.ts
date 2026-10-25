@@ -87,6 +87,21 @@ describe("completion accounting: finish is a proposal", () => {
     } finally { await r.cleanup(); }
   });
 
+  it("with a page visible before the cap, attempting it or not gives the same exhausted outcome (review m6)", async () => {
+    const outcomes: string[] = [];
+    for (const attempt of [false, true]) {
+      const steps = [
+        () => ({ type: "inspect_semantics" }),
+        (o: Observation) => ({ type: "navigate", url: linkTo(o, "/valid.html") }),
+        () => ({ type: "inspect_semantics" }),
+        ...(attempt ? [(o: Observation) => ({ type: "navigate", url: o.links.find((link) => link.href.endsWith("/index.html"))!.href.replace("/index.html", "/broken.html") })] : []),
+      ];
+      const r = await run("/skip-links/index.html", ({ call, observation }) => call < steps.length ? { action: steps[call]!(observation!) } : finish(), ACCOUNTING, { limits: { maxSurfaces: 2 } });
+      try { outcomes.push(r.result.completion!.outcome); } finally { await r.cleanup(); }
+    }
+    assert.deepEqual(outcomes, ["exhausted", "exhausted"]);
+  });
+
   it("an obligation refused by a non-budget policy is blocked", () => {
     const frontier = new Frontier("b", ACCOUNTING, (url) => url);
     const base: Observation = {
