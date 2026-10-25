@@ -76,7 +76,7 @@ The scheduler is a `ModelProvider` that makes no model call: usage is 0, the cos
    Ties are broken by obligation id, which follows discovery and element order.
 3. **Caps:** `condition.sampling.maxPagesPerSource`, and the executor's surface, step, call and wall caps, unchanged.
 
-It never reads fixture truth, and never uses file names, URLs or text as signals. Two tests enforce this: a static scan of the source, and a permutation test with the URL names swapped. A finished page is reported `"complete"` only if nothing in its view is outstanding.
+It never reads fixture truth, and never uses file names, URLs or text as signals. Two tests enforce this: a static scan of the source, and a permutation test with the URL names swapped. Its finish proposal is `"complete"` only when nothing in its view is outstanding; otherwise it is `"inconclusive"`.
 
 ## Rule table (`frontier-rules/v1`, frontier-rules.ts)
 

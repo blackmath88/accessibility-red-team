@@ -1,4 +1,4 @@
-# Adaptive track: Mistral adapter (S3, mocked)
+# Adaptive track: Mistral adapter (S3; mocked tests, three fixture-only live trials)
 
 Status: implemented and tested against a fake `fetch`. Three fixture-only live trials have been run with the real model (2026-10-25, trials 1–3 below; loopback fixtures only, under the trial budgets recorded there). No other real call has been made. Any further live call, including the frontier benchmark (docs/experiments/FRONTIER_BENCHMARK.md), needs its own owner approval of credential source, model, spend cap and targets.
 

@@ -85,3 +85,19 @@ describe("development fixture variants", () => {
     assert.throws(() => heldOutVariants({}), /owner-supplied seed/);
   });
 });
+
+describe("arm B configHash carries the condition", () => {
+  it("differs for a non-default condition and keeps the historical formula for condition A", async () => {
+    const { runArmB, DEFAULT_ARM_LIMITS } = await import("../src/experimental/adaptive/arms.js");
+    const { sha256 } = await import("../src/experimental/adaptive/executor.js");
+    const { DEFAULT_FIXTURE_LIMITS } = await import("../src/experimental/adaptive/contracts.js");
+    const roots = [await mkdtemp(join(tmpdir(), "art-arm-")), await mkdtemp(join(tmpdir(), "art-arm-"))];
+    try {
+      const a = await runArmB("skip-links", "/skip-links/index.html", { outDir: roots[0]!, browser: harness.browser, codeSha: "test" });
+      const hidden = await runArmB("skip-links", "/skip-links/index.html", { outDir: roots[1]!, browser: harness.browser, codeSha: "test", condition: CONDITIONS.hidden });
+      assert.notEqual(a.pinned.configHash, hidden.pinned.configHash);
+      const historical = { ...DEFAULT_ARM_LIMITS, sessionLimits: { ...DEFAULT_FIXTURE_LIMITS, maxSurfaces: DEFAULT_ARM_LIMITS.maxSurfaces, maxWallMs: DEFAULT_ARM_LIMITS.maxWallMs } };
+      assert.equal(a.pinned.configHash, sha256(JSON.stringify(historical)));
+    } finally { for (const root of roots) await rm(root, { recursive: true, force: true }); }
+  });
+});
