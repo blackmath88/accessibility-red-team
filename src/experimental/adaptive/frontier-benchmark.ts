@@ -8,7 +8,18 @@ import { costOf } from "./budget.js";
 import { ExplorationConditionSchema, LimitsSchema } from "./contracts.js";
 import { codeSha } from "./executor.js";
 import { confirmHashFor } from "./live-trial.js";
-import { FRONTIER_DEV_FIXTURES } from "../../../test/fixtures/adaptive-sites/variants.js";
+import { FRONTIER_DEV_FIXTURES, LEAKY_FIXTURES } from "../../../test/fixtures/adaptive-sites/variants.js";
+
+// Each condition id is bound to its flags, selector and model slot, so a filled-in config cannot hash a mislabelled plan.
+// "hidden" is the ledger-hidden control: it separates ledger visibility from the shared repairs (skill v4, report_candidate, completion).
+const FLAGS = ["ledgerVisible", "completionAccounting", "incrementalCandidates"] as const;
+export const EXPECTED_CONDITIONS = {
+  A: { flags: [false, false, false], selector: "model", model: "baseline" },
+  hidden: { flags: [false, true, true], selector: "model", model: "baseline" },
+  B: { flags: [true, true, true], selector: "model", model: "baseline" },
+  C: { flags: [true, true, true], selector: "model", model: "stronger" },
+  D: { flags: [true, true, true], selector: "scheduler", model: null },
+} as const;
 
 export const DEFAULT_BENCHMARK_CONFIG = "src/experimental/adaptive/trials/frontier-benchmark.v1.json";
 const PLACEHOLDER = /^OWNER_SUPPLIED/;
@@ -29,17 +40,31 @@ export const BenchmarkConfigSchema = z.strictObject({
   apiKeyEnv: z.string().regex(/^[A-Z][A-Z0-9_]*$/),
   baseUrl: z.string().url().refine((url) => new URL(url).protocol === "https:", "baseUrl must be https"),
   models: z.strictObject({ baseline: ModelSchema, stronger: ModelSchema }),
-  conditions: z.array(z.strictObject({ id: z.enum(["A", "B", "C", "D"]), label: z.string(), model: z.enum(["baseline", "stronger"]).nullable(), condition: ExplorationConditionSchema })).min(1),
+  conditions: z.array(z.strictObject({ id: z.enum(["A", "hidden", "B", "C", "D"]), label: z.string(), model: z.enum(["baseline", "stronger"]).nullable(), condition: ExplorationConditionSchema })).min(1),
   fixtures: z.array(z.enum(FRONTIER_DEV_FIXTURES)).min(1),
   fixtureSplit: z.literal("development"),
+  // Fixtures whose URLs or link text reveal the defect; scored separately from neutral variants.
+  leakyFixtures: z.array(z.string()),
   repeats: z.number().int().min(1).max(20),
   session: LimitsSchema.omit({ maxResponseBytes: true }),
   totalBudget: z.strictObject({ currency: z.string().length(3), maxSpend: z.number().positive() }),
   outRoot: z.string().min(1),
 }).superRefine((config, ctx) => {
+  const fail = (path: (string | number)[], message: string) => ctx.addIssue({ code: "custom", path, message });
   for (const [index, item] of config.conditions.entries()) {
-    if ((item.condition.selector === "scheduler") !== (item.model === null)) ctx.addIssue({ code: "custom", path: ["conditions", index], message: "the scheduler condition has no model; every model condition names one" });
+    if ((item.condition.selector === "scheduler") !== (item.model === null)) fail(["conditions", index], "the scheduler condition has no model; every model condition names one");
+    const expected = EXPECTED_CONDITIONS[item.id];
+    const flags = FLAGS.map((flag) => item.condition[flag]);
+    if (flags.some((value, at) => value !== expected.flags[at]) || item.condition.selector !== expected.selector) {
+      fail(["conditions", index, "condition"], `condition ${item.id} must have ${FLAGS.map((flag, at) => `${flag}=${expected.flags[at]}`).join(", ")}, selector=${expected.selector}`);
+    }
+    if (item.model !== expected.model) fail(["conditions", index, "model"], `condition ${item.id} must use model slot ${expected.model ?? "null (no model)"}`);
   }
+  const ids = config.conditions.map((item) => item.id);
+  if (new Set(ids).size !== ids.length) fail(["conditions"], `condition ids must be unique: ${ids.join(", ")}`);
+  if (config.models.stronger.model === config.models.baseline.model) fail(["models", "stronger", "model"], "the stronger model must differ from the baseline model");
+  for (const fixture of config.fixtures) if (LEAKY_FIXTURES.includes(fixture) && !config.leakyFixtures.includes(fixture)) fail(["leakyFixtures"], `${fixture} reveals its defect in URLs or link text and must be listed as leaky`);
+  for (const fixture of config.leakyFixtures) if (!(config.fixtures as string[]).includes(fixture)) fail(["leakyFixtures"], `${fixture} is not in fixtures`);
 });
 export type BenchmarkConfig = z.infer<typeof BenchmarkConfigSchema>;
 
@@ -64,7 +89,7 @@ export function benchmarkPlan(raw: Raw, sha: string): BenchmarkPlan {
     const known = !model || (typeof pricing?.inputPerMillion === "number" && typeof pricing?.outputPerMillion === "number");
     const worst = !model ? 0 : known ? costOf(pricing, perCondition * s.maxInputTokens, perCondition * s.maxOutputTokens) : null;
     if (worst === null) priced = false; else worstTotal += worst;
-    return `  ${item["id"]}  ${String(item["label"]).padEnd(52)} ${model ? model.model : "no model (scheduler)"}; ${perCondition} sessions, <= ${model ? perCondition * s.maxModelCalls : 0} model calls; worst-case spend ${worst === null ? "UNKNOWN (no price)" : `${worst.toFixed(4)} ${pricing?.currency ?? ""}`}`;
+    return `  ${String(item["id"]).padEnd(7)} ${String(item["label"]).padEnd(66)} ${model ? model.model : "no model (scheduler)"}; ${perCondition} sessions, <= ${model ? perCondition * s.maxModelCalls : 0} model calls; worst-case spend ${worst === null ? "UNKNOWN (no price)" : `${worst.toFixed(4)} ${pricing?.currency ?? ""}`}`;
   });
   const budget = raw["totalBudget"]?.maxSpend;
   if (priced && typeof budget === "number" && worstTotal > budget) problems.push(`totalBudget.maxSpend: worst-case spend ${worstTotal.toFixed(4)} exceeds the budget ${budget}`);
@@ -72,7 +97,8 @@ export function benchmarkPlan(raw: Raw, sha: string): BenchmarkPlan {
   const lines = [
     "Frontier benchmark — DRY RUN PLAN (no network call, no environment read, no live path)",
     `  code                 ${sha}`,
-    `  fixtures             ${fixtures.join(", ")} (${raw["fixtureSplit"] ?? "?"}; none is held out)`,
+    `  fixtures             ${fixtures.map((name) => (raw["leakyFixtures"] ?? []).includes(name) ? `${name} [LEAKY]` : name).join(", ")} (${raw["fixtureSplit"] ?? "?"}; none is held out)`,
+    `  leaky fixtures       ${(raw["leakyFixtures"] ?? []).join(", ") || "none"}: URLs or link text reveal the defect; scored separately from the neutral variants`,
     `  repeats              ${repeats}  ->  ${perCondition} sessions per condition, ${perCondition * conditions.length} in total`,
     `  per session          ${s.maxModelCalls} model calls, ${s.maxSteps} steps, ${s.maxInputTokens} input / ${s.maxOutputTokens} output tokens, ${s.maxWallMs} ms, ${s.maxSurfaces} surfaces (same caps for every condition)`,
     "  conditions",
