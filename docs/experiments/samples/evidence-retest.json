@@ -1,0 +1,6 @@
+{
+  "schema": "art/case-retest/v1",
+  "retestId": "synthetic-skipped-retest",
+  "execution_status": "skipped",
+  "assessment": null
+}

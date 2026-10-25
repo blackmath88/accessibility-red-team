@@ -1,0 +1,16 @@
+{
+  "schema": "art/human-adjudication/v1",
+  "adjudicationId": "synthetic-adjudication",
+  "assessmentId": "synthetic-assisted-assessment",
+  "reviewerId": "synthetic-example-reviewer",
+  "author": {
+    "kind": "human",
+    "id": "synthetic-example-reviewer"
+  },
+  "decidedAt": "2026-10-25T20:00:00.000Z",
+  "decision": "approve_finding",
+  "claimVersion": "69de02b78cc31757ffa43ba7c26fe3db7d710a7ddde3d37032ece6bdec6780f5",
+  "evidenceVersion": "09f8c78065e49158fb257e1fe3b7a30d42cda73fc1a2d23c7ae3c5cd46ee83ec",
+  "synthetic": true,
+  "note": "EXAMPLE ONLY: no real human review; cannot authorize publication"
+}

@@ -1,0 +1,41 @@
+{
+  "schema": "art/assessment-result/v1",
+  "assessmentId": "synthetic-assisted-assessment",
+  "executionId": null,
+  "observationId": "synthetic-observation",
+  "subjectId": "synthetic-site/page-a",
+  "obligationId": "skip-target-exists",
+  "probeId": null,
+  "implementationVersion": null,
+  "entryDigest": null,
+  "implementationDigest": null,
+  "outcome": "violation",
+  "claim": "Synthetic recognized skip link has a missing same-page target",
+  "claimVersion": "69de02b78cc31757ffa43ba7c26fe3db7d710a7ddde3d37032ece6bdec6780f5",
+  "evidenceVersion": "09f8c78065e49158fb257e1fe3b7a30d42cda73fc1a2d23c7ae3c5cd46ee83ec",
+  "evidenceRefs": [
+    {
+      "ref": "synthetic://skip-link/dom",
+      "sha256": "9a0fc80635739f745ec2d7c7ba691695f13317065b628e770cc8c1e7580bb4c0"
+    }
+  ],
+  "environment": {
+    "browserName": "synthetic-chromium",
+    "browserVersion": "example-only",
+    "platform": "synthetic-linux",
+    "probeRuntimeVersion": "journeys/0.1"
+  },
+  "executedAt": "2026-10-25T20:00:00.000Z",
+  "provenance": {
+    "status": "KNOWN",
+    "integrity": "verified",
+    "source": "Synthetic unit fixture; no real artifact verification"
+  },
+  "author": {
+    "kind": "model",
+    "id": "synthetic-proposer"
+  },
+  "assessment_mode": "assisted",
+  "verification": "human_adjudicated",
+  "publication_eligibility": "internal_only"
+}
