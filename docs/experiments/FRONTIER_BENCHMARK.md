@@ -14,7 +14,10 @@ Each run takes an `ExplorationCondition` (`art/adaptive-condition/v1`) on the ru
 | `selector` | `model` | `scheduler` is refused until it exists |
 
 - **Condition A** has all flags off. It loads skill v3 and sends the same prompts as trial 3. Its only artifact differences are `frontier.json` and the `condition` / `completion: null` fields in `result.json`.
-- **Ledger-hidden control:** `completionAccounting` and `incrementalCandidates` on, `ledgerVisible` off. It loads skill v4, but its observations are identical to condition A's apart from the timestamp and the remaining wall-clock budget. A test enforces this. Any difference between B and this control is therefore due to visibility, not to the shared repairs.
+- **Ledger-hidden control:** `completionAccounting` and `incrementalCandidates` on, `ledgerVisible` off. It loads skill v4.
+  - With `ledgerVisible` off, nothing is added to the observation. For the same well-formed actions, its observations equal condition A's apart from the timestamp and the remaining wall-clock budget, and a test enforces this.
+  - `incrementalCandidates` changes two things the model can see: the allowed-types list in a refusal hint (shown through `recentDenials` after a malformed action), and the history entry of a `report_candidate`, which is accepted here but refused under A.
+  - B and the control share both, so a difference between B and the control is due to visibility. A difference between A and the control is due to the shared repairs.
 - **B:** all three flags on, same model as A.
 - **C:** the same as B, with a stronger pinned model.
 - **D:** the deterministic scheduler. Not built yet.

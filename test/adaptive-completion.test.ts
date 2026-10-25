@@ -75,6 +75,35 @@ describe("completion accounting: finish is a proposal", () => {
     } finally { await r.cleanup(); }
   });
 
+  it("with every remaining obligation refused by policy the outcome is blocked, and unreachable pages are excluded", async () => {
+    const steps = [() => ({ type: "inspect_semantics" }), (o: Observation) => ({ type: "navigate", url: linkTo(o, "/valid.html") })];
+    const r = await run("/skip-links/index.html", ({ call, observation }) => call < steps.length ? { action: steps[call]!(observation!) } : finish(), ACCOUNTING, { limits: { maxSurfaces: 1 } });
+    try {
+      const completion = r.result.completion!;
+      assert.equal(completion.outcome, "blocked", JSON.stringify(completion));
+      assert.equal(completion.blocked, 2);
+      assert.ok(completion.exclusions.some((item) => /surface_limit/.test(item.reason)));
+      assert.ok(completion.exclusions.some((item) => /^not reachable/.test(item.reason)), "broken.html was never offered or visited");
+    } finally { await r.cleanup(); }
+  });
+
+  it("the sampling rule keeps the first N pages per discovery source in discovery order and excludes the rest", () => {
+    const links = ["/a", "/b", "/c", "/d"];
+    const observation: Observation = {
+      step: 0, url: "/", title: "", lang: null, timestamp: "", headings: [], landmarks: [], controls: [], skipLinks: [], dialogs: [], focus: null, lastActivated: null,
+      links: links.map((href, index) => ({ ref: `e${index}`, name: "", hasAccessibleName: false, href, visible: true, sameOrigin: true, navigable: true, denyReason: null, selectorHint: "a" })),
+      pageTextExcerpt: "", evidence: [], recentActions: [], finalCall: false, recentDenials: [], budget: { stepsLeft: 1, modelCallsLeft: 1, wallMsLeft: 1, surfacesLeft: 1 },
+      legal: { navigate: links, activate: [], simple: [] },
+    };
+    const frontier = new Frontier("s", ACCOUNTING, (url) => url);
+    frontier.observe({ step: 0, observation, discoveredNow: links, previous: null });
+    const completion = frontier.completion({ status: "completed", cancelled: false, proposal: "complete", maxPagesPerSource: 2 });
+    assert.equal(completion.outcome, "partial");
+    assert.deepEqual([...new Set(completion.pending.map((item) => item.pageId))], ["p1", "p2", "p3"]);
+    const sampled = completion.exclusions.filter((item) => /^sampled out/.test(item.reason)).length;
+    assert.equal(sampled, 4, "two obligations each on p4 and p5");
+  });
+
   it("cancellation yields completion cancelled", async () => {
     const controller = new AbortController();
     const r = await run("/skip-links/index.html", ({ call }) => {
