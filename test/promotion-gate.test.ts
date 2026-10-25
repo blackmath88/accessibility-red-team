@@ -15,6 +15,10 @@ function record(): ValidationRecord {
     cases: challengeCases.map((item) => ({ caseId: item.file, category: item.category, expected: item.expected, actual: item.expected, supported: true, freshContext: true, independent: item.category === "independent_structure" })),
   };
 }
+function eligibleGate() {
+  const validationRecord = record();
+  return { validationRecord, result: evaluateGate(skipLinkEntry, validationRecord, skipLinkDigests()) };
+}
 function review(digests: ProbeDigests, synthetic = true): ReviewerDecision {
   return { reviewerId: "unit-test-reviewer", decidedAt: "2026-10-25T19:00:00.000Z", decision: "approve_trusted", ...digests, synthetic, note: "Unit input only: never a real review of this probe." };
 }
@@ -103,7 +107,7 @@ test("non-synthetic approval branch returns a new trusted entry bound to exact d
   // synthetic=false exercises the human-record branch, not evidence of a real sign-off.
   const digests = skipLinkDigests();
   const decision = review(digests, false);
-  const result = applyReviewerDecision(skipLinkEntry, decision, digests);
+  const result = applyReviewerDecision(skipLinkEntry, decision, digests, eligibleGate());
   assert.equal(result.applied, true);
   assert.notEqual(result.entry, skipLinkEntry);
   assert.equal(result.entry.maturity, "trusted");
@@ -115,7 +119,7 @@ test("non-synthetic approval branch returns a new trusted entry bound to exact d
 test("claim or implementation changes invalidate previous approvals and block stale application", () => {
   const digests = skipLinkDigests();
   const decision = review(digests, false);
-  const trusted = applyReviewerDecision(skipLinkEntry, decision, digests).entry;
+  const trusted = applyReviewerDecision(skipLinkEntry, decision, digests, eligibleGate()).entry;
   const changedClaim = { ...trusted, claimTemplate: "Changed claim" };
   assert.equal(isTrustedEligible(changedClaim, digests), false);
   const claimDigests = { ...digests, entryDigest: entryDigest(changedClaim) };
@@ -128,13 +132,38 @@ test("claim or implementation changes invalidate previous approvals and block st
 
 test("non-approvals and synthetic review flags cannot establish trusted eligibility", () => {
   const digests = skipLinkDigests();
-  const trusted = applyReviewerDecision(skipLinkEntry, review(digests, false), digests).entry;
+  const trusted = applyReviewerDecision(skipLinkEntry, review(digests, false), digests, eligibleGate()).entry;
   for (const decision of ["reject", "needs_changes"] as const) {
     const result = applyReviewerDecision(trusted, { ...review(digests, false), decision }, digests);
-    assert.equal(result.entry.maturity, "candidate");
+    assert.equal(result.entry.maturity, decision === "reject" ? "retired" : "candidate");
     assert.equal(isTrustedEligible(result.entry, digests), false);
   }
   assert.equal(isTrustedEligible({ ...trusted, review: { ...trusted.review!, synthetic: true } }, digests), false);
   assert.equal(isTrustedEligible({ ...trusted, review: null }, digests), false);
   for (const maturity of ["experimental", "candidate", "retired"] as const) assert.equal(isTrustedEligible({ ...trusted, maturity }, digests), false);
+});
+
+test("trusted approval requires an eligible gate bound to the same validation record and digests", () => {
+  const digests = skipLinkDigests();
+  const decision = review(digests, false);
+  const denied = (gate?: ReturnType<typeof eligibleGate>) => {
+    const result = applyReviewerDecision(skipLinkEntry, decision, digests, gate);
+    assert.equal(result.applied, false);
+    assert.equal(result.reason, "not applied: validation gate not eligible_for_review");
+    assert.equal(result.entry.maturity, "candidate");
+  };
+  denied();
+  const incomplete = record();
+  incomplete.cases = [];
+  denied({ validationRecord: incomplete, result: evaluateGate(skipLinkEntry, incomplete, digests) });
+  const changed = eligibleGate();
+  changed.validationRecord.cases[0]!.freshContext = false;
+  denied(changed);
+  const fabricated = eligibleGate();
+  fabricated.validationRecord.cases = [];
+  fabricated.result = { ...evaluateGate(skipLinkEntry, fabricated.validationRecord, digests), verdict: "eligible_for_review" };
+  denied(fabricated);
+  const stale = eligibleGate();
+  stale.result.binding.implementationDigest = implementationDigest("other implementation");
+  denied(stale);
 });

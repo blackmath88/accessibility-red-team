@@ -1,0 +1,14 @@
+{
+  "schema": "art/hypothesis/v1",
+  "hypothesisId": "synthetic-hypothesis",
+  "source": "journey_gap",
+  "subjectId": "synthetic-site/page-a",
+  "obligationId": "skip-target-exists",
+  "suspectedBarrier": "A recognized skip link may have no target",
+  "falsifyingTest": "Inspect its decoded fragment in a fresh document context",
+  "createdAt": "2026-10-25T20:00:00.000Z",
+  "author": {
+    "kind": "model",
+    "id": "synthetic-proposer"
+  }
+}

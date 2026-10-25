@@ -1,0 +1,14 @@
+{
+  "schema": "art/finding-case/v1",
+  "caseId": "synthetic-case",
+  "subjectId": "synthetic-site/page-a",
+  "obligationId": "skip-target-exists",
+  "probeId": "skip-link.same-page",
+  "implementationVersion": "journeys/0.1+malformed-fragment.1",
+  "assessmentIds": [
+    "synthetic-assessment"
+  ],
+  "adjudicationIds": [],
+  "retestIds": [],
+  "disposition": "open"
+}
