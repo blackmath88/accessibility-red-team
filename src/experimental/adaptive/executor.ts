@@ -8,8 +8,8 @@ import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import type { Browser, BrowserContext, Page } from "playwright";
 import {
-  ActionSchema, ACTION_TYPES, CandidateFindingSchema, ModelDecisionSchema, SessionConfigSchema, SessionResultSchema,
-  type Action, type DenialReason, type ElementFacts, type EvidenceRecord, type Observation, type PinnedVersions,
+  ActionSchema, ACTION_TYPES, CandidateFindingSchema, DEFAULT_CONDITION, ExplorationConditionSchema, ModelDecisionSchema, SessionConfigSchema, SessionResultSchema,
+  type Action, type ExplorationCondition, type DenialReason, type ElementFacts, type EvidenceRecord, type Observation, type PinnedVersions,
   type PolicyDenial, type SessionConfig, type SessionConfigInput, type SessionResult, type StoredCandidate, type TerminalStatus, type TraceStep,
 } from "./contracts.js";
 import { ELEMENT_SELECTOR, observePage, type LastActivated } from "./observe.js";
@@ -17,6 +17,7 @@ import { BrowserGuard, CONTEXT_OPTIONS, SessionPolicy, classifyActivation, type 
 import { isContainedBrowser, launchContainedBrowser, type ContainedBrowser } from "./containment.js";
 import { ProviderError, type ModelProvider } from "./provider.js";
 import { OBSERVATION_MARKER } from "./providers/fake.js";
+import { Frontier } from "./frontier.js";
 
 const HERE = dirname(fileURLToPath(import.meta.url));
 export const SKILL_PATH = join(HERE, "skill", "adaptive-a11y-skill.v3.md");
@@ -60,7 +61,19 @@ export type RunSessionOptions = {
   browser?: Browser;
   resolver?: Resolver;
   codeSha?: string;
+  // Comparison condition; omitted means condition A (DEFAULT_CONDITION), the pinned historical executor.
+  condition?: ExplorationCondition;
 };
+
+// Packet 1 records the condition and the ledger but implements none of the flags yet. A run labelled with a non-default condition
+// that silently behaved like condition A would contaminate later comparisons, so it is refused.
+export function resolveCondition(input: ExplorationCondition | undefined): ExplorationCondition {
+  const condition = ExplorationConditionSchema.parse(input ?? DEFAULT_CONDITION);
+  const pending: string[] = (["ledgerVisible", "completionAccounting", "incrementalCandidates"] as const).filter((flag) => condition[flag]);
+  if (condition.selector !== "model") pending.push(`selector=${condition.selector}`);
+  if (pending.length) throw new Error(`exploration condition not implemented yet: ${pending.join(", ")}`);
+  return condition;
+}
 
 type Cause = "cancelled" | "timeout";
 type Checked = { ok: true; action: Action } | { ok: false; reason: DenialReason; detail: string; url?: string };
@@ -129,6 +142,8 @@ class Session {
   readonly states = new Set<string>();
   readonly discovered = new Set<string>();
   readonly usage = { inputTokens: 0, outputTokens: 0, estimated: false };
+  // Written to frontier.json every turn whatever the condition; never part of the observation in condition A.
+  readonly frontier: Frontier;
   modelCalls = 0;
   status: TerminalStatus = "completed";
   reason = "";
@@ -146,8 +161,9 @@ class Session {
   private readonly history: HistoryEntry[] = [];
   private readonly startedAtMs = Date.now();
 
-  constructor(readonly config: SessionConfig, private readonly options: RunSessionOptions, private readonly skillText: string) {
+  constructor(readonly config: SessionConfig, private readonly options: RunSessionOptions, private readonly skillText: string, condition: ExplorationCondition) {
     this.policy = new SessionPolicy(config, options.resolver);
+    this.frontier = new Frontier(config.sessionId, condition, (url) => this.policy.normalize(url));
   }
 
   private get limits() { return this.config.limits; }
@@ -175,6 +191,7 @@ class Session {
     await writeFile(join(this.outDir, "evidence.json"), JSON.stringify(this.evidence, null, 2));
     await writeFile(join(this.outDir, "denials.json"), JSON.stringify(this.denials, null, 2));
     await writeFile(join(this.outDir, "candidates.json"), JSON.stringify(this.candidates, null, 2));
+    await writeFile(join(this.outDir, "frontier.json"), JSON.stringify(this.frontier.snapshot(), null, 2));
   }
 
   async run(browser: Browser): Promise<void> {
@@ -239,6 +256,8 @@ class Session {
     if (previous && previous.changed === null) previous.changed = previous.changeKeyBefore !== changeKey;
     this.observation.recentActions = this.history.slice(-HISTORY_LENGTH).map(({ changeKeyBefore: _key, changed, ...entry }) => ({ ...entry, stateChanged: changed ?? false }));
     for (const url of observed.discoveredNow) this.discovered.add(url);
+    const executedBefore = previous && previous.outcome === "executed" ? { type: previous.type, targetRef: previous.targetRef, step: previous.step } : null;
+    this.frontier.observe({ step: this.step, observation: this.observation, discoveredNow: observed.discoveredNow, previous: executedBefore });
     this.states.add(stateKey(this.observation, (url) => this.policy.normalize(url)));
     const observationJson = JSON.stringify(this.observation);
     await appendFile(join(this.outDir, "observations.jsonl"), observationJson + "\n");
@@ -318,6 +337,8 @@ class Session {
     }
     record.evidenceIds = this.evidence.slice(evidenceBefore).map((item) => item.id);
     record.denialIds = this.denials.slice(denialsBefore).map((item) => item.id);
+    this.frontier.recordEvidence(this.evidence.slice(evidenceBefore));
+    this.frontier.recordDenials(this.denials.slice(denialsBefore));
     await this.log(record);
     await this.flush();
     if (keepGoing && finalCall) {
@@ -496,6 +517,7 @@ export async function runSession(options: RunSessionOptions): Promise<SessionRes
   // Checked before anything is written: a caller-supplied browser must sit behind the containment proxy.
   if (options.browser && !isContainedBrowser(options.browser)) throw new Error("runSession refuses a browser that was not launched with launchContainedBrowser");
   const config = SessionConfigSchema.parse(options.config);
+  const condition = resolveCondition(options.condition);
   // The public-mode decision functions stay (and stay unit-tested) but nothing may start a public session: DNS is resolved by this process
   // and not pinned for the browser, the resolution cache never expires, no host mappings are supplied and site isolation is disabled.
   if (config.mode === "public") throw new Error(PUBLIC_MODE_DISABLED);
@@ -507,7 +529,7 @@ export async function runSession(options: RunSessionOptions): Promise<SessionRes
   await mkdir(join(options.outDir, "evidence"), { recursive: true });
   const startedAtMs = Date.now();
   const startedAt = new Date(startedAtMs).toISOString();
-  const session = new Session(config, options, skillText);
+  const session = new Session(config, options, skillText, condition);
 
   const onOuterAbort = () => session.abort("cancelled");
   if (options.signal?.aborted) onOuterAbort(); else options.signal?.addEventListener("abort", onOuterAbort, { once: true });
@@ -531,6 +553,7 @@ export async function runSession(options: RunSessionOptions): Promise<SessionRes
     await session.closeContext();
     await owned?.close();
   }
+  session.frontier.setTerminal(session.status, session.reason);
 
   const result = SessionResultSchema.parse({
     schema: "art/adaptive-result/v1", sessionId: config.sessionId, status: session.status, reason: session.reason, startedAt,
@@ -539,7 +562,7 @@ export async function runSession(options: RunSessionOptions): Promise<SessionRes
     evidenceCount: session.evidence.length, candidateCount: session.candidates.filter((item) => item.status === "candidate").length,
     rejectedCandidateCount: session.candidates.filter((item) => item.status === "rejected").length, denialCount: session.denials.length + session.droppedBrowserDenials,
     pinned, finishSummary: session.finishSummary,
-    artifacts: ["result.json", "trace.jsonl", "observations.jsonl", "evidence.json", "denials.json", "candidates.json"],
+    artifacts: ["result.json", "trace.jsonl", "observations.jsonl", "evidence.json", "denials.json", "candidates.json", "frontier.json"],
   });
   await session.flush();
   await appendFile(join(options.outDir, "trace.jsonl"), "");

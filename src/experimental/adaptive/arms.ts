@@ -15,7 +15,7 @@ import { selectRepresentativeSurfaces } from "../../scout/sample.js";
 import type { DiscoveredPage } from "../../scout/contracts.js";
 import { scanUrl } from "../../scan.js";
 import { portOf, startFixtureProxy, startFixtures, type FixtureName } from "../../../test/fixtures/adaptive-sites/server.js";
-import { DEFAULT_FIXTURE_LIMITS, type EvidenceRecord, type Limits, type PolicyDenial, type SessionResult, type StoredCandidate } from "./contracts.js";
+import { DEFAULT_FIXTURE_LIMITS, type EvidenceRecord, type ExplorationCondition, type Limits, type PolicyDenial, type SessionResult, type StoredCandidate } from "./contracts.js";
 import { codeSha, runSession, sha256 } from "./executor.js";
 import { isContainedBrowser, launchContainedBrowser, type ContainedBrowser } from "./containment.js";
 import type { ModelProvider } from "./provider.js";
@@ -287,7 +287,7 @@ export async function runArmA(fixture: FixtureName, truthStartPath: string, opti
 // ---------------------------------------------------------------- Arm B: adaptive harness with the scripted fake provider
 
 // sessionLimits overrides the executor budgets (model calls, tokens, steps) for arm B's session; maxSurfaces and maxWallMs come from limits.
-export type RunArmBOptions = RunArmOptions & { provider?: ModelProvider; browser?: Browser; sessionLimits?: Partial<Omit<Limits, "maxSurfaces" | "maxWallMs">> };
+export type RunArmBOptions = RunArmOptions & { provider?: ModelProvider; browser?: Browser; sessionLimits?: Partial<Omit<Limits, "maxSurfaces" | "maxWallMs">>; condition?: ExplorationCondition };
 
 export async function runArmB(fixture: FixtureName, truthStartPath: string, options: RunArmBOptions): Promise<ArmSummary> {
   const limits = { ...DEFAULT_ARM_LIMITS, ...options.limits };
@@ -309,7 +309,7 @@ export async function runArmB(fixture: FixtureName, truthStartPath: string, opti
         schema: "art/adaptive-session/v1", sessionId: `${fixture}-B`, startUrl: `${fixtures.origin}${truthStartPath}`, allowedOrigins: [fixtures.origin], mode: "fixture", publicTargets: [],
         limits: sessionLimits,
       },
-      provider, outDir: sessionDir, browser, codeSha: options.codeSha,
+      provider, outDir: sessionDir, browser, codeSha: options.codeSha, condition: options.condition,
     });
   } finally {
     await contained?.close();
