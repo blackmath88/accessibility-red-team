@@ -9,6 +9,9 @@ export const DEV_VARIANTS = ["dev-k1", "dev-k2", "dev-k3"] as const;
 // Existing fixtures reused as development cases for the frontier comparison (malicious stays out: it is not comparable).
 export const FRONTIER_DEV_FIXTURES = ["skip-links", "news-service", "menu-dialog", ...DEV_VARIANTS] as const;
 export type FrontierDevFixture = typeof FRONTIER_DEV_FIXTURES[number];
+// The three legacy fixtures leak the answer through URLs and link text (e.g. a link named after the defect). Models read that text;
+// the scheduler does not. They are scored separately from the neutral variants.
+export const LEAKY_FIXTURES: readonly string[] = ["skip-links", "news-service", "menu-dialog"];
 
 export async function loadDevTruth(name: FrontierDevFixture): Promise<Truth & { split?: string }> {
   return JSON.parse(await readFile(join(FIXTURE_DIR, name, "truth.json"), "utf8")) as Truth & { split?: string };

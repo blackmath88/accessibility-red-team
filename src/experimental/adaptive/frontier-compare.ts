@@ -57,7 +57,7 @@ export async function runLocalComparison(options: { outRoot?: string; id?: strin
           config: { schema: "art/adaptive-session/v1", sessionId: `${fixture}-${item.label}`, startUrl: `${server.origin}${truth.startPath}`, allowedOrigins: [server.origin], mode: "fixture", publicTargets: [], limits },
           provider: item.provider(), outDir: sessionDir, browser: contained.browser, codeSha: sha, condition: item.condition,
         });
-        rows.push(await scoreSession(sessionDir, truth, item.label, item.condition.sampling.maxPagesPerSource));
+        rows.push(await scoreSession(sessionDir, truth, item.label, item.condition));
       }
     }
   } finally {
@@ -71,8 +71,11 @@ export async function runLocalComparison(options: { outRoot?: string; id?: strin
 }
 
 export function renderComparison(id: string, sha: string, rows: SessionFunnel[]): string {
-  const credited = (label: string) => rows.filter((row) => row.condition === label).flatMap((row) => row.defects).filter((defect) => defect.credited).length;
-  const total = (label: string) => rows.filter((row) => row.condition === label).flatMap((row) => row.defects).length;
+  const tally = (label: string, leaky?: boolean) => {
+    const defects = rows.filter((row) => row.condition === label && (leaky === undefined || row.leaky === leaky)).flatMap((row) => row.defects);
+    return `${defects.filter((defect) => defect.credited).length} / ${defects.length}`;
+  };
+  const notComparable = (label: string) => { const own = rows.filter((row) => row.condition === label); return `${own.filter((row) => !row.comparable).length} of ${own.length} sessions`; };
   const labels = [...new Set(rows.map((row) => row.condition))];
   return [
     `# Frontier comparison \`${id}\` (local, no model)`, "",
@@ -82,7 +85,8 @@ export function renderComparison(id: string, sha: string, rows: SessionFunnel[])
     "- **This run: new local scripted and scheduler sessions.** A-standin, hidden-standin and B-standin are driven by the scripted explorer (scripted-policy.ts), a stand-in for a model. It does not read the frontier and picks some links by text, so differences between these three come from harness accounting, not from model behaviour. D is the deterministic scheduler: no model calls, cost 0, interpretation by the rule table (a separate mechanism, an open design decision).",
     "- **Pending API comparisons** (A, B and C with real models): not run. They need owner approval of the dry-run plan in trials/frontier-benchmark.v1.json.", "",
     "## Credited defects (probe ran and evidence-backed report matched)", "",
-    ...labels.map((label) => `- ${label}: ${credited(label)} / ${total(label)}`), "",
+    "Neutral = development variants with neutral names; leaky = legacy fixtures whose URLs or link text reveal the defect (models can read it, the scheduler does not). Not comparable = sessions that ended in an error, invalid output, denial limit or cancellation (timeouts and other budget ends are comparable).", "",
+    ...labels.map((label) => `- ${label}: ${tally(label)} (neutral ${tally(label, false)}, leaky ${tally(label, true)}; not comparable ${notComparable(label)})`), "",
     "## Funnel per seeded defect", "",
     "Exploration columns: discovered, visible, selected, visited, probe ran. Interpretation columns: interpreted, reported. Unadjudicated findings are neither verified nor false positives.", "",
     ...renderFunnelTable(rows), "",

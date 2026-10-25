@@ -6,9 +6,17 @@
 import { readFile } from "node:fs/promises";
 import { join } from "node:path";
 import { matches } from "./compare.js";
-import { FrontierLedgerSchema, type EvidenceRecord, type FrontierProbe, type SessionResult, type StoredCandidate } from "./contracts.js";
+import { ExplorationConditionSchema, FrontierLedgerSchema, type EvidenceRecord, type ExplorationCondition, type FrontierProbe, type SessionResult, type StoredCandidate } from "./contracts.js";
 import { classifyCompletion } from "./frontier.js";
 import type { Truth } from "../../../test/fixtures/adaptive-sites/server.js";
+import { LEAKY_FIXTURES } from "../../../test/fixtures/adaptive-sites/variants.js";
+
+// Comparable sessions ended normally or by a budget (steps, calls, tokens, surfaces, wall clock). Errors, provider failures, invalid
+// output, denial limits and cancellations are not comparable; their count is reported per condition next to recall, never dropped.
+export const COMPARABLE_STATUSES = new Set(["completed", "budget_exhausted", "timeout"]);
+
+// Dialog obligations are keyed by control subject ("#id"); a defect's match names the same control, with or without "#". Exact match only.
+export const subjectMatches = (subject: string | null, match: string) => subject === `#${match.replace(/^#/, "")}`;
 
 export const FUNNEL_VERSION = "frontier-funnel/v1";
 
@@ -25,7 +33,9 @@ export type DefectFunnel = {
 
 export type SessionFunnel = {
   schema: typeof FUNNEL_VERSION;
-  fixture: string; condition: string; terminal: string; comparable: boolean;
+  fixture: string; condition: string; recordedCondition: ExplorationCondition; terminal: string; comparable: boolean;
+  // Legacy fixture whose URLs or link text reveal the defect; scored separately.
+  leaky: boolean;
   defects: DefectFunnel[];
   prematureCompletion: boolean; proposal: "complete" | "inconclusive" | null; completionOutcome: string;
   coverage: { pagesVisited: number; pagesDiscovered: number; statesSeen: number; probesExecuted: number; probesTotal: number };
@@ -34,16 +44,32 @@ export type SessionFunnel = {
   modelCalls: number; inputTokens: number; outputTokens: number;
 };
 
+// When cited evidence targets a skip link, its href (recorded in the evidence's own skip-link facts) joins the locator, so credit
+// depends on what was probed and cited, not on whether a note happens to repeat the href.
+function skipHref(record: EvidenceRecord): string {
+  const skipLinks = record.domFacts["skipLinks"];
+  if (!record.target || !Array.isArray(skipLinks)) return "";
+  const hit = skipLinks.find((entry) => entry && typeof entry === "object" && (entry as { ref?: unknown }).ref === record.target!.ref) as { href?: unknown } | undefined;
+  return typeof hit?.href === "string" ? hit.href : "";
+}
+
 const pathOf = (url: string) => { try { return new URL(url).pathname; } catch { return url.split("#")[0]!; } };
 
-export async function scoreSession(dir: string, truth: Truth, condition: string, maxPagesPerSource: number): Promise<SessionFunnel> {
+// The condition and sampling come from the run's own result.json; a caller's expected condition that disagrees is refused.
+export async function scoreSession(dir: string, truth: Truth, label: string, expected?: ExplorationCondition): Promise<SessionFunnel> {
   const json = async <T>(name: string) => JSON.parse(await readFile(join(dir, name), "utf8")) as T;
   const result = await json<SessionResult>("result.json");
+  const recorded = ExplorationConditionSchema.parse(result.condition);
+  if (expected && JSON.stringify(ExplorationConditionSchema.parse(expected)) !== JSON.stringify(recorded)) {
+    throw new Error(`funnel: label ${label} expects ${JSON.stringify(expected)} but the run recorded ${JSON.stringify(recorded)}`);
+  }
+  const maxPagesPerSource = recorded.sampling.maxPagesPerSource;
   const ledger = FrontierLedgerSchema.parse(await json("frontier.json"));
   const evidence = await json<EvidenceRecord[]>("evidence.json");
   const candidates = await json<StoredCandidate[]>("candidates.json");
-  const trace = (await readFile(join(dir, "trace.jsonl"), "utf8")).split("\n").filter(Boolean).map((line) => JSON.parse(line) as { action: Record<string, unknown> | null });
-  const navigated = new Set(trace.filter((step) => step.action?.["type"] === "navigate" && typeof step.action["url"] === "string").map((step) => pathOf(step.action!["url"] as string)));
+  const trace = (await readFile(join(dir, "trace.jsonl"), "utf8")).split("\n").filter(Boolean).map((line) => JSON.parse(line) as { action: Record<string, unknown> | null; outcome: string });
+  // Selected = a navigation to the page that the executor carried out (refused attempts do not count).
+  const navigated = new Set(trace.filter((step) => step.outcome === "executed" && step.action?.["type"] === "navigate" && typeof step.action["url"] === "string").map((step) => pathOf(step.action!["url"] as string)));
   const finish = [...trace].reverse().find((step) => step.action?.["type"] === "finish");
   const proposal = (finish?.action?.["verdict"] as "complete" | "inconclusive" | undefined) ?? null;
 
@@ -53,7 +79,7 @@ export async function scoreSession(dir: string, truth: Truth, condition: string,
     const records = (finding?.observationRefs ?? []).map((ref) => evidence.find((item) => item.id === ref)).filter((item): item is EvidenceRecord => Boolean(item));
     return {
       candidate, category: finding?.category ?? "",
-      occurrences: records.map((item) => ({ path: pathOf(item.url), locator: `${item.target?.selectorHint ?? ""} ${item.note ?? ""}`.trim(), kind: item.kind })),
+      occurrences: records.map((item) => ({ path: pathOf(item.url), locator: `${item.target?.selectorHint ?? ""} ${skipHref(item)} ${item.note ?? ""}`.trim(), kind: item.kind })),
     };
   });
 
@@ -61,9 +87,8 @@ export async function scoreSession(dir: string, truth: Truth, condition: string,
     const page = ledger.pages.find((item) => pathOf(item.url) === defect.path);
     const isStart = defect.path === truth.startPath;
     const probe = PROBE_FOR[defect.category];
-    const subject = defect.match.replace(/^#/, "");
     const probeExecuted = Boolean(page && probe && ledger.obligations.some((item) => item.pageId === page.id && item.probe === probe && item.status === "executed"
-      && (probe !== "dialog_focus_return" || (item.subject ?? "").includes(subject))));
+      && (probe !== "dialog_focus_return" || subjectMatches(item.subject, defect.match))));
     const onPage = findings.filter((finding) => finding.category === defect.category && finding.occurrences.some((occurrence) => occurrence.path === defect.path));
     const reported = findings.some((finding) => finding.candidate.status === "candidate" && matches(finding, defect) && finding.occurrences.some((occurrence) => occurrence.kind !== "navigate"));
     const exploration = { discovered: Boolean(page), modelVisible: isStart || Boolean(page?.modelVisible), selected: isStart || navigated.has(defect.path), visited: Boolean(page?.visited), probeExecuted };
@@ -74,9 +99,9 @@ export async function scoreSession(dir: string, truth: Truth, condition: string,
   const denied: Record<string, number> = {};
   for (const denial of await json<Array<{ reason: string }>>("denials.json")) denied[denial.reason] = (denied[denial.reason] ?? 0) + 1;
   return {
-    schema: FUNNEL_VERSION, fixture: truth.fixture, condition, terminal: result.status,
+    schema: FUNNEL_VERSION, fixture: truth.fixture, condition: label, recordedCondition: recorded, terminal: result.status,
     // Malicious fixtures and errored sessions are not comparable across conditions.
-    comparable: truth.fixture !== "malicious" && (result.status === "completed" || result.status === "budget_exhausted"),
+    comparable: truth.fixture !== "malicious" && COMPARABLE_STATUSES.has(result.status), leaky: LEAKY_FIXTURES.includes(truth.fixture),
     defects, prematureCompletion: proposal === "complete" && completion.outcome !== "complete_within_scope", proposal, completionOutcome: completion.outcome,
     coverage: {
       pagesVisited: ledger.pages.filter((page) => page.visited).length, pagesDiscovered: ledger.pages.length, statesSeen: ledger.states.length,

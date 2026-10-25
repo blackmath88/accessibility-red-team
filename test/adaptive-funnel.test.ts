@@ -6,7 +6,7 @@ import { after, before, describe, it } from "node:test";
 import { DEFAULT_CONDITION } from "../src/experimental/adaptive/contracts.js";
 import { runSession } from "../src/experimental/adaptive/executor.js";
 import { CONDITIONS, runLocalComparison } from "../src/experimental/adaptive/frontier-compare.js";
-import { scoreSession } from "../src/experimental/adaptive/funnel.js";
+import { COMPARABLE_STATUSES, scoreSession, subjectMatches } from "../src/experimental/adaptive/funnel.js";
 import { FakeProvider, type FakeScript } from "../src/experimental/adaptive/providers/fake.js";
 import { FIXTURE_DIR, loadTruth } from "./fixtures/adaptive-sites/server.js";
 import { DEV_VARIANTS, FRONTIER_DEV_FIXTURES, heldOutVariants, loadDevTruth } from "./fixtures/adaptive-sites/variants.js";
@@ -24,7 +24,7 @@ describe("funnel scoring", () => {
       : { action: { type: "finish", verdict: "complete", summary: "everything tested", candidates: [] } };
     try {
       await runSession({ config: fixtureConfig(harness, "/skip-links/index.html"), provider: new FakeProvider(script), outDir, browser: harness.browser, codeSha: "test" });
-      const row = await scoreSession(outDir, await loadTruth("skip-links"), "A", DEFAULT_CONDITION.sampling.maxPagesPerSource);
+      const row = await scoreSession(outDir, await loadTruth("skip-links"), "A", DEFAULT_CONDITION);
       const defect = row.defects[0]!;
       assert.deepEqual(defect.exploration, { discovered: true, modelVisible: true, selected: false, visited: false, probeExecuted: false });
       assert.deepEqual(defect.interpretation, { interpreted: false, reported: false });
@@ -32,7 +32,47 @@ describe("funnel scoring", () => {
       assert.equal(row.prematureCompletion, true);
       assert.equal(row.completionOutcome, "partial");
       assert.equal(row.comparable, true);
+      assert.equal(row.leaky, true);
+      // Review m3: the label's condition must match what the run recorded.
+      await assert.rejects(scoreSession(outDir, await loadTruth("skip-links"), "B", CONDITIONS.B), /recorded/);
     } finally { await rm(outDir, { recursive: true, force: true }); }
+  });
+
+  it("a model-style skip-link note without the href is credited from the cited evidence (review M2)", async () => {
+    const outDir = await mkdtemp(join(tmpdir(), "art-adaptive-"));
+    const script: FakeScript = ({ call, observation }) => {
+      if (call === 0) return { action: { type: "navigate", url: linkTo(observation, "/broken.html") } };
+      if (call === 1) return { action: { type: "capture_evidence", targetRef: observation!.skipLinks[0]!.ref, note: "skip link target missing" } };
+      return { action: { type: "finish", verdict: "complete", summary: "", candidates: [{ category: "skip_link_broken", claim: "The skip link goes nowhere.", observationRefs: ["ev_2"], reproductionSteps: ["Open the page"], limitations: ["DOM summary"], proposedDeterministicCheck: "skip link target exists" }] } };
+    };
+    try {
+      await runSession({ config: fixtureConfig(harness, "/skip-links/index.html"), provider: new FakeProvider(script), outDir, browser: harness.browser, codeSha: "test" });
+      const row = await scoreSession(outDir, await loadTruth("skip-links"), "A", DEFAULT_CONDITION);
+      assert.deepEqual(row.defects[0]!.interpretation, { interpreted: true, reported: true });
+      assert.equal(row.defects[0]!.credited, true);
+    } finally { await rm(outDir, { recursive: true, force: true }); }
+  });
+
+  it("a refused navigation is not 'selected' (review n4)", async () => {
+    const outDir = await mkdtemp(join(tmpdir(), "art-adaptive-"));
+    const script: FakeScript = ({ call, observation }) => call === 0
+      ? { action: { type: "navigate", url: observation!.links.find((link) => link.href.endsWith("/broken.html"))!.href } }
+      : { action: { type: "finish", verdict: "inconclusive", summary: "", candidates: [] } };
+    try {
+      await runSession({ config: fixtureConfig(harness, "/skip-links/index.html", { maxSurfaces: 1 }), provider: new FakeProvider(script), outDir, browser: harness.browser, codeSha: "test" });
+      const row = await scoreSession(outDir, await loadTruth("skip-links"), "A", DEFAULT_CONDITION);
+      assert.equal(row.deniedActions["surface_limit"], 1);
+      assert.equal(row.defects[0]!.exploration.selected, false);
+    } finally { await rm(outDir, { recursive: true, force: true }); }
+  });
+
+  it("timeouts are comparable like other budget ends, and dialog subjects match exactly (review m4, n2)", () => {
+    assert.ok(COMPARABLE_STATUSES.has("timeout") && COMPARABLE_STATUSES.has("budget_exhausted"));
+    for (const status of ["error", "provider_error", "invalid_model_output", "denial_limit", "cancelled"]) assert.ok(!COMPARABLE_STATUSES.has(status), status);
+    assert.equal(subjectMatches("#c3", "#c3"), true);
+    assert.equal(subjectMatches("#help-btn", "help-btn"), true);
+    assert.equal(subjectMatches("#c30", "#c3"), false);
+    assert.equal(subjectMatches("#c3x", "c3"), false);
   });
 
   it("the local runner writes per-session frontier.json, funnel.json and comparison.md, and D is credited on the neutral sibling variant", async () => {
@@ -46,6 +86,7 @@ describe("funnel scoring", () => {
       assert.match(result.markdown, /Historical live trials 1–3/);
       assert.match(result.markdown, /Pending API comparisons/);
       assert.match(result.markdown, /stand-in for a model/);
+      assert.match(result.markdown, /- D: 1 \/ 1 \(neutral 1 \/ 1, leaky 0 \/ 0; not comparable 0 of 1 sessions\)/);
       assert.doesNotMatch(result.markdown, /127\.0\.0\.1|localhost|:\d{4,5}\//, "paths only, never origins");
       assert.equal(CONDITIONS.D.selector, "scheduler");
     } finally { await rm(outRoot, { recursive: true, force: true }); }
