@@ -53,7 +53,9 @@ All of this is code that never reads the skill text:
 - **Network boundary**: every request from the sandbox browser goes through a deny-by-default loopback proxy
   (`containment.ts`; GET/HEAD to the allowed fixture origin only; CONNECT and upgrades refused). Arm B and the tests run behind
   it, and `runSession` launches one when no browser is supplied. It is the layer that stops a dedicated worker's WebSocket,
-  which no page-level control sees; proxy refusals appear in arm B's denials as `containment_proxy`.
+  which no page-level control sees; proxy refusals appear in arm B's denials as `containment_proxy` (records capped at 200, the
+  remainder counted). Response headers lose hop-by-hop, proxy and `Set-Cookie` headers; a truncated upstream body ends the
+  client response. Non-proxied WebRTC UDP is disabled at launch, and `runSession`/`runArmB` refuse an uncontained browser.
 - **Channels page interception cannot see**: WebSockets from pages and frames are refused (`websocket` denial, never
   connected; `routeWebSocket` is a per-page mock and does not reach workers, the proxy does), SharedWorker is
   removed from the sandbox browser (`--disable-blink-features=SharedWorker`; an init-script stub is a second layer and records

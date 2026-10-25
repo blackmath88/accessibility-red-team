@@ -14,7 +14,7 @@ import {
 } from "./contracts.js";
 import { ELEMENT_SELECTOR, observePage, type LastActivated } from "./observe.js";
 import { BrowserGuard, CONTEXT_OPTIONS, SessionPolicy, classifyActivation, type RecordDenial, type Resolver } from "./policy.js";
-import { launchContainedBrowser, type ContainedBrowser } from "./containment.js";
+import { isContainedBrowser, launchContainedBrowser, type ContainedBrowser } from "./containment.js";
 import { ProviderError, type ModelProvider } from "./provider.js";
 import { OBSERVATION_MARKER } from "./providers/fake.js";
 
@@ -424,6 +424,8 @@ function asRecord(value: unknown): Record<string, unknown> | null {
 export const PUBLIC_MODE_DISABLED = "adaptive public mode is disabled pending hardening and owner approval; only fixture mode (loopback fixtures) can run";
 
 export async function runSession(options: RunSessionOptions): Promise<SessionResult> {
+  // Checked before anything is written: a caller-supplied browser must sit behind the containment proxy.
+  if (options.browser && !isContainedBrowser(options.browser)) throw new Error("runSession refuses a browser that was not launched with launchContainedBrowser");
   const config = SessionConfigSchema.parse(options.config);
   // The public-mode decision functions stay (and stay unit-tested) but nothing may start a public session: DNS is resolved by this process
   // and not pinned for the browser, the resolution cache never expires, no host mappings are supplied and site isolation is disabled.

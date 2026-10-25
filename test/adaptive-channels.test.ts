@@ -4,6 +4,8 @@ import { DEFAULT_FIXTURE_LIMITS } from "../src/experimental/adaptive/contracts.j
 import { runSession } from "../src/experimental/adaptive/executor.js";
 import { FakeProvider, fixedScript } from "../src/experimental/adaptive/providers/fake.js";
 import { readFile } from "node:fs/promises";
+import { createSocket } from "node:dgram";
+import { launchSandboxBrowser } from "../src/experimental/adaptive/policy.js";
 import { join } from "node:path";
 import { runInTemp, startHarness, type Harness } from "./adaptive-helpers.js";
 
@@ -28,6 +30,37 @@ describe("page channels that bypass page-level request interception are closed",
       // The dedicated worker's WebSocket is invisible to page-level controls; the containment proxy is what refuses it.
       assert.ok(harness.proxy.refused.some((entry) => entry.startsWith("CONNECT ") || entry.startsWith("UPGRADE ")), `worker WebSocket refused by the proxy: ${JSON.stringify(harness.proxy.refused)}`);
     } finally { await run.cleanup(); }
+  });
+
+  it("WebRTC cannot send UDP around the proxy (STUN to a local UDP listener receives nothing)", async () => {
+    const udp = createSocket("udp4");
+    let packets = 0;
+    udp.on("message", () => { packets += 1; });
+    await new Promise<void>((resolve) => udp.bind(0, "127.0.0.1", resolve));
+    const port = udp.address().port;
+    const context = await harness.browser.newContext({ serviceWorkers: "block" });
+    try {
+      const page = await context.newPage();
+      await page.goto(`${harness.fixtures.origin}/skip-links/index.html`);
+      await page.evaluate(async (stunPort) => {
+        const pc = new RTCPeerConnection({ iceServers: [{ urls: `stun:127.0.0.1:${stunPort}` }] });
+        pc.createDataChannel("x");
+        await pc.setLocalDescription(await pc.createOffer());
+        await new Promise((resolve) => setTimeout(resolve, 1500));
+        pc.close();
+      }, port);
+      assert.equal(packets, 0, "no UDP packet reached the listener");
+    } finally { await context.close(); await new Promise<void>((resolve) => udp.close(() => resolve())); }
+  });
+
+  it("runSession refuses a browser that was not launched behind the containment proxy", async () => {
+    const bare = await launchSandboxBrowser();
+    try {
+      await assert.rejects(
+        runSession({ config: { schema: "art/adaptive-session/v1", sessionId: "bare", startUrl: `${harness.fixtures.origin}/skip-links/index.html`, allowedOrigins: [harness.fixtures.origin], mode: "fixture", publicTargets: [], limits: DEFAULT_FIXTURE_LIMITS }, provider: new FakeProvider(wait), outDir: "/nonexistent/never-created", browser: bare }),
+        /not launched with launchContainedBrowser/,
+      );
+    } finally { await bare.close(); }
   });
 
   it("the sandbox browser is launched without the SharedWorker feature", async () => {

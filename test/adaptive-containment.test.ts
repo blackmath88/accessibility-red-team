@@ -60,6 +60,46 @@ describe("containment proxy", () => {
     } finally { await own.close(); await new Promise<void>((resolve) => upstream.close(() => resolve())); }
   });
 
+  it("drops hop-by-hop, proxy and cookie response headers, and ends the client response if the upstream body is cut off", async () => {
+    const upstream = createServer((req, res) => {
+      if (req.url === "/cut") { res.writeHead(200, { "content-length": "1000" }); res.write("partial"); setTimeout(() => res.socket?.destroy(), 50); return; }
+      res.writeHead(200, { "set-cookie": "a=b; Domain=other.test", "proxy-authenticate": "Basic", connection: "x-foo", "x-foo": "1", "x-keep": "1" });
+      res.end("ok");
+    });
+    await new Promise<void>((resolve) => upstream.listen(0, "127.0.0.1", resolve));
+    const origin = `http://127.0.0.1:${(upstream.address() as AddressInfo).port}`;
+    const own = await startContainmentProxy([origin]);
+    const get = (path: string) => new Promise<{ headers: Record<string, unknown>; ended: string }>((resolve) => {
+      const req = request({ host: "127.0.0.1", port: new URL(own.url).port, path: `${origin}${path}`, headers: { host: new URL(origin).host } }, (res) => {
+        res.resume();
+        res.on("end", () => resolve({ headers: res.headers, ended: "end" }));
+        res.on("aborted", () => resolve({ headers: res.headers, ended: "aborted" }));
+        res.on("error", () => resolve({ headers: res.headers, ended: "error" }));
+      });
+      req.on("error", () => resolve({ headers: {}, ended: "error" }));
+      req.end();
+    });
+    try {
+      const plain = await get("/x");
+      for (const name of ["set-cookie", "proxy-authenticate", "x-foo"]) assert.equal(plain.headers[name], undefined, name);
+      assert.equal(plain.headers["x-keep"], "1");
+      const cut = await Promise.race([get("/cut"), new Promise<{ ended: string }>((resolve) => setTimeout(() => resolve({ ended: "hung" }), 3000))]);
+      assert.notEqual(cut.ended, "hung", "client response was ended after the upstream was cut off");
+    } finally { await own.close(); await new Promise<void>((resolve) => upstream.close(() => resolve())); }
+  });
+
+  it("caps individual refusal records at 200 but counts every refusal", async () => {
+    const own = await startContainmentProxy([fixtures.origin]);
+    try {
+      const { port } = new URL(own.url);
+      for (let i = 0; i < 250; i += 1) {
+        await new Promise<void>((resolve) => { const req = request({ host: "127.0.0.1", port, path: `${fixtures.offOrigin}/n${i}`, headers: { host: new URL(fixtures.offOrigin).host } }, (res) => { res.resume(); res.on("end", resolve); }); req.end(); });
+      }
+      assert.equal(own.refused.length, 200);
+      assert.equal(own.refusedTotal(), 250);
+    } finally { await own.close(); }
+  });
+
   it("only accepts http origins", async () => {
     await assert.rejects(startContainmentProxy(["https://example.org"]), /only forwards http origins/);
   });

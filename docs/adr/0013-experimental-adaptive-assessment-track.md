@@ -32,8 +32,11 @@ agent in a browser) and different safeguards. This ADR neither relies on nor arg
      same interception (verified by test). Non-GET/HEAD requests are refused.
    - *Network boundary*: the sandbox browser's only network path is a deny-by-default loopback forward proxy
      (`containment.ts`) that forwards plain GET/HEAD to the allowed fixture origin and refuses everything else, including
-     CONNECT tunnels (how Chrome carries `ws://` through a proxy) and upgrades. This is what stops traffic that page-level
-     interception cannot see, such as a WebSocket opened inside a dedicated worker.
+     CONNECT tunnels (how Chrome carries `ws://` through a proxy) and upgrades, with request and response header allowlists.
+     This is what stops traffic that page-level interception cannot see, such as a WebSocket opened inside a dedicated worker.
+     WebRTC UDP would go around any HTTP proxy, so the browser is launched with
+     `--force-webrtc-ip-handling-policy=disable_non_proxied_udp` (tested: STUN to a local UDP listener receives nothing), and
+     loopback is proxied through an explicit `<-loopback>` bypass rule. Session code refuses a browser not launched this way.
    - *Page-level layers on top* record denials and close channels early: WebSockets from pages and frames are refused with
      `context.routeWebSocket` (a per-page mock, so it does not cover workers; the proxy does); SharedWorker is removed from
      the browser (`--disable-blink-features=SharedWorker`, plus an init-script stub); service workers are blocked by the

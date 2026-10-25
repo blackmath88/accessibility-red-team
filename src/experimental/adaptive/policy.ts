@@ -264,7 +264,11 @@ export async function launchSandboxBrowser(options: { hostMappings?: Record<stri
   }
   // With a proxy (see containment.ts) every request, including loopback and worker traffic, must pass the proxy: Playwright adds
   // `<-loopback>` to the bypass list so loopback is not exempt.
-  return chromium.launch({ headless: true, args, ...(options.proxyServer ? { proxy: { server: options.proxyServer } } : {}) });
+  // WebRTC sends UDP (STUN, TURN, ICE) around any HTTP proxy; with a proxy, non-proxied UDP is disabled so WebRTC can only use the proxy
+  // (where TURN-over-TCP arrives as CONNECT and is refused). The bypass list is explicit so loopback is proxied regardless of
+  // Playwright's own default (which an environment variable can switch off).
+  if (options.proxyServer) args.push("--force-webrtc-ip-handling-policy=disable_non_proxied_udp");
+  return chromium.launch({ headless: true, args, ...(options.proxyServer ? { proxy: { server: options.proxyServer, bypass: "<-loopback>" } } : {}) });
 }
 
 export const CONTEXT_OPTIONS = {

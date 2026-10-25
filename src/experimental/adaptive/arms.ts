@@ -15,9 +15,9 @@ import { selectRepresentativeSurfaces } from "../../scout/sample.js";
 import type { DiscoveredPage } from "../../scout/contracts.js";
 import { scanUrl } from "../../scan.js";
 import { portOf, startFixtureProxy, startFixtures, type FixtureName } from "../../../test/fixtures/adaptive-sites/server.js";
-import { DEFAULT_FIXTURE_LIMITS, type EvidenceRecord, type PolicyDenial, type SessionResult, type StoredCandidate } from "./contracts.js";
+import { DEFAULT_FIXTURE_LIMITS, type EvidenceRecord, type Limits, type PolicyDenial, type SessionResult, type StoredCandidate } from "./contracts.js";
 import { codeSha, runSession, sha256 } from "./executor.js";
-import { launchContainedBrowser, type ContainedBrowser } from "./containment.js";
+import { isContainedBrowser, launchContainedBrowser, type ContainedBrowser } from "./containment.js";
 import type { ModelProvider } from "./provider.js";
 import { FakeProvider } from "./providers/fake.js";
 import { exploratoryScript } from "./scripted-policy.js";
@@ -286,7 +286,8 @@ export async function runArmA(fixture: FixtureName, truthStartPath: string, opti
 
 // ---------------------------------------------------------------- Arm B: adaptive harness with the scripted fake provider
 
-export type RunArmBOptions = RunArmOptions & { provider?: ModelProvider; browser?: Browser };
+// sessionLimits overrides the executor budgets (model calls, tokens, steps) for arm B's session; maxSurfaces and maxWallMs come from limits.
+export type RunArmBOptions = RunArmOptions & { provider?: ModelProvider; browser?: Browser; sessionLimits?: Partial<Omit<Limits, "maxSurfaces" | "maxWallMs">> };
 
 export async function runArmB(fixture: FixtureName, truthStartPath: string, options: RunArmBOptions): Promise<ArmSummary> {
   const limits = { ...DEFAULT_ARM_LIMITS, ...options.limits };
@@ -295,16 +296,18 @@ export async function runArmB(fixture: FixtureName, truthStartPath: string, opti
   const fixtures = await startFixtures();
   let contained: ContainedBrowser | null = null;
   const provider = options.provider ?? new FakeProvider(exploratoryScript());
+  const sessionLimits = { ...DEFAULT_FIXTURE_LIMITS, ...options.sessionLimits, maxSurfaces: limits.maxSurfaces, maxWallMs: limits.maxWallMs };
   let result: SessionResult;
   const sessionDir = join(outDir, "session");
   try {
     // Launched inside the try so that a launch failure still closes the fixture servers.
     // Arm B's own browser sits behind a containment proxy for the fixture origin, so worker and WebSocket traffic cannot leave either.
+    if (options.browser && !isContainedBrowser(options.browser)) throw new Error("runArmB refuses a browser that was not launched with launchContainedBrowser");
     const browser = options.browser ?? (contained = await launchContainedBrowser([fixtures.origin])).browser;
     result = await runSession({
       config: {
         schema: "art/adaptive-session/v1", sessionId: `${fixture}-B`, startUrl: `${fixtures.origin}${truthStartPath}`, allowedOrigins: [fixtures.origin], mode: "fixture", publicTargets: [],
-        limits: { ...DEFAULT_FIXTURE_LIMITS, maxSurfaces: limits.maxSurfaces, maxWallMs: limits.maxWallMs },
+        limits: sessionLimits,
       },
       provider, outDir: sessionDir, browser, codeSha: options.codeSha,
     });
@@ -327,11 +330,11 @@ export async function runArmB(fixture: FixtureName, truthStartPath: string, opti
       }),
     });
   }
-  const config = { ...limits, sessionLimits: { ...DEFAULT_FIXTURE_LIMITS, maxSurfaces: limits.maxSurfaces, maxWallMs: limits.maxWallMs } };
+  const config = { ...limits, sessionLimits };
   const states = result.statesVisited;
   const summary: ArmSummary = {
     schema: "art/adaptive-arm/v1", arm: "B", fixture, startPath: truthStartPath,
-    pinned: { codeSha: result.pinned.codeSha, configHash: hashJson(config), implementation: "src/experimental/adaptive executor + scripted explorer (fake provider)", skillVersion: result.pinned.skillVersion, modelId: result.pinned.modelId },
+    pinned: { codeSha: result.pinned.codeSha, configHash: hashJson(config), implementation: provider.id === "fake" ? "src/experimental/adaptive executor + scripted explorer (fake provider)" : `src/experimental/adaptive executor + real model (${provider.id}:${provider.requestedModel})`, skillVersion: result.pinned.skillVersion, modelId: result.pinned.modelId },
     limits, startedAt: result.startedAt, durationMs: result.durationMs, terminal: result.status,
     surfaces: result.surfacesVisited.map((url) => ({ path: pathOf(url), kind: null, classificationReason: null, hasForm: null, substantiveFormFields: null, title: null })),
     states, components: [...new Set(evidence.filter((item) => item.kind === "activate" || item.kind === "capture_evidence").map((item) => `${item.kind}:${pathOf(item.url)}:${item.target?.selectorHint ?? "-"}`))],
@@ -340,6 +343,9 @@ export async function runArmB(fixture: FixtureName, truthStartPath: string, opti
     denials: [
       ...denials.map((denial) => ({ source: denial.source, reason: denial.reason, detail: denial.detail, url: denial.url })),
       ...(contained?.proxy.refused ?? []).map((entry) => ({ source: "containment_proxy", reason: "refused_by_proxy", detail: entry, url: null })),
+      ...(contained && contained.proxy.refusedTotal() > contained.proxy.refused.length
+        ? [{ source: "containment_proxy", reason: "refusals_truncated", detail: `${contained.proxy.refusedTotal() - contained.proxy.refused.length} further proxy refusals not recorded individually`, url: null }]
+        : []),
     ],
     usage: { wallMs: result.durationMs, modelCalls: result.modelCalls, inputTokens: result.usage.inputTokens, outputTokens: result.usage.outputTokens, tokensEstimated: result.usage.estimated, cost: "unavailable" },
     journeys: [],
