@@ -37,12 +37,12 @@ async function assertProvenance(ledger: FrontierLedger, outDir: string): Promise
 }
 
 describe("exploration condition", () => {
-  it("defaults to condition A and refuses the scheduler selector, which is not implemented yet", async () => {
+  it("defaults to condition A and refuses the scheduler selector with any other provider", async () => {
     assert.deepEqual(ExplorationConditionSchema.parse(DEFAULT_CONDITION), DEFAULT_CONDITION);
     const outDir = await mkdtemp(join(tmpdir(), "art-adaptive-"));
     try {
       for (const condition of [{ ...DEFAULT_CONDITION, selector: "scheduler" as const }]) {
-        await assert.rejects(runSession({ config: fixtureConfig(harness, "/skip-links/index.html"), provider: new FakeProvider(() => ({ action: { type: "finish", verdict: "complete", summary: "" } })), outDir, browser: harness.browser, codeSha: "test", condition }), /not implemented yet/);
+        await assert.rejects(runSession({ config: fixtureConfig(harness, "/skip-links/index.html"), provider: new FakeProvider(() => ({ action: { type: "finish", verdict: "complete", summary: "" } })), outDir, browser: harness.browser, codeSha: "test", condition }), /needs ledgerVisible|needs the frontier-scheduler provider/);
       }
     } finally { await rm(outDir, { recursive: true, force: true }); }
   });

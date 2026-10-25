@@ -76,11 +76,17 @@ export type RunSessionOptions = {
 
 export type ExplorationConditionInput = z.input<typeof ExplorationConditionSchema>;
 
-// The deterministic scheduler is not built yet. A run labelled with it that silently behaved like the model selector would
-// contaminate later comparisons, so it is refused.
-export function resolveCondition(input: ExplorationConditionInput | undefined): ExplorationCondition {
+// Provider id of the deterministic scheduler (scheduler.ts). Defined here so the executor can check labels without importing it.
+export const SCHEDULER_PROVIDER_ID = "frontier-scheduler";
+
+// A run's label must match what drove it: selector "scheduler" only with the scheduler provider, which needs the visible frontier
+// and report_candidate; the scheduler provider never runs under selector "model".
+export function resolveCondition(input: ExplorationConditionInput | undefined, providerId?: string): ExplorationCondition {
   const condition = ExplorationConditionSchema.parse(input ?? DEFAULT_CONDITION);
-  if (condition.selector !== "model") throw new Error(`exploration condition not implemented yet: selector=${condition.selector}`);
+  if (condition.selector === "scheduler") {
+    if (!condition.ledgerVisible || !condition.incrementalCandidates) throw new Error("selector=scheduler needs ledgerVisible and incrementalCandidates");
+    if (providerId !== undefined && providerId !== SCHEDULER_PROVIDER_ID) throw new Error(`selector=scheduler needs the ${SCHEDULER_PROVIDER_ID} provider, not ${providerId}`);
+  } else if (providerId === SCHEDULER_PROVIDER_ID) throw new Error(`the ${SCHEDULER_PROVIDER_ID} provider needs selector=scheduler`);
   return condition;
 }
 
@@ -560,7 +566,7 @@ export async function runSession(options: RunSessionOptions): Promise<SessionRes
   // Checked before anything is written: a caller-supplied browser must sit behind the containment proxy.
   if (options.browser && !isContainedBrowser(options.browser)) throw new Error("runSession refuses a browser that was not launched with launchContainedBrowser");
   const config = SessionConfigSchema.parse(options.config);
-  const condition = resolveCondition(options.condition);
+  const condition = resolveCondition(options.condition, options.provider.id);
   // The public-mode decision functions stay (and stay unit-tested) but nothing may start a public session: DNS is resolved by this process
   // and not pinned for the browser, the resolution cache never expires, no host mappings are supplied and site isolation is disabled.
   if (config.mode === "public") throw new Error(PUBLIC_MODE_DISABLED);
