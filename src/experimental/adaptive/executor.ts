@@ -19,8 +19,8 @@ import { ProviderError, type ModelProvider } from "./provider.js";
 import { OBSERVATION_MARKER } from "./providers/fake.js";
 
 const HERE = dirname(fileURLToPath(import.meta.url));
-export const SKILL_PATH = join(HERE, "skill", "adaptive-a11y-skill.v1.md");
-export const SKILL_VERSION = "adaptive-a11y-skill/v1";
+export const SKILL_PATH = join(HERE, "skill", "adaptive-a11y-skill.v2.md");
+export const SKILL_VERSION = "adaptive-a11y-skill/v2";
 const REPO_ROOT = resolve(HERE, "..", "..", "..");
 const MAX_DENIALS = 10;
 const MAX_BROWSER_DENIAL_RECORDS = 200;
@@ -65,6 +65,35 @@ export type RunSessionOptions = {
 type Cause = "cancelled" | "timeout";
 type Checked = { ok: true; action: Action } | { ok: false; reason: DenialReason; detail: string; url?: string };
 type Decision = { ok: true; raw: unknown } | { ok: false; reason: string };
+
+// Refusal text for a malformed action. It is shown to the model in recentDenials, so it names the expected shape, using the model's own
+// intended action when one can be recognised. The action is still refused: the contract stays strict, only the feedback is specific.
+const ACTION_ALIASES = ["actionType", "action", "name", "kind"] as const;
+const ACTION_EXAMPLES: Record<string, string> = {
+  inspect_semantics: '{"type": "inspect_semantics"}', navigate: '{"type": "navigate", "url": "<a URL from legal.navigate>"}',
+  focus_next: '{"type": "focus_next"}', focus_prev: '{"type": "focus_prev"}', activate: '{"type": "activate", "targetRef": "<a ref from legal.activate>"}',
+  escape: '{"type": "escape"}', scroll: '{"type": "scroll", "direction": "down"}', capture_evidence: '{"type": "capture_evidence", "targetRef": "<ref>", "note": "<text>"}',
+  finish: '{"type": "finish", "verdict": "complete", "summary": "<text>", "candidates": []}', unknown: '{"type": "unknown", "reason": "<text>"}',
+};
+export function actionFormatHint(raw: unknown): string {
+  const record = raw && typeof raw === "object" && !Array.isArray(raw) ? raw as Record<string, unknown> : null;
+  const known = (value: unknown): value is string => typeof value === "string" && (ACTION_TYPES as readonly string[]).includes(value);
+  let intended: string | undefined;
+  let where = "";
+  if (record) {
+    // Common mis-keys first, then any other key whose value is an action name (trial 1 also saw "op").
+    const alias = ACTION_ALIASES.find((key) => known(record[key])) ?? Object.keys(record).find((key) => key !== "type" && known(record[key]));
+    if (alias) { intended = record[alias] as string; where = `the action name was under "${alias}"`; }
+    else {
+      const nested = Object.keys(record).find(known);
+      if (nested) { intended = nested; where = `the action name was used as an object key`; }
+      else if (typeof record["type"] === "string") where = `"${String(record["type"]).slice(0, 40)}" is not an action type`;
+    }
+  }
+  const allowed = `allowed types: ${ACTION_TYPES.join(", ")}`;
+  if (intended) return `refused, ${where}; the action name goes in "type". Send {"action": ${ACTION_EXAMPLES[intended]}, "rationale": "..."}`;
+  return `refused, ${where || 'the action has no "type"'}; send {"action": {"type": "<action type>", ...fields}, "rationale": "..."}; ${allowed}`;
+}
 
 function parseDecision(text: string): Decision {
   let json: unknown;
@@ -198,7 +227,7 @@ class Session {
     await appendFile(join(this.outDir, "observations.jsonl"), observationJson + "\n");
 
     const messages = [
-      { role: "system" as const, content: `${this.skillText}\n\nReply with exactly one JSON object: {"action": {...}, "rationale": "..."}.` },
+      { role: "system" as const, content: `${this.skillText}\n\nReply with exactly one JSON object: {"action": {"type": "<action type>", ...fields}, "rationale": "..."}. The action name goes in "type".` },
       { role: "user" as const, content: `${OBSERVATION_MARKER}\n${observationJson}` },
     ];
     const inputEstimate = messages.reduce((sum, message) => sum + estimateTokens(message.content), 0);
@@ -275,7 +304,7 @@ class Session {
   private async validate(raw: unknown): Promise<Checked> {
     const type = raw && typeof raw === "object" ? (raw as { type?: unknown }).type : undefined;
     if (typeof type !== "string" || !(ACTION_TYPES as readonly string[]).includes(type)) {
-      return { ok: false, reason: "forbidden_action_type", detail: `action type ${JSON.stringify(type)} is not in the action union` };
+      return { ok: false, reason: "forbidden_action_type", detail: actionFormatHint(raw) };
     }
     const parsed = ActionSchema.safeParse(raw);
     if (!parsed.success) return { ok: false, reason: "invalid_action_fields", detail: `${type}: ${parsed.error.issues[0]?.path.join(".") || "action"} ${parsed.error.issues[0]?.message ?? "invalid"}` };

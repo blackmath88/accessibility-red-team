@@ -34,7 +34,7 @@ Playwright Chromium must be installed (`npm run playwright:install`).
 | `observe.ts` | bounded page observation (DOM facts, legal navigate/activate lists) |
 | `executor.ts` | validates the chosen action, runs it with ordinary Playwright calls, records evidence, enforces budgets and cancellation |
 | `providers/fake.ts`, `scripted-policy.ts` | deterministic fake model and the scripted explorer used as Arm B's policy |
-| `skill/adaptive-a11y-skill.v1.md` | versioned guidance for the tester (guidance, not a security boundary) |
+| `skill/adaptive-a11y-skill.v2.md` (v1 kept as trial-1 provenance) | versioned guidance for the tester (guidance, not a security boundary) |
 | `arms.ts` | Arm A (existing scanner + journeys), Arm B (adaptive harness), sealing |
 | `observer.ts`, `candidate-checks.ts`, `compare.ts`, `cli.ts` | observer hypotheses, candidate check, comparison, CLI |
 | `test/fixtures/adaptive-sites/` | six localhost fixture sites + `truth.json` each + `server.ts`; `heldout-menus` is the held-out variation |

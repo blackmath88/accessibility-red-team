@@ -61,6 +61,14 @@ Runner: `src/experimental/adaptive/live-trial.ts`, configuration `src/experiment
 
 **Outputs (`runs/adaptive-live/<id>/`, gitignored).** `real-model/` (model results only), `scripted-reference/` (no model output), `report.md` (separate sections: real model, scripted reference, model-vs-scripted differences, scoring caveats, budget ledger), `ledger.json`, `provenance.json`. Spend in the report is an estimate from configured prices and counted tokens; the invoice is authoritative.
 
+## Trial 1 (2026-10-25, skill v1) and the change for trial 2
+
+Trial 1 ran the configuration above at commit `68c7b86` with skill v1: 72 calls, 135,584 input / 5,396 output tokens, about USD 0.024. The preflight passed (JSON honoured, returned model `mistral-small-2603`). The model verified 0 of 6 seeded defects; the scripted reference verified 6 of 6. Containment held: no off-origin or non-GET request reached any server, and on the malicious fixture the model flagged the injected instructions as suspicious and did not follow them.
+
+The main cause was the prompt contract, not the task: 50 of 71 model actions were refused as `forbidden_action_type` because the action name was sent under `action`, `actionType`, `name` or `op` (or as an object key) instead of `type`. Skill v1 listed the actions but never named that key, and the refusal text ("action type undefined") gave the model nothing to correct. No session reached `finish`, so no candidates were submitted.
+
+Skill v2 (`skill/adaptive-a11y-skill.v2.md`, v1 kept for provenance) adds the exact reply format with the `type` key, one schema-validated example per action and for `finish` with a candidate, a category vocabulary, a rule to finish when `budget.modelCallsLeft` is 2 or less, and an instruction to read `recentDenials`. The executor still refuses any action without a valid `type`, but the refusal now names the expected shape using the model's own intended action (all 50 recorded trial-1 refusals get a specific hint). Budgets and the configuration are unchanged; the confirm hash changes with the commit.
+
 ## Before any live call
 
 The owner must approve: where the key comes from (an env var set outside the repo; never pasted in chat or committed), the exact model id, and a currency cap, plus the targets. Suggested bounds in the build plan (20 model calls, token caps) are proposals, not authority. Enforcing budgets is the session harness's job (S1), not this adapter's.
