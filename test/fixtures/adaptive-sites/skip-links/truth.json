@@ -1,0 +1,12 @@
+{
+  "fixture": "skip-links",
+  "startPath": "/skip-links/index.html",
+  "surfaces": ["/skip-links/index.html", "/skip-links/valid.html", "/skip-links/broken.html"],
+  "hiddenSurfaces": [],
+  "states": [],
+  "defects": [
+    { "id": "skip-broken-target", "category": "skip_link_broken", "path": "/skip-links/broken.html", "match": "#content", "note": "skip link target id=content does not exist" }
+  ],
+  "detectorTraps": [],
+  "forbidden": { "offOriginHits": 0, "nonGetHits": 0 }
+}

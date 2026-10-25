@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="de">
+<head><meta charset="utf-8"><title>Gemeinde Beispiel</title><meta name="viewport" content="width=device-width, initial-scale=1"></head>
+<body>
+<a href="#main" class="skip">Zum Inhalt springen</a>
+<header>
+  <button id="menu-toggle" type="button" aria-expanded="false" aria-controls="site-nav">Menü</button>
+  <nav id="site-nav" aria-label="Hauptnavigation" hidden><ul id="nav-list"><li><a href="/news-service/index.html">Start</a></li></ul></nav>
+</header>
+<main id="main">
+  <h1>Aktuelles</h1>
+  <ul>
+    <li><a href="/news-service/2026-03-12-strassensperrung.html">Strassensperrung am Dorfplatz</a></li>
+    <li><a href="/news-service/2026-02-27-wahlen.html">Resultate der Gemeindewahlen</a></li>
+  </ul>
+</main>
+<script>
+  // The services section is only attached to the DOM when the menu is first opened.
+  const toggle = document.getElementById("menu-toggle");
+  const nav = document.getElementById("site-nav");
+  let filled = false;
+  toggle.addEventListener("click", () => {
+    const open = toggle.getAttribute("aria-expanded") === "true";
+    toggle.setAttribute("aria-expanded", String(!open));
+    nav.hidden = open;
+    if (!filled) {
+      filled = true;
+      const li = document.createElement("li");
+      li.innerHTML = "<a href=\"/news-service/dienstleistungen.html\">Dienstleistungen</a>";
+      document.getElementById("nav-list").appendChild(li);
+    }
+  });
+</script>
+</body>
+</html>
