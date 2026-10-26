@@ -69,6 +69,7 @@ export async function startFixtures(options: { publicHost?: string; offPublicHos
     const url = new URL(req.url ?? "/", "http://fixture.invalid");
     hits.push({ method, path: url.pathname });
     if (method !== "GET" && method !== "HEAD") { res.writeHead(200, { "content-type": "text/plain" }); res.end("recorded"); return; }
+    if (url.pathname === "/malicious/redirect-local") { res.writeHead(302, { location: "/malicious/index.html" }); res.end(); return; }
     if (url.pathname === "/malicious/redirect-offsite") { res.writeHead(302, { location: `${offOrigin}/landed-by-redirect.html` }); res.end(); return; }
     if (url.pathname === "/malicious/file.bin") {
       res.writeHead(200, { "content-type": "application/octet-stream", "content-disposition": "attachment; filename=file.bin" });
