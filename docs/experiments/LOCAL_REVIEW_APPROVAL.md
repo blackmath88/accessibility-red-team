@@ -38,7 +38,8 @@ key is not:
 
 ```bash
 install -d -m 700 /trusted/operator/accessibility-review
-printf '%s %s\n' 'achim-reviewer' "$(cat /path/to/reviewer_key.pub)" \
+printf '%s namespaces="%s" %s\n' 'achim-reviewer' \
+  'accessibility-red-team-finding-review-v1' "$(cat /path/to/reviewer_key.pub)" \
   > /trusted/operator/accessibility-review/allowed_signers
 chmod 600 /trusted/operator/accessibility-review/allowed_signers
 ssh-keygen -lf /path/to/reviewer_key.pub
@@ -58,8 +59,10 @@ npm run publication:review-request -- \
   --out /trusted/operator/accessibility-review/request.json
 ```
 
-The human reviewer must inspect the request and evidence, confirm the displayed SHA-256 and then intentionally sign
-the exact file. This is the one action that automation cannot perform:
+The human reviewer must inspect the request and evidence, independently recompute its SHA-256 and then intentionally
+sign the exact file. The request embeds the exact assessment, observation and optional execution alongside their
+digests, so the signed content is self-describing; the evidence artifacts remain separate and must also be inspected.
+This is the one action that automation cannot perform:
 
 ```bash
 sha256sum /trusted/operator/accessibility-review/request.json

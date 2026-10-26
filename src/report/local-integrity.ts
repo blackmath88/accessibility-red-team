@@ -60,11 +60,13 @@ export async function verifyLocalEvidenceArtifacts(options: {
     if (!binding) throw new Error(`No local artifact binding exists for evidence ref ${ref}.`);
     const artifactPath = await realpath(resolve(root, binding.path));
     if (!inside(root, artifactPath)) throw new Error(`Evidence ref ${ref} resolves outside the evidence root.`);
-    const handle = await open(artifactPath, constants.O_RDONLY | constants.O_NOFOLLOW);
+    const handle = await open(artifactPath, constants.O_RDONLY | constants.O_NOFOLLOW | constants.O_NONBLOCK);
     let bytes: Buffer;
     try {
       const metadata = await handle.stat();
       if (!metadata.isFile()) throw new Error(`Evidence ref ${ref} does not resolve to a regular file.`);
+      const openedPath = await realpath(`/proc/self/fd/${handle.fd}`);
+      if (!inside(root, openedPath)) throw new Error(`Evidence ref ${ref} changed location outside the evidence root while opening.`);
       if (metadata.size > MAX_LOCAL_EVIDENCE_BYTES) throw new Error(`Evidence ref ${ref} exceeds ${MAX_LOCAL_EVIDENCE_BYTES} bytes.`);
       bytes = await handle.readFile();
     } finally {
