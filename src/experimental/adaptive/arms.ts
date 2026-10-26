@@ -201,6 +201,16 @@ export async function runArmA(fixture: FixtureName, truthStartPath: string, opti
       if (seen.has(next.url) || next.depth > 2) continue;
       seen.add(next.url);
       const page = await context.newPage();
+      // Discovery records the page it asked for: once that navigation has started, any further top-level navigation the page
+      // starts itself (an auto-submitted form, a scripted location change) is aborted, so the result cannot depend on timing.
+      let navigating = false;
+      await page.route("**/*", (route) => {
+        const request = route.request();
+        if (!request.isNavigationRequest() || request.frame() !== page.mainFrame()) return route.continue();
+        if (navigating) return route.abort("aborted");
+        navigating = true;
+        return route.continue();
+      });
       try {
         const response = await page.goto(next.url, { waitUntil: "domcontentloaded", timeout: 15_000 });
         if (!response || response.status() >= 400) continue;

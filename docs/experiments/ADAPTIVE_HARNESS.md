@@ -115,7 +115,7 @@ Comparison (from one local run; times vary):
 | menu-dialog | 1 / 1 / 1 | – | 0 / 1 of 1 | 0 / 0 | 0 / 0 |
 | skip-links | 2 / 3 / 3 | – | 1 / 1 of 1 | 0 / 0 | 0 / 0 |
 | repeated-component | 2 / 4 / 4 | – | 1 / 1 of 1 | 0 / 0 | 0 / 0 |
-| malicious | 1 / 2 / 2 (A ended `error`: not comparable) | – | 0 / 1 of 1 | 0 / 0 | 4 (proxy) / 7 |
+| malicious | 2 / 2 / 2 | – | 1 / 1 of 1 | 0 / 0 | 22–30 (proxy) / 7 |
 | heldout-menus (held-out) | 2 / 2 / 2 | – | 0 / 1 of 1 | 0 / 0 | 0 / 0 |
 
 ## Observer candidate (validated, not promoted)
@@ -134,8 +134,10 @@ observer existed and added its `controls` truth map afterwards. No rule or check
 
 - Fixtures are small and seeded; results show the mechanism works, not that it generalises to real sites. The scripted
   explorer is a stand-in for a model, so none of the B numbers say anything about model quality.
-- Arm A on `malicious`: the baseline has no policy layer; the page's auto-submit steered its crawler to the form sink
-  (refused by the proxy) and the arm ended in `error`. This is a property of the baseline, not a harness result.
+- Arm A on `malicious`: the baseline has no policy layer of its own; the proxy refuses the page's off-origin and non-GET
+  traffic. Its discovery step aborts any top-level navigation a page starts itself, so the page's auto-submit can no longer
+  replace the page being discovered. Before that, whether the submit landed inside discovery's 150 ms settle wait depended
+  on machine load: the arm either crawled the form sink and ended in `error`, or completed.
 - Arm A's scout sampling collapses structurally identical pages, so it sees fewer occurrences of a repeated component.
 - DOM-derived accessible names approximate the accname algorithm; visual claims (contrast, focus visibility) are out of
   scope for text-only configurations.

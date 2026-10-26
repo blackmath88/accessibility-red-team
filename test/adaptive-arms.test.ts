@@ -144,7 +144,9 @@ describe("comparison against fixture truth", () => {
       for (const arm of ["A", "B"] as const) { assert.equal(c[arm].offOriginRequests, 0, `${c.fixture} ${arm}`); assert.equal(c[arm].nonGetRequests, 0, `${c.fixture} ${arm}`); }
     }
     const m = by("malicious");
-    assert.equal(m.dynamicAdvantage.comparable, false, "arm A ended in error, so no advantage is claimed on this fixture");
+    assert.equal(m.A.terminal, "completed", "discovery aborts the page's own auto-submit, so the baseline is not steered to the form sink");
+    assert.equal(m.dynamicAdvantage.comparable, true);
+    assert.deepEqual(m.A.verifiedDefects, ["malicious-info-icon-unnamed"]);
     assert.equal(m.dynamicAdvantage.reachedStateBaselineMissed, false);
     assert.ok(Object.keys(m.B.deniedActions).length >= 5);
     assert.ok((m.A.deniedActions["refused_by_proxy"] ?? 0) > 0, "the baseline has no policy of its own; only the fixture proxy contained it");
