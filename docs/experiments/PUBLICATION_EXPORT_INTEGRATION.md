@@ -40,7 +40,8 @@ stored label is never republished as authority.
 This local CLI does not authenticate a person, verify evidence bytes, or establish secure storage. The workflow
 invoking it remains responsible for provisioning the authority file and integrity receipts from trusted systems.
 The stacked local-integrity slice is documented in `TRUSTED_PUBLICATION_CONTEXT.md`; it verifies actual bytes and
-feeds receipts into this exporter, while deliberately keeping reviewer approval and applicability unavailable.
+feeds receipts into this exporter. `LOCAL_REVIEW_APPROVAL.md` adds the opt-in reviewer-held signature path for
+manual/assisted findings while leaving automatic probe trust and promotion unchanged.
 
 ## Integration coverage
 

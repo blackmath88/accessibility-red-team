@@ -38,7 +38,7 @@ function inside(root: string, path: string): boolean {
   return suffix !== "" && suffix !== ".." && !suffix.startsWith(`..${sep}`) && !isAbsolute(suffix);
 }
 
-async function verifyLocalEvidenceFiles(options: {
+export async function verifyLocalEvidenceArtifacts(options: {
   evidenceRoot: string;
   requiredRefs: readonly EvidenceRef[];
   bindings: unknown;
@@ -83,7 +83,7 @@ export async function verifyLocalEvidence(options: {
   requiredRefs: readonly EvidenceRef[];
   bindings: unknown;
 }): Promise<EvidenceRef[]> {
-  return (await verifyLocalEvidenceFiles(options)).receipts;
+  return (await verifyLocalEvidenceArtifacts(options)).receipts;
 }
 
 export async function buildIntegrityOnlyPublicationExport(options: {
@@ -104,7 +104,7 @@ export async function buildIntegrityOnlyPublicationExport(options: {
     const parsed = AssessmentResultSchema.safeParse(candidate.record);
     return parsed.success ? [{ candidate, assessment: parsed.data }] : [];
   });
-  const verified = await verifyLocalEvidenceFiles({
+  const verified = await verifyLocalEvidenceArtifacts({
     evidenceRoot: options.evidenceRoot,
     requiredRefs: assessments.flatMap(({ assessment }) => assessment.evidenceRefs),
     bindings: JSON.parse(bindingsRaw),

@@ -120,6 +120,7 @@ export async function buildPublicationExportFromTrustedContext(options: {
   authority: unknown;
   outPath: string;
   additionalInputPaths?: readonly string[];
+  trustedAdjudications?: ReadonlyMap<string, unknown>;
   now?: () => Date;
 }): Promise<PublicationExport> {
   const outPath = resolve(options.outPath);
@@ -168,7 +169,7 @@ export async function buildPublicationExportFromTrustedContext(options: {
       ...(trusted.currentDigests ? { currentDigests: trusted.currentDigests } : {}),
       execution: candidate.execution,
       observation: candidate.observation,
-      adjudication: candidate.adjudication,
+      adjudication: options.trustedAdjudications?.get(candidate.candidateId) ?? candidate.adjudication,
       verifiedEvidenceRefs: trusted.verifiedEvidenceRefs,
       scope: trusted.scope,
       authorizedReviewerIds: authority.authorizedReviewerIds,

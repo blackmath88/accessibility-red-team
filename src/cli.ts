@@ -7,6 +7,7 @@ import { scoutSite } from "./scout/scout.js";
 import { buildReport } from "./report/build.js";
 import { buildPublicationExport } from "./report/publication.js";
 import { buildIntegrityOnlyPublicationExport } from "./report/local-integrity.js";
+import { buildApprovedLocalPublicationExport, prepareLocalReviewRequest, recordLocalApproval, REVIEW_NAMESPACE } from "./report/local-approval.js";
 import { auditSite } from "./site/audit.js";
 import { compareSiteReports } from "./watch/compare.js";
 import { runCohort } from "./cohort/run.js";
@@ -25,6 +26,9 @@ function usage(): never {
     "  npm run report -- <run-dir> --profile requirements/profiles/ch.federal.yml",
     "  npm run publication:export -- <legacy-report.json> <candidate-set.json> --authority <trusted-authority.json> --out <publication-report.json>",
     "  npm run publication:export-local -- <legacy-report.json> <candidate-set.json> --bindings <local-evidence-bindings.json> --evidence-root <dir> --out <publication-report.json>",
+    "  npm run publication:review-request -- <legacy-report.json> <candidate-set.json> --bindings <bindings.json> --evidence-root <dir> --candidate <id> --reviewer <principal> --note <text> --out <request.json>",
+    "  npm run publication:review-record -- <request.json> <request.json.sig> --allowed-signers <allowed_signers> --approvals <approvals.jsonl>",
+    "  npm run publication:export-approved -- <legacy-report.json> <candidate-set.json> --bindings <bindings.json> --evidence-root <dir> --allowed-signers <allowed_signers> --approvals <approvals.jsonl> --out <publication-report.json>",
     "  npm run audit -- <url> [--out runs/<name>] [--max-pages 20] [--max-depth 2] [--profile requirements/profiles/ch.federal.yml] [--journeys]",
     "  npm run journey -- <url> [--out runs/<name>]",
     "  npm run watch -- <previous-report.json> <current-report.json> [--out watch.json]",
@@ -38,6 +42,14 @@ function usage(): never {
 function valueAfter(args: string[], flag: string): string | undefined {
   const index = args.indexOf(flag);
   return index >= 0 ? args[index + 1] : undefined;
+}
+
+function exactFlagValues(values: string[], expectedFlags: readonly string[]): Record<string, string> | undefined {
+  if (values.length !== expectedFlags.length * 2) return undefined;
+  const suppliedFlags = values.filter((_, index) => index % 2 === 0);
+  if (suppliedFlags.some((flag) => !expectedFlags.includes(flag)) || new Set(suppliedFlags).size !== expectedFlags.length
+    || values.some((value, index) => index % 2 === 1 && value.startsWith("--"))) return undefined;
+  return Object.fromEntries(expectedFlags.map((flag) => [flag, values[values.indexOf(flag) + 1]!]));
 }
 
 const [command, ...args] = process.argv.slice(2);
@@ -155,6 +167,37 @@ if (command === "scan") {
       console.error(error instanceof Error ? error.message : String(error));
       process.exit(1);
     });
+} else if (command === "publication-review-request") {
+  const sourceReportPath = args[0];
+  const candidatesPath = args[1];
+  const values = exactFlagValues(args.slice(2), ["--bindings", "--evidence-root", "--candidate", "--reviewer", "--note", "--out"]);
+  if (!sourceReportPath || sourceReportPath.startsWith("--") || !candidatesPath || candidatesPath.startsWith("--") || !values) usage();
+  prepareLocalReviewRequest({
+    sourceReportPath: resolve(sourceReportPath), candidatesPath: resolve(candidatesPath),
+    bindingsPath: resolve(values["--bindings"]!), evidenceRoot: resolve(values["--evidence-root"]!),
+    candidateId: values["--candidate"]!, reviewerId: values["--reviewer"]!, note: values["--note"]!, outPath: resolve(values["--out"]!),
+  }).then((result) => console.log(JSON.stringify({ ...result, request: undefined, signingNamespace: REVIEW_NAMESPACE }, null, 2)))
+    .catch((error) => { console.error(error instanceof Error ? error.message : String(error)); process.exit(1); });
+} else if (command === "publication-review-record") {
+  const requestPath = args[0];
+  const signaturePath = args[1];
+  const values = exactFlagValues(args.slice(2), ["--allowed-signers", "--approvals"]);
+  if (!requestPath || requestPath.startsWith("--") || !signaturePath || signaturePath.startsWith("--") || !values) usage();
+  recordLocalApproval({ requestPath: resolve(requestPath), signaturePath: resolve(signaturePath),
+    allowedSignersPath: resolve(values["--allowed-signers"]!), approvalsPath: resolve(values["--approvals"]!) })
+    .then((result) => console.log(JSON.stringify(result, null, 2)))
+    .catch((error) => { console.error(error instanceof Error ? error.message : String(error)); process.exit(1); });
+} else if (command === "publication-export-approved") {
+  const sourceReportPath = args[0];
+  const candidatesPath = args[1];
+  const values = exactFlagValues(args.slice(2), ["--bindings", "--evidence-root", "--allowed-signers", "--approvals", "--out"]);
+  if (!sourceReportPath || sourceReportPath.startsWith("--") || !candidatesPath || candidatesPath.startsWith("--") || !values) usage();
+  buildApprovedLocalPublicationExport({ sourceReportPath: resolve(sourceReportPath), candidatesPath: resolve(candidatesPath),
+    bindingsPath: resolve(values["--bindings"]!), evidenceRoot: resolve(values["--evidence-root"]!),
+    allowedSignersPath: resolve(values["--allowed-signers"]!), approvalsPath: resolve(values["--approvals"]!), outPath: resolve(values["--out"]!) })
+    .then((result) => console.log(JSON.stringify({ ...result.export.summary, verifiedEvidenceRefs: result.verifiedEvidenceRefs,
+      verifiedApprovals: result.verifiedApprovals }, null, 2)))
+    .catch((error) => { console.error(error instanceof Error ? error.message : String(error)); process.exit(1); });
 } else if (command === "audit") {
   const url = args.find((arg) => !arg.startsWith("--"));
   if (!url) usage();

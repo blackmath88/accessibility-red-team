@@ -1,0 +1,48 @@
+{
+  "schema": "art/publication-candidate-set/v1",
+  "candidates": [
+    {
+      "candidateId": "sample-assisted",
+      "record": {
+        "schema": "art/assessment-result/v1",
+        "assessmentId": "synthetic-assisted-assessment",
+        "executionId": null,
+        "observationId": "synthetic-observation",
+        "subjectId": "synthetic-site/page-a",
+        "obligationId": "skip-target-exists",
+        "probeId": null,
+        "implementationVersion": null,
+        "entryDigest": null,
+        "implementationDigest": null,
+        "outcome": "violation",
+        "claim": "Synthetic recognized skip link has a missing same-page target",
+        "claimVersion": "69de02b78cc31757ffa43ba7c26fe3db7d710a7ddde3d37032ece6bdec6780f5",
+        "evidenceVersion": "a6a0f535e6ef3e7c16140960c667662f4bf74a28838202c8b7ba8ec9de7ce222",
+        "evidenceRefs": [
+          { "ref": "local-artifact://sample/dom", "sha256": "177ebcc08186801cd8c9696b8506e653fb79b502597870971ae65e67456ce68e" }
+        ],
+        "environment": { "browserName": "synthetic-chromium", "browserVersion": "example-only", "platform": "synthetic-linux", "probeRuntimeVersion": "journeys/0.1" },
+        "executedAt": "2026-10-25T20:00:00.000Z",
+        "provenance": { "status": "KNOWN", "integrity": "verified", "source": "Synthetic unit fixture; no real artifact verification" },
+        "author": { "kind": "model", "id": "synthetic-proposer" },
+        "assessment_mode": "assisted",
+        "verification": "human_adjudicated",
+        "publication_eligibility": "internal_only"
+      },
+      "observation": {
+        "schema": "art/reproduced-observation/v1",
+        "observationId": "synthetic-observation",
+        "hypothesisId": "synthetic-hypothesis",
+        "subjectId": "synthetic-site/page-a",
+        "obligationId": "skip-target-exists",
+        "contextId": "synthetic-fresh-context",
+        "freshContext": true,
+        "evidenceRefs": [
+          { "ref": "local-artifact://sample/dom", "sha256": "177ebcc08186801cd8c9696b8506e653fb79b502597870971ae65e67456ce68e" }
+        ],
+        "observedAt": "2026-10-25T20:00:00.000Z",
+        "author": { "kind": "system", "id": "synthetic-fixture-runner" }
+      }
+    }
+  ]
+}
