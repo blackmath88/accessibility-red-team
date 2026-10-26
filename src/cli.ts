@@ -5,6 +5,7 @@ import YAML from "yaml";
 import { scanUrl } from "./scan.js";
 import { scoutSite } from "./scout/scout.js";
 import { buildReport } from "./report/build.js";
+import { buildPublicationExport } from "./report/publication.js";
 import { auditSite } from "./site/audit.js";
 import { compareSiteReports } from "./watch/compare.js";
 import { runCohort } from "./cohort/run.js";
@@ -21,6 +22,7 @@ function usage(): never {
     "  npm run scan -- <url> [--out runs/<name>] [--no-events]",
     "  npm run scout -- <url> [--out runs/<name>/surface.json] [--max-pages 20] [--max-depth 2]",
     "  npm run report -- <run-dir> --profile requirements/profiles/ch.federal.yml",
+    "  npm run publication:export -- <legacy-report.json> <candidate-set.json> --authority <trusted-authority.json> --out <publication-report.json>",
     "  npm run audit -- <url> [--out runs/<name>] [--max-pages 20] [--max-depth 2] [--profile requirements/profiles/ch.federal.yml] [--journeys]",
     "  npm run journey -- <url> [--out runs/<name>]",
     "  npm run watch -- <previous-report.json> <current-report.json> [--out watch.json]",
@@ -98,6 +100,27 @@ if (command === "scan") {
     profilePath: resolve(profilePath),
     emit,
   }))
+    .then((result) => console.log(JSON.stringify(result.summary, null, 2)))
+    .catch((error) => {
+      console.error(error instanceof Error ? error.message : String(error));
+      process.exit(1);
+    });
+} else if (command === "publication-export") {
+  const sourceReportPath = args[0];
+  const candidatesPath = args[1];
+  const flags = args.slice(2);
+  if (flags.length !== 4 || ![flags[0], flags[2]].every((flag) => flag === "--authority" || flag === "--out")
+    || flags[0] === flags[2] || flags[1]?.startsWith("--") || flags[3]?.startsWith("--")) usage();
+  const authorityPath = flags[flags.indexOf("--authority") + 1];
+  const outPath = flags[flags.indexOf("--out") + 1];
+  if (!sourceReportPath || sourceReportPath.startsWith("--") || !candidatesPath || candidatesPath.startsWith("--") || !authorityPath || !outPath) usage();
+
+  buildPublicationExport({
+    sourceReportPath: resolve(sourceReportPath),
+    candidatesPath: resolve(candidatesPath),
+    authorityPath: resolve(authorityPath),
+    outPath: resolve(outPath),
+  })
     .then((result) => console.log(JSON.stringify(result.summary, null, 2)))
     .catch((error) => {
       console.error(error instanceof Error ? error.message : String(error));
