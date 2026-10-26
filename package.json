@@ -22,6 +22,7 @@
     "scout": "tsx src/cli.ts scout",
     "report": "tsx src/cli.ts report",
     "publication:export": "tsx src/cli.ts publication-export",
+    "publication:export-local": "tsx src/cli.ts publication-export-local",
     "audit": "tsx src/cli.ts audit",
     "benchmark:scout": "tsx src/benchmark/cli.ts",
     "watch": "tsx src/cli.ts watch",

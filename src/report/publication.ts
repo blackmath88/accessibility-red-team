@@ -95,6 +95,7 @@ export const PublicationExportSchema = z.strictObject({
 }).readonly();
 
 export type PublicationExport = z.infer<typeof PublicationExportSchema>;
+export type PublicationAuthority = z.infer<typeof PublicationAuthoritySchema>;
 
 function findingCount(report: z.infer<typeof SourceReportSchema>): number {
   return report.findings.length;
@@ -113,29 +114,29 @@ export function publicationRecordDigest(value: unknown): string {
   return createHash("sha256").update(canonicalJson(value)).digest("hex");
 }
 
-export async function buildPublicationExport(options: {
+export async function buildPublicationExportFromTrustedContext(options: {
   sourceReportPath: string;
   candidatesPath: string;
-  authorityPath: string;
+  authority: unknown;
   outPath: string;
+  additionalInputPaths?: readonly string[];
   now?: () => Date;
 }): Promise<PublicationExport> {
   const outPath = resolve(options.outPath);
-  const inputPaths = [options.sourceReportPath, options.candidatesPath, options.authorityPath].map((path) => resolve(path));
+  const inputPaths = [options.sourceReportPath, options.candidatesPath, ...(options.additionalInputPaths ?? [])].map((path) => resolve(path));
   const [inputRealPaths, outDirectory] = await Promise.all([
     Promise.all(inputPaths.map((path) => realpath(path))),
     realpath(dirname(outPath)),
   ]);
   const canonicalOutPath = await realpath(outPath).catch(() => join(outDirectory, basename(outPath)));
   if (inputRealPaths.includes(canonicalOutPath)) throw new Error("Publication export output must not overwrite a source report, candidate set or authority file.");
-  const [sourceBytes, candidatesRaw, authorityRaw] = await Promise.all([
+  const [sourceBytes, candidatesRaw] = await Promise.all([
     readFile(options.sourceReportPath),
     readFile(options.candidatesPath, "utf8"),
-    readFile(options.authorityPath, "utf8"),
   ]);
   const sourceReport = SourceReportSchema.parse(JSON.parse(sourceBytes.toString("utf8")));
   const candidateSet = PublicationCandidateSetSchema.parse(JSON.parse(candidatesRaw));
-  const authority = PublicationAuthoritySchema.parse(JSON.parse(authorityRaw));
+  const authority = PublicationAuthoritySchema.parse(options.authority);
   const sourceReportSha256 = createHash("sha256").update(sourceBytes).digest("hex");
   if (authority.sourceReportSha256 !== sourceReportSha256) throw new Error("Publication authority does not match the exact source report bytes.");
   const trustedCandidates = new Map(authority.candidates.map((candidate) => [candidate.candidateId, candidate]));
@@ -214,4 +215,22 @@ export async function buildPublicationExport(options: {
     await rm(temporaryPath, { force: true });
   }
   return result;
+}
+
+export async function buildPublicationExport(options: {
+  sourceReportPath: string;
+  candidatesPath: string;
+  authorityPath: string;
+  outPath: string;
+  now?: () => Date;
+}): Promise<PublicationExport> {
+  const authorityRaw = await readFile(options.authorityPath, "utf8");
+  return buildPublicationExportFromTrustedContext({
+    sourceReportPath: options.sourceReportPath,
+    candidatesPath: options.candidatesPath,
+    authority: JSON.parse(authorityRaw),
+    outPath: options.outPath,
+    additionalInputPaths: [options.authorityPath],
+    ...(options.now ? { now: options.now } : {}),
+  });
 }

@@ -6,6 +6,7 @@ import { scanUrl } from "./scan.js";
 import { scoutSite } from "./scout/scout.js";
 import { buildReport } from "./report/build.js";
 import { buildPublicationExport } from "./report/publication.js";
+import { buildIntegrityOnlyPublicationExport } from "./report/local-integrity.js";
 import { auditSite } from "./site/audit.js";
 import { compareSiteReports } from "./watch/compare.js";
 import { runCohort } from "./cohort/run.js";
@@ -23,6 +24,7 @@ function usage(): never {
     "  npm run scout -- <url> [--out runs/<name>/surface.json] [--max-pages 20] [--max-depth 2]",
     "  npm run report -- <run-dir> --profile requirements/profiles/ch.federal.yml",
     "  npm run publication:export -- <legacy-report.json> <candidate-set.json> --authority <trusted-authority.json> --out <publication-report.json>",
+    "  npm run publication:export-local -- <legacy-report.json> <candidate-set.json> --bindings <local-evidence-bindings.json> --evidence-root <dir> --out <publication-report.json>",
     "  npm run audit -- <url> [--out runs/<name>] [--max-pages 20] [--max-depth 2] [--profile requirements/profiles/ch.federal.yml] [--journeys]",
     "  npm run journey -- <url> [--out runs/<name>]",
     "  npm run watch -- <previous-report.json> <current-report.json> [--out watch.json]",
@@ -122,6 +124,33 @@ if (command === "scan") {
     outPath: resolve(outPath),
   })
     .then((result) => console.log(JSON.stringify(result.summary, null, 2)))
+    .catch((error) => {
+      console.error(error instanceof Error ? error.message : String(error));
+      process.exit(1);
+    });
+} else if (command === "publication-export-local") {
+  const sourceReportPath = args[0];
+  const candidatesPath = args[1];
+  const flags = args.slice(2);
+  const expectedFlags = ["--bindings", "--evidence-root", "--out"];
+  const suppliedFlags = flags.filter((_, index) => index % 2 === 0);
+  if (flags.length !== 6 || suppliedFlags.some((flag) => !expectedFlags.includes(flag))
+    || new Set(suppliedFlags).size !== expectedFlags.length || flags.some((value, index) => index % 2 === 1 && value.startsWith("--"))) usage();
+  const bindingsPath = flags[flags.indexOf("--bindings") + 1];
+  const evidenceRoot = flags[flags.indexOf("--evidence-root") + 1];
+  const outPath = flags[flags.indexOf("--out") + 1];
+  if (!sourceReportPath || sourceReportPath.startsWith("--") || !candidatesPath || candidatesPath.startsWith("--")
+    || !bindingsPath || !evidenceRoot || !outPath) usage();
+
+  buildIntegrityOnlyPublicationExport({
+    sourceReportPath: resolve(sourceReportPath),
+    candidatesPath: resolve(candidatesPath),
+    bindingsPath: resolve(bindingsPath),
+    evidenceRoot: resolve(evidenceRoot),
+    outPath: resolve(outPath),
+  })
+    .then((result) => console.log(JSON.stringify({ ...result.export.summary, verifiedEvidenceRefs: result.verifiedEvidenceRefs.length,
+      reviewerAuthority: "unavailable" }, null, 2)))
     .catch((error) => {
       console.error(error instanceof Error ? error.message : String(error));
       process.exit(1);
