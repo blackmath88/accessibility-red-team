@@ -2,7 +2,7 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import { execFile } from "node:child_process";
 import { createHash } from "node:crypto";
-import { mkdir, mkdtemp, readFile, rm, symlink, writeFile } from "node:fs/promises";
+import { link, mkdir, mkdtemp, readFile, rm, symlink, writeFile } from "node:fs/promises";
 import { readFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
@@ -202,6 +202,31 @@ test("approved local export cannot overwrite inputs through aliases and approval
       assert.equal(malformed.code, 2, args.join(" "));
       assert.match(malformed.stderr, /Usage:/);
     }
+  } finally {
+    await rm(directory, { recursive: true, force: true });
+  }
+});
+
+test("approval recording refuses hardlinked inputs and unterminated append stores", async () => {
+  const directory = await mkdtemp(join(tmpdir(), "art-local-approval-store-"));
+  try {
+    const { paths } = await fixture(directory);
+    const repository = new URL("..", import.meta.url).pathname;
+    assert.equal((await runCli(prepareArgs(paths), repository)).code, 0);
+    await exec("ssh-keygen", ["-Y", "sign", "-f", paths.key, "-n", REVIEW_NAMESPACE, paths.request]);
+    await rm(paths.approvals);
+    await link(paths.request, paths.approvals);
+    let result = await runCli(["publication-review-record", paths.request, `${paths.request}.sig`,
+      "--allowed-signers", paths.allowedSigners, "--approvals", paths.approvals], repository);
+    assert.equal(result.code, 1);
+    assert.match(result.stderr, /must not overwrite or alias/);
+
+    await rm(paths.approvals);
+    await writeFile(paths.approvals, "unterminated");
+    result = await runCli(["publication-review-record", paths.request, `${paths.request}.sig`,
+      "--allowed-signers", paths.allowedSigners, "--approvals", paths.approvals], repository);
+    assert.equal(result.code, 1);
+    assert.match(result.stderr, /must end with a newline/);
   } finally {
     await rm(directory, { recursive: true, force: true });
   }

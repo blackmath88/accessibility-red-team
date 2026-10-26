@@ -1,7 +1,7 @@
 import { createHash, randomUUID } from "node:crypto";
 import { spawn } from "node:child_process";
 import { constants } from "node:fs";
-import { mkdtemp, open, readFile, realpath, rm, writeFile } from "node:fs/promises";
+import { mkdtemp, open, readFile, realpath, rm, stat, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join, resolve } from "node:path";
 import { z } from "zod";
@@ -24,6 +24,7 @@ import {
 
 const IdSchema = z.string().trim().min(1);
 const REVIEW_NAMESPACE = "accessibility-red-team-finding-review-v1";
+const SSH_KEYGEN_PATH = "/usr/bin/ssh-keygen";
 
 const ProbeVersionSchema = z.strictObject({
   probeId: IdSchema.nullable(),
@@ -43,8 +44,11 @@ export const LocalReviewRequestSchema = z.strictObject({
   sourceReportSha256: DigestSchema,
   assessmentId: IdSchema,
   assessmentDigest: DigestSchema,
+  assessment: z.unknown(),
   observationDigest: DigestSchema,
+  observation: z.unknown(),
   executionDigest: DigestSchema.optional(),
+  execution: z.unknown().optional(),
   subjectId: IdSchema,
   obligationId: IdSchema,
   claimVersion: DigestSchema,
@@ -82,7 +86,7 @@ async function verifySshSignature(options: {
   try {
     await writeFile(signaturePath, options.signature, { flag: "wx", mode: 0o600 });
     await new Promise<void>((accept, reject) => {
-      const child = spawn("ssh-keygen", [
+      const child = spawn(SSH_KEYGEN_PATH, [
         "-Y", "verify",
         "-f", options.allowedSignersPath,
         "-I", options.reviewerId,
@@ -92,6 +96,7 @@ async function verifySshSignature(options: {
       let stderr = "";
       child.stderr.on("data", (chunk) => { stderr += String(chunk); });
       child.on("error", reject);
+      child.stdin.on("error", reject);
       child.on("close", (code) => code === 0
         ? accept()
         : reject(new Error(`Approval signature is not authorized for reviewer ${options.reviewerId}.${stderr.trim() ? ` ${stderr.trim()}` : ""}`)));
@@ -148,7 +153,7 @@ export async function prepareLocalReviewRequest(options: {
   if (assessment.verification !== "human_adjudicated") {
     throw new Error("The assessment must explicitly require the existing human-adjudicated publication path.");
   }
-  const observation = ReproducedObservationSchema.parse(candidate.observation);
+  ReproducedObservationSchema.parse(candidate.observation);
   const request = LocalReviewRequestSchema.parse({
     schema: "art/local-finding-review-request/v1",
     approvalId: randomUUID(),
@@ -160,8 +165,10 @@ export async function prepareLocalReviewRequest(options: {
     sourceReportSha256: sha256(loaded.sourceBytes),
     assessmentId: assessment.assessmentId,
     assessmentDigest: publicationRecordDigest(candidate.record),
-    observationDigest: publicationRecordDigest(observation),
-    ...(candidate.execution === undefined ? {} : { executionDigest: publicationRecordDigest(candidate.execution) }),
+    assessment: candidate.record,
+    observationDigest: publicationRecordDigest(candidate.observation),
+    observation: candidate.observation,
+    ...(candidate.execution === undefined ? {} : { executionDigest: publicationRecordDigest(candidate.execution), execution: candidate.execution }),
     subjectId: assessment.subjectId,
     obligationId: assessment.obligationId,
     claimVersion: assessment.claimVersion,
@@ -205,13 +212,19 @@ export async function recordLocalApproval(options: {
     sshSignature: signature,
   });
   const approvalsPath = resolve(options.approvalsPath);
-  const existingApprovalsPath = await realpath(approvalsPath).catch(() => undefined);
-  if (existingApprovalsPath && [allowedSignersRealPath, requestRealPath, signatureRealPath].includes(existingApprovalsPath)) {
-    throw new Error("Approval store must not overwrite or alias the request, signature or reviewer configuration.");
-  }
-  const handle = await open(approvalsPath, constants.O_APPEND | constants.O_CREAT | constants.O_WRONLY | constants.O_NOFOLLOW, 0o600);
+  const protectedStats = await Promise.all([allowedSignersRealPath, requestRealPath, signatureRealPath].map((path) => stat(path)));
+  const handle = await open(approvalsPath, constants.O_APPEND | constants.O_CREAT | constants.O_RDWR | constants.O_NOFOLLOW, 0o600);
   try {
-    if (!(await handle.stat()).isFile()) throw new Error("Approval store must be a regular file.");
+    const metadata = await handle.stat();
+    if (!metadata.isFile()) throw new Error("Approval store must be a regular file.");
+    if (protectedStats.some((item) => item.dev === metadata.dev && item.ino === metadata.ino)) {
+      throw new Error("Approval store must not overwrite or alias the request, signature or reviewer configuration.");
+    }
+    if (metadata.size > 0) {
+      const lastByte = Buffer.alloc(1);
+      await handle.read(lastByte, 0, 1, metadata.size - 1);
+      if (lastByte[0] !== 0x0a) throw new Error("Existing approval store must end with a newline before appending.");
+    }
     await handle.writeFile(`${JSON.stringify(envelope)}\n`, "utf8");
   } finally {
     await handle.close();
@@ -267,8 +280,11 @@ export async function buildApprovedLocalPublicationExport(options: {
       && request.sourceReportSha256 === sourceReportSha256
       && request.assessmentId === assessment.assessmentId
       && request.assessmentDigest === publicationRecordDigest(candidate.record)
+      && request.assessmentDigest === publicationRecordDigest(request.assessment)
       && request.observationDigest === (candidate.observation === undefined ? "" : publicationRecordDigest(candidate.observation))
+      && request.observationDigest === publicationRecordDigest(request.observation)
       && request.executionDigest === (candidate.execution === undefined ? undefined : publicationRecordDigest(candidate.execution))
+      && request.executionDigest === (request.execution === undefined ? undefined : publicationRecordDigest(request.execution))
       && request.subjectId === assessment.subjectId
       && request.obligationId === assessment.obligationId
       && request.claimVersion === assessment.claimVersion
