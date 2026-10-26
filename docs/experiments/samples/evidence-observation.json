@@ -1,0 +1,20 @@
+{
+  "schema": "art/reproduced-observation/v1",
+  "observationId": "synthetic-observation",
+  "hypothesisId": "synthetic-hypothesis",
+  "subjectId": "synthetic-site/page-a",
+  "obligationId": "skip-target-exists",
+  "contextId": "synthetic-fresh-context",
+  "freshContext": true,
+  "evidenceRefs": [
+    {
+      "ref": "synthetic://skip-link/dom",
+      "sha256": "9a0fc80635739f745ec2d7c7ba691695f13317065b628e770cc8c1e7580bb4c0"
+    }
+  ],
+  "observedAt": "2026-10-25T20:00:00.000Z",
+  "author": {
+    "kind": "system",
+    "id": "synthetic-fixture-runner"
+  }
+}

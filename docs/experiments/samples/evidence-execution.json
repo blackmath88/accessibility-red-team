@@ -1,0 +1,33 @@
+{
+  "schema": "art/probe-execution/v1",
+  "executionId": "synthetic-execution",
+  "subjectId": "synthetic-site/page-a",
+  "obligationId": "skip-target-exists",
+  "probeId": "skip-link.same-page",
+  "implementationVersion": "journeys/0.1+malformed-fragment.1",
+  "entryDigest": "523510a6ac5534581e3bde030bf6f59fa73deb021082f55d617ecebc203006ef",
+  "implementationDigest": "fe098846cf9fc03cd049f4219a08abd512e30a5efc3704d72d9facca1678f15b",
+  "outcome": "violation",
+  "evidenceRefs": [
+    {
+      "ref": "synthetic://skip-link/dom",
+      "sha256": "9a0fc80635739f745ec2d7c7ba691695f13317065b628e770cc8c1e7580bb4c0"
+    }
+  ],
+  "environment": {
+    "browserName": "synthetic-chromium",
+    "browserVersion": "example-only",
+    "platform": "synthetic-linux",
+    "probeRuntimeVersion": "journeys/0.1"
+  },
+  "executedAt": "2026-10-25T20:00:00.000Z",
+  "provenance": {
+    "status": "KNOWN",
+    "integrity": "verified",
+    "source": "Synthetic unit fixture; no real artifact verification"
+  },
+  "author": {
+    "kind": "system",
+    "id": "synthetic-fixture-runner"
+  }
+}

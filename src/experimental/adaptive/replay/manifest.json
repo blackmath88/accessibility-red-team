@@ -1,0 +1,994 @@
+{
+  "schema": "art/decision-replay/v1",
+  "provenance": "synthetic_local_smoke",
+  "historicalExtraction": {
+    "status": "blocked",
+    "reason": "Exact trial-3 model-visible messages are absent on this host; narrative summaries are not replay inputs."
+  },
+  "sourceCodeSha": "3065bc2fe655c325b360c20b2480fbfb0fd77722",
+  "packetVersion": "synthetic-decisions/v1",
+  "provider": "fake",
+  "sampling": {
+    "temperature": 0,
+    "maxOutputTokens": 600,
+    "responseFormat": "json_object",
+    "timeoutMs": 1000
+  },
+  "modelSlots": [
+    {
+      "id": "current",
+      "status": "configured",
+      "exactModel": "mistral-small-2603",
+      "source": "src/experimental/adaptive/trials/frontier-benchmark.v1.json"
+    },
+    {
+      "id": "stronger",
+      "status": "unresolved",
+      "exactModel": null,
+      "source": null
+    }
+  ],
+  "repetitions": 10,
+  "requests": [
+    {
+      "id": "missed_sibling/original/current/1",
+      "point": "missed_sibling",
+      "variant": "original",
+      "modelSlot": "current",
+      "repetition": 1,
+      "packetSha256": "af735d7f6e0fa3a5c14eaad9250fc081714c528fd38a68406b1337d403a72102"
+    },
+    {
+      "id": "missed_sibling/original/current/2",
+      "point": "missed_sibling",
+      "variant": "original",
+      "modelSlot": "current",
+      "repetition": 2,
+      "packetSha256": "af735d7f6e0fa3a5c14eaad9250fc081714c528fd38a68406b1337d403a72102"
+    },
+    {
+      "id": "missed_sibling/original/current/3",
+      "point": "missed_sibling",
+      "variant": "original",
+      "modelSlot": "current",
+      "repetition": 3,
+      "packetSha256": "af735d7f6e0fa3a5c14eaad9250fc081714c528fd38a68406b1337d403a72102"
+    },
+    {
+      "id": "missed_sibling/original/current/4",
+      "point": "missed_sibling",
+      "variant": "original",
+      "modelSlot": "current",
+      "repetition": 4,
+      "packetSha256": "af735d7f6e0fa3a5c14eaad9250fc081714c528fd38a68406b1337d403a72102"
+    },
+    {
+      "id": "missed_sibling/original/current/5",
+      "point": "missed_sibling",
+      "variant": "original",
+      "modelSlot": "current",
+      "repetition": 5,
+      "packetSha256": "af735d7f6e0fa3a5c14eaad9250fc081714c528fd38a68406b1337d403a72102"
+    },
+    {
+      "id": "missed_sibling/original/current/6",
+      "point": "missed_sibling",
+      "variant": "original",
+      "modelSlot": "current",
+      "repetition": 6,
+      "packetSha256": "af735d7f6e0fa3a5c14eaad9250fc081714c528fd38a68406b1337d403a72102"
+    },
+    {
+      "id": "missed_sibling/original/current/7",
+      "point": "missed_sibling",
+      "variant": "original",
+      "modelSlot": "current",
+      "repetition": 7,
+      "packetSha256": "af735d7f6e0fa3a5c14eaad9250fc081714c528fd38a68406b1337d403a72102"
+    },
+    {
+      "id": "missed_sibling/original/current/8",
+      "point": "missed_sibling",
+      "variant": "original",
+      "modelSlot": "current",
+      "repetition": 8,
+      "packetSha256": "af735d7f6e0fa3a5c14eaad9250fc081714c528fd38a68406b1337d403a72102"
+    },
+    {
+      "id": "missed_sibling/original/current/9",
+      "point": "missed_sibling",
+      "variant": "original",
+      "modelSlot": "current",
+      "repetition": 9,
+      "packetSha256": "af735d7f6e0fa3a5c14eaad9250fc081714c528fd38a68406b1337d403a72102"
+    },
+    {
+      "id": "missed_sibling/original/current/10",
+      "point": "missed_sibling",
+      "variant": "original",
+      "modelSlot": "current",
+      "repetition": 10,
+      "packetSha256": "af735d7f6e0fa3a5c14eaad9250fc081714c528fd38a68406b1337d403a72102"
+    },
+    {
+      "id": "missed_sibling/original/stronger/1",
+      "point": "missed_sibling",
+      "variant": "original",
+      "modelSlot": "stronger",
+      "repetition": 1,
+      "packetSha256": "af735d7f6e0fa3a5c14eaad9250fc081714c528fd38a68406b1337d403a72102"
+    },
+    {
+      "id": "missed_sibling/original/stronger/2",
+      "point": "missed_sibling",
+      "variant": "original",
+      "modelSlot": "stronger",
+      "repetition": 2,
+      "packetSha256": "af735d7f6e0fa3a5c14eaad9250fc081714c528fd38a68406b1337d403a72102"
+    },
+    {
+      "id": "missed_sibling/original/stronger/3",
+      "point": "missed_sibling",
+      "variant": "original",
+      "modelSlot": "stronger",
+      "repetition": 3,
+      "packetSha256": "af735d7f6e0fa3a5c14eaad9250fc081714c528fd38a68406b1337d403a72102"
+    },
+    {
+      "id": "missed_sibling/original/stronger/4",
+      "point": "missed_sibling",
+      "variant": "original",
+      "modelSlot": "stronger",
+      "repetition": 4,
+      "packetSha256": "af735d7f6e0fa3a5c14eaad9250fc081714c528fd38a68406b1337d403a72102"
+    },
+    {
+      "id": "missed_sibling/original/stronger/5",
+      "point": "missed_sibling",
+      "variant": "original",
+      "modelSlot": "stronger",
+      "repetition": 5,
+      "packetSha256": "af735d7f6e0fa3a5c14eaad9250fc081714c528fd38a68406b1337d403a72102"
+    },
+    {
+      "id": "missed_sibling/original/stronger/6",
+      "point": "missed_sibling",
+      "variant": "original",
+      "modelSlot": "stronger",
+      "repetition": 6,
+      "packetSha256": "af735d7f6e0fa3a5c14eaad9250fc081714c528fd38a68406b1337d403a72102"
+    },
+    {
+      "id": "missed_sibling/original/stronger/7",
+      "point": "missed_sibling",
+      "variant": "original",
+      "modelSlot": "stronger",
+      "repetition": 7,
+      "packetSha256": "af735d7f6e0fa3a5c14eaad9250fc081714c528fd38a68406b1337d403a72102"
+    },
+    {
+      "id": "missed_sibling/original/stronger/8",
+      "point": "missed_sibling",
+      "variant": "original",
+      "modelSlot": "stronger",
+      "repetition": 8,
+      "packetSha256": "af735d7f6e0fa3a5c14eaad9250fc081714c528fd38a68406b1337d403a72102"
+    },
+    {
+      "id": "missed_sibling/original/stronger/9",
+      "point": "missed_sibling",
+      "variant": "original",
+      "modelSlot": "stronger",
+      "repetition": 9,
+      "packetSha256": "af735d7f6e0fa3a5c14eaad9250fc081714c528fd38a68406b1337d403a72102"
+    },
+    {
+      "id": "missed_sibling/original/stronger/10",
+      "point": "missed_sibling",
+      "variant": "original",
+      "modelSlot": "stronger",
+      "repetition": 10,
+      "packetSha256": "af735d7f6e0fa3a5c14eaad9250fc081714c528fd38a68406b1337d403a72102"
+    },
+    {
+      "id": "missed_sibling/frontier_visible/current/1",
+      "point": "missed_sibling",
+      "variant": "frontier_visible",
+      "modelSlot": "current",
+      "repetition": 1,
+      "packetSha256": "9620519a35269e559f63c32a50b96a272c744db133489ad05254eaf6405f4765"
+    },
+    {
+      "id": "missed_sibling/frontier_visible/current/2",
+      "point": "missed_sibling",
+      "variant": "frontier_visible",
+      "modelSlot": "current",
+      "repetition": 2,
+      "packetSha256": "9620519a35269e559f63c32a50b96a272c744db133489ad05254eaf6405f4765"
+    },
+    {
+      "id": "missed_sibling/frontier_visible/current/3",
+      "point": "missed_sibling",
+      "variant": "frontier_visible",
+      "modelSlot": "current",
+      "repetition": 3,
+      "packetSha256": "9620519a35269e559f63c32a50b96a272c744db133489ad05254eaf6405f4765"
+    },
+    {
+      "id": "missed_sibling/frontier_visible/current/4",
+      "point": "missed_sibling",
+      "variant": "frontier_visible",
+      "modelSlot": "current",
+      "repetition": 4,
+      "packetSha256": "9620519a35269e559f63c32a50b96a272c744db133489ad05254eaf6405f4765"
+    },
+    {
+      "id": "missed_sibling/frontier_visible/current/5",
+      "point": "missed_sibling",
+      "variant": "frontier_visible",
+      "modelSlot": "current",
+      "repetition": 5,
+      "packetSha256": "9620519a35269e559f63c32a50b96a272c744db133489ad05254eaf6405f4765"
+    },
+    {
+      "id": "missed_sibling/frontier_visible/current/6",
+      "point": "missed_sibling",
+      "variant": "frontier_visible",
+      "modelSlot": "current",
+      "repetition": 6,
+      "packetSha256": "9620519a35269e559f63c32a50b96a272c744db133489ad05254eaf6405f4765"
+    },
+    {
+      "id": "missed_sibling/frontier_visible/current/7",
+      "point": "missed_sibling",
+      "variant": "frontier_visible",
+      "modelSlot": "current",
+      "repetition": 7,
+      "packetSha256": "9620519a35269e559f63c32a50b96a272c744db133489ad05254eaf6405f4765"
+    },
+    {
+      "id": "missed_sibling/frontier_visible/current/8",
+      "point": "missed_sibling",
+      "variant": "frontier_visible",
+      "modelSlot": "current",
+      "repetition": 8,
+      "packetSha256": "9620519a35269e559f63c32a50b96a272c744db133489ad05254eaf6405f4765"
+    },
+    {
+      "id": "missed_sibling/frontier_visible/current/9",
+      "point": "missed_sibling",
+      "variant": "frontier_visible",
+      "modelSlot": "current",
+      "repetition": 9,
+      "packetSha256": "9620519a35269e559f63c32a50b96a272c744db133489ad05254eaf6405f4765"
+    },
+    {
+      "id": "missed_sibling/frontier_visible/current/10",
+      "point": "missed_sibling",
+      "variant": "frontier_visible",
+      "modelSlot": "current",
+      "repetition": 10,
+      "packetSha256": "9620519a35269e559f63c32a50b96a272c744db133489ad05254eaf6405f4765"
+    },
+    {
+      "id": "missed_sibling/frontier_visible/stronger/1",
+      "point": "missed_sibling",
+      "variant": "frontier_visible",
+      "modelSlot": "stronger",
+      "repetition": 1,
+      "packetSha256": "9620519a35269e559f63c32a50b96a272c744db133489ad05254eaf6405f4765"
+    },
+    {
+      "id": "missed_sibling/frontier_visible/stronger/2",
+      "point": "missed_sibling",
+      "variant": "frontier_visible",
+      "modelSlot": "stronger",
+      "repetition": 2,
+      "packetSha256": "9620519a35269e559f63c32a50b96a272c744db133489ad05254eaf6405f4765"
+    },
+    {
+      "id": "missed_sibling/frontier_visible/stronger/3",
+      "point": "missed_sibling",
+      "variant": "frontier_visible",
+      "modelSlot": "stronger",
+      "repetition": 3,
+      "packetSha256": "9620519a35269e559f63c32a50b96a272c744db133489ad05254eaf6405f4765"
+    },
+    {
+      "id": "missed_sibling/frontier_visible/stronger/4",
+      "point": "missed_sibling",
+      "variant": "frontier_visible",
+      "modelSlot": "stronger",
+      "repetition": 4,
+      "packetSha256": "9620519a35269e559f63c32a50b96a272c744db133489ad05254eaf6405f4765"
+    },
+    {
+      "id": "missed_sibling/frontier_visible/stronger/5",
+      "point": "missed_sibling",
+      "variant": "frontier_visible",
+      "modelSlot": "stronger",
+      "repetition": 5,
+      "packetSha256": "9620519a35269e559f63c32a50b96a272c744db133489ad05254eaf6405f4765"
+    },
+    {
+      "id": "missed_sibling/frontier_visible/stronger/6",
+      "point": "missed_sibling",
+      "variant": "frontier_visible",
+      "modelSlot": "stronger",
+      "repetition": 6,
+      "packetSha256": "9620519a35269e559f63c32a50b96a272c744db133489ad05254eaf6405f4765"
+    },
+    {
+      "id": "missed_sibling/frontier_visible/stronger/7",
+      "point": "missed_sibling",
+      "variant": "frontier_visible",
+      "modelSlot": "stronger",
+      "repetition": 7,
+      "packetSha256": "9620519a35269e559f63c32a50b96a272c744db133489ad05254eaf6405f4765"
+    },
+    {
+      "id": "missed_sibling/frontier_visible/stronger/8",
+      "point": "missed_sibling",
+      "variant": "frontier_visible",
+      "modelSlot": "stronger",
+      "repetition": 8,
+      "packetSha256": "9620519a35269e559f63c32a50b96a272c744db133489ad05254eaf6405f4765"
+    },
+    {
+      "id": "missed_sibling/frontier_visible/stronger/9",
+      "point": "missed_sibling",
+      "variant": "frontier_visible",
+      "modelSlot": "stronger",
+      "repetition": 9,
+      "packetSha256": "9620519a35269e559f63c32a50b96a272c744db133489ad05254eaf6405f4765"
+    },
+    {
+      "id": "missed_sibling/frontier_visible/stronger/10",
+      "point": "missed_sibling",
+      "variant": "frontier_visible",
+      "modelSlot": "stronger",
+      "repetition": 10,
+      "packetSha256": "9620519a35269e559f63c32a50b96a272c744db133489ad05254eaf6405f4765"
+    },
+    {
+      "id": "missed_sibling/restructured_evidence/current/1",
+      "point": "missed_sibling",
+      "variant": "restructured_evidence",
+      "modelSlot": "current",
+      "repetition": 1,
+      "packetSha256": "a9a104bea4bc3001383162f8391bc5aeadb4846edfde7c6a7d83e9f5a7d8ee81"
+    },
+    {
+      "id": "missed_sibling/restructured_evidence/current/2",
+      "point": "missed_sibling",
+      "variant": "restructured_evidence",
+      "modelSlot": "current",
+      "repetition": 2,
+      "packetSha256": "a9a104bea4bc3001383162f8391bc5aeadb4846edfde7c6a7d83e9f5a7d8ee81"
+    },
+    {
+      "id": "missed_sibling/restructured_evidence/current/3",
+      "point": "missed_sibling",
+      "variant": "restructured_evidence",
+      "modelSlot": "current",
+      "repetition": 3,
+      "packetSha256": "a9a104bea4bc3001383162f8391bc5aeadb4846edfde7c6a7d83e9f5a7d8ee81"
+    },
+    {
+      "id": "missed_sibling/restructured_evidence/current/4",
+      "point": "missed_sibling",
+      "variant": "restructured_evidence",
+      "modelSlot": "current",
+      "repetition": 4,
+      "packetSha256": "a9a104bea4bc3001383162f8391bc5aeadb4846edfde7c6a7d83e9f5a7d8ee81"
+    },
+    {
+      "id": "missed_sibling/restructured_evidence/current/5",
+      "point": "missed_sibling",
+      "variant": "restructured_evidence",
+      "modelSlot": "current",
+      "repetition": 5,
+      "packetSha256": "a9a104bea4bc3001383162f8391bc5aeadb4846edfde7c6a7d83e9f5a7d8ee81"
+    },
+    {
+      "id": "missed_sibling/restructured_evidence/current/6",
+      "point": "missed_sibling",
+      "variant": "restructured_evidence",
+      "modelSlot": "current",
+      "repetition": 6,
+      "packetSha256": "a9a104bea4bc3001383162f8391bc5aeadb4846edfde7c6a7d83e9f5a7d8ee81"
+    },
+    {
+      "id": "missed_sibling/restructured_evidence/current/7",
+      "point": "missed_sibling",
+      "variant": "restructured_evidence",
+      "modelSlot": "current",
+      "repetition": 7,
+      "packetSha256": "a9a104bea4bc3001383162f8391bc5aeadb4846edfde7c6a7d83e9f5a7d8ee81"
+    },
+    {
+      "id": "missed_sibling/restructured_evidence/current/8",
+      "point": "missed_sibling",
+      "variant": "restructured_evidence",
+      "modelSlot": "current",
+      "repetition": 8,
+      "packetSha256": "a9a104bea4bc3001383162f8391bc5aeadb4846edfde7c6a7d83e9f5a7d8ee81"
+    },
+    {
+      "id": "missed_sibling/restructured_evidence/current/9",
+      "point": "missed_sibling",
+      "variant": "restructured_evidence",
+      "modelSlot": "current",
+      "repetition": 9,
+      "packetSha256": "a9a104bea4bc3001383162f8391bc5aeadb4846edfde7c6a7d83e9f5a7d8ee81"
+    },
+    {
+      "id": "missed_sibling/restructured_evidence/current/10",
+      "point": "missed_sibling",
+      "variant": "restructured_evidence",
+      "modelSlot": "current",
+      "repetition": 10,
+      "packetSha256": "a9a104bea4bc3001383162f8391bc5aeadb4846edfde7c6a7d83e9f5a7d8ee81"
+    },
+    {
+      "id": "missed_sibling/restructured_evidence/stronger/1",
+      "point": "missed_sibling",
+      "variant": "restructured_evidence",
+      "modelSlot": "stronger",
+      "repetition": 1,
+      "packetSha256": "a9a104bea4bc3001383162f8391bc5aeadb4846edfde7c6a7d83e9f5a7d8ee81"
+    },
+    {
+      "id": "missed_sibling/restructured_evidence/stronger/2",
+      "point": "missed_sibling",
+      "variant": "restructured_evidence",
+      "modelSlot": "stronger",
+      "repetition": 2,
+      "packetSha256": "a9a104bea4bc3001383162f8391bc5aeadb4846edfde7c6a7d83e9f5a7d8ee81"
+    },
+    {
+      "id": "missed_sibling/restructured_evidence/stronger/3",
+      "point": "missed_sibling",
+      "variant": "restructured_evidence",
+      "modelSlot": "stronger",
+      "repetition": 3,
+      "packetSha256": "a9a104bea4bc3001383162f8391bc5aeadb4846edfde7c6a7d83e9f5a7d8ee81"
+    },
+    {
+      "id": "missed_sibling/restructured_evidence/stronger/4",
+      "point": "missed_sibling",
+      "variant": "restructured_evidence",
+      "modelSlot": "stronger",
+      "repetition": 4,
+      "packetSha256": "a9a104bea4bc3001383162f8391bc5aeadb4846edfde7c6a7d83e9f5a7d8ee81"
+    },
+    {
+      "id": "missed_sibling/restructured_evidence/stronger/5",
+      "point": "missed_sibling",
+      "variant": "restructured_evidence",
+      "modelSlot": "stronger",
+      "repetition": 5,
+      "packetSha256": "a9a104bea4bc3001383162f8391bc5aeadb4846edfde7c6a7d83e9f5a7d8ee81"
+    },
+    {
+      "id": "missed_sibling/restructured_evidence/stronger/6",
+      "point": "missed_sibling",
+      "variant": "restructured_evidence",
+      "modelSlot": "stronger",
+      "repetition": 6,
+      "packetSha256": "a9a104bea4bc3001383162f8391bc5aeadb4846edfde7c6a7d83e9f5a7d8ee81"
+    },
+    {
+      "id": "missed_sibling/restructured_evidence/stronger/7",
+      "point": "missed_sibling",
+      "variant": "restructured_evidence",
+      "modelSlot": "stronger",
+      "repetition": 7,
+      "packetSha256": "a9a104bea4bc3001383162f8391bc5aeadb4846edfde7c6a7d83e9f5a7d8ee81"
+    },
+    {
+      "id": "missed_sibling/restructured_evidence/stronger/8",
+      "point": "missed_sibling",
+      "variant": "restructured_evidence",
+      "modelSlot": "stronger",
+      "repetition": 8,
+      "packetSha256": "a9a104bea4bc3001383162f8391bc5aeadb4846edfde7c6a7d83e9f5a7d8ee81"
+    },
+    {
+      "id": "missed_sibling/restructured_evidence/stronger/9",
+      "point": "missed_sibling",
+      "variant": "restructured_evidence",
+      "modelSlot": "stronger",
+      "repetition": 9,
+      "packetSha256": "a9a104bea4bc3001383162f8391bc5aeadb4846edfde7c6a7d83e9f5a7d8ee81"
+    },
+    {
+      "id": "missed_sibling/restructured_evidence/stronger/10",
+      "point": "missed_sibling",
+      "variant": "restructured_evidence",
+      "modelSlot": "stronger",
+      "repetition": 10,
+      "packetSha256": "a9a104bea4bc3001383162f8391bc5aeadb4846edfde7c6a7d83e9f5a7d8ee81"
+    },
+    {
+      "id": "dialog_focus/original/current/1",
+      "point": "dialog_focus",
+      "variant": "original",
+      "modelSlot": "current",
+      "repetition": 1,
+      "packetSha256": "e654e8726083f7d115f5618993d8df5ee938887cd7d945cfd95b08866f92a769"
+    },
+    {
+      "id": "dialog_focus/original/current/2",
+      "point": "dialog_focus",
+      "variant": "original",
+      "modelSlot": "current",
+      "repetition": 2,
+      "packetSha256": "e654e8726083f7d115f5618993d8df5ee938887cd7d945cfd95b08866f92a769"
+    },
+    {
+      "id": "dialog_focus/original/current/3",
+      "point": "dialog_focus",
+      "variant": "original",
+      "modelSlot": "current",
+      "repetition": 3,
+      "packetSha256": "e654e8726083f7d115f5618993d8df5ee938887cd7d945cfd95b08866f92a769"
+    },
+    {
+      "id": "dialog_focus/original/current/4",
+      "point": "dialog_focus",
+      "variant": "original",
+      "modelSlot": "current",
+      "repetition": 4,
+      "packetSha256": "e654e8726083f7d115f5618993d8df5ee938887cd7d945cfd95b08866f92a769"
+    },
+    {
+      "id": "dialog_focus/original/current/5",
+      "point": "dialog_focus",
+      "variant": "original",
+      "modelSlot": "current",
+      "repetition": 5,
+      "packetSha256": "e654e8726083f7d115f5618993d8df5ee938887cd7d945cfd95b08866f92a769"
+    },
+    {
+      "id": "dialog_focus/original/current/6",
+      "point": "dialog_focus",
+      "variant": "original",
+      "modelSlot": "current",
+      "repetition": 6,
+      "packetSha256": "e654e8726083f7d115f5618993d8df5ee938887cd7d945cfd95b08866f92a769"
+    },
+    {
+      "id": "dialog_focus/original/current/7",
+      "point": "dialog_focus",
+      "variant": "original",
+      "modelSlot": "current",
+      "repetition": 7,
+      "packetSha256": "e654e8726083f7d115f5618993d8df5ee938887cd7d945cfd95b08866f92a769"
+    },
+    {
+      "id": "dialog_focus/original/current/8",
+      "point": "dialog_focus",
+      "variant": "original",
+      "modelSlot": "current",
+      "repetition": 8,
+      "packetSha256": "e654e8726083f7d115f5618993d8df5ee938887cd7d945cfd95b08866f92a769"
+    },
+    {
+      "id": "dialog_focus/original/current/9",
+      "point": "dialog_focus",
+      "variant": "original",
+      "modelSlot": "current",
+      "repetition": 9,
+      "packetSha256": "e654e8726083f7d115f5618993d8df5ee938887cd7d945cfd95b08866f92a769"
+    },
+    {
+      "id": "dialog_focus/original/current/10",
+      "point": "dialog_focus",
+      "variant": "original",
+      "modelSlot": "current",
+      "repetition": 10,
+      "packetSha256": "e654e8726083f7d115f5618993d8df5ee938887cd7d945cfd95b08866f92a769"
+    },
+    {
+      "id": "dialog_focus/original/stronger/1",
+      "point": "dialog_focus",
+      "variant": "original",
+      "modelSlot": "stronger",
+      "repetition": 1,
+      "packetSha256": "e654e8726083f7d115f5618993d8df5ee938887cd7d945cfd95b08866f92a769"
+    },
+    {
+      "id": "dialog_focus/original/stronger/2",
+      "point": "dialog_focus",
+      "variant": "original",
+      "modelSlot": "stronger",
+      "repetition": 2,
+      "packetSha256": "e654e8726083f7d115f5618993d8df5ee938887cd7d945cfd95b08866f92a769"
+    },
+    {
+      "id": "dialog_focus/original/stronger/3",
+      "point": "dialog_focus",
+      "variant": "original",
+      "modelSlot": "stronger",
+      "repetition": 3,
+      "packetSha256": "e654e8726083f7d115f5618993d8df5ee938887cd7d945cfd95b08866f92a769"
+    },
+    {
+      "id": "dialog_focus/original/stronger/4",
+      "point": "dialog_focus",
+      "variant": "original",
+      "modelSlot": "stronger",
+      "repetition": 4,
+      "packetSha256": "e654e8726083f7d115f5618993d8df5ee938887cd7d945cfd95b08866f92a769"
+    },
+    {
+      "id": "dialog_focus/original/stronger/5",
+      "point": "dialog_focus",
+      "variant": "original",
+      "modelSlot": "stronger",
+      "repetition": 5,
+      "packetSha256": "e654e8726083f7d115f5618993d8df5ee938887cd7d945cfd95b08866f92a769"
+    },
+    {
+      "id": "dialog_focus/original/stronger/6",
+      "point": "dialog_focus",
+      "variant": "original",
+      "modelSlot": "stronger",
+      "repetition": 6,
+      "packetSha256": "e654e8726083f7d115f5618993d8df5ee938887cd7d945cfd95b08866f92a769"
+    },
+    {
+      "id": "dialog_focus/original/stronger/7",
+      "point": "dialog_focus",
+      "variant": "original",
+      "modelSlot": "stronger",
+      "repetition": 7,
+      "packetSha256": "e654e8726083f7d115f5618993d8df5ee938887cd7d945cfd95b08866f92a769"
+    },
+    {
+      "id": "dialog_focus/original/stronger/8",
+      "point": "dialog_focus",
+      "variant": "original",
+      "modelSlot": "stronger",
+      "repetition": 8,
+      "packetSha256": "e654e8726083f7d115f5618993d8df5ee938887cd7d945cfd95b08866f92a769"
+    },
+    {
+      "id": "dialog_focus/original/stronger/9",
+      "point": "dialog_focus",
+      "variant": "original",
+      "modelSlot": "stronger",
+      "repetition": 9,
+      "packetSha256": "e654e8726083f7d115f5618993d8df5ee938887cd7d945cfd95b08866f92a769"
+    },
+    {
+      "id": "dialog_focus/original/stronger/10",
+      "point": "dialog_focus",
+      "variant": "original",
+      "modelSlot": "stronger",
+      "repetition": 10,
+      "packetSha256": "e654e8726083f7d115f5618993d8df5ee938887cd7d945cfd95b08866f92a769"
+    },
+    {
+      "id": "dialog_focus/frontier_visible/current/1",
+      "point": "dialog_focus",
+      "variant": "frontier_visible",
+      "modelSlot": "current",
+      "repetition": 1,
+      "packetSha256": "a6d270771bb6427af66fd2a664072f25761603fbdeb82b751851568f4193d7da"
+    },
+    {
+      "id": "dialog_focus/frontier_visible/current/2",
+      "point": "dialog_focus",
+      "variant": "frontier_visible",
+      "modelSlot": "current",
+      "repetition": 2,
+      "packetSha256": "a6d270771bb6427af66fd2a664072f25761603fbdeb82b751851568f4193d7da"
+    },
+    {
+      "id": "dialog_focus/frontier_visible/current/3",
+      "point": "dialog_focus",
+      "variant": "frontier_visible",
+      "modelSlot": "current",
+      "repetition": 3,
+      "packetSha256": "a6d270771bb6427af66fd2a664072f25761603fbdeb82b751851568f4193d7da"
+    },
+    {
+      "id": "dialog_focus/frontier_visible/current/4",
+      "point": "dialog_focus",
+      "variant": "frontier_visible",
+      "modelSlot": "current",
+      "repetition": 4,
+      "packetSha256": "a6d270771bb6427af66fd2a664072f25761603fbdeb82b751851568f4193d7da"
+    },
+    {
+      "id": "dialog_focus/frontier_visible/current/5",
+      "point": "dialog_focus",
+      "variant": "frontier_visible",
+      "modelSlot": "current",
+      "repetition": 5,
+      "packetSha256": "a6d270771bb6427af66fd2a664072f25761603fbdeb82b751851568f4193d7da"
+    },
+    {
+      "id": "dialog_focus/frontier_visible/current/6",
+      "point": "dialog_focus",
+      "variant": "frontier_visible",
+      "modelSlot": "current",
+      "repetition": 6,
+      "packetSha256": "a6d270771bb6427af66fd2a664072f25761603fbdeb82b751851568f4193d7da"
+    },
+    {
+      "id": "dialog_focus/frontier_visible/current/7",
+      "point": "dialog_focus",
+      "variant": "frontier_visible",
+      "modelSlot": "current",
+      "repetition": 7,
+      "packetSha256": "a6d270771bb6427af66fd2a664072f25761603fbdeb82b751851568f4193d7da"
+    },
+    {
+      "id": "dialog_focus/frontier_visible/current/8",
+      "point": "dialog_focus",
+      "variant": "frontier_visible",
+      "modelSlot": "current",
+      "repetition": 8,
+      "packetSha256": "a6d270771bb6427af66fd2a664072f25761603fbdeb82b751851568f4193d7da"
+    },
+    {
+      "id": "dialog_focus/frontier_visible/current/9",
+      "point": "dialog_focus",
+      "variant": "frontier_visible",
+      "modelSlot": "current",
+      "repetition": 9,
+      "packetSha256": "a6d270771bb6427af66fd2a664072f25761603fbdeb82b751851568f4193d7da"
+    },
+    {
+      "id": "dialog_focus/frontier_visible/current/10",
+      "point": "dialog_focus",
+      "variant": "frontier_visible",
+      "modelSlot": "current",
+      "repetition": 10,
+      "packetSha256": "a6d270771bb6427af66fd2a664072f25761603fbdeb82b751851568f4193d7da"
+    },
+    {
+      "id": "dialog_focus/frontier_visible/stronger/1",
+      "point": "dialog_focus",
+      "variant": "frontier_visible",
+      "modelSlot": "stronger",
+      "repetition": 1,
+      "packetSha256": "a6d270771bb6427af66fd2a664072f25761603fbdeb82b751851568f4193d7da"
+    },
+    {
+      "id": "dialog_focus/frontier_visible/stronger/2",
+      "point": "dialog_focus",
+      "variant": "frontier_visible",
+      "modelSlot": "stronger",
+      "repetition": 2,
+      "packetSha256": "a6d270771bb6427af66fd2a664072f25761603fbdeb82b751851568f4193d7da"
+    },
+    {
+      "id": "dialog_focus/frontier_visible/stronger/3",
+      "point": "dialog_focus",
+      "variant": "frontier_visible",
+      "modelSlot": "stronger",
+      "repetition": 3,
+      "packetSha256": "a6d270771bb6427af66fd2a664072f25761603fbdeb82b751851568f4193d7da"
+    },
+    {
+      "id": "dialog_focus/frontier_visible/stronger/4",
+      "point": "dialog_focus",
+      "variant": "frontier_visible",
+      "modelSlot": "stronger",
+      "repetition": 4,
+      "packetSha256": "a6d270771bb6427af66fd2a664072f25761603fbdeb82b751851568f4193d7da"
+    },
+    {
+      "id": "dialog_focus/frontier_visible/stronger/5",
+      "point": "dialog_focus",
+      "variant": "frontier_visible",
+      "modelSlot": "stronger",
+      "repetition": 5,
+      "packetSha256": "a6d270771bb6427af66fd2a664072f25761603fbdeb82b751851568f4193d7da"
+    },
+    {
+      "id": "dialog_focus/frontier_visible/stronger/6",
+      "point": "dialog_focus",
+      "variant": "frontier_visible",
+      "modelSlot": "stronger",
+      "repetition": 6,
+      "packetSha256": "a6d270771bb6427af66fd2a664072f25761603fbdeb82b751851568f4193d7da"
+    },
+    {
+      "id": "dialog_focus/frontier_visible/stronger/7",
+      "point": "dialog_focus",
+      "variant": "frontier_visible",
+      "modelSlot": "stronger",
+      "repetition": 7,
+      "packetSha256": "a6d270771bb6427af66fd2a664072f25761603fbdeb82b751851568f4193d7da"
+    },
+    {
+      "id": "dialog_focus/frontier_visible/stronger/8",
+      "point": "dialog_focus",
+      "variant": "frontier_visible",
+      "modelSlot": "stronger",
+      "repetition": 8,
+      "packetSha256": "a6d270771bb6427af66fd2a664072f25761603fbdeb82b751851568f4193d7da"
+    },
+    {
+      "id": "dialog_focus/frontier_visible/stronger/9",
+      "point": "dialog_focus",
+      "variant": "frontier_visible",
+      "modelSlot": "stronger",
+      "repetition": 9,
+      "packetSha256": "a6d270771bb6427af66fd2a664072f25761603fbdeb82b751851568f4193d7da"
+    },
+    {
+      "id": "dialog_focus/frontier_visible/stronger/10",
+      "point": "dialog_focus",
+      "variant": "frontier_visible",
+      "modelSlot": "stronger",
+      "repetition": 10,
+      "packetSha256": "a6d270771bb6427af66fd2a664072f25761603fbdeb82b751851568f4193d7da"
+    },
+    {
+      "id": "dialog_focus/restructured_evidence/current/1",
+      "point": "dialog_focus",
+      "variant": "restructured_evidence",
+      "modelSlot": "current",
+      "repetition": 1,
+      "packetSha256": "a43372f1e28d96bccb2fa2834c6826c1cf24241cb82c864b54dab266ea8be82d"
+    },
+    {
+      "id": "dialog_focus/restructured_evidence/current/2",
+      "point": "dialog_focus",
+      "variant": "restructured_evidence",
+      "modelSlot": "current",
+      "repetition": 2,
+      "packetSha256": "a43372f1e28d96bccb2fa2834c6826c1cf24241cb82c864b54dab266ea8be82d"
+    },
+    {
+      "id": "dialog_focus/restructured_evidence/current/3",
+      "point": "dialog_focus",
+      "variant": "restructured_evidence",
+      "modelSlot": "current",
+      "repetition": 3,
+      "packetSha256": "a43372f1e28d96bccb2fa2834c6826c1cf24241cb82c864b54dab266ea8be82d"
+    },
+    {
+      "id": "dialog_focus/restructured_evidence/current/4",
+      "point": "dialog_focus",
+      "variant": "restructured_evidence",
+      "modelSlot": "current",
+      "repetition": 4,
+      "packetSha256": "a43372f1e28d96bccb2fa2834c6826c1cf24241cb82c864b54dab266ea8be82d"
+    },
+    {
+      "id": "dialog_focus/restructured_evidence/current/5",
+      "point": "dialog_focus",
+      "variant": "restructured_evidence",
+      "modelSlot": "current",
+      "repetition": 5,
+      "packetSha256": "a43372f1e28d96bccb2fa2834c6826c1cf24241cb82c864b54dab266ea8be82d"
+    },
+    {
+      "id": "dialog_focus/restructured_evidence/current/6",
+      "point": "dialog_focus",
+      "variant": "restructured_evidence",
+      "modelSlot": "current",
+      "repetition": 6,
+      "packetSha256": "a43372f1e28d96bccb2fa2834c6826c1cf24241cb82c864b54dab266ea8be82d"
+    },
+    {
+      "id": "dialog_focus/restructured_evidence/current/7",
+      "point": "dialog_focus",
+      "variant": "restructured_evidence",
+      "modelSlot": "current",
+      "repetition": 7,
+      "packetSha256": "a43372f1e28d96bccb2fa2834c6826c1cf24241cb82c864b54dab266ea8be82d"
+    },
+    {
+      "id": "dialog_focus/restructured_evidence/current/8",
+      "point": "dialog_focus",
+      "variant": "restructured_evidence",
+      "modelSlot": "current",
+      "repetition": 8,
+      "packetSha256": "a43372f1e28d96bccb2fa2834c6826c1cf24241cb82c864b54dab266ea8be82d"
+    },
+    {
+      "id": "dialog_focus/restructured_evidence/current/9",
+      "point": "dialog_focus",
+      "variant": "restructured_evidence",
+      "modelSlot": "current",
+      "repetition": 9,
+      "packetSha256": "a43372f1e28d96bccb2fa2834c6826c1cf24241cb82c864b54dab266ea8be82d"
+    },
+    {
+      "id": "dialog_focus/restructured_evidence/current/10",
+      "point": "dialog_focus",
+      "variant": "restructured_evidence",
+      "modelSlot": "current",
+      "repetition": 10,
+      "packetSha256": "a43372f1e28d96bccb2fa2834c6826c1cf24241cb82c864b54dab266ea8be82d"
+    },
+    {
+      "id": "dialog_focus/restructured_evidence/stronger/1",
+      "point": "dialog_focus",
+      "variant": "restructured_evidence",
+      "modelSlot": "stronger",
+      "repetition": 1,
+      "packetSha256": "a43372f1e28d96bccb2fa2834c6826c1cf24241cb82c864b54dab266ea8be82d"
+    },
+    {
+      "id": "dialog_focus/restructured_evidence/stronger/2",
+      "point": "dialog_focus",
+      "variant": "restructured_evidence",
+      "modelSlot": "stronger",
+      "repetition": 2,
+      "packetSha256": "a43372f1e28d96bccb2fa2834c6826c1cf24241cb82c864b54dab266ea8be82d"
+    },
+    {
+      "id": "dialog_focus/restructured_evidence/stronger/3",
+      "point": "dialog_focus",
+      "variant": "restructured_evidence",
+      "modelSlot": "stronger",
+      "repetition": 3,
+      "packetSha256": "a43372f1e28d96bccb2fa2834c6826c1cf24241cb82c864b54dab266ea8be82d"
+    },
+    {
+      "id": "dialog_focus/restructured_evidence/stronger/4",
+      "point": "dialog_focus",
+      "variant": "restructured_evidence",
+      "modelSlot": "stronger",
+      "repetition": 4,
+      "packetSha256": "a43372f1e28d96bccb2fa2834c6826c1cf24241cb82c864b54dab266ea8be82d"
+    },
+    {
+      "id": "dialog_focus/restructured_evidence/stronger/5",
+      "point": "dialog_focus",
+      "variant": "restructured_evidence",
+      "modelSlot": "stronger",
+      "repetition": 5,
+      "packetSha256": "a43372f1e28d96bccb2fa2834c6826c1cf24241cb82c864b54dab266ea8be82d"
+    },
+    {
+      "id": "dialog_focus/restructured_evidence/stronger/6",
+      "point": "dialog_focus",
+      "variant": "restructured_evidence",
+      "modelSlot": "stronger",
+      "repetition": 6,
+      "packetSha256": "a43372f1e28d96bccb2fa2834c6826c1cf24241cb82c864b54dab266ea8be82d"
+    },
+    {
+      "id": "dialog_focus/restructured_evidence/stronger/7",
+      "point": "dialog_focus",
+      "variant": "restructured_evidence",
+      "modelSlot": "stronger",
+      "repetition": 7,
+      "packetSha256": "a43372f1e28d96bccb2fa2834c6826c1cf24241cb82c864b54dab266ea8be82d"
+    },
+    {
+      "id": "dialog_focus/restructured_evidence/stronger/8",
+      "point": "dialog_focus",
+      "variant": "restructured_evidence",
+      "modelSlot": "stronger",
+      "repetition": 8,
+      "packetSha256": "a43372f1e28d96bccb2fa2834c6826c1cf24241cb82c864b54dab266ea8be82d"
+    },
+    {
+      "id": "dialog_focus/restructured_evidence/stronger/9",
+      "point": "dialog_focus",
+      "variant": "restructured_evidence",
+      "modelSlot": "stronger",
+      "repetition": 9,
+      "packetSha256": "a43372f1e28d96bccb2fa2834c6826c1cf24241cb82c864b54dab266ea8be82d"
+    },
+    {
+      "id": "dialog_focus/restructured_evidence/stronger/10",
+      "point": "dialog_focus",
+      "variant": "restructured_evidence",
+      "modelSlot": "stronger",
+      "repetition": 10,
+      "packetSha256": "a43372f1e28d96bccb2fa2834c6826c1cf24241cb82c864b54dab266ea8be82d"
+    }
+  ]
+}

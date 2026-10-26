@@ -1,0 +1,18 @@
+{
+  "schema": "art/finding-case/v1",
+  "caseId": "synthetic-case",
+  "subjectId": "synthetic-site/page-a",
+  "obligationId": "skip-target-exists",
+  "probeId": "skip-link.same-page",
+  "implementationVersion": "journeys/0.1+malformed-fragment.1",
+  "assessmentIds": [
+    "synthetic-assessment"
+  ],
+  "adjudicationIds": [],
+  "retestIds": [],
+  "disposition": "open",
+  "entryDigest": "523510a6ac5534581e3bde030bf6f59fa73deb021082f55d617ecebc203006ef",
+  "implementationDigest": "fe098846cf9fc03cd049f4219a08abd512e30a5efc3704d72d9facca1678f15b",
+  "claimVersion": "1aeb409d3257eb73aa481329741a11eb08986e347a7de8a48b5d57876a298dcd",
+  "resolutionReasons": []
+}
