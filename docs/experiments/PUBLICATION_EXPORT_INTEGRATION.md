@@ -43,9 +43,12 @@ invoking it remains responsible for provisioning the authority file and integrit
 ## Integration coverage
 
 `test/publication-export.test.ts` exercises the file-to-file boundary. A simulated non-synthetic, exact-version
-manual approval is included. Stale claim approval, missing trusted evidence receipts, a duplicate assessment and a
-raw hypothesis are rejected. The test also asserts that hypothesis text is absent from the written export and that
-the export cannot overwrite an input.
+manual approval and a separately simulated trusted automated result are included; the same automated result remains
+rejected while its probe entry is still a candidate. Stale and synthetic approvals, missing trusted evidence
+receipts, a duplicate assessment, a raw hypothesis, changed assessment/observation/execution records and modified
+source-report bytes are rejected. The test also asserts that hypothesis text is absent from the written export,
+that the export cannot overwrite an input through a symlink alias, and that malformed CLI layouts exit with usage
+status before any input read. All authority in these tests is explicitly simulated and is not real sign-off.
 
 ## Remaining unconnected paths
 
