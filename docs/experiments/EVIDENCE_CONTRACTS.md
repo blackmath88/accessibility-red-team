@@ -233,7 +233,12 @@ All verification commands below completed with exit 0 for this focused repair:
 | `npx tsx --test --test-force-exit test/evidence-*.test.ts test/catalogue-*.test.ts test/promotion-*.test.ts test/skip-link-*.test.ts test/journeys.test.ts` | 55 tests passed, 0 failed/cancelled/skipped/todo, exit 0 |
 | `python3 .github/check-public-docs.py` | PASS: 3 entry documents, 23 local link/image targets, exit 0 |
 
-## Production callers remain unconnected
+## One export connected; production callers otherwise remain unconnected
+
+The opt-in publication export now calls `decidePublication` through
+[`PUBLICATION_EXPORT_INTEGRATION.md`](PUBLICATION_EXPORT_INTEGRATION.md). It emits only policy-approved versioned
+assessments and labels its source report `legacy_snapshot_not_policy_evaluated`; it does not rewrite or reclassify
+the source report.
 
 Read-only inspection found these existing paths, which neither import nor invoke
 `decidePublication`, `resolveCase` or the new record schemas:

@@ -1,0 +1,9 @@
+{
+  "schema": "art/accessibility-report/v1",
+  "generatedAt": "2026-10-26T18:00:00.000Z",
+  "profileId": "sample-profile",
+  "target": { "requestedUrl": "https://example.test/", "finalUrl": "https://example.test/" },
+  "summary": { "violations": 0, "incomplete": 0, "applicable": 0, "bestPractice": 0, "unknownApplicability": 0 },
+  "findings": [],
+  "aiCalls": 0
+}

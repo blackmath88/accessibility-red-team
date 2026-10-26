@@ -1,0 +1,6 @@
+{
+  "schema": "art/local-evidence-binding-set/v1",
+  "bindings": [
+    { "ref": "local-artifact://sample/dom", "path": "evidence/dom.txt" }
+  ]
+}
