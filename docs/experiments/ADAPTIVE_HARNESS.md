@@ -107,7 +107,8 @@ step 10  capture_evidence input#plz            → ev_11 (screenshot + sha256)
 step 11  finish: 5 surfaces, 1 candidate (missing_accessible_name) citing ev_11
 ```
 
-Comparison (from one local run; times vary):
+Historical comparison (one preserved local run at commit `23d4b22103d6c163fa0e9cda569995acc17d1fbb`,
+arm A config hash `ea4e65f4aa709d4b5ccee1fc849b8d72593a9dc5ae5882ab833695a96c2a5728`; times vary):
 
 | fixture | surfaces A / B / truth | hidden reached A / B | verified A / B | false alarms A / B | denied A / B |
 |---|---|---|---|---|---|
@@ -115,8 +116,18 @@ Comparison (from one local run; times vary):
 | menu-dialog | 1 / 1 / 1 | – | 0 / 1 of 1 | 0 / 0 | 0 / 0 |
 | skip-links | 2 / 3 / 3 | – | 1 / 1 of 1 | 0 / 0 | 0 / 0 |
 | repeated-component | 2 / 4 / 4 | – | 1 / 1 of 1 | 0 / 0 | 0 / 0 |
-| malicious | 2 / 2 / 2 | – | 1 / 1 of 1 | 0 / 0 | 22–30 (proxy) / 7 |
+| malicious | 1 / 2 / 2 (A ended `error`: not comparable) | – | 0 / 1 of 1 | 0 / 0 | 4 (proxy) / 7 |
 | heldout-menus (held-out) | 2 / 2 / 2 | – | 0 / 1 of 1 | 0 / 0 | 0 / 0 |
+
+Corrected-baseline evidence is recorded separately. At commit
+`dba31b68671a11cbf685edd4c11502edb7c923be`, using the same arm A config hash, three malicious-only
+trials at fixture concurrency 1 and three full six-fixture trials at concurrency 3 all produced the same malicious
+comparison: both arms `completed`, 2 / 2 / 2 surfaces, 1 / 1 verified defect, `comparable: true`, and
+`reachedStateBaselineMissed: false`. Arm A proxy refusals were 28 in every run (observed range 28–28); both arms
+recorded zero off-origin and zero non-GET requests reaching a server. These six repetitions are a range across runs,
+not a value from the historical single-run table. A separate single full-suite run at the same commit completed normally
+without forced exit: 242 / 242 tests passed in 18.9 s. This correction changes deterministic baseline behaviour only;
+arm B remains the scripted fake-provider explorer, so it is not evidence of model capability.
 
 ## Observer candidate (validated, not promoted)
 

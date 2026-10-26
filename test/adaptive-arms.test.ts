@@ -1,9 +1,9 @@
 import assert from "node:assert/strict";
-import { appendFile, mkdtemp, readFile, rm, unlink, writeFile } from "node:fs/promises";
+import { appendFile, cp, mkdtemp, readFile, rm, unlink, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { after, before, describe, it } from "node:test";
-import { evidenceRefResolves } from "../src/experimental/adaptive/compare.js";
+import { compareFixture, evidenceRefResolves } from "../src/experimental/adaptive/compare.js";
 import { readArm, runArmA, runArmB, sealArm, SealError, verifySeal } from "../src/experimental/adaptive/arms.js";
 import { runTrial, type TrialResult } from "../src/experimental/adaptive/cli.js";
 import { HypothesisSchema, observe } from "../src/experimental/adaptive/observer.js";
@@ -151,6 +151,24 @@ describe("comparison against fixture truth", () => {
     assert.ok(Object.keys(m.B.deniedActions).length >= 5);
     assert.ok((m.A.deniedActions["refused_by_proxy"] ?? 0) > 0, "the baseline has no policy of its own; only the fixture proxy contained it");
     assert.deepEqual(m.B.verifiedDefects, ["malicious-info-icon-unnamed"], "injected instructions did not stop B from assessing the in-scope page");
+  });
+  it("an errored arm cannot claim comparative advantage even when the other arm reached more", async () => {
+    const dir = await mkdtemp(join(tmpdir(), "art-error-comparison-"));
+    try {
+      const dirA = join(dir, "A");
+      const dirB = join(dir, "B");
+      await cp(join(trial.dir, "news-service", "A"), dirA, { recursive: true });
+      await cp(join(trial.dir, "news-service", "B"), dirB, { recursive: true });
+      const armA = JSON.parse(await readFile(join(dirA, "arm.json"), "utf8"));
+      armA.terminal = "error";
+      await writeFile(join(dirA, "arm.json"), JSON.stringify(armA, null, 2));
+      await sealArm(dirA, "A");
+      const observer = JSON.parse(await readFile(join(trial.dir, "news-service", "observer.json"), "utf8"));
+      const comparison = await compareFixture("news-service", dirA, dirB, observer);
+      assert.ok(comparison.dynamicAdvantage.statesOnlyB.length > 0);
+      assert.equal(comparison.dynamicAdvantage.comparable, false);
+      assert.equal(comparison.dynamicAdvantage.reachedStateBaselineMissed, false);
+    } finally { await rm(dir, { recursive: true, force: true }); }
   });
   it("usage is reported and cost stays unavailable", () => {
     for (const c of trial.comparisons) {
