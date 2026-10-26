@@ -1,6 +1,7 @@
 import { createHash } from "node:crypto";
-import { readFile, realpath, stat } from "node:fs/promises";
-import { isAbsolute, relative, resolve } from "node:path";
+import { constants } from "node:fs";
+import { open, readFile, realpath } from "node:fs/promises";
+import { isAbsolute, relative, resolve, sep } from "node:path";
 import { z } from "zod";
 import { AssessmentResultSchema, EvidenceRefSchema, type EvidenceRef } from "../evidence/contracts.js";
 import {
@@ -10,6 +11,8 @@ import {
   type PublicationAuthority,
   type PublicationExport,
 } from "./publication.js";
+
+const MAX_LOCAL_EVIDENCE_BYTES = 25 * 1024 * 1024;
 
 const IdSchema = z.string().trim().min(1);
 const LocalEvidenceBindingSchema = z.strictObject({
@@ -32,7 +35,7 @@ export type LocalEvidenceBindingSet = z.infer<typeof LocalEvidenceBindingSetSche
 
 function inside(root: string, path: string): boolean {
   const suffix = relative(root, path);
-  return suffix !== "" && !suffix.startsWith("..") && !isAbsolute(suffix);
+  return suffix !== "" && suffix !== ".." && !suffix.startsWith(`..${sep}`) && !isAbsolute(suffix);
 }
 
 async function verifyLocalEvidenceFiles(options: {
@@ -57,8 +60,16 @@ async function verifyLocalEvidenceFiles(options: {
     if (!binding) throw new Error(`No local artifact binding exists for evidence ref ${ref}.`);
     const artifactPath = await realpath(resolve(root, binding.path));
     if (!inside(root, artifactPath)) throw new Error(`Evidence ref ${ref} resolves outside the evidence root.`);
-    if (!(await stat(artifactPath)).isFile()) throw new Error(`Evidence ref ${ref} does not resolve to a regular file.`);
-    const bytes = await readFile(artifactPath);
+    const handle = await open(artifactPath, constants.O_RDONLY | constants.O_NOFOLLOW);
+    let bytes: Buffer;
+    try {
+      const metadata = await handle.stat();
+      if (!metadata.isFile()) throw new Error(`Evidence ref ${ref} does not resolve to a regular file.`);
+      if (metadata.size > MAX_LOCAL_EVIDENCE_BYTES) throw new Error(`Evidence ref ${ref} exceeds ${MAX_LOCAL_EVIDENCE_BYTES} bytes.`);
+      bytes = await handle.readFile();
+    } finally {
+      await handle.close();
+    }
     const actualSha256 = createHash("sha256").update(bytes).digest("hex");
     if (actualSha256 !== expectedSha256) throw new Error(`Evidence ref ${ref} does not match its expected SHA-256.`);
     verified.push({ ref, sha256: actualSha256 });

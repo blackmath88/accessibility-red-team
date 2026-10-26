@@ -17,7 +17,8 @@ integrity check:
 
 1. parses the candidate assessments and collects their exact evidence refs;
 2. resolves every binding beneath the real evidence-root path, refusing a symlink or traversal outside it;
-3. reads each regular file and recomputes SHA-256 over its actual bytes;
+3. opens each artifact once with no final symlink following, verifies the same file descriptor is a regular file no
+   larger than 25 MiB, and recomputes SHA-256 over the bytes read from that descriptor;
 4. refuses missing bindings, conflicting expected hashes and changed bytes before issuing an in-memory receipt;
 5. binds assessment, observation and execution records by canonical digest and feeds that context directly into
    the existing publication exporter, without an editable intermediate authority file;
@@ -51,4 +52,3 @@ export once such a service exists. That fixture is labelled test-only and is not
 Coverage includes matching bytes, modified bytes, missing/conflicting bindings, symlink escape, fail-closed export,
 and the explicitly simulated future approval path. The skip-link probe remains a candidate. This slice does not add
 DOs, deploy anything, promote probes, contact public sites, migrate report/watch callers, or manufacture sign-off.
-

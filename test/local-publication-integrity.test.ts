@@ -107,14 +107,43 @@ test("local evidence verification rejects missing, conflicting and out-of-root b
     await assert.rejects(() => verifyLocalEvidence({ evidenceRoot: input.evidenceRoot,
       requiredRefs: [...input.evidenceRefs, { ...input.evidenceRefs[0]!, sha256: "0".repeat(64) }],
       bindings: { schema: "art/local-evidence-binding-set/v1", bindings: [{ ref: input.evidenceRefs[0]!.ref, path: "dom.bin" }] } }), /conflicting expected hashes/);
+    const evidenceBytes = await readFile(input.evidencePath);
     const outside = join(directory, "outside.bin");
-    const alias = join(input.evidenceRoot, "outside-alias.bin");
-    await writeFile(outside, "outside");
-    await symlink(outside, alias);
+    const outsideAlias = join(input.evidenceRoot, "outside-alias.bin");
+    await writeFile(outside, evidenceBytes);
+    await symlink(outside, outsideAlias);
     await assert.rejects(() => verifyLocalEvidence({ evidenceRoot: input.evidenceRoot, requiredRefs: input.evidenceRefs,
       bindings: { schema: "art/local-evidence-binding-set/v1", bindings: [{ ref: input.evidenceRefs[0]!.ref, path: "outside-alias.bin" }] } }), /outside the evidence root/);
+    for (const path of ["../outside.bin", outside]) {
+      await assert.rejects(() => verifyLocalEvidence({ evidenceRoot: input.evidenceRoot, requiredRefs: input.evidenceRefs,
+        bindings: { schema: "art/local-evidence-binding-set/v1", bindings: [{ ref: input.evidenceRefs[0]!.ref, path }] } }), /outside the evidence root/);
+    }
+    const dotted = join(input.evidenceRoot, "..evidence.bin");
+    await writeFile(dotted, evidenceBytes);
+    assert.deepEqual(await verifyLocalEvidence({ evidenceRoot: input.evidenceRoot, requiredRefs: input.evidenceRefs,
+      bindings: { schema: "art/local-evidence-binding-set/v1", bindings: [{ ref: input.evidenceRefs[0]!.ref, path: "..evidence.bin" }] } }), input.evidenceRefs);
+    const inRootAlias = join(input.evidenceRoot, "in-root-alias.bin");
+    await symlink(input.evidencePath, inRootAlias);
+    assert.deepEqual(await verifyLocalEvidence({ evidenceRoot: input.evidenceRoot, requiredRefs: input.evidenceRefs,
+      bindings: { schema: "art/local-evidence-binding-set/v1", bindings: [{ ref: input.evidenceRefs[0]!.ref, path: "in-root-alias.bin" }] } }), input.evidenceRefs);
+    await mkdir(join(input.evidenceRoot, "directory"));
+    await assert.rejects(() => verifyLocalEvidence({ evidenceRoot: input.evidenceRoot, requiredRefs: input.evidenceRefs,
+      bindings: { schema: "art/local-evidence-binding-set/v1", bindings: [{ ref: input.evidenceRefs[0]!.ref, path: "directory" }] } }), /regular file/);
   } finally {
     await rm(directory, { recursive: true, force: true });
+  }
+});
+
+test("local integrity CLI rejects malformed flag layouts before reading inputs", async () => {
+  for (const args of [
+    ["publication-export-local"],
+    ["publication-export-local", "report.json", "candidates.json", "--bindings", "bindings.json", "--evidence-root", "root"],
+    ["publication-export-local", "report.json", "candidates.json", "--bindings", "bindings.json", "--bindings", "other.json", "--out", "out.json"],
+    ["publication-export-local", "report.json", "candidates.json", "--bindings", "--out", "bindings.json", "--evidence-root", "root"],
+  ]) {
+    const result = await runCli(args, process.cwd());
+    assert.equal(result.code, 2, args.join(" "));
+    assert.match(result.stderr, /Usage:/, args.join(" "));
   }
 });
 
