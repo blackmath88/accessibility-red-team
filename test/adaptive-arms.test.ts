@@ -170,6 +170,15 @@ describe("comparison against fixture truth", () => {
       assert.equal(comparison.dynamicAdvantage.reachedStateBaselineMissed, false);
     } finally { await rm(dir, { recursive: true, force: true }); }
   });
+  it("allows redirect hops belonging to the discovery navigation while still blocking page-initiated replacement", async () => {
+    const dir = await mkdtemp(join(tmpdir(), "art-discovery-redirect-"));
+    try {
+      const arm = await runArmA("malicious", "/malicious/redirect-local", { outDir: dir });
+      assert.equal(arm.terminal, "completed");
+      assert.ok(arm.surfaces.some((surface) => surface.path === "/malicious/index.html"));
+      assert.ok(arm.surfaces.some((surface) => surface.path === "/malicious/ok.html"));
+    } finally { await rm(dir, { recursive: true, force: true }); }
+  });
   it("usage is reported and cost stays unavailable", () => {
     for (const c of trial.comparisons) {
       assert.equal(c.B.usage.cost, "unavailable");
