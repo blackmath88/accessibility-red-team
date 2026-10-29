@@ -1,5 +1,7 @@
 {
+  "schema": "art/basel-discovery/v2",
   "generatedAt": "2026-10-29",
+  "lastDiscovery": "2026-10-29",
   "note": "Startbestand aus dem Basel-Feldlauf; keine vollständige Inventur. Neue Bereiche sind Rechercheaufträge, keine geprüften Eigentumsbehauptungen.",
   "entries": [
     {
@@ -1635,5 +1637,9 @@
       "source": "https://eportal.egov.bs.ch/",
       "scope": "Verlinkung ist beobachtet; Betreiber/Eigentum und Login-Grenze sind noch zu prüfen."
     }
-  ]
+  ],
+  "organisations": [],
+  "webProperties": [],
+  "edges": [],
+  "batchProposal": []
 }
