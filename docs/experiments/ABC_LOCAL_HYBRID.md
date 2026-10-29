@@ -87,3 +87,25 @@ missing skip target and the dev-k2 unnamed button; a one-line repaired copy of d
 Review (independent, static, Opus via Orca, `cb3fa92`): no safety blocker; findings on packet blinding, C's per-request time
 split, consultant-authored finish suggestions, ledger persistence, the owner cap and repair verification were fixed after the
 runs (they do not change the code that ran s1/s2) or are disclosed above and in the report.
+
+## Extension: Mistral directly as the exploration policy (segment s3, code `2f27deb`)
+
+Condition **M**: `mistral-small-2603` is the exploration policy itself, with the same harness flags, caps, fixtures and
+skill (v4) as B, no repair, and its own trial-wide budget (worst case about USD 0.20, counted in the owner cap). A was
+rerun in the same segment; 3 repeats each, 18 sessions. The B/C results above are unchanged.
+
+| | A | M |
+|---|---|---|
+| Credited seeded instances | 12/12 | 6/12 (dev-k2 both, all 3 repeats; dev-k1 0/3; dev-k3 0/3) |
+| Premature "complete" proposals | 0 | 3 (all dev-k3) |
+| Duplicates / unlisted claims | 0 / 0 | 14 / 6 |
+| Blind judge: supported / contradicted / insufficient | 12 / 0 / 0 | 7 / 20 / 4 |
+| Time (9 sessions) | 7 s | 129 s |
+| Cost | 0 | USD 0.069 (101 calls, 425 274 / 9 159 tokens) |
+
+- M visited every page in every session (exploration solved), but on dev-k3 it closed both dialogs by clicking "Schliessen",
+  never with Escape, and still reported that the **working** dialog `#c2` does not return focus, in all 3 runs. A
+  fresh-browser replay of M's own steps shows focus returns to `#c2`: the claim is false.
+- On dev-k1, 2 of 3 runs stated the right defect ("#inhalt-x does not exist") but cited a start-page snapshot (whose skip link works)
+  instead of the defective sub-page: judged contradicted by its own evidence, not credited.
+- Total Mistral spend over the whole experiment: USD 0.073 of the USD 5 cap.
