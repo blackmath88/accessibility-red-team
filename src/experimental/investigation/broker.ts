@@ -9,6 +9,8 @@ import { createHash } from "node:crypto";
 import { mkdir, readFile, writeFile } from "node:fs/promises";
 import { join } from "node:path";
 import { pathToFileURL } from "node:url";
+import { constants } from "node:fs";
+import { access } from "node:fs/promises";
 import { chromium, type Browser, type BrowserContext, type ElementHandle, type Page } from "playwright";
 import sharp from "sharp";
 
@@ -34,26 +36,48 @@ export class MeasurementBroker {
   private artifactN = 0;
   readonly log: Array<{ at: string; attempt: string; op: string; ok: boolean; reason?: string }> = [];
   private attempt = "unset";
+  private liveForAttempt = false;
+  private liveOpens = 0;
+  private lock: Promise<unknown> = Promise.resolve();
 
   constructor(private readonly o: BrokerOptions) {}
 
-  forAttempt(attempt: string) { this.attempt = attempt; return this.handle; }
+  // Live access is granted per attempt and only when that attempt's packet targets live; one live open per attempt.
+  forAttempt(attempt: string, opts: { live: boolean } = { live: false }) {
+    this.attempt = attempt; this.liveForAttempt = this.o.liveAllowed && opts.live; this.liveOpens = 0;
+    return this.handle;
+  }
 
   async close() { await this.context?.close().catch(() => undefined); await this.browser?.close().catch(() => undefined); }
 
-  private async ledger(): Promise<Ledger> { return JSON.parse(await readFile(this.o.ledgerPath, "utf8").catch(() => '{"loads":[],"lastAt":0}')) as Ledger; }
+  // A missing ledger starts empty; an unreadable or malformed one blocks live loads (fail closed).
+  private async ledger(): Promise<Ledger> {
+    const exists = await access(this.o.ledgerPath, constants.F_OK).then(() => true, () => false);
+    if (!exists) return { loads: [], lastAt: 0 };
+    const L = JSON.parse(await readFile(this.o.ledgerPath, "utf8")) as Ledger;
+    if (!Array.isArray(L.loads) || typeof L.lastAt !== "number") throw new Error("live ledger malformed");
+    return L;
+  }
 
-  readonly handle = async (op: string, args: unknown): Promise<Reply> => {
-    const a = (args && typeof args === "object" ? args : {}) as Record<string, unknown>;
-    let reply: Reply;
-    try { reply = await this.dispatch(op, a); } catch (error) { reply = { ok: false, reason: `operation failed: ${String((error as Error).message ?? error).slice(0, 160)}` }; }
-    this.log.push({ at: new Date().toISOString(), attempt: this.attempt, op, ok: reply.ok, ...(reply.ok ? {} : { reason: reply.reason }) });
-    return reply;
+  // All operations are serialised inside the broker as well, whatever the caller does.
+  readonly handle = (op: string, args: unknown, signal?: AbortSignal): Promise<Reply> => {
+    const run = this.lock.then(() => this.handleNow(op, args, signal));
+    this.lock = run.catch(() => undefined);
+    return run;
   };
 
-  private async dispatch(op: string, a: Record<string, unknown>): Promise<Reply> {
+  private async handleNow(op: string, args: unknown, signal?: AbortSignal): Promise<Reply> {
+    const a = (args && typeof args === "object" ? args : {}) as Record<string, unknown>;
+    let reply: Reply;
+    if (signal?.aborted) reply = { ok: false, reason: "attempt settled" };
+    else try { reply = await this.dispatch(op, a, signal); } catch (error) { reply = { ok: false, reason: `operation failed: ${String((error as Error).message ?? error).slice(0, 160)}` }; }
+    this.log.push({ at: new Date().toISOString(), attempt: this.attempt, op, ok: reply.ok, ...(reply.ok ? {} : { reason: reply.reason }) });
+    return reply;
+  }
+
+  private async dispatch(op: string, a: Record<string, unknown>, signal?: AbortSignal): Promise<Reply> {
     switch (op) {
-      case "open": return this.open(a);
+      case "open": return this.open(a, signal);
       case "viewport": return this.withPage((p) => p.evaluate(() => ({ innerWidth, innerHeight, devicePixelRatio, scrollX: Math.round(scrollX), scrollY: Math.round(scrollY), docHeight: document.documentElement.scrollHeight })));
       case "findText": {
         const text = str(a["text"], 80), max = int(a["max"] ?? 5, 1, 5);
@@ -93,23 +117,27 @@ export class MeasurementBroker {
     return { ok: true, result: await fn(this.page) };
   }
 
-  private async open(a: Record<string, unknown>): Promise<Reply> {
+  private async open(a: Record<string, unknown>, signal?: AbortSignal): Promise<Reply> {
     const target = str(a["target"], 40), vpName = str(a["viewport"] ?? "1440x900", 10);
     const vp = vpName ? VIEWPORTS[vpName] : undefined;
     if (!target || !vp) return { ok: false, reason: `open needs target ("live" or a fixture name) and viewport in ${Object.keys(VIEWPORTS).join(", ")}` };
     let url: string;
     if (target === "live") {
-      if (!this.o.liveAllowed) return { ok: false, reason: "live target not enabled for this attempt" };
+      if (!this.liveForAttempt) return { ok: false, reason: "live target not enabled for this attempt" };
+      if (this.liveOpens >= 1) return { ok: false, reason: "one live open per attempt" };
       const L = await this.ledger();
       if (L.loads.length >= this.o.maxLiveLoads) return { ok: false, reason: `live load cap ${this.o.maxLiveLoads} reached` };
       const wait = L.lastAt + this.o.minGapMs - Date.now();
       if (wait > 0) await new Promise((r) => setTimeout(r, wait));
+      if (signal?.aborted) return { ok: false, reason: "attempt settled before the live load" };
+      this.liveOpens++;
       url = LIVE_URL;
     } else {
       if (!/^[a-z-]{1,30}$/.test(target)) return { ok: false, reason: "unknown fixture" };
       url = pathToFileURL(join(this.o.fixtureDir, `${target}.html`)).href;
     }
     await this.context?.close().catch(() => undefined);
+    this.context = null; this.page = null;
     this.handles.clear();
     this.browser ??= await chromium.launch();
     this.context = await this.browser.newContext({ viewport: vp, userAgent: UA, acceptDownloads: false, serviceWorkers: "block", javaScriptEnabled: true });
@@ -118,12 +146,12 @@ export class MeasurementBroker {
     await this.context.route("**/*", (route) => {
       const req = route.request();
       if (req.method() !== "GET") return route.abort();
-      if (req.isNavigationRequest() && req.frame() === this.page?.mainFrame() && req.url().split("#")[0] !== url) return route.abort();
+      if (req.isNavigationRequest() && req.frame() === main.mainFrame() && req.url().split("#")[0] !== url) return route.abort();
       if (target !== "live" && !req.url().startsWith("file://")) return route.abort();
       return route.continue();
     });
-    this.page = await this.context.newPage();
-    const main = this.page;
+    const main = await this.context.newPage();
+    this.page = main;
     this.context.on("page", (p) => { if (p !== main) void p.close(); }); // popups are closed, never followed
     let status: number | null = null;
     if (target === "live") {
@@ -131,15 +159,17 @@ export class MeasurementBroker {
       L.lastAt = Date.now();
       L.loads.push({ at: new Date().toISOString(), url, viewport: vpName!, status: null, attempt: this.attempt });
       await writeFile(this.o.ledgerPath, JSON.stringify(L, null, 1)); // counted before the request, so failures count too
-      const res = await this.page.goto(url, { waitUntil: "load", timeout: 30_000 }).catch(() => null);
+      const res = await main.goto(url, { waitUntil: "load", timeout: 30_000 }).catch(() => null);
       status = res?.status() ?? null;
       L.loads[L.loads.length - 1]!.status = status;
       await writeFile(this.o.ledgerPath, JSON.stringify(L, null, 1));
     } else {
-      await this.page.goto(url, { waitUntil: "load", timeout: 10_000 });
+      await main.goto(url, { waitUntil: "load", timeout: 10_000 });
     }
-    await this.page.waitForTimeout(target === "live" ? RENDER_WAIT_MS : 200);
-    if (new URL(this.page.url()).origin !== (target === "live" ? LIVE_ORIGIN : "null") && target === "live") return { ok: false, reason: "landed off-origin; page closed" };
+    await main.waitForTimeout(target === "live" ? RENDER_WAIT_MS : 200);
+    const landed = new URL(main.url());
+    const expected = target === "live" ? landed.origin === LIVE_ORIGIN : landed.protocol === "file:";
+    if (!expected) { await main.close().catch(() => undefined); this.page = null; this.handles.clear(); return { ok: false, reason: "landed off-origin; page closed" }; }
     return { ok: true, result: { target, url: target === "live" ? url : `fixture:${target}`, viewport: vpName, status } };
   }
 

@@ -7,7 +7,9 @@
 //   npx tsx src/experimental/investigation/m1.ts <run> design|revise <attempt> [from] | execute <attempt> <target[,target]> <viewport[,viewport]> [--live]
 import { createHash } from "node:crypto";
 import { mkdir, readFile, readdir, writeFile } from "node:fs/promises";
-import { join, resolve } from "node:path";
+import { access } from "node:fs/promises";
+import { dirname, join, resolve } from "node:path";
+import { fileURLToPath } from "node:url";
 import { z } from "zod";
 import { BudgetedProvider, type Pricing, type TrialBudget } from "../adaptive/budget.js";
 import { MistralProvider } from "../adaptive/providers/mistral.js";
@@ -18,7 +20,11 @@ const MODEL = "mistral-small-2603";
 const PRICING: Pricing = { currency: "USD", inputPerMillion: 0.15, outputPerMillion: 0.6 };
 const BUDGET: TrialBudget = { maxCalls: 4, maxInputTokens: 60_000, maxOutputTokens: 12_000, maxSpend: 0.05, maxWallMs: 600_000, minCallIntervalMs: 1100 };
 const OWNER_CAP_USD = 5;
-const PRIOR_LEDGERS = "/home/achim/Work/art-abc/runs/abc"; // A/B/C/M ledgers (USD 0.0726 reported)
+// Paths are anchored at the repository root, not the current directory, so the caps cannot be reset by running elsewhere.
+const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), "../../..");
+const RUNS = join(ROOT, "runs/ail-m1");
+// Earlier experiments' ledgers (A/B/C/M, USD 0.0726 reported) live in another checkout; the directory is required.
+const PRIOR_LEDGERS = process.env["AIL_PRIOR_LEDGERS"] ?? "";
 const FIXTURES = ["overlay", "no-overlay", "clean-control", "opacity-control"];
 const sha = (s: string | Buffer) => createHash("sha256").update(s).digest("hex");
 
@@ -58,13 +64,15 @@ function baselinePacket() {
 }
 
 async function priorSpend() {
-  let total = 0;
-  for (const d of await readdir(PRIOR_LEDGERS).catch(() => [] as string[])) {
+  let total = 0, priorFound = 0;
+  if (!PRIOR_LEDGERS) throw new Error("AIL_PRIOR_LEDGERS not set: the aggregate owner cap needs the earlier ledgers");
+  for (const d of await readdir(PRIOR_LEDGERS)) {
     const raw = await readFile(join(PRIOR_LEDGERS, d, "ledger.json"), "utf8").catch(() => null);
-    if (raw) { const j = JSON.parse(raw) as { consultant: { spend: number }; direct?: { spend: number } }; total += j.consultant.spend + (j.direct?.spend ?? 0); }
+    if (raw) { const j = JSON.parse(raw) as { consultant: { spend: number }; direct?: { spend: number } }; total += j.consultant.spend + (j.direct?.spend ?? 0); priorFound++; }
   }
-  for (const d of await readdir("runs/ail-m1").catch(() => [] as string[])) {
-    for (const f of await readdir(join("runs/ail-m1", d)).catch(() => [] as string[])) {
+  if (priorFound === 0) throw new Error(`no prior ledgers under AIL_PRIOR_LEDGERS: refusing paid calls`);
+  for (const d of await readdir(RUNS).catch(() => [] as string[])) {
+    for (const f of await readdir(join(RUNS, d)).catch(() => [] as string[])) {
       if (!f.startsWith("designer-ledger")) continue;
       total += (JSON.parse(await readFile(join("runs/ail-m1", d, f), "utf8")) as { spend: number }).spend;
     }
@@ -73,11 +81,15 @@ async function priorSpend() {
 }
 
 async function designer(run: string, attempt: string, mode: "design" | "revise", from?: string) {
-  const dir = resolve("runs/ail-m1", run);
+  const dir = join(RUNS, run);
   await mkdir(join(dir, "attempts", attempt), { recursive: true });
   const spent = await priorSpend();
   if (spent + BUDGET.maxSpend > OWNER_CAP_USD) throw new Error(`owner cap: ${spent} spent`);
   if (!process.env["ADAPTIVE_MISTRAL_API_KEY"]) throw new Error("ADAPTIVE_MISTRAL_API_KEY not set");
+  const ledgerFile = join(dir, `designer-ledger-${attempt}.json`);
+  if (await access(ledgerFile).then(() => true, () => false)) throw new Error(`attempt ${attempt} already has a designer ledger; use a new attempt name`);
+  // Worst-case reservation on disk BEFORE the call, so a failed or interrupted call still counts toward the owner cap.
+  await writeFile(ledgerFile, JSON.stringify({ reservation: true, spend: BUDGET.maxSpend }, null, 1));
   const provider = new BudgetedProvider(new MistralProvider({ apiKeyEnv: "ADAPTIVE_MISTRAL_API_KEY", model: MODEL }), PRICING, BUDGET);
   const packet = baselinePacket();
   let context = `BASELINE EVIDENCE (frozen):\n${JSON.stringify(packet, null, 1)}`;
@@ -100,7 +112,7 @@ ${mode === "revise" ? "This is a REVISION: change the probe in response to what 
 ${API_DOC}
 Reply with ONE JSON object: {"hypotheses":[{"id","statement","prediction","falsifier"} x3],"probe":{"question","falsifier","controls":[...],"limitations":[...],"code":"<the ES module as a string>"}${mode === "revise" ? ',"revisionNote":"..."' : ""}}`;
   const response = await provider.complete({ messages: [{ role: "system", content: system }, { role: "user", content: context }], maxOutputTokens: 5000, temperature: 0, responseFormat: "json_object", timeoutMs: 120_000 });
-  await writeFile(join(dir, `designer-ledger-${attempt}.json`), JSON.stringify({ ...provider.ledger }, null, 1)); // one per call; all are summed
+  await writeFile(ledgerFile, JSON.stringify({ ...provider.ledger }, null, 1)); // one per attempt; all are summed
   await writeFile(join(dir, "attempts", attempt, "designer-raw.json"), JSON.stringify({ model: MODEL, returnedModel: response.returnedModel, usage: response.usage, text: response.text }, null, 1));
   await writeFile(join(dir, "attempts", attempt, "designer-input.txt"), `${system}\n\n---\n${context}`);
   await accept(run, attempt, mode, sha(context));
@@ -113,7 +125,7 @@ function perTarget(json: string, cap: number): string {
 
 // Validates the saved designer output (also used to re-validate after a schema correction without a new paid call).
 async function accept(run: string, attempt: string, mode: string, inputSha256?: string) {
-  const dir = resolve("runs/ail-m1", run);
+  const dir = join(RUNS, run);
   const raw = JSON.parse(await readFile(join(dir, "attempts", attempt, "designer-raw.json"), "utf8")) as { returnedModel: string | null; text: string };
   const parsed = ProposalSchema.safeParse(JSON.parse(raw.text));
   if (!parsed.success) throw new Error(`proposal invalid: ${parsed.error.issues[0]?.path.join(".")} ${parsed.error.issues[0]?.message}`);
@@ -125,9 +137,9 @@ async function accept(run: string, attempt: string, mode: string, inputSha256?: 
 
 async function execute(run: string, attempt: string, targets: string[], viewports: string[], live: boolean) {
   if (!sandboxAvailable().ok) throw new Error("LIVE DYNAMIC EXECUTION BLOCKED: no verified sandbox");
-  const dir = resolve("runs/ail-m1", run);
+  const dir = join(RUNS, run);
   const code = await readFile(join(dir, "attempts", attempt, "probe.mjs"), "utf8");
-  const broker = new MeasurementBroker({ runDir: dir, ledgerPath: resolve("runs/ail-m1/live-ledger.json"), fixtureDir: resolve("test/fixtures/investigation"), liveAllowed: live, maxLiveLoads: 16, minGapMs: 10_000 });
+  const broker = new MeasurementBroker({ runDir: dir, ledgerPath: join(RUNS, "live-ledger.json"), fixtureDir: join(ROOT, "test/fixtures/investigation"), liveAllowed: live, maxLiveLoads: 16, minGapMs: 10_000 });
   const resultsPath = join(dir, "attempts", attempt, "results.json");
   const results: Record<string, unknown> = JSON.parse(await readFile(resultsPath, "utf8").catch(() => "{}"));
   try {
@@ -136,7 +148,8 @@ async function execute(run: string, attempt: string, targets: string[], viewport
       for (const viewport of viewports) {
         if (!VIEWPORTS[viewport]) throw new Error(`viewport ${viewport}`);
         const key = `${target}@${viewport}`;
-        const out = await runInSandbox(code, { target, viewport }, broker.forAttempt(`${attempt}-${target}-${viewport}`));
+        const out = await runInSandbox(code, { target, viewport }, broker.forAttempt(`${attempt}-${target}-${viewport}`, { live: target === "live" }));
+        if (results[key]) results[`${key}#superseded-${Date.now()}`] = results[key]; // earlier runs are kept, not overwritten
         results[key] = { ...out, target, viewport, url: target === "live" ? LIVE_URL : `fixture:${target}`, broker: BROKER_VERSION };
         console.log(key, out.state, out.error ?? "", JSON.stringify(out.result).slice(0, 300));
       }

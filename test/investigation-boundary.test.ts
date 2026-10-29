@@ -22,14 +22,17 @@ describe("investigation sandbox (bwrap) and measurement broker boundaries", { sk
       const o = {};
       try { await fetch("https://www.bs.ch/", { signal: AbortSignal.timeout(2000) }); o.net = "REACHED"; } catch (e) { o.net = "blocked"; }
       const fs = await import("node:fs");
-      o.home = fs.existsSync("/home"); o.repo = fs.existsSync(${JSON.stringify(process.cwd())});
+      const seen = (path) => { try { return fs.existsSync(path); } catch { return false; } }; // the permission model throws instead
+      o.home = seen("/home"); o.repo = seen(${JSON.stringify(process.cwd())});
       try { fs.writeFileSync("/usr/x", "1"); o.write = "WROTE"; } catch { o.write = "denied"; }
       o.env = Object.keys(process.env).filter((k) => k !== "PWD");
       try { (await import("node:child_process")).execSync("id"); o.exec = "RAN"; } catch { o.exec = "blocked"; }
+      try { (await import("node:child_process")).execFileSync("/usr/bin/id"); o.execFile = "RAN"; } catch { o.execFile = "blocked"; }
+      try { new (await import("node:worker_threads")).Worker("/probe.mjs"); o.worker = "STARTED"; } catch { o.worker = "blocked"; }
       return o; }`;
     const out = await runInSandbox(code, {}, null);
     assert.equal(out.state, "completed", out.error ?? "");
-    assert.deepEqual(out.result, { net: "blocked", home: false, repo: false, write: "denied", env: [], exec: "blocked" });
+    assert.deepEqual(out.result, { net: "blocked", home: false, repo: false, write: "denied", env: [], exec: "blocked", execFile: "blocked", worker: "blocked" });
   });
 
   it("the broker refuses unknown operations, live access when not enabled, traversal and oversized arguments", async () => {
@@ -81,5 +84,45 @@ describe("investigation sandbox (bwrap) and measurement broker boundaries", { sk
     const forged = await runInSandbox(`export default async function () { process.stdout.write(JSON.stringify({ type: "result", token: "forged", result: "FORGED" }) + "\\n"); return "real"; }`, {}, null);
     assert.equal(forged.result, "real");
     assert.ok(forged.violations.some((v) => v.includes("wrong token")));
+  });
+
+  it("broker calls are serialised even when the probe does not await them, and none outlives settlement", async () => {
+    let active = 0, peak = 0, afterSettle = 0, settledAt = 0;
+    const slowHandler = async (_op: string, _args: unknown, signal: AbortSignal) => {
+      active++; peak = Math.max(peak, active);
+      await new Promise((r) => setTimeout(r, 300));
+      active--;
+      if (settledAt && Date.now() > settledAt) afterSettle++;
+      return signal.aborted ? { ok: false as const, reason: "attempt settled" } : { ok: true as const, result: null };
+    };
+    const burst = await runInSandbox(`export default async function (broker) { await Promise.all([1, 2, 3, 4].map(() => broker.call("viewport"))); return "done"; }`, {}, slowHandler);
+    assert.equal(burst.state, "completed");
+    assert.equal(peak, 1, "at most one broker call at a time");
+    assert.equal(burst.calls.length, 4);
+    const late = await runInSandbox(`export default async function (broker) { broker.call("viewport"); broker.call("viewport"); await new Promise(() => {}); }`, {}, slowHandler, { ...DEFAULT_LIMITS, wallMs: 450 });
+    settledAt = Date.now();
+    await new Promise((r) => setTimeout(r, 800));
+    assert.equal(late.state, "timeout");
+    assert.equal(afterSettle, 0, "the outcome resolves only after in-flight broker work has drained");
+    assert.ok(late.calls.some((c) => c.reason === "dropped at settlement" || c.reason === "attempt settled"));
+  });
+
+  it("a non-object output line is a violation, not a coordinator crash", async () => {
+    const out = await runInSandbox(`export default async function () { process.stdout.write("null\\n42\\n"); return "ok"; }`, {}, null);
+    assert.equal(out.state, "completed");
+    assert.equal(out.result, "ok");
+    assert.equal(out.violations.filter((v) => v === "non-object output").length, 2);
+  });
+
+  it("live access is per attempt: denied for fixture packets and capped before any request", async () => {
+    const liveDir = await mkdtemp(join(tmpdir(), "ail-live-"));
+    const b = new MeasurementBroker({ runDir: liveDir, ledgerPath: join(liveDir, "ledger.json"), fixtureDir: "test/fixtures/investigation-boundary", liveAllowed: true, maxLiveLoads: 0, minGapMs: 10_000 });
+    const code = `export default async function (broker) { try { await broker.call("open", { target: "live", viewport: "1440x900" }); return "allowed"; } catch (e) { return e.message; } }`;
+    try {
+      const fixturePacket = await runInSandbox(code, {}, b.forAttempt("t-fixture", { live: false }));
+      assert.match(String(fixturePacket.result), /live target not enabled/);
+      const capped = await runInSandbox(code, {}, b.forAttempt("t-live", { live: true }));
+      assert.match(String(capped.result), /live load cap 0 reached/);
+    } finally { await b.close(); await rm(liveDir, { recursive: true, force: true }); }
   });
 });
