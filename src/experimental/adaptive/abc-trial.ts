@@ -51,6 +51,8 @@ function args() {
     live: argv.includes("--live"), confirm: flag("confirm"), segment: flag("segment") ?? "s1", repeats: Number(flag("repeats") ?? 1),
     fixtures: flag("fixtures")?.split(",") ?? MANIFEST.fixtures, conditions: flag("conditions")?.split(",") ?? [...MANIFEST.conditionOrder],
     outRoot: flag("out") ?? "runs/abc",
+    // The one evidence-driven process repair, applied to every arm of a segment (s1 had none): see ABC_LOCAL_HYBRID.md.
+    repairs: (flag("repair")?.split(",") ?? []).filter(Boolean),
   };
 }
 
@@ -63,10 +65,12 @@ function localProvider(): ModelProvider {
 async function main() {
   const a = args();
   const sha = codeSha();
-  const plan = { manifest: MANIFEST, segment: a.segment, repeats: a.repeats, fixtures: a.fixtures, conditions: a.conditions };
+  for (const repair of a.repairs) if (repair !== "repeat-guard") throw new Error(`unknown repair ${repair}`);
+  const plan = { manifest: MANIFEST, segment: a.segment, repeats: a.repeats, fixtures: a.fixtures, conditions: a.conditions, repairs: a.repairs };
   const hash = confirmHashOf(plan, sha);
   const sessions = a.repeats * a.fixtures.length * a.conditions.length;
   console.log(`A/B/C trial — ${a.live ? "LIVE" : "DRY RUN (no model call)"}\n  code ${sha}\n  segment ${a.segment}, repeats ${a.repeats}, fixtures ${a.fixtures.join(",")}, conditions ${a.conditions.join(",")} -> ${sessions} sessions`);
+  console.log(`  repairs: ${a.repairs.join(",") || "none"}`);
   console.log(`  caps per session: ${JSON.stringify(MANIFEST.limits)}\n  local ${MANIFEST.local.model} (${MANIFEST.local.base}) at loopback; consultant ${MANIFEST.consultant.model}, <= ${MAX_CONSULTS}/session, budget ${MANIFEST.consultantBudget.maxSpend} USD per invocation\n  confirm hash ${hash}`);
   if (!a.live) return;
   if (a.confirm !== hash) throw new Error("--confirm does not match this plan and code");
@@ -109,7 +113,7 @@ async function main() {
           const started = Date.now();
           const result = await runSession({
             config: { schema: "art/adaptive-session/v1", sessionId: `${a.segment}-r${repeat}-${fixture}-${label}`, startUrl: `${server.origin}${truth.startPath}`, allowedOrigins: [server.origin], mode: "fixture", publicTargets: [], limits: MANIFEST.limits },
-            provider, outDir: sessionDir, browser: contained.browser, codeSha: sha, condition,
+            provider, outDir: sessionDir, browser: contained.browser, codeSha: sha, condition, refuseRepeatInSameState: a.repairs.includes("repeat-guard"),
           });
           const row = await scoreSession(sessionDir, truth, label, condition);
           rows.push(row);

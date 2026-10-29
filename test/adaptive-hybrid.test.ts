@@ -66,3 +66,32 @@ describe("hybrid-escalation/v1", () => {
     assert.equal(local.requests[0]!.messages.length, 2, "no advisory without a trigger");
   });
 });
+
+describe("repeat-guard repair (opt-in executor option)", async () => {
+  const { mkdtemp, rm, readFile } = await import("node:fs/promises");
+  const { tmpdir } = await import("node:os");
+  const { join } = await import("node:path");
+  const { runSession } = await import("../src/experimental/adaptive/executor.js");
+  const { FakeProvider } = await import("../src/experimental/adaptive/providers/fake.js");
+  const { fixtureConfig, startHarness } = await import("./adaptive-helpers.js");
+  const { CONDITIONS } = await import("../src/experimental/adaptive/frontier-compare.js");
+  const harness = await startHarness();
+  // The s1 failure: the same capture on the same element, again and again, in an unchanged page state.
+  const looping = () => new FakeProvider(({ call }) => call < 3 ? { action: { type: "capture_evidence", targetRef: "e1", note: "x" } } : { action: { type: "finish", verdict: "inconclusive", summary: "", candidates: [] } });
+  const run = async (guard: boolean) => {
+    const outDir = await mkdtemp(join(tmpdir(), "art-adaptive-"));
+    try {
+      await runSession({ config: fixtureConfig(harness, "/dev-k1/index.html"), provider: looping(), outDir, browser: harness.browser, codeSha: "test", condition: CONDITIONS.B, refuseRepeatInSameState: guard });
+      return (await readFile(join(outDir, "trace.jsonl"), "utf8")).split("\n").filter(Boolean).map((line) => JSON.parse(line) as { outcome: string; detail: string });
+    } finally { await rm(outDir, { recursive: true, force: true }); }
+  };
+  it("is off by default: identical captures all execute", async () => {
+    assert.deepEqual((await run(false)).slice(0, 3).map((t) => t.outcome), ["executed", "executed", "executed"]);
+  });
+  it("refuses an identical capture in the identical state and names the evidence it already produced", async () => {
+    const trace = await run(true);
+    assert.deepEqual(trace.slice(0, 3).map((t) => t.outcome), ["executed", "denied", "denied"]);
+    assert.match(trace[1]!.detail, /^repeated_in_same_state: already done at step 0 .*ev_1/);
+    await harness.close();
+  });
+});
