@@ -1,8 +1,9 @@
 // Experimental adaptive track (docs/experiments/ABC_LOCAL_HYBRID.md). Not imported by production code.
-// A/B/C comparison on the neutral DEVELOPMENT fixtures (exposed, never held out):
+// A/B/C(/M) comparison on the neutral DEVELOPMENT fixtures (exposed, never held out):
 //   A  algorithmic: frontier scheduler + rule table, no model calls
 //   B  local LLM (Ollama on loopback) drives the same contained harness
 //   C  the same local LLM + at most two advisory Mistral consultations per session (hybrid.ts, hybrid-escalation/v1)
+//   M  Mistral itself as the exploration policy (added after s1/s2; same harness, caps and fixtures)
 // All three use the frontier-B harness flags (visible ledger, completion accounting, report_candidate) and identical caps.
 // Dry run by default: prints the frozen manifest and its confirm hash. --live needs --confirm <hash>, committed code and, for C,
 // the Mistral key in ADAPTIVE_MISTRAL_API_KEY. The local endpoint needs no credential.
@@ -39,6 +40,9 @@ export const MANIFEST = {
     escalation: ESCALATION_VERSION, maxConsultsPerSession: MAX_CONSULTS,
   },
   // Per run invocation; the owner cap is USD 5 across all invocations (ledger.json per run, summed in the report).
+  // Condition M (added after s1/s2): Mistral itself is the exploration policy, same harness, caps and fixtures as B.
+  // Trial-wide hard budget per invocation; worst case = 1M input + 90k output tokens at the configured prices (about USD 0.20).
+  directBudget: { maxCalls: 110, maxInputTokens: 1_000_000, maxOutputTokens: 90_000, maxSpend: 1.0, maxWallMs: 3_600_000, minCallIntervalMs: 1100 } satisfies TrialBudget,
   consultantBudget: { maxCalls: 30, maxInputTokens: 300_000, maxOutputTokens: 12_000, maxSpend: 0.5, maxWallMs: 3_600_000, minCallIntervalMs: 500 } satisfies TrialBudget,
 };
 
@@ -49,7 +53,10 @@ async function priorSpend(outRoot: string): Promise<number> {
   let total = 0;
   for (const entry of await readdir(resolve(outRoot)).catch(() => [] as string[])) {
     const ledger = await readFile(join(resolve(outRoot), entry, "ledger.json"), "utf8").catch(() => null);
-    if (ledger) total += (JSON.parse(ledger) as { consultant: { spend: number } }).consultant.spend;
+    if (ledger) {
+      const parsed = JSON.parse(ledger) as { consultant: { spend: number }; direct?: { spend: number } };
+      total += parsed.consultant.spend + (parsed.direct?.spend ?? 0);
+    }
   }
   return total;
 }
@@ -86,7 +93,7 @@ async function main() {
   const a = args();
   const sha = codeSha();
   for (const repair of a.repairs) if (repair !== "repeat-guard") throw new Error(`unknown repair ${repair}`);
-  const usesLocal = a.conditions.some((label) => label !== "A");
+  const usesLocal = a.conditions.some((label) => label === "B" || label === "C");
   // The endpoint value is part of the plan (and so of the confirm hash); it is only written to run artifacts, never committed.
   const plan = { manifest: MANIFEST, localEndpoint: usesLocal ? localEndpoint() : null, segment: a.segment, repeats: a.repeats, fixtures: a.fixtures, conditions: a.conditions, repairs: a.repairs };
   const hash = confirmHashOf(plan, sha);
@@ -99,17 +106,20 @@ async function main() {
   if (!/^[0-9a-f]{40}$/.test(sha)) throw new Error("uncommitted code; commit before a live run");
   // Owner cap across every invocation: refuse when earlier ledgers plus this invocation's ceiling could exceed it.
   const spent = (await priorSpend(a.outRoot)) + (resolve(a.outRoot) === resolve("runs/abc") ? 0 : await priorSpend("runs/abc"));
-  if (a.conditions.includes("C") && spent + MANIFEST.consultantBudget.maxSpend > OWNER_CAP_USD) throw new Error(`owner cap ${OWNER_CAP_USD} USD: ${spent.toFixed(4)} already spent, this run may spend ${MANIFEST.consultantBudget.maxSpend}`);
-  if (a.conditions.includes("C") && !process.env[MANIFEST.consultant.apiKeyEnv]) throw new Error(`${MANIFEST.consultant.apiKeyEnv} is not set`);
+  const mayCharge = (a.conditions.includes("C") ? MANIFEST.consultantBudget.maxSpend : 0) + (a.conditions.includes("M") ? MANIFEST.directBudget.maxSpend : 0);
+  if (spent + mayCharge > OWNER_CAP_USD) throw new Error(`owner cap ${OWNER_CAP_USD} USD: ${spent.toFixed(4)} already spent, this run may spend ${mayCharge}`);
+  if ((a.conditions.includes("C") || a.conditions.includes("M")) && !process.env[MANIFEST.consultant.apiKeyEnv]) throw new Error(`${MANIFEST.consultant.apiKeyEnv} is not set`);
 
   const dir = resolve(a.outRoot, `${a.segment}-${new Date().toISOString().replace(/[:.]/g, "-")}`);
   await mkdir(dir, { recursive: true });
   await writeFile(join(dir, "manifest.json"), JSON.stringify({ ...plan, codeSha: sha, confirmHash: hash, host: execFileSync("hostname", { encoding: "utf8" }).trim(), startedAt: new Date().toISOString() }, null, 2));
 
-  // Preflight the local model: returned identity must match.
-  const pre = await localProvider().complete({ messages: [{ role: "user", content: 'Reply with the JSON object {"ok": true}.' }], maxOutputTokens: 16, temperature: 0, responseFormat: "json_object", timeoutMs: 60_000 });
-  await writeFile(join(dir, "preflight-local.json"), JSON.stringify({ requestedModel: pre.requestedModel, returnedModel: pre.returnedModel, latencyMs: pre.latencyMs, text: pre.text.slice(0, 80) }, null, 2));
-  if (pre.returnedModel !== pre.requestedModel) throw new Error(`local model identity mismatch: ${pre.returnedModel}`);
+  // Preflight the local model (B/C only): returned identity must match. M's returned model id is recorded on every call in trace.jsonl.
+  if (usesLocal) {
+    const pre = await localProvider().complete({ messages: [{ role: "user", content: 'Reply with the JSON object {"ok": true}.' }], maxOutputTokens: 16, temperature: 0, responseFormat: "json_object", timeoutMs: 60_000 });
+    await writeFile(join(dir, "preflight-local.json"), JSON.stringify({ requestedModel: pre.requestedModel, returnedModel: pre.returnedModel, latencyMs: pre.latencyMs, text: pre.text.slice(0, 80) }, null, 2));
+    if (pre.returnedModel !== pre.requestedModel) throw new Error(`local model identity mismatch: ${pre.returnedModel}`);
+  }
   // Warm-up (outside every session): evaluate the skill prompt once so the first measured session does not pay the cold prompt
   // evaluation alone. The smoke run showed that cost exceeds the 30 s request cap on CPU. Same for B and C.
   if (usesLocal) {
@@ -118,7 +128,10 @@ async function main() {
     await writeFile(join(dir, "warmup-local.json"), JSON.stringify({ latencyMs: warm.latencyMs, inputTokens: warm.usage?.inputTokens ?? null }, null, 2));
   }
 
-  const consultant = new BudgetedProvider(new MistralProvider({ apiKeyEnv: MANIFEST.consultant.apiKeyEnv, model: MANIFEST.consultant.model, baseUrl: MANIFEST.consultant.endpoint }), MANIFEST.consultant.pricing, MANIFEST.consultantBudget);
+  const mistral = () => new MistralProvider({ apiKeyEnv: MANIFEST.consultant.apiKeyEnv, model: MANIFEST.consultant.model, baseUrl: MANIFEST.consultant.endpoint });
+  const consultant = new BudgetedProvider(mistral(), MANIFEST.consultant.pricing, MANIFEST.consultantBudget);
+  const direct = new BudgetedProvider(mistral(), MANIFEST.consultant.pricing, MANIFEST.directBudget);
+  const writeLedger = () => writeFile(join(dir, "ledger.json"), JSON.stringify({ consultant: consultant.ledger, direct: direct.ledger, pricing: MANIFEST.consultant.pricing }, null, 2));
   const server = await startFixtures();
   const contained = await launchContainedBrowser([server.origin]).catch(async (error) => { await server.close(); throw error; });
   const rows: SessionFunnel[] = [];
@@ -133,6 +146,7 @@ async function main() {
           let condition: ExplorationCondition = MANIFEST.harnessCondition;
           if (label === "A") { provider = new FrontierScheduler({ maxPagesPerSource: CONDITIONS.D.sampling.maxPagesPerSource }); condition = CONDITIONS.D; }
           else if (label === "B") provider = localProvider();
+          else if (label === "M") provider = direct;
           else if (label === "C") provider = new HybridProvider(localProvider(), consultant, (entry) => appendFile(join(sessionDir, "hybrid.jsonl"), JSON.stringify(entry) + "\n"));
           else throw new Error(`unknown condition ${label}`);
           const started = Date.now();
@@ -143,18 +157,18 @@ async function main() {
           const row = await scoreSession(sessionDir, truth, label, condition);
           rows.push(row);
           console.log(`  r${repeat} ${fixture} ${label}: ${result.status} (${result.reason.slice(0, 80)}), ${result.modelCalls} calls, ${Math.round((Date.now() - started) / 1000)} s, credited ${row.defects.filter((d) => d.credited).length}/${row.defects.length}`);
-          await writeFile(join(dir, "ledger.json"), JSON.stringify({ consultant: consultant.ledger, pricing: MANIFEST.consultant.pricing }, null, 2));
+          await writeLedger();
         }
       }
     }
   } finally {
-    await writeFile(join(dir, "ledger.json"), JSON.stringify({ consultant: consultant.ledger, pricing: MANIFEST.consultant.pricing }, null, 2));
+    await writeLedger();
     await contained.close();
     await server.close();
   }
   await writeFile(join(dir, "funnel.json"), JSON.stringify({ schema: FUNNEL_VERSION, codeSha: sha, rows }, null, 2));
   await writeFile(join(dir, "comparison.md"), renderComparison(`${a.segment}`, sha, rows));
-  console.log(`done: ${dir}\n  consultant ledger: ${JSON.stringify(consultant.ledger)}`);
+  console.log(`done: ${dir}\n  consultant ledger: ${JSON.stringify(consultant.ledger)}\n  direct ledger: ${JSON.stringify(direct.ledger)}`);
 }
 
 if (import.meta.url === `file://${process.argv[1]}`) {
