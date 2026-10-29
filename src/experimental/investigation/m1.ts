@@ -22,11 +22,11 @@ const PRIOR_LEDGERS = "/home/achim/Work/art-abc/runs/abc"; // A/B/C/M ledgers (U
 const FIXTURES = ["overlay", "no-overlay", "clean-control", "opacity-control"];
 const sha = (s: string | Buffer) => createHash("sha256").update(s).digest("hex");
 
-export const HypothesisSchema = z.object({ id: z.string().min(1).max(20), statement: z.string().min(1).max(400), prediction: z.string().min(1).max(400), falsifier: z.string().min(1).max(400) });
+export const HypothesisSchema = z.object({ id: z.string().min(1).max(80), statement: z.string().min(1).max(1500), prediction: z.string().min(1).max(1500), falsifier: z.string().min(1).max(1500) });
 export const ProposalSchema = z.object({
   hypotheses: z.array(HypothesisSchema).min(3).max(3),
-  probe: z.object({ question: z.string().min(1).max(400), falsifier: z.string().min(1).max(600), controls: z.array(z.string()).max(4), limitations: z.array(z.string()).max(6), code: z.string().min(50).max(12_000) }),
-  revisionNote: z.string().max(800).optional(),
+  probe: z.object({ question: z.string().min(1).max(1500), falsifier: z.string().min(1).max(2000), controls: z.array(z.string()).max(10), limitations: z.array(z.string()).max(12), code: z.string().min(50).max(12_000) }),
+  revisionNote: z.string().max(4000).optional(),
 });
 
 const API_DOC = `You write ONE JavaScript ES module: export default async function (broker, packet) { ... return <JSON-serialisable measurements>; }
@@ -64,8 +64,10 @@ async function priorSpend() {
     if (raw) { const j = JSON.parse(raw) as { consultant: { spend: number }; direct?: { spend: number } }; total += j.consultant.spend + (j.direct?.spend ?? 0); }
   }
   for (const d of await readdir("runs/ail-m1").catch(() => [] as string[])) {
-    const raw = await readFile(join("runs/ail-m1", d, "designer-ledger.json"), "utf8").catch(() => null);
-    if (raw) total += (JSON.parse(raw) as { spend: number }).spend;
+    for (const f of await readdir(join("runs/ail-m1", d)).catch(() => [] as string[])) {
+      if (!f.startsWith("designer-ledger")) continue;
+      total += (JSON.parse(await readFile(join("runs/ail-m1", d, f), "utf8")) as { spend: number }).spend;
+    }
   }
   return total;
 }
@@ -80,25 +82,42 @@ async function designer(run: string, attempt: string, mode: "design" | "revise")
   const packet = baselinePacket();
   let context = `BASELINE EVIDENCE (frozen):\n${JSON.stringify(packet, null, 1)}`;
   if (mode === "revise") {
-    const prev = (await readdir(join(dir, "attempts"))).filter((a) => a !== attempt).sort().at(-1)!;
+    // Previous designed attempt (replays are not designs); its fresh-replay results are added when present.
+    const prev = (await readdir(join(dir, "attempts"))).filter((a) => a !== attempt && !a.endsWith("-replay")).sort().at(-1)!;
     const prevProposal = await readFile(join(dir, "attempts", prev, "proposal.json"), "utf8");
     const results = await readFile(join(dir, "attempts", prev, "results.json"), "utf8");
+    const replay = await readFile(join(dir, "attempts", `${prev}-replay`, "results.json"), "utf8").catch(() => "");
     const critic = await readFile(join(dir, "attempts", prev, "critic.json"), "utf8").catch(() => "{}");
-    context += `\n\nPREVIOUS ATTEMPT ${prev} (proposal):\n${prevProposal}\n\nRESULTS of executing it (fixtures and live):\n${results.slice(0, 18_000)}\n\nCRITIC REVIEW of the previous attempt:\n${critic.slice(0, 3000)}`;
+    context += `\n\nPREVIOUS ATTEMPT ${prev} (proposal):\n${prevProposal}\n\nRESULTS of executing it (fixtures and live):\n${perTarget(results, 3_000)}`;
+    if (replay) context += `\n\nFRESH REPLAY of ${prev} (new process and browser, same code; includes the 390x844 viewport):\n${perTarget(replay, 6_000)}`;
+    context += `\n\nCRITIC REVIEW of the previous attempt:\n${critic.slice(0, 3000)}`;
   }
   const system = `You are the experiment designer in a bounded accessibility investigation. Propose exactly 3 competing, falsifiable hypotheses for WHY the hint looks faint, and ONE executable probe that measures facts able to support or reject them. The probe will be run on each local fixture and on the live page (packet.target), at the viewports given in packet.viewport. Measure geometry, overlap (elementsFromPoint at points inside the hint's own rect), computed styles and RENDERED pixels inside the hint's own rect (do not rely on the old hand-placed crop). Compare the page as loaded (no scrolling) with the scrolled state that put the hint in the vertical centre (scrollTo so the hint's centre is at innerHeight/2). Never claim a cause from one measurement; say what would falsify it.
 ${mode === "revise" ? "This is a REVISION: change the probe in response to what the results and critic showed (fix errors, add the measurement that would discriminate between the remaining hypotheses), and explain the change in revisionNote." : ""}
 ${API_DOC}
 Reply with ONE JSON object: {"hypotheses":[{"id","statement","prediction","falsifier"} x3],"probe":{"question","falsifier","controls":[...],"limitations":[...],"code":"<the ES module as a string>"}${mode === "revise" ? ',"revisionNote":"..."' : ""}}`;
   const response = await provider.complete({ messages: [{ role: "system", content: system }, { role: "user", content: context }], maxOutputTokens: 5000, temperature: 0, responseFormat: "json_object", timeoutMs: 120_000 });
-  await writeFile(join(dir, "designer-ledger.json"), JSON.stringify({ ...provider.ledger }, null, 1));
+  await writeFile(join(dir, `designer-ledger-${attempt}.json`), JSON.stringify({ ...provider.ledger }, null, 1)); // one per call; all are summed
   await writeFile(join(dir, "attempts", attempt, "designer-raw.json"), JSON.stringify({ model: MODEL, returnedModel: response.returnedModel, usage: response.usage, text: response.text }, null, 1));
-  const parsed = ProposalSchema.safeParse(JSON.parse(response.text));
+  await writeFile(join(dir, "attempts", attempt, "designer-input.txt"), `${system}\n\n---\n${context}`);
+  await accept(run, attempt, mode, sha(context));
+}
+
+// Compact JSON per target, each capped, so a late target (e.g. the mobile viewport) is not truncated away.
+function perTarget(json: string, cap: number): string {
+  return Object.entries(JSON.parse(json) as Record<string, unknown>).map(([k, v]) => `${k}: ${JSON.stringify(v).slice(0, cap)}`).join("\n");
+}
+
+// Validates the saved designer output (also used to re-validate after a schema correction without a new paid call).
+async function accept(run: string, attempt: string, mode: string, inputSha256?: string) {
+  const dir = resolve("runs/ail-m1", run);
+  const raw = JSON.parse(await readFile(join(dir, "attempts", attempt, "designer-raw.json"), "utf8")) as { returnedModel: string | null; text: string };
+  const parsed = ProposalSchema.safeParse(JSON.parse(raw.text));
   if (!parsed.success) throw new Error(`proposal invalid: ${parsed.error.issues[0]?.path.join(".")} ${parsed.error.issues[0]?.message}`);
-  const proposal = { ...parsed.data, attempt, mode, model: MODEL, returnedModel: response.returnedModel ?? null, codeSha256: sha(parsed.data.probe.code), inputSha256: sha(context), createdAt: new Date().toISOString() };
+  const proposal = { ...parsed.data, attempt, mode, model: MODEL, returnedModel: raw.returnedModel ?? null, codeSha256: sha(parsed.data.probe.code), inputSha256: inputSha256 ?? null, createdAt: new Date().toISOString() };
   await writeFile(join(dir, "attempts", attempt, "proposal.json"), JSON.stringify(proposal, null, 1));
   await writeFile(join(dir, "attempts", attempt, "probe.mjs"), parsed.data.probe.code);
-  console.log(JSON.stringify({ attempt, hypotheses: proposal.hypotheses.map((h) => h.id + ": " + h.statement.slice(0, 90)), codeSha256: proposal.codeSha256, spend: provider.ledger.spend }, null, 1));
+  console.log(JSON.stringify({ attempt, hypotheses: proposal.hypotheses.map((h) => h.id + ": " + h.statement.slice(0, 110)), codeSha256: proposal.codeSha256 }, null, 1));
 }
 
 async function execute(run: string, attempt: string, targets: string[], viewports: string[], live: boolean) {
@@ -129,5 +148,5 @@ async function execute(run: string, attempt: string, targets: string[], viewport
 
 const [run, stage, attempt, t, v] = process.argv.slice(2);
 if (!run || !stage || !attempt) { console.error("usage: m1.ts <run> design|revise <attempt> | execute <attempt> <targets> <viewports> [--live]"); process.exit(2); }
-(stage === "execute" ? execute(run, attempt, t!.split(","), (v ?? "1440x900").split(","), process.argv.includes("--live")) : designer(run, attempt, stage as "design" | "revise"))
+(stage === "accept" ? accept(run, attempt, t ?? "design") : stage === "execute" ? execute(run, attempt, t!.split(","), (v ?? "1440x900").split(","), process.argv.includes("--live")) : designer(run, attempt, stage as "design" | "revise"))
   .catch((e) => { console.error(String(e?.message ?? e)); process.exit(1); });
