@@ -15,7 +15,7 @@
 <div class="tw"><table>
 <thead><tr><th>Bestandteil</th><th>Implementiert</th><th>Getestet</th><th>Live beobachtet</th><th>Menschlich geprüft</th></tr></thead>
 <tbody>
-<tr><td>Deterministischer Scanner: axe, sichere Tastatur-Journeys, Coverage, Screenshots</td><td>ja (main)</td><td>Testsuite im Repo vorhanden; hier nicht ausgeführt</td><td>unklar (in diesem Abschnitt nicht geprüft)</td><td>nein</td></tr>
+<tr><td>Deterministischer Scanner: axe, sichere Tastatur-Journeys, Coverage, Screenshots</td><td>ja (main)</td><td>ja (volle Testsuite am finalen Stand dieses Berichts)</td><td>ja: 12 öffentliche Basel-Seiten am 29.10.2026 (Feldlauf dieses Berichts)</td><td>nein</td></tr>
 <tr><td>Publikations-Export mit Richtlinie und SSH-signierter Freigabe (opt-in, lokal)</td><td>ja (main)</td><td>ja, nur mit simulierter Autorität</td><td>nein</td><td>nein (keine echte Freigabe erteilt)</td></tr>
 <tr><td>Experimenteller Frontier-Scheduler A, lokales LLM B, Hybrid C, Mistral M</td><td>ja (PR #52, nur Fixture-Modus)</td><td>ja</td><td>ja, nur auf Entwicklungs-Fixtures (Loopback)</td><td>nein (Beurteilung modellgestützt)</td></tr>
 <tr><td>Partner-Pilot, AT-Nutzer-Validierung, Anbindung weiterer Berichtspfade</td><td>nein (vorgeschlagen)</td><td>–</td><td>–</td><td>–</td></tr>
@@ -50,7 +50,7 @@
 <text x="368" y="150" fill="var(--muted,currentColor)" font-size="11">nicht im</text>
 <text x="368" y="164" fill="var(--muted,currentColor)" font-size="11">Produktionspfad</text>
 </svg>
-<figcaption class="small">Nicht an die Richtlinie angebunden (laut <code>PUBLICATION_EXPORT_INTEGRATION.md</code>, im Code geprüft): <code>buildReport</code>, <code>buildSiteReport</code>, <code>auditSite</code>, Watch-Vergleich, Kohorten, Control-Center-Upload/Serving, Populationsanalyse, Outreach. Ob die Basel-Feldartefakte über den Export laufen werden: unklar (nicht Teil dieses Abschnitts).</figcaption>
+<figcaption class="small">Nicht an die Richtlinie angebunden (laut <code>PUBLICATION_EXPORT_INTEGRATION.md</code>, im Code geprüft): <code>buildReport</code>, <code>buildSiteReport</code>, <code>auditSite</code>, Watch-Vergleich, Kohorten, Control-Center-Upload/Serving, Populationsanalyse, Outreach. Die Basel-Feldartefakte laufen nicht über den Export: Dies ist ein privater Arbeitsbericht ohne Veröffentlichung.</figcaption>
 </figure>
 
 <h3>Ergebnisse A/B/C/M (nur offengelegte Entwicklungs-Fixtures)</h3>

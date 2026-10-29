@@ -1,0 +1,464 @@
+{
+ "schema": "art/basel-field-results/v1",
+ "codeSha": "4fdb589d3ad09c0e233cd1fd7a075e306330e163",
+ "startedAt": "2026-10-29T20:22:06.436480+00:00",
+ "wallSeconds": 233.8,
+ "pages": [
+  {
+   "id": "p01-start",
+   "url": "https://www.bs.ch/",
+   "task": "Einstieg und Navigation zu allen Diensten",
+   "interface": "Startseite mit Hauptmenü, Suche, Kacheln",
+   "finalUrl": "https://www.bs.ch/",
+   "counts": {
+    "violations": 1,
+    "incomplete": 1,
+    "passes": 44,
+    "inapplicable": 44
+   },
+   "runs": {
+    "scan": "ok",
+    "journey": "ok"
+   },
+   "journeys": {
+    "keyboard.focus-trace": "incomplete",
+    "skip-link.same-page": "incomplete",
+    "expandable.aria-expanded": "pass",
+    "dialog.focus-behavior": "incomplete"
+   }
+  },
+  {
+   "id": "p02-umzug",
+   "url": "https://www.bs.ch/themen/persoenliches-und-wohnen/umzug-und-wegzug/umzug-innerhalb-des-kantons-melden",
+   "task": "Umzug innerhalb des Kantons melden",
+   "interface": "Dienst-Einstiegsseite mit Absprung zu eUmzug/eServices",
+   "finalUrl": "https://www.bs.ch/themen/persoenliches-und-wohnen/umzug-und-wegzug/umzug-innerhalb-des-kantons-melden",
+   "counts": {
+    "violations": 3,
+    "incomplete": 1,
+    "passes": 44,
+    "inapplicable": 44
+   },
+   "runs": {
+    "scan": "ok",
+    "journey": "ok"
+   },
+   "journeys": {
+    "keyboard.focus-trace": "incomplete",
+    "skip-link.same-page": "incomplete",
+    "expandable.aria-expanded": "pass",
+    "dialog.focus-behavior": "incomplete"
+   }
+  },
+  {
+   "id": "p03-pass",
+   "url": "https://www.bs.ch/themen/persoenliches-und-wohnen/pass-identitaetskarte-und-beglaubigungen/ich-brauche-einen-neuen-pass-eine-neue-identitaetskarte",
+   "task": "Pass / Identitätskarte bestellen",
+   "interface": "Dienst-Einstiegsseite, Terminbezug, viele Fremdlinks",
+   "finalUrl": "https://www.bs.ch/themen/persoenliches-und-wohnen/pass-identitaetskarte-und-beglaubigungen/ich-brauche-einen-neuen-pass-eine-neue-identitaetskarte",
+   "counts": {
+    "violations": 4,
+    "incomplete": 1,
+    "passes": 47,
+    "inapplicable": 41
+   },
+   "runs": {
+    "scan": "ok",
+    "journey": "ok"
+   },
+   "journeys": {
+    "keyboard.focus-trace": "incomplete",
+    "skip-link.same-page": "incomplete",
+    "expandable.aria-expanded": "pass",
+    "dialog.focus-behavior": "incomplete"
+   }
+  },
+  {
+   "id": "p04-zuzug",
+   "url": "https://www.bs.ch/themen/persoenliches-und-wohnen/zuzug-und-aufenthalt/zuzug-den-kanton-basel-stadt",
+   "task": "Zuzug anmelden",
+   "interface": "Dienst-Einstiegsseite mit eServices und PDFs",
+   "finalUrl": "https://www.bs.ch/themen/persoenliches-und-wohnen/zuzug-und-aufenthalt/zuzug-den-kanton-basel-stadt",
+   "counts": {
+    "violations": 4,
+    "incomplete": 1,
+    "passes": 46,
+    "inapplicable": 42
+   },
+   "runs": {
+    "scan": "ok",
+    "journey": "ok"
+   },
+   "journeys": {
+    "keyboard.focus-trace": "incomplete",
+    "skip-link.same-page": "incomplete",
+    "expandable.aria-expanded": "pass",
+    "dialog.focus-behavior": "incomplete"
+   }
+  },
+  {
+   "id": "p05-abfall",
+   "url": "https://www.bs.ch/themen/umwelt-und-bauen/abfall-und-sauberkeit/abfallabfuhr",
+   "task": "Abfuhrtermine und -zone finden",
+   "interface": "Informationsseite mit Karten-iFrame, PDF-Zonenplänen, App-Links",
+   "finalUrl": "https://www.bs.ch/themen/umwelt-und-bauen/abfall-und-sauberkeit/abfallabfuhr",
+   "counts": {
+    "violations": 3,
+    "incomplete": 1,
+    "passes": 47,
+    "inapplicable": 41
+   },
+   "runs": {
+    "scan": "ok",
+    "journey": "ok"
+   },
+   "journeys": {
+    "keyboard.focus-trace": "incomplete",
+    "skip-link.same-page": "incomplete",
+    "expandable.aria-expanded": "pass",
+    "dialog.focus-behavior": "incomplete"
+   }
+  },
+  {
+   "id": "p06-zonensuche",
+   "url": "https://www.bs.ch/apps/zonensuche",
+   "task": "Abfuhrzone zur Adresse suchen",
+   "interface": "Interaktive Such-App (Formular, nur Laden und Tastaturfokus)",
+   "finalUrl": "https://www.bs.ch/apps/zonensuche",
+   "counts": {
+    "violations": 4,
+    "incomplete": 1,
+    "passes": 43,
+    "inapplicable": 45
+   },
+   "runs": {
+    "scan": "ok",
+    "journey": "ok"
+   },
+   "journeys": {
+    "keyboard.focus-trace": "pass",
+    "skip-link.same-page": "incomplete",
+    "expandable.aria-expanded": "pass",
+    "dialog.focus-behavior": "incomplete"
+   }
+  },
+  {
+   "id": "p07-sozialhilferechner",
+   "url": "https://www.bs.ch/apps/sozialhilferechner",
+   "task": "Anspruch auf Sozialhilfe abschätzen",
+   "interface": "Rechner-App (Formular, nur Laden und Tastaturfokus)",
+   "finalUrl": "https://www.bs.ch/apps/sozialhilferechner",
+   "counts": {
+    "violations": 3,
+    "incomplete": 2,
+    "passes": 44,
+    "inapplicable": 44
+   },
+   "runs": {
+    "scan": "ok",
+    "journey": "ok"
+   },
+   "journeys": {
+    "keyboard.focus-trace": "incomplete",
+    "skip-link.same-page": "incomplete",
+    "expandable.aria-expanded": "pass",
+    "dialog.focus-behavior": "incomplete"
+   }
+  },
+  {
+   "id": "p08-anwohnerparkkarte",
+   "url": "https://www.bs.ch/themen/mobilitaet/fahren-und-parkieren/parkkarten/anwohnerparkkarte",
+   "task": "Anwohnerparkkarte beantragen",
+   "interface": "Dienst-Einstiegsseite mit eServices/Formularen",
+   "finalUrl": "https://www.bs.ch/themen/mobilitaet/fahren-und-parkieren/parkkarten/anwohnerparkkarte",
+   "counts": {
+    "violations": 3,
+    "incomplete": 1,
+    "passes": 51,
+    "inapplicable": 37
+   },
+   "runs": {
+    "scan": "ok",
+    "journey": "ok"
+   },
+   "journeys": {
+    "keyboard.focus-trace": "incomplete",
+    "skip-link.same-page": "incomplete",
+    "expandable.aria-expanded": "pass",
+    "dialog.focus-behavior": "incomplete"
+   }
+  },
+  {
+   "id": "p09-behindertenparkkarte",
+   "url": "https://www.bs.ch/themen/mobilitaet/fahren-und-parkieren/parkkarten/behindertenparkkarte",
+   "task": "Behindertenparkkarte beantragen",
+   "interface": "Dienst-Einstiegsseite mit Formular-Absprung",
+   "finalUrl": "https://www.bs.ch/themen/mobilitaet/fahren-und-parkieren/parkkarten/behindertenparkkarte",
+   "counts": {
+    "violations": 3,
+    "incomplete": 1,
+    "passes": 46,
+    "inapplicable": 42
+   },
+   "runs": {
+    "scan": "ok",
+    "journey": "ok"
+   },
+   "journeys": {
+    "keyboard.focus-trace": "incomplete",
+    "skip-link.same-page": "incomplete",
+    "expandable.aria-expanded": "pass",
+    "dialog.focus-behavior": "incomplete"
+   }
+  },
+  {
+   "id": "p10-steuerformulare",
+   "url": "https://www.bs.ch/themen/arbeit-und-steuern/steuererklaerung/online-formulare-steuerverwaltung",
+   "task": "Steuerformulare online finden",
+   "interface": "Linksammlung zu eSteuern/eServices",
+   "finalUrl": "https://www.bs.ch/themen/arbeit-und-steuern/steuererklaerung/online-formulare-steuerverwaltung",
+   "counts": {
+    "violations": 3,
+    "incomplete": 1,
+    "passes": 44,
+    "inapplicable": 44
+   },
+   "runs": {
+    "scan": "ok",
+    "journey": "ok"
+   },
+   "journeys": {
+    "keyboard.focus-trace": "incomplete",
+    "skip-link.same-page": "incomplete",
+    "expandable.aria-expanded": "pass",
+    "dialog.focus-behavior": "incomplete"
+   }
+  },
+  {
+   "id": "p11-kita",
+   "url": "https://www.bs.ch/themen/bildung-und-kinderbetreuung/kinderbetreuung/kita",
+   "task": "Kita-Platz und Beiträge finden",
+   "interface": "Informationsseite mit vielen PDFs und Fachportal",
+   "finalUrl": "https://www.bs.ch/themen/bildung-und-kinderbetreuung/kinderbetreuung/kita",
+   "counts": {
+    "violations": 3,
+    "incomplete": 1,
+    "passes": 47,
+    "inapplicable": 41
+   },
+   "runs": {
+    "scan": "ok",
+    "journey": "ok"
+   },
+   "journeys": {
+    "keyboard.focus-trace": "incomplete",
+    "skip-link.same-page": "incomplete",
+    "expandable.aria-expanded": "pass",
+    "dialog.focus-behavior": "incomplete"
+   }
+  },
+  {
+   "id": "p12-eportal",
+   "url": "https://eportal.egov.bs.ch/",
+   "task": "Öffentliche ePortal-Angebote finden",
+   "interface": "JavaScript-Anwendung (ePortal-Startseite, öffentlich)",
+   "finalUrl": "https://eportal.egov.bs.ch/dashboard",
+   "counts": {
+    "violations": 1,
+    "incomplete": 2,
+    "passes": 43,
+    "inapplicable": 46
+   },
+   "runs": {
+    "scan": "ok",
+    "journey": "ok"
+   },
+   "journeys": {
+    "keyboard.focus-trace": "pass",
+    "skip-link.same-page": "inapplicable",
+    "expandable.aria-expanded": "inapplicable",
+    "dialog.focus-behavior": "inapplicable"
+   }
+  }
+ ],
+ "violationComponents": [
+  {
+   "rule": "axe.landmark-main-is-top-level",
+   "target": "main",
+   "pages": [
+    "p02-umzug",
+    "p03-pass",
+    "p04-zuzug",
+    "p05-abfall",
+    "p06-zonensuche",
+    "p07-sozialhilferechner",
+    "p08-anwohnerparkkarte",
+    "p09-behindertenparkkarte",
+    "p10-steuerformulare",
+    "p11-kita"
+   ]
+  },
+  {
+   "rule": "axe.aria-allowed-attr",
+   "target": "#searchinput",
+   "pages": [
+    "p01-start",
+    "p02-umzug",
+    "p03-pass",
+    "p04-zuzug",
+    "p05-abfall",
+    "p08-anwohnerparkkarte",
+    "p09-behindertenparkkarte",
+    "p10-steuerformulare",
+    "p11-kita"
+   ]
+  },
+  {
+   "rule": "axe.region",
+   "target": ".bk-main-canvas > div > h1",
+   "pages": [
+    "p02-umzug",
+    "p03-pass",
+    "p04-zuzug",
+    "p05-abfall",
+    "p07-sozialhilferechner",
+    "p08-anwohnerparkkarte",
+    "p09-behindertenparkkarte",
+    "p10-steuerformulare",
+    "p11-kita"
+   ]
+  },
+  {
+   "rule": "axe.region",
+   "target": ".h-\\[250px\\] > h3",
+   "pages": [
+    "p02-umzug",
+    "p03-pass",
+    "p04-zuzug",
+    "p05-abfall",
+    "p08-anwohnerparkkarte",
+    "p09-behindertenparkkarte",
+    "p10-steuerformulare",
+    "p11-kita"
+   ]
+  },
+  {
+   "rule": "axe.region",
+   "target": "#search-privacy-hint",
+   "pages": [
+    "p02-umzug",
+    "p03-pass",
+    "p04-zuzug",
+    "p05-abfall",
+    "p08-anwohnerparkkarte",
+    "p09-behindertenparkkarte",
+    "p10-steuerformulare",
+    "p11-kita"
+   ]
+  },
+  {
+   "rule": "axe.region",
+   "target": ".h-\\[250px\\] > .mb-30",
+   "pages": [
+    "p03-pass",
+    "p04-zuzug",
+    "p05-abfall",
+    "p10-steuerformulare",
+    "p11-kita"
+   ]
+  },
+  {
+   "rule": "axe.region",
+   "target": ".mb-30",
+   "pages": [
+    "p02-umzug",
+    "p08-anwohnerparkkarte",
+    "p09-behindertenparkkarte"
+   ]
+  },
+  {
+   "rule": "axe.heading-order",
+   "target": ".my-30.paragraph--margin.container:nth-child(1) > .info-box.md\\:col-span-7.p-15 > .grid-cols-\\[auto_1fr\\].text-primary-700.gap-10 > .h4.text-primary-600",
+   "pages": [
+    "p03-pass"
+   ]
+  },
+  {
+   "rule": "axe.heading-order",
+   "target": ".my-30.paragraph--margin.container:nth-child(1) > .info-box.md\\:col-span-7.p-15 > .grid-cols-\\[auto_1fr\\].text-primary-700.items-center > .h4.text-primary-600",
+   "pages": [
+    "p04-zuzug"
+   ]
+  },
+  {
+   "rule": "axe.color-contrast",
+   "target": ".text-xs",
+   "pages": [
+    "p06-zonensuche"
+   ]
+  },
+  {
+   "rule": "axe.empty-heading",
+   "target": ".text-gray-900",
+   "pages": [
+    "p06-zonensuche"
+   ]
+  },
+  {
+   "rule": "axe.heading-order",
+   "target": ".text-xl",
+   "pages": [
+    "p06-zonensuche"
+   ]
+  },
+  {
+   "rule": "axe.aria-allowed-attr",
+   "target": "#input_2",
+   "pages": [
+    "p07-sozialhilferechner"
+   ]
+  },
+  {
+   "rule": "axe.aria-allowed-attr",
+   "target": "li[_ngcontent-ng-c3868052514=\"\"]:nth-child(1) > egov-portal > egov-container > .border-none.standard-theme[_ngcontent-ng-c3157900004=\"\"]",
+   "pages": [
+    "p12-eportal"
+   ]
+  },
+  {
+   "rule": "axe.aria-allowed-attr",
+   "target": "li[_ngcontent-ng-c3868052514=\"\"]:nth-child(2) > egov-portal > egov-container > .border-none.standard-theme[_ngcontent-ng-c3157900004=\"\"]",
+   "pages": [
+    "p12-eportal"
+   ]
+  },
+  {
+   "rule": "axe.aria-allowed-attr",
+   "target": "li[_ngcontent-ng-c3868052514=\"\"]:nth-child(3) > egov-portal > egov-container > .border-none.standard-theme[_ngcontent-ng-c3157900004=\"\"]",
+   "pages": [
+    "p12-eportal"
+   ]
+  },
+  {
+   "rule": "axe.aria-allowed-attr",
+   "target": "li[_ngcontent-ng-c3868052514=\"\"]:nth-child(4) > egov-portal > egov-container > .border-none.standard-theme[_ngcontent-ng-c3157900004=\"\"]",
+   "pages": [
+    "p12-eportal"
+   ]
+  },
+  {
+   "rule": "axe.aria-allowed-attr",
+   "target": "li[_ngcontent-ng-c3868052514=\"\"]:nth-child(5) > egov-portal > egov-container > .border-none.standard-theme[_ngcontent-ng-c3157900004=\"\"]",
+   "pages": [
+    "p12-eportal"
+   ]
+  },
+  {
+   "rule": "axe.aria-allowed-attr",
+   "target": "li[_ngcontent-ng-c3868052514=\"\"]:nth-child(6) > egov-portal > egov-container > .border-none.standard-theme[_ngcontent-ng-c3157900004=\"\"]",
+   "pages": [
+    "p12-eportal"
+   ]
+  }
+ ]
+}
