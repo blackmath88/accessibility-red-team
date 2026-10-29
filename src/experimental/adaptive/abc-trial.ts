@@ -8,11 +8,11 @@
 // the Mistral key in ADAPTIVE_MISTRAL_API_KEY. The local endpoint needs no credential.
 //   npm run adaptive:abc -- [--segment s1] [--repeats 1] [--fixtures dev-k1] [--conditions A,B] [--live --confirm <hash>]
 import { execFileSync } from "node:child_process";
-import { appendFile, mkdir, writeFile } from "node:fs/promises";
+import { appendFile, mkdir, readFile, writeFile } from "node:fs/promises";
 import { join, resolve } from "node:path";
 import { BudgetedProvider, type Pricing, type TrialBudget } from "./budget.js";
 import { type ExplorationCondition, type Limits } from "./contracts.js";
-import { codeSha, runSession, sha256 } from "./executor.js";
+import { codeSha, runSession, sha256, skillFor } from "./executor.js";
 import { CONDITIONS, renderComparison } from "./frontier-compare.js";
 import { FUNNEL_VERSION, scoreSession, type SessionFunnel } from "./funnel.js";
 import { launchContainedBrowser } from "./containment.js";
@@ -81,6 +81,13 @@ async function main() {
   const pre = await localProvider().complete({ messages: [{ role: "user", content: 'Reply with the JSON object {"ok": true}.' }], maxOutputTokens: 16, temperature: 0, responseFormat: "json_object", timeoutMs: 60_000 });
   await writeFile(join(dir, "preflight-local.json"), JSON.stringify({ requestedModel: pre.requestedModel, returnedModel: pre.returnedModel, latencyMs: pre.latencyMs, text: pre.text.slice(0, 80) }, null, 2));
   if (pre.returnedModel !== pre.requestedModel) throw new Error(`local model identity mismatch: ${pre.returnedModel}`);
+  // Warm-up (outside every session): evaluate the skill prompt once so the first measured session does not pay the cold prompt
+  // evaluation alone. The smoke run showed that cost exceeds the 30 s request cap on CPU. Same for B and C.
+  if (a.conditions.some((label) => label !== "A")) {
+    const skillText = await readFile(skillFor(MANIFEST.harnessCondition).path, "utf8");
+    const warm = await localProvider().complete({ messages: [{ role: "system", content: skillText }, { role: "user", content: 'Warm-up only. Reply with the JSON object {"ok": true}.' }], maxOutputTokens: 16, temperature: 0, responseFormat: "json_object", timeoutMs: 180_000 });
+    await writeFile(join(dir, "warmup-local.json"), JSON.stringify({ latencyMs: warm.latencyMs, inputTokens: warm.usage?.inputTokens ?? null }, null, 2));
+  }
 
   const consultant = new BudgetedProvider(new MistralProvider({ apiKeyEnv: MANIFEST.consultant.apiKeyEnv, model: MANIFEST.consultant.model, baseUrl: MANIFEST.consultant.endpoint }), MANIFEST.consultant.pricing, MANIFEST.consultantBudget);
   const server = await startFixtures();
