@@ -27,7 +27,7 @@ test("basel discovery: sample fixture validates and embeds into a separate page"
   const html = readFileSync(out, "utf8");
   const embedded = html.match(/<script type="application\/json" id="discovery-data">(.*?)<\/script>/s);
   assert.ok(embedded);
-  assert.deepEqual(JSON.parse(embedded[1]), JSON.parse(readFileSync(FIXTURE, "utf8")));
+  assert.deepEqual(JSON.parse(embedded[1]!), JSON.parse(readFileSync(FIXTURE, "utf8")));
 });
 
 test("basel discovery: an edge to an unknown id fails validation and names the edge", (t) => {
