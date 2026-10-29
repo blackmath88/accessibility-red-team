@@ -36,7 +36,7 @@
   }],
   "batchProposal": [{ "rank": 1, "url": "...", "propertyId": "wp-...", "serviceId": "S.. | null",
                       "ring": "core|other_public|external_dependency", "reason": "...",
-                      "authorisationNeeded": "new approval (same origin as #53) | new explicit scope (new origin)",
+                      "authorisationNeeded": "new approval (same origin as #53) | new explicit scope (new origin) | approved by the owner (…) and used once in ring 1; a further run needs a new approval",
                       "executedIn": "ring1-20261029 (optional)", "assessmentId": "r01 (optional)" }],
   "assessmentRounds": [{ "id": "ring1-20261029", "pages": 7, "report": "../basel-ring1/index.html", "status": "done; approval used" }]
 }

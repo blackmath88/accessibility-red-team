@@ -7,7 +7,7 @@
   {
    "id": "r01",
    "url": "https://www.bs.ch/bettingen/gemeinde/dienstleistungen-behoerdengaenge-online-durchfuehren",
-   "task": "Gemeindedienste von Bettingen auf dem Kantonsauftritt – ande",
+   "task": "Gemeindedienste von Bettingen auf dem Kantonsauftritt – andere Trägerschaft, gleiche Vorlage.",
    "serviceId": null,
    "counts": {
     "violations": 3,
@@ -29,7 +29,7 @@
   {
    "id": "r02",
    "url": "https://www.bs.ch/themen/persoenliches-und-wohnen/einbuergerungen",
-   "task": "Einbürgerung: wichtige Bürgeraufgabe mit Bürgergemeinde-Bezu",
+   "task": "Einbürgerung: wichtige Bürgeraufgabe mit Bürgergemeinde-Bezug.",
    "serviceId": null,
    "counts": {
     "violations": 3,
@@ -51,7 +51,7 @@
   {
    "id": "r03",
    "url": "https://www.bs.ch/willkommen-bei-den-gerichten",
-   "task": "Judikative auf dem Kantonsauftritt",
+   "task": "Judikative auf dem Kantonsauftritt; Zugang zu Gerichten.",
    "serviceId": null,
    "counts": {
     "violations": 3,
@@ -73,7 +73,7 @@
   {
    "id": "r04-s05",
    "url": "https://www.bs.ch/themen/persoenliches-und-wohnen/umzug-und-wegzug/wegzug-vom-kanton-melden",
-   "task": "Abmeldung",
+   "task": "Bisher nicht geprüft; Bezahlschritt-Grenze (eServices).",
    "serviceId": "S05",
    "counts": {
     "violations": 3,
@@ -95,7 +95,7 @@
   {
    "id": "r05-s13",
    "url": "https://www.bs.ch/themen/finanzielle-hilfe/menschen-mit-behinderung",
-   "task": "Leistungen finden",
+   "task": "Zielgruppe direkt betroffen; bisher nicht geprüft.",
    "serviceId": "S13",
    "counts": {
     "violations": 3,
@@ -117,7 +117,7 @@
   {
    "id": "r06-s23",
    "url": "https://www.bs.ch/gebaerdensprache",
-   "task": "Informationen in Gebärdensprache",
+   "task": "Barrierefreie Kommunikation; Videos (Basel nennt Videos selbst als Einschränkung).",
    "serviceId": "S23",
    "counts": {
     "violations": 2,
@@ -139,7 +139,7 @@
   {
    "id": "r07-s09",
    "url": "https://www.bs.ch/apps/zonensuche",
-   "task": "Abfuhrzone zur Adresse",
+   "task": "Nachtest der reproduzierten #53-Beobachtung (Pflichtfeld-Hinweis).",
    "serviceId": "S09",
    "counts": {
     "violations": 4,
@@ -266,5 +266,15 @@
    "darkestGrey": 242,
    "contrastOnWhite": 1.12
   }
- }
+ },
+ "newVersus53": [],
+ "sameElementNewSelector": [
+  {
+   "rule": "axe.region",
+   "target": "h3",
+   "html": "<h3 class=\"font-bold\">Nicht fündig geworden?</h3>"
+  }
+ ],
+ "axeContrastZonensuche": 4.47,
+ "runsOk": "14/14"
 }
