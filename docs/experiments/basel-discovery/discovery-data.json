@@ -2260,7 +2260,7 @@
    "name": "Schweizerisches Tropen- und Public Health-Institut",
    "area": "bildung",
    "type": "joint_institution",
-   "legalForm": null,
+   "legalForm": "sAöR",
    "sponsorship": "jointly_sponsored",
    "sponsorshipNote": "gemeinschaftlich, Anteil 50 %",
    "parentId": null,
@@ -2287,7 +2287,7 @@
    "id": "org-mch",
    "name": "MCH Group AG",
    "area": "institutionen",
-   "type": "public_institution",
+   "type": "unknown",
    "legalForm": "AG",
    "sponsorship": "state_participation",
    "sponsorshipNote": "massgeblicher Einfluss, Anteil 37,5 %",
@@ -2368,20 +2368,6 @@
    }
   },
   {
-   "id": "org-onegov",
-   "name": "OneGov.ch (Verein)",
-   "area": "plattformen",
-   "type": "unknown",
-   "legalForm": null,
-   "sponsorship": "unknown",
-   "sponsorshipNote": "OneGov.ch ist laut Impressum ein Verein aus Kantonen, Gemeinden, öffentlichen Institutionen und Fachpartnern.",
-   "parentId": null,
-   "status": {
-    "discovered": true,
-    "ownershipEvidenced": false
-   }
-  },
-  {
    "id": "org-talus",
    "name": "Talus Informatik AG",
    "area": "plattformen",
@@ -2412,6 +2398,20 @@
   {
    "id": "org-lab5",
    "name": "Lab5",
+   "area": "plattformen",
+   "type": "private_partner",
+   "legalForm": null,
+   "sponsorship": "private",
+   "sponsorshipNote": null,
+   "parentId": null,
+   "status": {
+    "discovered": true,
+    "ownershipEvidenced": false
+   }
+  },
+  {
+   "id": "org-exoscale",
+   "name": "Exoscale",
    "area": "plattformen",
    "type": "private_partner",
    "legalForm": null,
@@ -2633,7 +2633,7 @@
    "kind": "document_store",
    "status": {
     "discovered": true,
-    "ownershipEvidenced": true,
+    "ownershipEvidenced": false,
     "selected": false,
     "assessed": false,
     "outOfScope": false,
@@ -3052,7 +3052,7 @@
    "evidence": [
     {
      "url": "https://www.bs.ch/organisation",
-     "support": "Kantonale Organisationsseite führt «Präsidialdepartement» unter «Verwaltung».",
+     "support": "Kantonale Organisationsseite führt Präsidialdepartement unter Verwaltung.",
      "retrievedAt": "2026-10-29T21:03:16.270827+00:00",
      "sourceDate": null,
      "confidence": "medium"
@@ -3067,7 +3067,7 @@
    "evidence": [
     {
      "url": "https://www.bs.ch/organisation",
-     "support": "Kantonale Organisationsseite führt «Bau- und Verkehrsdepartement» unter «Verwaltung».",
+     "support": "Kantonale Organisationsseite führt Bau- und Verkehrsdepartement unter Verwaltung.",
      "retrievedAt": "2026-10-29T21:03:16.270827+00:00",
      "sourceDate": null,
      "confidence": "medium"
@@ -3082,7 +3082,7 @@
    "evidence": [
     {
      "url": "https://www.bs.ch/organisation",
-     "support": "Kantonale Organisationsseite führt «Erziehungsdepartement» unter «Verwaltung».",
+     "support": "Kantonale Organisationsseite führt Erziehungsdepartement unter Verwaltung.",
      "retrievedAt": "2026-10-29T21:03:16.270827+00:00",
      "sourceDate": null,
      "confidence": "medium"
@@ -3097,7 +3097,7 @@
    "evidence": [
     {
      "url": "https://www.bs.ch/organisation",
-     "support": "Kantonale Organisationsseite führt «Finanzdepartement» unter «Verwaltung».",
+     "support": "Kantonale Organisationsseite führt Finanzdepartement unter Verwaltung.",
      "retrievedAt": "2026-10-29T21:03:16.270827+00:00",
      "sourceDate": null,
      "confidence": "medium"
@@ -3112,7 +3112,7 @@
    "evidence": [
     {
      "url": "https://www.bs.ch/organisation",
-     "support": "Kantonale Organisationsseite führt «Gesundheitsdepartement» unter «Verwaltung».",
+     "support": "Kantonale Organisationsseite führt Gesundheitsdepartement unter Verwaltung.",
      "retrievedAt": "2026-10-29T21:03:16.270827+00:00",
      "sourceDate": null,
      "confidence": "medium"
@@ -3127,7 +3127,7 @@
    "evidence": [
     {
      "url": "https://www.bs.ch/organisation",
-     "support": "Kantonale Organisationsseite führt «Justiz- und Sicherheitsdepartement» unter «Verwaltung».",
+     "support": "Kantonale Organisationsseite führt Justiz- und Sicherheitsdepartement unter Verwaltung.",
      "retrievedAt": "2026-10-29T21:03:16.270827+00:00",
      "sourceDate": null,
      "confidence": "medium"
@@ -3142,7 +3142,7 @@
    "evidence": [
     {
      "url": "https://www.bs.ch/organisation",
-     "support": "Kantonale Organisationsseite führt «Departement für Wirtschaft, Soziales und Umwelt» unter «Verwaltung».",
+     "support": "Kantonale Organisationsseite führt Departement für Wirtschaft, Soziales und Umwelt unter Verwaltung.",
      "retrievedAt": "2026-10-29T21:03:16.270827+00:00",
      "sourceDate": null,
      "confidence": "medium"
@@ -3157,7 +3157,7 @@
    "evidence": [
     {
      "url": "https://www.bs.ch/organisation",
-     "support": "Kantonale Organisationsseite führt «Bevölkerungsdienste und Migration» unter dem Departement.",
+     "support": "Kantonale Organisationsseite führt Bevölkerungsdienste und Migration unter dem Departement.",
      "retrievedAt": "2026-10-29T21:03:16.270827+00:00",
      "sourceDate": null,
      "confidence": "medium"
@@ -3172,7 +3172,7 @@
    "evidence": [
     {
      "url": "https://www.bs.ch/organisation",
-     "support": "Kantonale Organisationsseite führt «Kantonspolizei» unter dem Departement.",
+     "support": "Kantonale Organisationsseite führt Kantonspolizei unter dem Departement.",
      "retrievedAt": "2026-10-29T21:03:16.270827+00:00",
      "sourceDate": null,
      "confidence": "medium"
@@ -3187,7 +3187,7 @@
    "evidence": [
     {
      "url": "https://www.bs.ch/organisation",
-     "support": "Kantonale Organisationsseite führt «Tiefbauamt» unter dem Departement.",
+     "support": "Kantonale Organisationsseite führt Tiefbauamt unter dem Departement.",
      "retrievedAt": "2026-10-29T21:03:16.270827+00:00",
      "sourceDate": null,
      "confidence": "medium"
@@ -3202,7 +3202,7 @@
    "evidence": [
     {
      "url": "https://www.bs.ch/organisation",
-     "support": "Kantonale Organisationsseite führt «Bau- und Gastgewerbeinspektorat» unter dem Departement.",
+     "support": "Kantonale Organisationsseite führt Bau- und Gastgewerbeinspektorat unter dem Departement.",
      "retrievedAt": "2026-10-29T21:03:16.270827+00:00",
      "sourceDate": null,
      "confidence": "medium"
@@ -3217,7 +3217,7 @@
    "evidence": [
     {
      "url": "https://www.bs.ch/organisation",
-     "support": "Kantonale Organisationsseite führt «Steuerverwaltung» unter dem Departement.",
+     "support": "Kantonale Organisationsseite führt Steuerverwaltung unter dem Departement.",
      "retrievedAt": "2026-10-29T21:03:16.270827+00:00",
      "sourceDate": null,
      "confidence": "medium"
@@ -3232,7 +3232,7 @@
    "evidence": [
     {
      "url": "https://www.bs.ch/organisation",
-     "support": "Kantonale Organisationsseite führt «IT BS» unter dem Departement.",
+     "support": "Kantonale Organisationsseite führt IT BS unter dem Departement.",
      "retrievedAt": "2026-10-29T21:03:16.270827+00:00",
      "sourceDate": null,
      "confidence": "medium"
@@ -3247,7 +3247,7 @@
    "evidence": [
     {
      "url": "https://www.bs.ch/organisation",
-     "support": "Kantonale Organisationsseite führt «Amt für Wirtschaft und Arbeit» unter dem Departement.",
+     "support": "Kantonale Organisationsseite führt Amt für Wirtschaft und Arbeit unter dem Departement.",
      "retrievedAt": "2026-10-29T21:03:16.270827+00:00",
      "sourceDate": null,
      "confidence": "medium"
@@ -3262,7 +3262,7 @@
    "evidence": [
     {
      "url": "https://www.bs.ch/organisation",
-     "support": "Kantonale Organisationsseite führt «Amt für Sozialbeiträge» unter dem Departement.",
+     "support": "Kantonale Organisationsseite führt Amt für Sozialbeiträge unter dem Departement.",
      "retrievedAt": "2026-10-29T21:03:16.270827+00:00",
      "sourceDate": null,
      "confidence": "medium"
@@ -3277,7 +3277,7 @@
    "evidence": [
     {
      "url": "https://www.bs.ch/organisation",
-     "support": "Kantonale Organisationsseite führt «Jugend, Familie und Sport» unter dem Departement.",
+     "support": "Kantonale Organisationsseite führt Jugend, Familie und Sport unter dem Departement.",
      "retrievedAt": "2026-10-29T21:03:16.270827+00:00",
      "sourceDate": null,
      "confidence": "medium"
@@ -3292,7 +3292,7 @@
    "evidence": [
     {
      "url": "https://www.bs.ch/organisation",
-     "support": "Unter «Staatspolitische Organe im Kanton Basel-Stadt»: «Grosser Rat, Legislative».",
+     "support": "Unter Staatspolitische Organe im Kanton Basel-Stadt: Grosser Rat, Legislative.",
      "retrievedAt": "2026-10-29T21:03:16.270827+00:00",
      "sourceDate": null,
      "confidence": "medium"
@@ -3307,7 +3307,7 @@
    "evidence": [
     {
      "url": "https://www.bs.ch/organisation",
-     "support": "Unter «Staatspolitische Organe im Kanton Basel-Stadt»: «Gerichte, Judikative».",
+     "support": "Unter Staatspolitische Organe im Kanton Basel-Stadt: Gerichte, Judikative.",
      "retrievedAt": "2026-10-29T21:03:16.270827+00:00",
      "sourceDate": null,
      "confidence": "medium"
@@ -3322,7 +3322,7 @@
    "evidence": [
     {
      "url": "https://www.bs.ch/organisation",
-     "support": "Unter «Unabhängige Stellen»: «Datenschutzbeauftragte».",
+     "support": "Unter Unabhängige Stellen: Datenschutzbeauftragte.",
      "retrievedAt": "2026-10-29T21:03:16.270827+00:00",
      "sourceDate": null,
      "confidence": "medium"
@@ -3337,7 +3337,7 @@
    "evidence": [
     {
      "url": "https://www.bs.ch/organisation",
-     "support": "Unter «Unabhängige Stellen»: «Ombudsstelle».",
+     "support": "Unter Unabhängige Stellen: Ombudsstelle.",
      "retrievedAt": "2026-10-29T21:03:16.270827+00:00",
      "sourceDate": null,
      "confidence": "medium"
@@ -3352,7 +3352,7 @@
    "evidence": [
     {
      "url": "https://www.bs.ch/organisation",
-     "support": "Unter «Unabhängige Stellen»: «Finanzkontrolle».",
+     "support": "Unter Unabhängige Stellen: Finanzkontrolle.",
      "retrievedAt": "2026-10-29T21:03:16.270827+00:00",
      "sourceDate": null,
      "confidence": "medium"
@@ -3392,21 +3392,6 @@
   {
    "id": "e-025",
    "from": "org-kanton-bs",
-   "to": "org-stadt-basel",
-   "relation": "jurisdiction_over",
-   "evidence": [
-    {
-     "url": "https://www.bs.ch/bettingen/gemeinde",
-     "support": "Neben den zwei Landgemeinden Riehen und Bettingen ist Basel die Stadtgemeinde (nur indirekt aus dieser Quelle).",
-     "retrievedAt": "2026-10-29T21:03:36.270983+00:00",
-     "sourceDate": null,
-     "confidence": "low"
-    }
-   ]
-  },
-  {
-   "id": "e-026",
-   "from": "org-kanton-bs",
    "to": "org-bg-bettingen",
    "relation": "jurisdiction_over",
    "evidence": [
@@ -3420,29 +3405,44 @@
    ]
   },
   {
-   "id": "e-027",
-   "from": "org-stadt-basel",
-   "to": "org-bg-basel",
-   "relation": "links_to",
-   "evidence": [
-    {
-     "url": "https://www.bs.ch/themen/persoenliches-und-wohnen/einbuergerungen",
-     "support": "Kantonale Einbürgerungsseite abgerufen; sie verlinkt keine Bürgergemeinde-Website. Zuordnung bleibt offen.",
-     "retrievedAt": "2026-10-29T21:07:43.716664+00:00",
-     "sourceDate": null,
-     "confidence": "low"
-    }
-   ]
-  },
-  {
-   "id": "e-028",
+   "id": "e-026",
    "from": "org-kanton-bs",
    "to": "org-bvb",
    "relation": "owns_or_sponsors",
    "evidence": [
     {
      "url": "https://media.bs.ch/original_file/4a2245c56aa3f5b4558440ac5a7bc87ccdbfc911/beteiligungsbericht-2024.pdf",
-     "support": "Beteiligungsspiegel 2024: «Basler Verkehrs-Betriebe (BVB)», Kantonsanteil 100 % (beherrscht); Rechtsform sAöR.",
+     "support": "Beteiligungsspiegel 2024 (Stand 31.12.2024): Basler Verkehrs-Betriebe (BVB), Kantonsanteil 100 % (beherrscht); Rechtsform sAöR.",
+     "retrievedAt": "2026-10-29T21:04:50.422695+00:00",
+     "sourceDate": "2024-12-31",
+     "confidence": "high"
+    }
+   ]
+  },
+  {
+   "id": "e-027",
+   "from": "org-kanton-bs",
+   "to": "org-bvb",
+   "relation": "links_to",
+   "evidence": [
+    {
+     "url": "https://www.bs.ch/organisation",
+     "support": "Auf der kantonalen Organisationsseite unter «Selbständige Betriebe» verlinkt.",
+     "retrievedAt": "2026-10-29T21:03:16.270827+00:00",
+     "sourceDate": null,
+     "confidence": "high"
+    }
+   ]
+  },
+  {
+   "id": "e-028",
+   "from": "org-kanton-bs",
+   "to": "org-iwb",
+   "relation": "owns_or_sponsors",
+   "evidence": [
+    {
+     "url": "https://media.bs.ch/original_file/4a2245c56aa3f5b4558440ac5a7bc87ccdbfc911/beteiligungsbericht-2024.pdf",
+     "support": "Beteiligungsspiegel 2024 (Stand 31.12.2024): Industrielle Werke Basel (IWB), Kantonsanteil 100 % (beherrscht); Rechtsform sAöR.",
      "retrievedAt": "2026-10-29T21:04:50.422695+00:00",
      "sourceDate": "2024-12-31",
      "confidence": "high"
@@ -3452,7 +3452,7 @@
   {
    "id": "e-029",
    "from": "org-kanton-bs",
-   "to": "org-bvb",
+   "to": "org-iwb",
    "relation": "links_to",
    "evidence": [
     {
@@ -3467,12 +3467,12 @@
   {
    "id": "e-030",
    "from": "org-kanton-bs",
-   "to": "org-iwb",
+   "to": "org-usb",
    "relation": "owns_or_sponsors",
    "evidence": [
     {
      "url": "https://media.bs.ch/original_file/4a2245c56aa3f5b4558440ac5a7bc87ccdbfc911/beteiligungsbericht-2024.pdf",
-     "support": "Beteiligungsspiegel 2024: «Industrielle Werke Basel (IWB)», Kantonsanteil 100 % (beherrscht); Rechtsform sAöR.",
+     "support": "Beteiligungsspiegel 2024 (Stand 31.12.2024): Universitätsspital Basel, Kantonsanteil 100 % (beherrscht); Rechtsform sAöR.",
      "retrievedAt": "2026-10-29T21:04:50.422695+00:00",
      "sourceDate": "2024-12-31",
      "confidence": "high"
@@ -3482,7 +3482,7 @@
   {
    "id": "e-031",
    "from": "org-kanton-bs",
-   "to": "org-iwb",
+   "to": "org-usb",
    "relation": "links_to",
    "evidence": [
     {
@@ -3497,12 +3497,12 @@
   {
    "id": "e-032",
    "from": "org-kanton-bs",
-   "to": "org-usb",
+   "to": "org-upk",
    "relation": "owns_or_sponsors",
    "evidence": [
     {
      "url": "https://media.bs.ch/original_file/4a2245c56aa3f5b4558440ac5a7bc87ccdbfc911/beteiligungsbericht-2024.pdf",
-     "support": "Beteiligungsspiegel 2024: «Universitätsspital Basel», Kantonsanteil 100 % (beherrscht); Rechtsform sAöR.",
+     "support": "Beteiligungsspiegel 2024 (Stand 31.12.2024): Universitäre Psychiatrische Kliniken Basel, Kantonsanteil 100 % (beherrscht); Rechtsform sAöR.",
      "retrievedAt": "2026-10-29T21:04:50.422695+00:00",
      "sourceDate": "2024-12-31",
      "confidence": "high"
@@ -3512,7 +3512,7 @@
   {
    "id": "e-033",
    "from": "org-kanton-bs",
-   "to": "org-usb",
+   "to": "org-upk",
    "relation": "links_to",
    "evidence": [
     {
@@ -3527,12 +3527,12 @@
   {
    "id": "e-034",
    "from": "org-kanton-bs",
-   "to": "org-upk",
+   "to": "org-felix-platter",
    "relation": "owns_or_sponsors",
    "evidence": [
     {
      "url": "https://media.bs.ch/original_file/4a2245c56aa3f5b4558440ac5a7bc87ccdbfc911/beteiligungsbericht-2024.pdf",
-     "support": "Beteiligungsspiegel 2024: «Universitäre Psychiatrische Kliniken Basel», Kantonsanteil 100 % (beherrscht); Rechtsform sAöR.",
+     "support": "Beteiligungsspiegel 2024 (Stand 31.12.2024): Universitäre Altersmedizin Felix Platter, Kantonsanteil 100 % (beherrscht); Rechtsform sAöR.",
      "retrievedAt": "2026-10-29T21:04:50.422695+00:00",
      "sourceDate": "2024-12-31",
      "confidence": "high"
@@ -3542,7 +3542,7 @@
   {
    "id": "e-035",
    "from": "org-kanton-bs",
-   "to": "org-upk",
+   "to": "org-felix-platter",
    "relation": "links_to",
    "evidence": [
     {
@@ -3557,12 +3557,12 @@
   {
    "id": "e-036",
    "from": "org-kanton-bs",
-   "to": "org-felix-platter",
+   "to": "org-uzb",
    "relation": "owns_or_sponsors",
    "evidence": [
     {
      "url": "https://media.bs.ch/original_file/4a2245c56aa3f5b4558440ac5a7bc87ccdbfc911/beteiligungsbericht-2024.pdf",
-     "support": "Beteiligungsspiegel 2024: «Universitäre Altersmedizin Felix Platter», Kantonsanteil 100 % (beherrscht); Rechtsform sAöR.",
+     "support": "Beteiligungsspiegel 2024 (Stand 31.12.2024): Universitäres Zentrum für Zahnmedizin Basel (UZB), Kantonsanteil 100 % (beherrscht); Rechtsform sAöR.",
      "retrievedAt": "2026-10-29T21:04:50.422695+00:00",
      "sourceDate": "2024-12-31",
      "confidence": "high"
@@ -3572,7 +3572,7 @@
   {
    "id": "e-037",
    "from": "org-kanton-bs",
-   "to": "org-felix-platter",
+   "to": "org-uzb",
    "relation": "links_to",
    "evidence": [
     {
@@ -3587,12 +3587,12 @@
   {
    "id": "e-038",
    "from": "org-kanton-bs",
-   "to": "org-uzb",
+   "to": "org-bkb",
    "relation": "owns_or_sponsors",
    "evidence": [
     {
      "url": "https://media.bs.ch/original_file/4a2245c56aa3f5b4558440ac5a7bc87ccdbfc911/beteiligungsbericht-2024.pdf",
-     "support": "Beteiligungsspiegel 2024: «Universitäres Zentrum für Zahnmedizin Basel (UZB)», Kantonsanteil 100 % (beherrscht); Rechtsform sAöR.",
+     "support": "Beteiligungsspiegel 2024 (Stand 31.12.2024): Basler Kantonalbank, Kantonsanteil 85,5 % (beherrscht); Rechtsform sAöR.",
      "retrievedAt": "2026-10-29T21:04:50.422695+00:00",
      "sourceDate": "2024-12-31",
      "confidence": "high"
@@ -3602,7 +3602,22 @@
   {
    "id": "e-039",
    "from": "org-kanton-bs",
-   "to": "org-uzb",
+   "to": "org-unibas",
+   "relation": "jointly_sponsors",
+   "evidence": [
+    {
+     "url": "https://media.bs.ch/original_file/4a2245c56aa3f5b4558440ac5a7bc87ccdbfc911/beteiligungsbericht-2024.pdf",
+     "support": "Beteiligungsspiegel 2024 (Stand 31.12.2024): Universität Basel, gemeinschaftlich mit anderen Kantonen, Anteil 50 %; Rechtsform sAöR.",
+     "retrievedAt": "2026-10-29T21:04:50.422695+00:00",
+     "sourceDate": "2024-12-31",
+     "confidence": "high"
+    }
+   ]
+  },
+  {
+   "id": "e-040",
+   "from": "org-kanton-bs",
+   "to": "org-unibas",
    "relation": "links_to",
    "evidence": [
     {
@@ -3615,29 +3630,14 @@
    ]
   },
   {
-   "id": "e-040",
-   "from": "org-kanton-bs",
-   "to": "org-bkb",
-   "relation": "owns_or_sponsors",
-   "evidence": [
-    {
-     "url": "https://media.bs.ch/original_file/4a2245c56aa3f5b4558440ac5a7bc87ccdbfc911/beteiligungsbericht-2024.pdf",
-     "support": "Beteiligungsspiegel 2024: «Basler Kantonalbank», Kantonsanteil 85,5 % (beherrscht); Rechtsform sAöR.",
-     "retrievedAt": "2026-10-29T21:04:50.422695+00:00",
-     "sourceDate": "2024-12-31",
-     "confidence": "high"
-    }
-   ]
-  },
-  {
    "id": "e-041",
    "from": "org-kanton-bs",
-   "to": "org-unibas",
+   "to": "org-ukbb",
    "relation": "jointly_sponsors",
    "evidence": [
     {
      "url": "https://media.bs.ch/original_file/4a2245c56aa3f5b4558440ac5a7bc87ccdbfc911/beteiligungsbericht-2024.pdf",
-     "support": "Beteiligungsspiegel 2024: «Universität Basel», gemeinschaftlich mit anderen Kantonen, Anteil 50 %; Rechtsform sAöR.",
+     "support": "Beteiligungsspiegel 2024 (Stand 31.12.2024): Universitäts-Kinderspital beider Basel (UKBB), gemeinschaftlich, Anteil 50 %; Rechtsform sAöR.",
      "retrievedAt": "2026-10-29T21:04:50.422695+00:00",
      "sourceDate": "2024-12-31",
      "confidence": "high"
@@ -3647,7 +3647,22 @@
   {
    "id": "e-042",
    "from": "org-kanton-bs",
-   "to": "org-unibas",
+   "to": "org-fhnw",
+   "relation": "jointly_sponsors",
+   "evidence": [
+    {
+     "url": "https://media.bs.ch/original_file/4a2245c56aa3f5b4558440ac5a7bc87ccdbfc911/beteiligungsbericht-2024.pdf",
+     "support": "Beteiligungsspiegel 2024 (Stand 31.12.2024): Fachhochschule Nordwestschweiz (FHNW), gemeinschaftlich, Anteil 19 %; Rechtsform sAöR.",
+     "retrievedAt": "2026-10-29T21:04:50.422695+00:00",
+     "sourceDate": "2024-12-31",
+     "confidence": "high"
+    }
+   ]
+  },
+  {
+   "id": "e-043",
+   "from": "org-kanton-bs",
+   "to": "org-fhnw",
    "relation": "links_to",
    "evidence": [
     {
@@ -3660,29 +3675,14 @@
    ]
   },
   {
-   "id": "e-043",
-   "from": "org-kanton-bs",
-   "to": "org-ukbb",
-   "relation": "jointly_sponsors",
-   "evidence": [
-    {
-     "url": "https://media.bs.ch/original_file/4a2245c56aa3f5b4558440ac5a7bc87ccdbfc911/beteiligungsbericht-2024.pdf",
-     "support": "Beteiligungsspiegel 2024: «Universitäts-Kinderspital beider Basel (UKBB)», gemeinschaftlich, Anteil 50 %; Rechtsform sAöR.",
-     "retrievedAt": "2026-10-29T21:04:50.422695+00:00",
-     "sourceDate": "2024-12-31",
-     "confidence": "high"
-    }
-   ]
-  },
-  {
    "id": "e-044",
    "from": "org-kanton-bs",
-   "to": "org-fhnw",
+   "to": "org-srh",
    "relation": "jointly_sponsors",
    "evidence": [
     {
      "url": "https://media.bs.ch/original_file/4a2245c56aa3f5b4558440ac5a7bc87ccdbfc911/beteiligungsbericht-2024.pdf",
-     "support": "Beteiligungsspiegel 2024: «Fachhochschule Nordwestschweiz (FHNW)», gemeinschaftlich, Anteil 19 %; Rechtsform sAöR.",
+     "support": "Beteiligungsspiegel 2024 (Stand 31.12.2024): Schweizerische Rheinhäfen (SRH), gemeinschaftlich, Anteil 66 %; Rechtsform sAöR.",
      "retrievedAt": "2026-10-29T21:04:50.422695+00:00",
      "sourceDate": "2024-12-31",
      "confidence": "high"
@@ -3692,7 +3692,7 @@
   {
    "id": "e-045",
    "from": "org-kanton-bs",
-   "to": "org-fhnw",
+   "to": "org-srh",
    "relation": "links_to",
    "evidence": [
     {
@@ -3707,12 +3707,12 @@
   {
    "id": "e-046",
    "from": "org-kanton-bs",
-   "to": "org-srh",
+   "to": "org-mfp",
    "relation": "jointly_sponsors",
    "evidence": [
     {
      "url": "https://media.bs.ch/original_file/4a2245c56aa3f5b4558440ac5a7bc87ccdbfc911/beteiligungsbericht-2024.pdf",
-     "support": "Beteiligungsspiegel 2024: «Schweizerische Rheinhäfen (SRH)», gemeinschaftlich, Anteil 66 %; Rechtsform sAöR.",
+     "support": "Beteiligungsspiegel 2024 (Stand 31.12.2024): Motorfahrzeugprüfstation beider Basel, gemeinschaftlich, Anteil 60 %; Rechtsform sAöR.",
      "retrievedAt": "2026-10-29T21:04:50.422695+00:00",
      "sourceDate": "2024-12-31",
      "confidence": "high"
@@ -3722,14 +3722,14 @@
   {
    "id": "e-047",
    "from": "org-kanton-bs",
-   "to": "org-srh",
-   "relation": "links_to",
+   "to": "org-swisstph",
+   "relation": "jointly_sponsors",
    "evidence": [
     {
-     "url": "https://www.bs.ch/organisation",
-     "support": "Auf der kantonalen Organisationsseite unter «Selbständige Betriebe» verlinkt.",
-     "retrievedAt": "2026-10-29T21:03:16.270827+00:00",
-     "sourceDate": null,
+     "url": "https://media.bs.ch/original_file/4a2245c56aa3f5b4558440ac5a7bc87ccdbfc911/beteiligungsbericht-2024.pdf",
+     "support": "Beteiligungsspiegel 2024 (Stand 31.12.2024): Schweizerisches Tropen- und Public Health-Institut, gemeinschaftlich, Anteil 50 %; Rechtsform sAöR.",
+     "retrievedAt": "2026-10-29T21:04:50.422695+00:00",
+     "sourceDate": "2024-12-31",
      "confidence": "high"
     }
    ]
@@ -3737,12 +3737,12 @@
   {
    "id": "e-048",
    "from": "org-kanton-bs",
-   "to": "org-mfp",
-   "relation": "jointly_sponsors",
+   "to": "org-gvbs",
+   "relation": "participates_in",
    "evidence": [
     {
      "url": "https://media.bs.ch/original_file/4a2245c56aa3f5b4558440ac5a7bc87ccdbfc911/beteiligungsbericht-2024.pdf",
-     "support": "Beteiligungsspiegel 2024: «Motorfahrzeugprüfstation beider Basel», gemeinschaftlich, Anteil 60 %; Rechtsform sAöR.",
+     "support": "Beteiligungsspiegel 2024 (Stand 31.12.2024): Gebäudeversicherung des Kantons Basel-Stadt, massgeblicher Einfluss, keine kapitalmässige Beteiligung; Rechtsform sAöR.",
      "retrievedAt": "2026-10-29T21:04:50.422695+00:00",
      "sourceDate": "2024-12-31",
      "confidence": "high"
@@ -3752,12 +3752,12 @@
   {
    "id": "e-049",
    "from": "org-kanton-bs",
-   "to": "org-swisstph",
-   "relation": "jointly_sponsors",
+   "to": "org-mch",
+   "relation": "participates_in",
    "evidence": [
     {
      "url": "https://media.bs.ch/original_file/4a2245c56aa3f5b4558440ac5a7bc87ccdbfc911/beteiligungsbericht-2024.pdf",
-     "support": "Beteiligungsspiegel 2024: «Schweizerisches Tropen- und Public Health-Institut», gemeinschaftlich, Anteil 50 %; Rechtsform nicht angegeben.",
+     "support": "Beteiligungsspiegel 2024 (Stand 31.12.2024): MCH Group AG, massgeblicher Einfluss, Anteil 37,5 %; Rechtsform AG.",
      "retrievedAt": "2026-10-29T21:04:50.422695+00:00",
      "sourceDate": "2024-12-31",
      "confidence": "high"
@@ -3766,36 +3766,6 @@
   },
   {
    "id": "e-050",
-   "from": "org-kanton-bs",
-   "to": "org-gvbs",
-   "relation": "participates_in",
-   "evidence": [
-    {
-     "url": "https://media.bs.ch/original_file/4a2245c56aa3f5b4558440ac5a7bc87ccdbfc911/beteiligungsbericht-2024.pdf",
-     "support": "Beteiligungsspiegel 2024: «Gebäudeversicherung des Kantons Basel-Stadt», massgeblicher Einfluss, keine kapitalmässige Beteiligung; Rechtsform sAöR.",
-     "retrievedAt": "2026-10-29T21:04:50.422695+00:00",
-     "sourceDate": "2024-12-31",
-     "confidence": "high"
-    }
-   ]
-  },
-  {
-   "id": "e-051",
-   "from": "org-kanton-bs",
-   "to": "org-mch",
-   "relation": "participates_in",
-   "evidence": [
-    {
-     "url": "https://media.bs.ch/original_file/4a2245c56aa3f5b4558440ac5a7bc87ccdbfc911/beteiligungsbericht-2024.pdf",
-     "support": "Beteiligungsspiegel 2024: «MCH Group AG», massgeblicher Einfluss, Anteil 37,5 %; Rechtsform AG.",
-     "retrievedAt": "2026-10-29T21:04:50.422695+00:00",
-     "sourceDate": "2024-12-31",
-     "confidence": "high"
-    }
-   ]
-  },
-  {
-   "id": "e-052",
    "from": "org-kanton-bs",
    "to": "org-ak-bs",
    "relation": "links_to",
@@ -3810,7 +3780,7 @@
    ]
   },
   {
-   "id": "e-053",
+   "id": "e-051",
    "from": "org-kanton-bs",
    "to": "org-ivbs",
    "relation": "links_to",
@@ -3825,14 +3795,14 @@
    ]
   },
   {
-   "id": "e-054",
+   "id": "e-052",
    "from": "org-webredaktion",
    "to": "wp-bs",
    "relation": "responsible_editorially",
    "evidence": [
     {
      "url": "https://www.bs.ch/impressum",
-     "support": "Impressum: «Anfragen zur Webseite: Webredaktion».",
+     "support": "Impressum, Abschnitt «Anfragen zur Webseite»: Webredaktion.",
      "retrievedAt": "2026-10-29T21:03:56.271192+00:00",
      "sourceDate": null,
      "confidence": "high"
@@ -3840,7 +3810,7 @@
    ]
   },
   {
-   "id": "e-055",
+   "id": "e-053",
    "from": "org-itbs",
    "to": "wp-bs",
    "relation": "operates_technically",
@@ -3855,7 +3825,7 @@
    ]
   },
   {
-   "id": "e-056",
+   "id": "e-054",
    "from": "org-liip",
    "to": "wp-bs",
    "relation": "operates_technically",
@@ -3870,7 +3840,7 @@
    ]
   },
   {
-   "id": "e-057",
+   "id": "e-055",
    "from": "org-oriented",
    "to": "wp-bs",
    "relation": "operates_technically",
@@ -3885,7 +3855,22 @@
    ]
   },
   {
-   "id": "e-058",
+   "id": "e-056",
+   "from": "org-exoscale",
+   "to": "wp-bs",
+   "relation": "operates_technically",
+   "evidence": [
+    {
+     "url": "https://www.bs.ch/impressum",
+     "support": "Impressum, Abschnitt «Hosting Alva» (KI-Assistent auf www.bs.ch): «Exoscale».",
+     "retrievedAt": "2026-10-29T21:03:56.271192+00:00",
+     "sourceDate": null,
+     "confidence": "high"
+    }
+   ]
+  },
+  {
+   "id": "e-057",
    "from": "org-seantis",
    "to": "wp-staatskalender",
    "relation": "operates_technically",
@@ -3900,22 +3885,7 @@
    ]
   },
   {
-   "id": "e-059",
-   "from": "org-onegov",
-   "to": "wp-staatskalender",
-   "relation": "operates_technically",
-   "evidence": [
-    {
-     "url": "https://www.bs.ch/impressum",
-     "support": "Staatskalender «auf OneGov Cloud gehostet».",
-     "retrievedAt": "2026-10-29T21:03:56.271192+00:00",
-     "sourceDate": null,
-     "confidence": "high"
-    }
-   ]
-  },
-  {
-   "id": "e-060",
+   "id": "e-058",
    "from": "org-kanton-bs",
    "to": "wp-staatskalender",
    "relation": "publishes_property",
@@ -3930,14 +3900,44 @@
    ]
   },
   {
-   "id": "e-061",
+   "id": "e-059",
    "from": "org-itbs",
-   "to": "wp-eservices",
+   "to": "wp-eportal",
    "relation": "operates_technically",
    "evidence": [
     {
      "url": "https://www.bs.ch/fd/itbs",
-     "support": "«Die dafür benötigten E-Government-Bausteine, die Plattform und die Infrastruktur werden ebenfalls von der IT BS bereitgestellt.»",
+     "support": "IT BS stellt laut eigener Seite die E-Government-Plattform bereit und verlinkt das ePortal als Einstieg (Zuordnung Plattform→ePortal: unsere Lesart).",
+     "retrievedAt": "2026-10-29T21:07:03.716408+00:00",
+     "sourceDate": null,
+     "confidence": "medium"
+    }
+   ]
+  },
+  {
+   "id": "e-060",
+   "from": "org-itbs",
+   "to": "wp-esteuern",
+   "relation": "links_to",
+   "evidence": [
+    {
+     "url": "https://www.bs.ch/fd/itbs",
+     "support": "«… das Steuerportal eSteuern.BS, das ebenfalls E-Government-Bausteine der IT BS verwendet.» (Betreiber damit nicht belegt)",
+     "retrievedAt": "2026-10-29T21:07:03.716408+00:00",
+     "sourceDate": null,
+     "confidence": "medium"
+    }
+   ]
+  },
+  {
+   "id": "e-061",
+   "from": "org-kanton-bs",
+   "to": "wp-eportal",
+   "relation": "publishes_property",
+   "evidence": [
+    {
+     "url": "https://www.bs.ch/fd/itbs",
+     "support": "«Das ePortal ist der Einstieg zu allen digital verfügbaren kantonalen Dienstleistungen.»",
      "retrievedAt": "2026-10-29T21:07:03.716408+00:00",
      "sourceDate": null,
      "confidence": "high"
@@ -3946,36 +3946,6 @@
   },
   {
    "id": "e-062",
-   "from": "org-itbs",
-   "to": "wp-esteuern",
-   "relation": "operates_technically",
-   "evidence": [
-    {
-     "url": "https://www.bs.ch/fd/itbs",
-     "support": "«Die dafür benötigten E-Government-Bausteine, die Plattform und die Infrastruktur werden ebenfalls von der IT BS bereitgestellt.»",
-     "retrievedAt": "2026-10-29T21:07:03.716408+00:00",
-     "sourceDate": null,
-     "confidence": "medium"
-    }
-   ]
-  },
-  {
-   "id": "e-063",
-   "from": "org-itbs",
-   "to": "wp-eportal",
-   "relation": "operates_technically",
-   "evidence": [
-    {
-     "url": "https://www.bs.ch/fd/itbs",
-     "support": "«Die dafür benötigten E-Government-Bausteine, die Plattform und die Infrastruktur werden ebenfalls von der IT BS bereitgestellt.»",
-     "retrievedAt": "2026-10-29T21:07:03.716408+00:00",
-     "sourceDate": null,
-     "confidence": "high"
-    }
-   ]
-  },
-  {
-   "id": "e-064",
    "from": "wp-eportal",
    "to": "wp-ekonto",
    "relation": "transaction_boundary",
@@ -3990,14 +3960,14 @@
    ]
   },
   {
-   "id": "e-065",
-   "from": "org-agov",
-   "to": "wp-eportal",
-   "relation": "operates_technically",
+   "id": "e-063",
+   "from": "wp-eportal",
+   "to": "org-agov",
+   "relation": "transaction_boundary",
    "evidence": [
     {
      "url": "https://www.bs.ch/fd/itbs/eportal-nutzungsbedingungen",
-     "support": "Login wird zu AGOV, dem «Authentifizierungsdienst des Bundes», weitergeleitet (nur Anmeldung).",
+     "support": "Login im ePortal leitet zu AGOV weiter, dem «Authentifizierungsdienst des Bundes» (nur Anmeldung; Betrieb des ePortals damit nicht belegt).",
      "retrievedAt": "2026-10-29T21:07:54.004221+00:00",
      "sourceDate": null,
      "confidence": "high"
@@ -4005,7 +3975,7 @@
    ]
   },
   {
-   "id": "e-066",
+   "id": "e-064",
    "from": "org-riehen",
    "to": "wp-riehen",
    "relation": "responsible_editorially",
@@ -4020,10 +3990,10 @@
    ]
   },
   {
-   "id": "e-067",
+   "id": "e-065",
    "from": "org-talus",
    "to": "wp-riehen",
-   "relation": "operates_technically",
+   "relation": "built_by",
    "evidence": [
     {
      "url": "https://www.riehen.ch/impressum/",
@@ -4035,14 +4005,14 @@
    ]
   },
   {
-   "id": "e-068",
+   "id": "e-066",
    "from": "wp-riehen",
    "to": "wp-riehen-jobs",
    "relation": "links_to",
    "evidence": [
     {
      "url": "https://www.riehen.ch/",
-     "support": "Startseite verlinkt «Offene Stellen» auf app.jobportal.abaservices.ch.",
+     "support": "Startseite verlinkt Offene Stellen auf app.jobportal.abaservices.ch.",
      "retrievedAt": "2026-10-29T21:05:39.337766+00:00",
      "sourceDate": null,
      "confidence": "high"
@@ -4050,14 +4020,14 @@
    ]
   },
   {
-   "id": "e-069",
+   "id": "e-067",
    "from": "org-grosser-rat",
    "to": "wp-grosserrat",
    "relation": "publishes_property",
    "evidence": [
     {
      "url": "https://grosserrat.bs.ch/",
-     "support": "Titel der Startseite: «Grosser Rat Basel-Stadt – Willkommen».",
+     "support": "Titel der Startseite: Grosser Rat Basel-Stadt – Willkommen.",
      "retrievedAt": "2026-10-29T21:05:39.658451+00:00",
      "sourceDate": null,
      "confidence": "high"
@@ -4065,10 +4035,10 @@
    ]
   },
   {
-   "id": "e-070",
+   "id": "e-068",
    "from": "org-eyeloveyou",
    "to": "wp-grosserrat",
-   "relation": "operates_technically",
+   "relation": "built_by",
    "evidence": [
     {
      "url": "https://grosserrat.bs.ch/impressum",
@@ -4080,10 +4050,10 @@
    ]
   },
   {
-   "id": "e-071",
+   "id": "e-069",
    "from": "org-lab5",
    "to": "wp-grosserrat",
-   "relation": "operates_technically",
+   "relation": "built_by",
    "evidence": [
     {
      "url": "https://grosserrat.bs.ch/impressum",
@@ -4095,14 +4065,14 @@
    ]
   },
   {
-   "id": "e-072",
+   "id": "e-070",
    "from": "wp-grosserrat",
    "to": "wp-pixas",
    "relation": "transaction_boundary",
    "evidence": [
     {
      "url": "https://grosserrat.bs.ch/",
-     "support": "Startseite verlinkt «Intern (PIXAS)» auf grosserratbs.pixas.ch (Anmeldung, nicht aufgerufen).",
+     "support": "Startseite verlinkt Intern (PIXAS) auf grosserratbs.pixas.ch (Anmeldung, nicht aufgerufen).",
      "retrievedAt": "2026-10-29T21:05:39.658451+00:00",
      "sourceDate": null,
      "confidence": "high"
@@ -4110,7 +4080,7 @@
    ]
   },
   {
-   "id": "e-073",
+   "id": "e-071",
    "from": "org-bvb",
    "to": "wp-bvb",
    "relation": "publishes_property",
@@ -4125,7 +4095,7 @@
    ]
   },
   {
-   "id": "e-074",
+   "id": "e-072",
    "from": "org-iwb",
    "to": "wp-iwb",
    "relation": "publishes_property",
@@ -4140,7 +4110,7 @@
    ]
   },
   {
-   "id": "e-075",
+   "id": "e-073",
    "from": "org-usb",
    "to": "wp-usb",
    "relation": "publishes_property",
@@ -4155,7 +4125,7 @@
    ]
   },
   {
-   "id": "e-076",
+   "id": "e-074",
    "from": "org-unibas",
    "to": "wp-unibas",
    "relation": "publishes_property",
@@ -4170,7 +4140,7 @@
    ]
   },
   {
-   "id": "e-077",
+   "id": "e-075",
    "from": "org-ivbs",
    "to": "wp-ivbs",
    "relation": "publishes_property",
@@ -4185,7 +4155,7 @@
    ]
   },
   {
-   "id": "e-078",
+   "id": "e-076",
    "from": "org-fhnw",
    "to": "wp-fhnw",
    "relation": "publishes_property",
@@ -4200,7 +4170,7 @@
    ]
   },
   {
-   "id": "e-079",
+   "id": "e-077",
    "from": "org-upk",
    "to": "wp-upk",
    "relation": "publishes_property",
@@ -4215,7 +4185,7 @@
    ]
   },
   {
-   "id": "e-080",
+   "id": "e-078",
    "from": "org-felix-platter",
    "to": "wp-felixplatter",
    "relation": "publishes_property",
@@ -4230,7 +4200,7 @@
    ]
   },
   {
-   "id": "e-081",
+   "id": "e-079",
    "from": "org-uzb",
    "to": "wp-uzb",
    "relation": "publishes_property",
@@ -4245,7 +4215,7 @@
    ]
   },
   {
-   "id": "e-082",
+   "id": "e-080",
    "from": "org-srh",
    "to": "wp-srh",
    "relation": "publishes_property",
@@ -4260,7 +4230,7 @@
    ]
   },
   {
-   "id": "e-083",
+   "id": "e-081",
    "from": "org-ak-bs",
    "to": "wp-ak",
    "relation": "publishes_property",
@@ -4275,14 +4245,14 @@
    ]
   },
   {
-   "id": "e-084",
+   "id": "e-082",
    "from": "wp-unibas",
    "to": "wp-unibas-services",
    "relation": "transaction_boundary",
    "evidence": [
     {
      "url": "https://www.unibas.ch/de",
-     "support": "Startseite verlinkt «Online Services» auf services.unibas.ch (nicht aufgerufen).",
+     "support": "Startseite verlinkt Online Services auf services.unibas.ch (nicht aufgerufen).",
      "retrievedAt": "2026-10-29T21:06:11.050175+00:00",
      "sourceDate": null,
      "confidence": "high"
@@ -4290,29 +4260,29 @@
    ]
   },
   {
-   "id": "e-085",
+   "id": "e-083",
    "from": "org-bettingen",
    "to": "wp-bs",
-   "relation": "publishes_property",
+   "relation": "responsible_editorially",
    "evidence": [
     {
      "url": "https://www.bs.ch/bettingen/gemeinde/dienstleistungen-behoerdengaenge-online-durchfuehren",
-     "support": "«Die Gemeindeverwaltung Bettingen bietet Ihnen viele Ihrer Dienstleistungen auch online an» – auf www.bs.ch/bettingen.",
+     "support": "Nur Teilbereich www.bs.ch/bettingen: «Die Gemeindeverwaltung Bettingen bietet Ihnen viele Ihrer Dienstleistungen auch online an».",
      "retrievedAt": "2026-10-29T21:07:23.716468+00:00",
      "sourceDate": null,
-     "confidence": "high"
+     "confidence": "medium"
     }
    ]
   },
   {
-   "id": "e-086",
+   "id": "e-084",
    "from": "org-kanton-bs",
    "to": "wp-bs",
    "relation": "publishes_property",
    "evidence": [
     {
      "url": "https://www.bs.ch/impressum",
-     "support": "Impressum: «Allgemeine Adresse Kanton Basel-Stadt».",
+     "support": "Impressum, Abschnitt «Allgemeine Adresse»: Kanton Basel-Stadt.",
      "retrievedAt": "2026-10-29T21:03:56.271192+00:00",
      "sourceDate": null,
      "confidence": "high"
@@ -4320,29 +4290,14 @@
    ]
   },
   {
-   "id": "e-087",
-   "from": "org-kanton-bs",
-   "to": "wp-media",
-   "relation": "publishes_property",
-   "evidence": [
-    {
-     "url": "https://media.bs.ch/original_file/4a2245c56aa3f5b4558440ac5a7bc87ccdbfc911/beteiligungsbericht-2024.pdf",
-     "support": "Beteiligungsbericht des Kantons liegt auf media.bs.ch.",
-     "retrievedAt": "2026-10-29T21:04:50.422695+00:00",
-     "sourceDate": "2024-12-31",
-     "confidence": "medium"
-    }
-   ]
-  },
-  {
-   "id": "e-088",
+   "id": "e-085",
    "from": "wp-bs",
    "to": "S01",
    "relation": "entry_point_of",
    "evidence": [
     {
      "url": "https://www.bs.ch/",
-     "support": "Einstieg des Dienstes «Startseite bs.ch».",
+     "support": "Einstieg des Dienstes Startseite bs.ch.",
      "retrievedAt": "2026-10-29T20:15:46.891062+00:00",
      "sourceDate": null,
      "confidence": "high"
@@ -4350,29 +4305,14 @@
    ]
   },
   {
-   "id": "e-089",
-   "from": "S01",
-   "to": "wp-mapgeo",
-   "relation": "embeds",
-   "evidence": [
-    {
-     "url": "https://www.bs.ch/",
-     "support": "Dienstseite verlinkt bzw. bettet map.geo.bs.ch ein (#53-Entdeckung).",
-     "retrievedAt": "2026-10-29T20:15:46.891062+00:00",
-     "sourceDate": null,
-     "confidence": "high"
-    }
-   ]
-  },
-  {
-   "id": "e-090",
+   "id": "e-086",
    "from": "wp-eportal",
    "to": "S02",
    "relation": "entry_point_of",
    "evidence": [
     {
      "url": "https://eportal.egov.bs.ch/",
-     "support": "Einstieg des Dienstes «ePortal (öffentliche Startseite)».",
+     "support": "Einstieg des Dienstes ePortal (öffentliche Startseite).",
      "retrievedAt": "2026-10-29T20:15:56.891134+00:00",
      "sourceDate": null,
      "confidence": "high"
@@ -4380,15 +4320,75 @@
    ]
   },
   {
-   "id": "e-091",
+   "id": "e-087",
    "from": "wp-bs",
    "to": "S03",
    "relation": "entry_point_of",
    "evidence": [
     {
      "url": "https://www.bs.ch/erklaerung-zur-barrierefreiheit",
-     "support": "Einstieg des Dienstes «Erklärung zur Barrierefreiheit».",
+     "support": "Einstieg des Dienstes Erklärung zur Barrierefreiheit.",
      "retrievedAt": "2026-10-29T20:16:06.891199+00:00",
+     "sourceDate": null,
+     "confidence": "high"
+    }
+   ]
+  },
+  {
+   "id": "e-088",
+   "from": "wp-bs",
+   "to": "S04",
+   "relation": "entry_point_of",
+   "evidence": [
+    {
+     "url": "https://www.bs.ch/themen/persoenliches-und-wohnen/umzug-und-wegzug/umzug-innerhalb-des-kantons-melden",
+     "support": "Einstieg des Dienstes Umzug innerhalb des Kantons melden.",
+     "retrievedAt": "2026-10-29T20:19:00.741599+00:00",
+     "sourceDate": null,
+     "confidence": "high"
+    }
+   ]
+  },
+  {
+   "id": "e-089",
+   "from": "S04",
+   "to": "wp-eservices",
+   "relation": "transaction_boundary",
+   "evidence": [
+    {
+     "url": "https://www.bs.ch/themen/persoenliches-und-wohnen/umzug-und-wegzug/umzug-innerhalb-des-kantons-melden",
+     "support": "Dienstseite verlinkt eservices.egov.bs.ch (#53-Entdeckung).",
+     "retrievedAt": "2026-10-29T20:19:00.741599+00:00",
+     "sourceDate": null,
+     "confidence": "high"
+    }
+   ]
+  },
+  {
+   "id": "e-090",
+   "from": "S04",
+   "to": "wp-eumzug",
+   "relation": "transaction_boundary",
+   "evidence": [
+    {
+     "url": "https://www.bs.ch/themen/persoenliches-und-wohnen/umzug-und-wegzug/umzug-innerhalb-des-kantons-melden",
+     "support": "Dienstseite verlinkt www.eumzug.swiss (#53-Entdeckung).",
+     "retrievedAt": "2026-10-29T20:19:00.741599+00:00",
+     "sourceDate": null,
+     "confidence": "high"
+    }
+   ]
+  },
+  {
+   "id": "e-091",
+   "from": "org-einwohneramt",
+   "to": "S04",
+   "relation": "responsible_editorially",
+   "evidence": [
+    {
+     "url": "https://www.bs.ch/themen/persoenliches-und-wohnen/umzug-und-wegzug/umzug-innerhalb-des-kantons-melden",
+     "support": "Seitenangabe Für dieses Thema zuständig: Einwohneramt.",
+     "retrievedAt": "2026-10-29T20:19:00.741599+00:00",
      "sourceDate": null,
      "confidence": "high"
     }
@@ -4396,14 +4396,14 @@
   },
   {
    "id": "e-092",
-   "from": "S03",
-   "to": "wp-mapgeo",
-   "relation": "embeds",
+   "from": "wp-bs",
+   "to": "S05",
+   "relation": "entry_point_of",
    "evidence": [
     {
-     "url": "https://www.bs.ch/erklaerung-zur-barrierefreiheit",
-     "support": "Dienstseite verlinkt bzw. bettet map.geo.bs.ch ein (#53-Entdeckung).",
-     "retrievedAt": "2026-10-29T20:16:06.891199+00:00",
+     "url": "https://www.bs.ch/themen/persoenliches-und-wohnen/umzug-und-wegzug/wegzug-vom-kanton-melden",
+     "support": "Einstieg des Dienstes Wegzug vom Kanton melden.",
+     "retrievedAt": "2026-10-29T20:19:10.741673+00:00",
      "sourceDate": null,
      "confidence": "high"
     }
@@ -4411,14 +4411,14 @@
   },
   {
    "id": "e-093",
-   "from": "wp-bs",
-   "to": "S04",
-   "relation": "entry_point_of",
+   "from": "S05",
+   "to": "wp-eservices",
+   "relation": "transaction_boundary",
    "evidence": [
     {
-     "url": "https://www.bs.ch/themen/persoenliches-und-wohnen/umzug-und-wegzug/umzug-innerhalb-des-kantons-melden",
-     "support": "Einstieg des Dienstes «Umzug innerhalb des Kantons melden».",
-     "retrievedAt": "2026-10-29T20:19:00.741599+00:00",
+     "url": "https://www.bs.ch/themen/persoenliches-und-wohnen/umzug-und-wegzug/wegzug-vom-kanton-melden",
+     "support": "Dienstseite verlinkt eservices.egov.bs.ch (#53-Entdeckung).",
+     "retrievedAt": "2026-10-29T20:19:10.741673+00:00",
      "sourceDate": null,
      "confidence": "high"
     }
@@ -4426,14 +4426,14 @@
   },
   {
    "id": "e-094",
-   "from": "S04",
-   "to": "wp-eservices",
+   "from": "S05",
+   "to": "wp-formulare",
    "relation": "transaction_boundary",
    "evidence": [
     {
-     "url": "https://www.bs.ch/themen/persoenliches-und-wohnen/umzug-und-wegzug/umzug-innerhalb-des-kantons-melden",
-     "support": "Dienstseite verlinkt bzw. bettet eservices.egov.bs.ch ein (#53-Entdeckung).",
-     "retrievedAt": "2026-10-29T20:19:00.741599+00:00",
+     "url": "https://www.bs.ch/themen/persoenliches-und-wohnen/umzug-und-wegzug/wegzug-vom-kanton-melden",
+     "support": "Dienstseite verlinkt formulare.bs.ch (#53-Entdeckung).",
+     "retrievedAt": "2026-10-29T20:19:10.741673+00:00",
      "sourceDate": null,
      "confidence": "high"
     }
@@ -4441,14 +4441,14 @@
   },
   {
    "id": "e-095",
-   "from": "S04",
-   "to": "wp-mapgeo",
-   "relation": "embeds",
+   "from": "S05",
+   "to": "wp-eumzug",
+   "relation": "transaction_boundary",
    "evidence": [
     {
-     "url": "https://www.bs.ch/themen/persoenliches-und-wohnen/umzug-und-wegzug/umzug-innerhalb-des-kantons-melden",
-     "support": "Dienstseite verlinkt bzw. bettet map.geo.bs.ch ein (#53-Entdeckung).",
-     "retrievedAt": "2026-10-29T20:19:00.741599+00:00",
+     "url": "https://www.bs.ch/themen/persoenliches-und-wohnen/umzug-und-wegzug/wegzug-vom-kanton-melden",
+     "support": "Dienstseite verlinkt www.eumzug.swiss (#53-Entdeckung).",
+     "retrievedAt": "2026-10-29T20:19:10.741673+00:00",
      "sourceDate": null,
      "confidence": "high"
     }
@@ -4456,14 +4456,14 @@
   },
   {
    "id": "e-096",
-   "from": "S04",
-   "to": "wp-eumzug",
-   "relation": "transaction_boundary",
+   "from": "org-einwohneramt",
+   "to": "S05",
+   "relation": "responsible_editorially",
    "evidence": [
     {
-     "url": "https://www.bs.ch/themen/persoenliches-und-wohnen/umzug-und-wegzug/umzug-innerhalb-des-kantons-melden",
-     "support": "Dienstseite verlinkt bzw. bettet www.eumzug.swiss ein (#53-Entdeckung).",
-     "retrievedAt": "2026-10-29T20:19:00.741599+00:00",
+     "url": "https://www.bs.ch/themen/persoenliches-und-wohnen/umzug-und-wegzug/wegzug-vom-kanton-melden",
+     "support": "Seitenangabe Für dieses Thema zuständig: Einwohneramt.",
+     "retrievedAt": "2026-10-29T20:19:10.741673+00:00",
      "sourceDate": null,
      "confidence": "high"
     }
@@ -4471,14 +4471,14 @@
   },
   {
    "id": "e-097",
-   "from": "org-einwohneramt",
-   "to": "S04",
-   "relation": "responsible_editorially",
+   "from": "wp-bs",
+   "to": "S06",
+   "relation": "entry_point_of",
    "evidence": [
     {
-     "url": "https://www.bs.ch/themen/persoenliches-und-wohnen/umzug-und-wegzug/umzug-innerhalb-des-kantons-melden",
-     "support": "Seitenangabe «Für dieses Thema zuständig: Einwohneramt».",
-     "retrievedAt": "2026-10-29T20:19:00.741599+00:00",
+     "url": "https://www.bs.ch/themen/persoenliches-und-wohnen/zuzug-und-aufenthalt/zuzug-den-kanton-basel-stadt",
+     "support": "Einstieg des Dienstes Zuzug in den Kanton.",
+     "retrievedAt": "2026-10-29T20:19:30.741807+00:00",
      "sourceDate": null,
      "confidence": "high"
     }
@@ -4486,14 +4486,14 @@
   },
   {
    "id": "e-098",
-   "from": "wp-bs",
-   "to": "S05",
-   "relation": "entry_point_of",
+   "from": "S06",
+   "to": "wp-eservices",
+   "relation": "transaction_boundary",
    "evidence": [
     {
-     "url": "https://www.bs.ch/themen/persoenliches-und-wohnen/umzug-und-wegzug/wegzug-vom-kanton-melden",
-     "support": "Einstieg des Dienstes «Wegzug vom Kanton melden».",
-     "retrievedAt": "2026-10-29T20:19:10.741673+00:00",
+     "url": "https://www.bs.ch/themen/persoenliches-und-wohnen/zuzug-und-aufenthalt/zuzug-den-kanton-basel-stadt",
+     "support": "Dienstseite verlinkt eservices.egov.bs.ch (#53-Entdeckung).",
+     "retrievedAt": "2026-10-29T20:19:30.741807+00:00",
      "sourceDate": null,
      "confidence": "high"
     }
@@ -4501,14 +4501,14 @@
   },
   {
    "id": "e-099",
-   "from": "S05",
-   "to": "wp-eservices",
-   "relation": "transaction_boundary",
+   "from": "org-einwohneramt",
+   "to": "S06",
+   "relation": "responsible_editorially",
    "evidence": [
     {
-     "url": "https://www.bs.ch/themen/persoenliches-und-wohnen/umzug-und-wegzug/wegzug-vom-kanton-melden",
-     "support": "Dienstseite verlinkt bzw. bettet eservices.egov.bs.ch ein (#53-Entdeckung).",
-     "retrievedAt": "2026-10-29T20:19:10.741673+00:00",
+     "url": "https://www.bs.ch/themen/persoenliches-und-wohnen/zuzug-und-aufenthalt/zuzug-den-kanton-basel-stadt",
+     "support": "Seitenangabe Für dieses Thema zuständig: Einwohneramt.",
+     "retrievedAt": "2026-10-29T20:19:30.741807+00:00",
      "sourceDate": null,
      "confidence": "high"
     }
@@ -4516,14 +4516,14 @@
   },
   {
    "id": "e-100",
-   "from": "S05",
-   "to": "wp-formulare",
-   "relation": "transaction_boundary",
+   "from": "wp-bs",
+   "to": "S07",
+   "relation": "entry_point_of",
    "evidence": [
     {
-     "url": "https://www.bs.ch/themen/persoenliches-und-wohnen/umzug-und-wegzug/wegzug-vom-kanton-melden",
-     "support": "Dienstseite verlinkt bzw. bettet formulare.bs.ch ein (#53-Entdeckung).",
-     "retrievedAt": "2026-10-29T20:19:10.741673+00:00",
+     "url": "https://www.bs.ch/themen/persoenliches-und-wohnen/pass-identitaetskarte-und-beglaubigungen/ich-brauche-einen-neuen-pass-eine-neue-identitaetskarte",
+     "support": "Einstieg des Dienstes Pass / Identitätskarte bestellen.",
+     "retrievedAt": "2026-10-29T20:19:20.741742+00:00",
      "sourceDate": null,
      "confidence": "high"
     }
@@ -4531,14 +4531,14 @@
   },
   {
    "id": "e-101",
-   "from": "S05",
-   "to": "wp-mapgeo",
-   "relation": "embeds",
+   "from": "S07",
+   "to": "wp-eservices",
+   "relation": "transaction_boundary",
    "evidence": [
     {
-     "url": "https://www.bs.ch/themen/persoenliches-und-wohnen/umzug-und-wegzug/wegzug-vom-kanton-melden",
-     "support": "Dienstseite verlinkt bzw. bettet map.geo.bs.ch ein (#53-Entdeckung).",
-     "retrievedAt": "2026-10-29T20:19:10.741673+00:00",
+     "url": "https://www.bs.ch/themen/persoenliches-und-wohnen/pass-identitaetskarte-und-beglaubigungen/ich-brauche-einen-neuen-pass-eine-neue-identitaetskarte",
+     "support": "Dienstseite verlinkt eservices.egov.bs.ch (#53-Entdeckung).",
+     "retrievedAt": "2026-10-29T20:19:20.741742+00:00",
      "sourceDate": null,
      "confidence": "high"
     }
@@ -4546,14 +4546,14 @@
   },
   {
    "id": "e-102",
-   "from": "S05",
-   "to": "wp-eumzug",
-   "relation": "transaction_boundary",
+   "from": "org-passamt",
+   "to": "S07",
+   "relation": "responsible_editorially",
    "evidence": [
     {
-     "url": "https://www.bs.ch/themen/persoenliches-und-wohnen/umzug-und-wegzug/wegzug-vom-kanton-melden",
-     "support": "Dienstseite verlinkt bzw. bettet www.eumzug.swiss ein (#53-Entdeckung).",
-     "retrievedAt": "2026-10-29T20:19:10.741673+00:00",
+     "url": "https://www.bs.ch/themen/persoenliches-und-wohnen/pass-identitaetskarte-und-beglaubigungen/ich-brauche-einen-neuen-pass-eine-neue-identitaetskarte",
+     "support": "Seitenangabe Für dieses Thema zuständig: Passamt.",
+     "retrievedAt": "2026-10-29T20:19:20.741742+00:00",
      "sourceDate": null,
      "confidence": "high"
     }
@@ -4561,14 +4561,14 @@
   },
   {
    "id": "e-103",
-   "from": "org-einwohneramt",
-   "to": "S05",
-   "relation": "responsible_editorially",
+   "from": "wp-bs",
+   "to": "S08",
+   "relation": "entry_point_of",
    "evidence": [
     {
-     "url": "https://www.bs.ch/themen/persoenliches-und-wohnen/umzug-und-wegzug/wegzug-vom-kanton-melden",
-     "support": "Seitenangabe «Für dieses Thema zuständig: Einwohneramt».",
-     "retrievedAt": "2026-10-29T20:19:10.741673+00:00",
+     "url": "https://www.bs.ch/themen/umwelt-und-bauen/abfall-und-sauberkeit/abfallabfuhr",
+     "support": "Einstieg des Dienstes Abfallabfuhr.",
+     "retrievedAt": "2026-10-29T20:16:53.898152+00:00",
      "sourceDate": null,
      "confidence": "high"
     }
@@ -4576,14 +4576,14 @@
   },
   {
    "id": "e-104",
-   "from": "wp-bs",
-   "to": "S06",
-   "relation": "entry_point_of",
+   "from": "S08",
+   "to": "wp-draeggwaegg",
+   "relation": "transaction_boundary",
    "evidence": [
     {
-     "url": "https://www.bs.ch/themen/persoenliches-und-wohnen/zuzug-und-aufenthalt/zuzug-den-kanton-basel-stadt",
-     "support": "Einstieg des Dienstes «Zuzug in den Kanton».",
-     "retrievedAt": "2026-10-29T20:19:30.741807+00:00",
+     "url": "https://www.bs.ch/themen/umwelt-und-bauen/abfall-und-sauberkeit/abfallabfuhr",
+     "support": "Dienstseite verlinkt app.draeggwaegg.ch (#53-Entdeckung).",
+     "retrievedAt": "2026-10-29T20:16:53.898152+00:00",
      "sourceDate": null,
      "confidence": "high"
     }
@@ -4591,14 +4591,14 @@
   },
   {
    "id": "e-105",
-   "from": "S06",
+   "from": "S08",
    "to": "wp-eservices",
    "relation": "transaction_boundary",
    "evidence": [
     {
-     "url": "https://www.bs.ch/themen/persoenliches-und-wohnen/zuzug-und-aufenthalt/zuzug-den-kanton-basel-stadt",
-     "support": "Dienstseite verlinkt bzw. bettet eservices.egov.bs.ch ein (#53-Entdeckung).",
-     "retrievedAt": "2026-10-29T20:19:30.741807+00:00",
+     "url": "https://www.bs.ch/themen/umwelt-und-bauen/abfall-und-sauberkeit/abfallabfuhr",
+     "support": "Dienstseite verlinkt eservices.egov.bs.ch (#53-Entdeckung).",
+     "retrievedAt": "2026-10-29T20:16:53.898152+00:00",
      "sourceDate": null,
      "confidence": "high"
     }
@@ -4606,14 +4606,14 @@
   },
   {
    "id": "e-106",
-   "from": "S06",
-   "to": "wp-mapgeo",
-   "relation": "embeds",
+   "from": "org-tiefbauamt",
+   "to": "S08",
+   "relation": "responsible_editorially",
    "evidence": [
     {
-     "url": "https://www.bs.ch/themen/persoenliches-und-wohnen/zuzug-und-aufenthalt/zuzug-den-kanton-basel-stadt",
-     "support": "Dienstseite verlinkt bzw. bettet map.geo.bs.ch ein (#53-Entdeckung).",
-     "retrievedAt": "2026-10-29T20:19:30.741807+00:00",
+     "url": "https://www.bs.ch/themen/umwelt-und-bauen/abfall-und-sauberkeit/abfallabfuhr",
+     "support": "Seitenangabe Für dieses Thema zuständig: Tiefbauamt.",
+     "retrievedAt": "2026-10-29T20:16:53.898152+00:00",
      "sourceDate": null,
      "confidence": "high"
     }
@@ -4621,14 +4621,14 @@
   },
   {
    "id": "e-107",
-   "from": "org-einwohneramt",
-   "to": "S06",
-   "relation": "responsible_editorially",
+   "from": "wp-bs",
+   "to": "S09",
+   "relation": "entry_point_of",
    "evidence": [
     {
-     "url": "https://www.bs.ch/themen/persoenliches-und-wohnen/zuzug-und-aufenthalt/zuzug-den-kanton-basel-stadt",
-     "support": "Seitenangabe «Für dieses Thema zuständig: Einwohneramt».",
-     "retrievedAt": "2026-10-29T20:19:30.741807+00:00",
+     "url": "https://www.bs.ch/apps/zonensuche",
+     "support": "Einstieg des Dienstes Zonensuche (App).",
+     "retrievedAt": "2026-10-29T20:20:30.742216+00:00",
      "sourceDate": null,
      "confidence": "high"
     }
@@ -4637,13 +4637,13 @@
   {
    "id": "e-108",
    "from": "wp-bs",
-   "to": "S07",
+   "to": "S10",
    "relation": "entry_point_of",
    "evidence": [
     {
-     "url": "https://www.bs.ch/themen/persoenliches-und-wohnen/pass-identitaetskarte-und-beglaubigungen/ich-brauche-einen-neuen-pass-eine-neue-identitaetskarte",
-     "support": "Einstieg des Dienstes «Pass / Identitätskarte bestellen».",
-     "retrievedAt": "2026-10-29T20:19:20.741742+00:00",
+     "url": "https://www.bs.ch/themen/umwelt-und-bauen/abfall-und-sauberkeit/abfall-abc",
+     "support": "Einstieg des Dienstes Abfall-ABC.",
+     "retrievedAt": "2026-10-29T20:21:30.742639+00:00",
      "sourceDate": null,
      "confidence": "high"
     }
@@ -4651,14 +4651,14 @@
   },
   {
    "id": "e-109",
-   "from": "S07",
-   "to": "wp-eservices",
-   "relation": "transaction_boundary",
+   "from": "wp-bs",
+   "to": "S11",
+   "relation": "entry_point_of",
    "evidence": [
     {
-     "url": "https://www.bs.ch/themen/persoenliches-und-wohnen/pass-identitaetskarte-und-beglaubigungen/ich-brauche-einen-neuen-pass-eine-neue-identitaetskarte",
-     "support": "Dienstseite verlinkt bzw. bettet eservices.egov.bs.ch ein (#53-Entdeckung).",
-     "retrievedAt": "2026-10-29T20:19:20.741742+00:00",
+     "url": "https://www.bs.ch/apps/sozialhilferechner",
+     "support": "Einstieg des Dienstes Sozialhilferechner (App).",
+     "retrievedAt": "2026-10-29T20:20:20.742147+00:00",
      "sourceDate": null,
      "confidence": "high"
     }
@@ -4666,14 +4666,14 @@
   },
   {
    "id": "e-110",
-   "from": "S07",
-   "to": "wp-mapgeo",
-   "relation": "embeds",
+   "from": "wp-bs",
+   "to": "S12",
+   "relation": "entry_point_of",
    "evidence": [
     {
-     "url": "https://www.bs.ch/themen/persoenliches-und-wohnen/pass-identitaetskarte-und-beglaubigungen/ich-brauche-einen-neuen-pass-eine-neue-identitaetskarte",
-     "support": "Dienstseite verlinkt bzw. bettet map.geo.bs.ch ein (#53-Entdeckung).",
-     "retrievedAt": "2026-10-29T20:19:20.741742+00:00",
+     "url": "https://www.bs.ch/themen/finanzielle-hilfe/leistungsrechner",
+     "support": "Einstieg des Dienstes Leistungsrechner (Übersicht).",
+     "retrievedAt": "2026-10-29T20:17:23.898356+00:00",
      "sourceDate": null,
      "confidence": "high"
     }
@@ -4681,14 +4681,14 @@
   },
   {
    "id": "e-111",
-   "from": "org-passamt",
-   "to": "S07",
-   "relation": "responsible_editorially",
+   "from": "wp-bs",
+   "to": "S13",
+   "relation": "entry_point_of",
    "evidence": [
     {
-     "url": "https://www.bs.ch/themen/persoenliches-und-wohnen/pass-identitaetskarte-und-beglaubigungen/ich-brauche-einen-neuen-pass-eine-neue-identitaetskarte",
-     "support": "Seitenangabe «Für dieses Thema zuständig: Passamt».",
-     "retrievedAt": "2026-10-29T20:19:20.741742+00:00",
+     "url": "https://www.bs.ch/themen/finanzielle-hilfe/menschen-mit-behinderung",
+     "support": "Einstieg des Dienstes Finanzielle Hilfe für Menschen mit Behinderung.",
+     "retrievedAt": "2026-10-29T20:17:33.898425+00:00",
      "sourceDate": null,
      "confidence": "high"
     }
@@ -4697,13 +4697,13 @@
   {
    "id": "e-112",
    "from": "wp-bs",
-   "to": "S08",
+   "to": "S14",
    "relation": "entry_point_of",
    "evidence": [
     {
-     "url": "https://www.bs.ch/themen/umwelt-und-bauen/abfall-und-sauberkeit/abfallabfuhr",
-     "support": "Einstieg des Dienstes «Abfallabfuhr».",
-     "retrievedAt": "2026-10-29T20:16:53.898152+00:00",
+     "url": "https://www.bs.ch/themen/mobilitaet/fahren-und-parkieren/parkkarten/anwohnerparkkarte",
+     "support": "Einstieg des Dienstes Anwohnerparkkarte.",
+     "retrievedAt": "2026-10-29T20:19:40.741877+00:00",
      "sourceDate": null,
      "confidence": "high"
     }
@@ -4711,14 +4711,14 @@
   },
   {
    "id": "e-113",
-   "from": "S08",
-   "to": "wp-draeggwaegg",
+   "from": "S14",
+   "to": "wp-eservices",
    "relation": "transaction_boundary",
    "evidence": [
     {
-     "url": "https://www.bs.ch/themen/umwelt-und-bauen/abfall-und-sauberkeit/abfallabfuhr",
-     "support": "Dienstseite verlinkt bzw. bettet app.draeggwaegg.ch ein (#53-Entdeckung).",
-     "retrievedAt": "2026-10-29T20:16:53.898152+00:00",
+     "url": "https://www.bs.ch/themen/mobilitaet/fahren-und-parkieren/parkkarten/anwohnerparkkarte",
+     "support": "Dienstseite verlinkt eservices.egov.bs.ch (#53-Entdeckung).",
+     "retrievedAt": "2026-10-29T20:19:40.741877+00:00",
      "sourceDate": null,
      "confidence": "high"
     }
@@ -4726,14 +4726,14 @@
   },
   {
    "id": "e-114",
-   "from": "S08",
-   "to": "wp-eservices",
+   "from": "S14",
+   "to": "wp-formulare",
    "relation": "transaction_boundary",
    "evidence": [
     {
-     "url": "https://www.bs.ch/themen/umwelt-und-bauen/abfall-und-sauberkeit/abfallabfuhr",
-     "support": "Dienstseite verlinkt bzw. bettet eservices.egov.bs.ch ein (#53-Entdeckung).",
-     "retrievedAt": "2026-10-29T20:16:53.898152+00:00",
+     "url": "https://www.bs.ch/themen/mobilitaet/fahren-und-parkieren/parkkarten/anwohnerparkkarte",
+     "support": "Dienstseite verlinkt formulare.bs.ch (#53-Entdeckung).",
+     "retrievedAt": "2026-10-29T20:19:40.741877+00:00",
      "sourceDate": null,
      "confidence": "high"
     }
@@ -4741,14 +4741,14 @@
   },
   {
    "id": "e-115",
-   "from": "S08",
-   "to": "wp-mapgeo",
-   "relation": "embeds",
+   "from": "org-kapo",
+   "to": "S14",
+   "relation": "responsible_editorially",
    "evidence": [
     {
-     "url": "https://www.bs.ch/themen/umwelt-und-bauen/abfall-und-sauberkeit/abfallabfuhr",
-     "support": "Dienstseite verlinkt bzw. bettet map.geo.bs.ch ein (#53-Entdeckung).",
-     "retrievedAt": "2026-10-29T20:16:53.898152+00:00",
+     "url": "https://www.bs.ch/themen/mobilitaet/fahren-und-parkieren/parkkarten/anwohnerparkkarte",
+     "support": "Seitenangabe Für dieses Thema zuständig: Kantonspolizei.",
+     "retrievedAt": "2026-10-29T20:19:40.741877+00:00",
      "sourceDate": null,
      "confidence": "high"
     }
@@ -4756,14 +4756,14 @@
   },
   {
    "id": "e-116",
-   "from": "org-tiefbauamt",
-   "to": "S08",
-   "relation": "responsible_editorially",
+   "from": "wp-bs",
+   "to": "S15",
+   "relation": "entry_point_of",
    "evidence": [
     {
-     "url": "https://www.bs.ch/themen/umwelt-und-bauen/abfall-und-sauberkeit/abfallabfuhr",
-     "support": "Seitenangabe «Für dieses Thema zuständig: Tiefbauamt».",
-     "retrievedAt": "2026-10-29T20:16:53.898152+00:00",
+     "url": "https://www.bs.ch/themen/mobilitaet/fahren-und-parkieren/parkkarten/behindertenparkkarte",
+     "support": "Einstieg des Dienstes Behindertenparkkarte.",
+     "retrievedAt": "2026-10-29T20:19:50.741945+00:00",
      "sourceDate": null,
      "confidence": "high"
     }
@@ -4771,14 +4771,14 @@
   },
   {
    "id": "e-117",
-   "from": "wp-bs",
-   "to": "S09",
-   "relation": "entry_point_of",
+   "from": "S15",
+   "to": "wp-formulare",
+   "relation": "transaction_boundary",
    "evidence": [
     {
-     "url": "https://www.bs.ch/apps/zonensuche",
-     "support": "Einstieg des Dienstes «Zonensuche (App)».",
-     "retrievedAt": "2026-10-29T20:20:30.742216+00:00",
+     "url": "https://www.bs.ch/themen/mobilitaet/fahren-und-parkieren/parkkarten/behindertenparkkarte",
+     "support": "Dienstseite verlinkt formulare.bs.ch (#53-Entdeckung).",
+     "retrievedAt": "2026-10-29T20:19:50.741945+00:00",
      "sourceDate": null,
      "confidence": "high"
     }
@@ -4786,14 +4786,14 @@
   },
   {
    "id": "e-118",
-   "from": "S09",
-   "to": "wp-mapgeo",
-   "relation": "embeds",
+   "from": "org-kapo",
+   "to": "S15",
+   "relation": "responsible_editorially",
    "evidence": [
     {
-     "url": "https://www.bs.ch/apps/zonensuche",
-     "support": "Dienstseite verlinkt bzw. bettet map.geo.bs.ch ein (#53-Entdeckung).",
-     "retrievedAt": "2026-10-29T20:20:30.742216+00:00",
+     "url": "https://www.bs.ch/themen/mobilitaet/fahren-und-parkieren/parkkarten/behindertenparkkarte",
+     "support": "Seitenangabe Für dieses Thema zuständig: Kantonspolizei.",
+     "retrievedAt": "2026-10-29T20:19:50.741945+00:00",
      "sourceDate": null,
      "confidence": "high"
     }
@@ -4802,13 +4802,13 @@
   {
    "id": "e-119",
    "from": "wp-bs",
-   "to": "S10",
+   "to": "S16",
    "relation": "entry_point_of",
    "evidence": [
     {
-     "url": "https://www.bs.ch/themen/umwelt-und-bauen/abfall-und-sauberkeit/abfall-abc",
-     "support": "Einstieg des Dienstes «Abfall-ABC».",
-     "retrievedAt": "2026-10-29T20:21:30.742639+00:00",
+     "url": "https://www.bs.ch/themen/mobilitaet/fahren-und-parkieren/busse-bezahlen",
+     "support": "Einstieg des Dienstes Busse bezahlen.",
+     "retrievedAt": "2026-10-29T20:21:20.742563+00:00",
      "sourceDate": null,
      "confidence": "high"
     }
@@ -4816,14 +4816,14 @@
   },
   {
    "id": "e-120",
-   "from": "S10",
-   "to": "wp-mapgeo",
-   "relation": "embeds",
+   "from": "S16",
+   "to": "wp-bussen",
+   "relation": "transaction_boundary",
    "evidence": [
     {
-     "url": "https://www.bs.ch/themen/umwelt-und-bauen/abfall-und-sauberkeit/abfall-abc",
-     "support": "Dienstseite verlinkt bzw. bettet map.geo.bs.ch ein (#53-Entdeckung).",
-     "retrievedAt": "2026-10-29T20:21:30.742639+00:00",
+     "url": "https://www.bs.ch/themen/mobilitaet/fahren-und-parkieren/busse-bezahlen",
+     "support": "Dienstseite verlinkt bussen.egov.bs.ch (#53-Entdeckung).",
+     "retrievedAt": "2026-10-29T20:21:20.742563+00:00",
      "sourceDate": null,
      "confidence": "high"
     }
@@ -4831,14 +4831,14 @@
   },
   {
    "id": "e-121",
-   "from": "wp-bs",
-   "to": "S11",
-   "relation": "entry_point_of",
+   "from": "org-kapo",
+   "to": "S16",
+   "relation": "responsible_editorially",
    "evidence": [
     {
-     "url": "https://www.bs.ch/apps/sozialhilferechner",
-     "support": "Einstieg des Dienstes «Sozialhilferechner (App)».",
-     "retrievedAt": "2026-10-29T20:20:20.742147+00:00",
+     "url": "https://www.bs.ch/themen/mobilitaet/fahren-und-parkieren/busse-bezahlen",
+     "support": "Seitenangabe Für dieses Thema zuständig: Kantonspolizei.",
+     "retrievedAt": "2026-10-29T20:21:20.742563+00:00",
      "sourceDate": null,
      "confidence": "high"
     }
@@ -4846,14 +4846,14 @@
   },
   {
    "id": "e-122",
-   "from": "S11",
-   "to": "wp-mapgeo",
-   "relation": "embeds",
+   "from": "wp-bs",
+   "to": "S17",
+   "relation": "entry_point_of",
    "evidence": [
     {
-     "url": "https://www.bs.ch/apps/sozialhilferechner",
-     "support": "Dienstseite verlinkt bzw. bettet map.geo.bs.ch ein (#53-Entdeckung).",
-     "retrievedAt": "2026-10-29T20:20:20.742147+00:00",
+     "url": "https://www.bs.ch/themen/arbeit-und-steuern/steuererklaerung/online-formulare-steuerverwaltung",
+     "support": "Einstieg des Dienstes Online-Formulare Steuerverwaltung.",
+     "retrievedAt": "2026-10-29T20:20:00.742010+00:00",
      "sourceDate": null,
      "confidence": "high"
     }
@@ -4861,14 +4861,14 @@
   },
   {
    "id": "e-123",
-   "from": "wp-bs",
-   "to": "S12",
-   "relation": "entry_point_of",
+   "from": "S17",
+   "to": "wp-eservices",
+   "relation": "transaction_boundary",
    "evidence": [
     {
-     "url": "https://www.bs.ch/themen/finanzielle-hilfe/leistungsrechner",
-     "support": "Einstieg des Dienstes «Leistungsrechner (Übersicht)».",
-     "retrievedAt": "2026-10-29T20:17:23.898356+00:00",
+     "url": "https://www.bs.ch/themen/arbeit-und-steuern/steuererklaerung/online-formulare-steuerverwaltung",
+     "support": "Dienstseite verlinkt eservices.egov.bs.ch (#53-Entdeckung).",
+     "retrievedAt": "2026-10-29T20:20:00.742010+00:00",
      "sourceDate": null,
      "confidence": "high"
     }
@@ -4876,14 +4876,14 @@
   },
   {
    "id": "e-124",
-   "from": "S12",
-   "to": "wp-mapgeo",
-   "relation": "embeds",
+   "from": "S17",
+   "to": "wp-esteuern",
+   "relation": "transaction_boundary",
    "evidence": [
     {
-     "url": "https://www.bs.ch/themen/finanzielle-hilfe/leistungsrechner",
-     "support": "Dienstseite verlinkt bzw. bettet map.geo.bs.ch ein (#53-Entdeckung).",
-     "retrievedAt": "2026-10-29T20:17:23.898356+00:00",
+     "url": "https://www.bs.ch/themen/arbeit-und-steuern/steuererklaerung/online-formulare-steuerverwaltung",
+     "support": "Dienstseite verlinkt esteuern.bs.ch (#53-Entdeckung).",
+     "retrievedAt": "2026-10-29T20:20:00.742010+00:00",
      "sourceDate": null,
      "confidence": "high"
     }
@@ -4891,14 +4891,14 @@
   },
   {
    "id": "e-125",
-   "from": "wp-bs",
-   "to": "S13",
-   "relation": "entry_point_of",
+   "from": "S17",
+   "to": "wp-formulare",
+   "relation": "transaction_boundary",
    "evidence": [
     {
-     "url": "https://www.bs.ch/themen/finanzielle-hilfe/menschen-mit-behinderung",
-     "support": "Einstieg des Dienstes «Finanzielle Hilfe für Menschen mit Behinderung».",
-     "retrievedAt": "2026-10-29T20:17:33.898425+00:00",
+     "url": "https://www.bs.ch/themen/arbeit-und-steuern/steuererklaerung/online-formulare-steuerverwaltung",
+     "support": "Dienstseite verlinkt formulare.bs.ch (#53-Entdeckung).",
+     "retrievedAt": "2026-10-29T20:20:00.742010+00:00",
      "sourceDate": null,
      "confidence": "high"
     }
@@ -4906,14 +4906,14 @@
   },
   {
    "id": "e-126",
-   "from": "S13",
-   "to": "wp-mapgeo",
-   "relation": "embeds",
+   "from": "wp-bs",
+   "to": "S18",
+   "relation": "entry_point_of",
    "evidence": [
     {
-     "url": "https://www.bs.ch/themen/finanzielle-hilfe/menschen-mit-behinderung",
-     "support": "Dienstseite verlinkt bzw. bettet map.geo.bs.ch ein (#53-Entdeckung).",
-     "retrievedAt": "2026-10-29T20:17:33.898425+00:00",
+     "url": "https://www.bs.ch/themen/arbeit-und-steuern/steuererklaerung/steuerrechner",
+     "support": "Einstieg des Dienstes Steuern berechnen.",
+     "retrievedAt": "2026-10-29T20:20:10.742081+00:00",
      "sourceDate": null,
      "confidence": "high"
     }
@@ -4922,13 +4922,13 @@
   {
    "id": "e-127",
    "from": "wp-bs",
-   "to": "S14",
+   "to": "S19",
    "relation": "entry_point_of",
    "evidence": [
     {
-     "url": "https://www.bs.ch/themen/mobilitaet/fahren-und-parkieren/parkkarten/anwohnerparkkarte",
-     "support": "Einstieg des Dienstes «Anwohnerparkkarte».",
-     "retrievedAt": "2026-10-29T20:19:40.741877+00:00",
+     "url": "https://www.bs.ch/themen/bildung-und-kinderbetreuung/kinderbetreuung/kita",
+     "support": "Einstieg des Dienstes Kita.",
+     "retrievedAt": "2026-10-29T20:20:40.742288+00:00",
      "sourceDate": null,
      "confidence": "high"
     }
@@ -4936,14 +4936,14 @@
   },
   {
    "id": "e-128",
-   "from": "S14",
-   "to": "wp-eservices",
+   "from": "S19",
+   "to": "wp-edkb",
    "relation": "transaction_boundary",
    "evidence": [
     {
-     "url": "https://www.bs.ch/themen/mobilitaet/fahren-und-parkieren/parkkarten/anwohnerparkkarte",
-     "support": "Dienstseite verlinkt bzw. bettet eservices.egov.bs.ch ein (#53-Entdeckung).",
-     "retrievedAt": "2026-10-29T20:19:40.741877+00:00",
+     "url": "https://www.bs.ch/themen/bildung-und-kinderbetreuung/kinderbetreuung/kita",
+     "support": "Dienstseite verlinkt ed-kinderbetreuung.edubs.ch (#53-Entdeckung).",
+     "retrievedAt": "2026-10-29T20:20:40.742288+00:00",
      "sourceDate": null,
      "confidence": "high"
     }
@@ -4951,14 +4951,14 @@
   },
   {
    "id": "e-129",
-   "from": "S14",
-   "to": "wp-formulare",
+   "from": "S19",
+   "to": "wp-eservices",
    "relation": "transaction_boundary",
    "evidence": [
     {
-     "url": "https://www.bs.ch/themen/mobilitaet/fahren-und-parkieren/parkkarten/anwohnerparkkarte",
-     "support": "Dienstseite verlinkt bzw. bettet formulare.bs.ch ein (#53-Entdeckung).",
-     "retrievedAt": "2026-10-29T20:19:40.741877+00:00",
+     "url": "https://www.bs.ch/themen/bildung-und-kinderbetreuung/kinderbetreuung/kita",
+     "support": "Dienstseite verlinkt eservices.egov.bs.ch (#53-Entdeckung).",
+     "retrievedAt": "2026-10-29T20:20:40.742288+00:00",
      "sourceDate": null,
      "confidence": "high"
     }
@@ -4966,14 +4966,14 @@
   },
   {
    "id": "e-130",
-   "from": "S14",
-   "to": "wp-mapgeo",
-   "relation": "embeds",
+   "from": "wp-bs",
+   "to": "S20",
+   "relation": "entry_point_of",
    "evidence": [
     {
-     "url": "https://www.bs.ch/themen/mobilitaet/fahren-und-parkieren/parkkarten/anwohnerparkkarte",
-     "support": "Dienstseite verlinkt bzw. bettet map.geo.bs.ch ein (#53-Entdeckung).",
-     "retrievedAt": "2026-10-29T20:19:40.741877+00:00",
+     "url": "https://www.bs.ch/themen/umwelt-und-bauen/bauen-im-kanton-basel-stadt/brauche-ich-eine-baubewilligung",
+     "support": "Einstieg des Dienstes Brauche ich eine Baubewilligung?.",
+     "retrievedAt": "2026-10-29T20:20:50.742351+00:00",
      "sourceDate": null,
      "confidence": "high"
     }
@@ -4981,14 +4981,14 @@
   },
   {
    "id": "e-131",
-   "from": "org-kapo",
-   "to": "S14",
-   "relation": "responsible_editorially",
+   "from": "S20",
+   "to": "wp-jaxforms",
+   "relation": "transaction_boundary",
    "evidence": [
     {
-     "url": "https://www.bs.ch/themen/mobilitaet/fahren-und-parkieren/parkkarten/anwohnerparkkarte",
-     "support": "Seitenangabe «Für dieses Thema zuständig: Kantonspolizei».",
-     "retrievedAt": "2026-10-29T20:19:40.741877+00:00",
+     "url": "https://www.bs.ch/themen/umwelt-und-bauen/bauen-im-kanton-basel-stadt/brauche-ich-eine-baubewilligung",
+     "support": "Dienstseite verlinkt jaxforms.cloud.bs.ch (#53-Entdeckung).",
+     "retrievedAt": "2026-10-29T20:20:50.742351+00:00",
      "sourceDate": null,
      "confidence": "high"
     }
@@ -4996,14 +4996,14 @@
   },
   {
    "id": "e-132",
-   "from": "wp-bs",
-   "to": "S15",
-   "relation": "entry_point_of",
+   "from": "org-bgi",
+   "to": "S20",
+   "relation": "responsible_editorially",
    "evidence": [
     {
-     "url": "https://www.bs.ch/themen/mobilitaet/fahren-und-parkieren/parkkarten/behindertenparkkarte",
-     "support": "Einstieg des Dienstes «Behindertenparkkarte».",
-     "retrievedAt": "2026-10-29T20:19:50.741945+00:00",
+     "url": "https://www.bs.ch/themen/umwelt-und-bauen/bauen-im-kanton-basel-stadt/brauche-ich-eine-baubewilligung",
+     "support": "Seitenangabe Für dieses Thema zuständig: Bau- und Gastgewerbeinspektorat.",
+     "retrievedAt": "2026-10-29T20:20:50.742351+00:00",
      "sourceDate": null,
      "confidence": "high"
     }
@@ -5011,14 +5011,14 @@
   },
   {
    "id": "e-133",
-   "from": "S15",
-   "to": "wp-formulare",
-   "relation": "transaction_boundary",
+   "from": "wp-bs",
+   "to": "S21",
+   "relation": "entry_point_of",
    "evidence": [
     {
-     "url": "https://www.bs.ch/themen/mobilitaet/fahren-und-parkieren/parkkarten/behindertenparkkarte",
-     "support": "Dienstseite verlinkt bzw. bettet formulare.bs.ch ein (#53-Entdeckung).",
-     "retrievedAt": "2026-10-29T20:19:50.741945+00:00",
+     "url": "https://www.bs.ch/themen/arbeit-und-steuern/unternehmen/gruendung-ansiedlung-von-firmen",
+     "support": "Einstieg des Dienstes Gründung & Ansiedlung von Firmen.",
+     "retrievedAt": "2026-10-29T20:21:00.742423+00:00",
      "sourceDate": null,
      "confidence": "high"
     }
@@ -5026,14 +5026,14 @@
   },
   {
    "id": "e-134",
-   "from": "S15",
-   "to": "wp-mapgeo",
-   "relation": "embeds",
+   "from": "wp-bs",
+   "to": "S22",
+   "relation": "entry_point_of",
    "evidence": [
     {
-     "url": "https://www.bs.ch/themen/mobilitaet/fahren-und-parkieren/parkkarten/behindertenparkkarte",
-     "support": "Dienstseite verlinkt bzw. bettet map.geo.bs.ch ein (#53-Entdeckung).",
-     "retrievedAt": "2026-10-29T20:19:50.741945+00:00",
+     "url": "https://www.bs.ch/themen/arbeit-und-steuern/arbeitsbewilligungen/erstmaliger-stellenantritt-der-schweiz",
+     "support": "Einstieg des Dienstes Erstmaliger Stellenantritt (Arbeitsbewilligung).",
+     "retrievedAt": "2026-10-29T20:21:10.742488+00:00",
      "sourceDate": null,
      "confidence": "high"
     }
@@ -5041,366 +5041,6 @@
   },
   {
    "id": "e-135",
-   "from": "org-kapo",
-   "to": "S15",
-   "relation": "responsible_editorially",
-   "evidence": [
-    {
-     "url": "https://www.bs.ch/themen/mobilitaet/fahren-und-parkieren/parkkarten/behindertenparkkarte",
-     "support": "Seitenangabe «Für dieses Thema zuständig: Kantonspolizei».",
-     "retrievedAt": "2026-10-29T20:19:50.741945+00:00",
-     "sourceDate": null,
-     "confidence": "high"
-    }
-   ]
-  },
-  {
-   "id": "e-136",
-   "from": "wp-bs",
-   "to": "S16",
-   "relation": "entry_point_of",
-   "evidence": [
-    {
-     "url": "https://www.bs.ch/themen/mobilitaet/fahren-und-parkieren/busse-bezahlen",
-     "support": "Einstieg des Dienstes «Busse bezahlen».",
-     "retrievedAt": "2026-10-29T20:21:20.742563+00:00",
-     "sourceDate": null,
-     "confidence": "high"
-    }
-   ]
-  },
-  {
-   "id": "e-137",
-   "from": "S16",
-   "to": "wp-bussen",
-   "relation": "transaction_boundary",
-   "evidence": [
-    {
-     "url": "https://www.bs.ch/themen/mobilitaet/fahren-und-parkieren/busse-bezahlen",
-     "support": "Dienstseite verlinkt bzw. bettet bussen.egov.bs.ch ein (#53-Entdeckung).",
-     "retrievedAt": "2026-10-29T20:21:20.742563+00:00",
-     "sourceDate": null,
-     "confidence": "high"
-    }
-   ]
-  },
-  {
-   "id": "e-138",
-   "from": "S16",
-   "to": "wp-mapgeo",
-   "relation": "embeds",
-   "evidence": [
-    {
-     "url": "https://www.bs.ch/themen/mobilitaet/fahren-und-parkieren/busse-bezahlen",
-     "support": "Dienstseite verlinkt bzw. bettet map.geo.bs.ch ein (#53-Entdeckung).",
-     "retrievedAt": "2026-10-29T20:21:20.742563+00:00",
-     "sourceDate": null,
-     "confidence": "high"
-    }
-   ]
-  },
-  {
-   "id": "e-139",
-   "from": "org-kapo",
-   "to": "S16",
-   "relation": "responsible_editorially",
-   "evidence": [
-    {
-     "url": "https://www.bs.ch/themen/mobilitaet/fahren-und-parkieren/busse-bezahlen",
-     "support": "Seitenangabe «Für dieses Thema zuständig: Kantonspolizei».",
-     "retrievedAt": "2026-10-29T20:21:20.742563+00:00",
-     "sourceDate": null,
-     "confidence": "high"
-    }
-   ]
-  },
-  {
-   "id": "e-140",
-   "from": "wp-bs",
-   "to": "S17",
-   "relation": "entry_point_of",
-   "evidence": [
-    {
-     "url": "https://www.bs.ch/themen/arbeit-und-steuern/steuererklaerung/online-formulare-steuerverwaltung",
-     "support": "Einstieg des Dienstes «Online-Formulare Steuerverwaltung».",
-     "retrievedAt": "2026-10-29T20:20:00.742010+00:00",
-     "sourceDate": null,
-     "confidence": "high"
-    }
-   ]
-  },
-  {
-   "id": "e-141",
-   "from": "S17",
-   "to": "wp-eservices",
-   "relation": "transaction_boundary",
-   "evidence": [
-    {
-     "url": "https://www.bs.ch/themen/arbeit-und-steuern/steuererklaerung/online-formulare-steuerverwaltung",
-     "support": "Dienstseite verlinkt bzw. bettet eservices.egov.bs.ch ein (#53-Entdeckung).",
-     "retrievedAt": "2026-10-29T20:20:00.742010+00:00",
-     "sourceDate": null,
-     "confidence": "high"
-    }
-   ]
-  },
-  {
-   "id": "e-142",
-   "from": "S17",
-   "to": "wp-esteuern",
-   "relation": "transaction_boundary",
-   "evidence": [
-    {
-     "url": "https://www.bs.ch/themen/arbeit-und-steuern/steuererklaerung/online-formulare-steuerverwaltung",
-     "support": "Dienstseite verlinkt bzw. bettet esteuern.bs.ch ein (#53-Entdeckung).",
-     "retrievedAt": "2026-10-29T20:20:00.742010+00:00",
-     "sourceDate": null,
-     "confidence": "high"
-    }
-   ]
-  },
-  {
-   "id": "e-143",
-   "from": "S17",
-   "to": "wp-formulare",
-   "relation": "transaction_boundary",
-   "evidence": [
-    {
-     "url": "https://www.bs.ch/themen/arbeit-und-steuern/steuererklaerung/online-formulare-steuerverwaltung",
-     "support": "Dienstseite verlinkt bzw. bettet formulare.bs.ch ein (#53-Entdeckung).",
-     "retrievedAt": "2026-10-29T20:20:00.742010+00:00",
-     "sourceDate": null,
-     "confidence": "high"
-    }
-   ]
-  },
-  {
-   "id": "e-144",
-   "from": "S17",
-   "to": "wp-mapgeo",
-   "relation": "embeds",
-   "evidence": [
-    {
-     "url": "https://www.bs.ch/themen/arbeit-und-steuern/steuererklaerung/online-formulare-steuerverwaltung",
-     "support": "Dienstseite verlinkt bzw. bettet map.geo.bs.ch ein (#53-Entdeckung).",
-     "retrievedAt": "2026-10-29T20:20:00.742010+00:00",
-     "sourceDate": null,
-     "confidence": "high"
-    }
-   ]
-  },
-  {
-   "id": "e-145",
-   "from": "wp-bs",
-   "to": "S18",
-   "relation": "entry_point_of",
-   "evidence": [
-    {
-     "url": "https://www.bs.ch/themen/arbeit-und-steuern/steuererklaerung/steuerrechner",
-     "support": "Einstieg des Dienstes «Steuern berechnen».",
-     "retrievedAt": "2026-10-29T20:20:10.742081+00:00",
-     "sourceDate": null,
-     "confidence": "high"
-    }
-   ]
-  },
-  {
-   "id": "e-146",
-   "from": "S18",
-   "to": "wp-mapgeo",
-   "relation": "embeds",
-   "evidence": [
-    {
-     "url": "https://www.bs.ch/themen/arbeit-und-steuern/steuererklaerung/steuerrechner",
-     "support": "Dienstseite verlinkt bzw. bettet map.geo.bs.ch ein (#53-Entdeckung).",
-     "retrievedAt": "2026-10-29T20:20:10.742081+00:00",
-     "sourceDate": null,
-     "confidence": "high"
-    }
-   ]
-  },
-  {
-   "id": "e-147",
-   "from": "wp-bs",
-   "to": "S19",
-   "relation": "entry_point_of",
-   "evidence": [
-    {
-     "url": "https://www.bs.ch/themen/bildung-und-kinderbetreuung/kinderbetreuung/kita",
-     "support": "Einstieg des Dienstes «Kita».",
-     "retrievedAt": "2026-10-29T20:20:40.742288+00:00",
-     "sourceDate": null,
-     "confidence": "high"
-    }
-   ]
-  },
-  {
-   "id": "e-148",
-   "from": "S19",
-   "to": "wp-edkb",
-   "relation": "transaction_boundary",
-   "evidence": [
-    {
-     "url": "https://www.bs.ch/themen/bildung-und-kinderbetreuung/kinderbetreuung/kita",
-     "support": "Dienstseite verlinkt bzw. bettet ed-kinderbetreuung.edubs.ch ein (#53-Entdeckung).",
-     "retrievedAt": "2026-10-29T20:20:40.742288+00:00",
-     "sourceDate": null,
-     "confidence": "high"
-    }
-   ]
-  },
-  {
-   "id": "e-149",
-   "from": "S19",
-   "to": "wp-eservices",
-   "relation": "transaction_boundary",
-   "evidence": [
-    {
-     "url": "https://www.bs.ch/themen/bildung-und-kinderbetreuung/kinderbetreuung/kita",
-     "support": "Dienstseite verlinkt bzw. bettet eservices.egov.bs.ch ein (#53-Entdeckung).",
-     "retrievedAt": "2026-10-29T20:20:40.742288+00:00",
-     "sourceDate": null,
-     "confidence": "high"
-    }
-   ]
-  },
-  {
-   "id": "e-150",
-   "from": "S19",
-   "to": "wp-mapgeo",
-   "relation": "embeds",
-   "evidence": [
-    {
-     "url": "https://www.bs.ch/themen/bildung-und-kinderbetreuung/kinderbetreuung/kita",
-     "support": "Dienstseite verlinkt bzw. bettet map.geo.bs.ch ein (#53-Entdeckung).",
-     "retrievedAt": "2026-10-29T20:20:40.742288+00:00",
-     "sourceDate": null,
-     "confidence": "high"
-    }
-   ]
-  },
-  {
-   "id": "e-151",
-   "from": "wp-bs",
-   "to": "S20",
-   "relation": "entry_point_of",
-   "evidence": [
-    {
-     "url": "https://www.bs.ch/themen/umwelt-und-bauen/bauen-im-kanton-basel-stadt/brauche-ich-eine-baubewilligung",
-     "support": "Einstieg des Dienstes «Brauche ich eine Baubewilligung?».",
-     "retrievedAt": "2026-10-29T20:20:50.742351+00:00",
-     "sourceDate": null,
-     "confidence": "high"
-    }
-   ]
-  },
-  {
-   "id": "e-152",
-   "from": "S20",
-   "to": "wp-jaxforms",
-   "relation": "transaction_boundary",
-   "evidence": [
-    {
-     "url": "https://www.bs.ch/themen/umwelt-und-bauen/bauen-im-kanton-basel-stadt/brauche-ich-eine-baubewilligung",
-     "support": "Dienstseite verlinkt bzw. bettet jaxforms.cloud.bs.ch ein (#53-Entdeckung).",
-     "retrievedAt": "2026-10-29T20:20:50.742351+00:00",
-     "sourceDate": null,
-     "confidence": "high"
-    }
-   ]
-  },
-  {
-   "id": "e-153",
-   "from": "S20",
-   "to": "wp-mapgeo",
-   "relation": "embeds",
-   "evidence": [
-    {
-     "url": "https://www.bs.ch/themen/umwelt-und-bauen/bauen-im-kanton-basel-stadt/brauche-ich-eine-baubewilligung",
-     "support": "Dienstseite verlinkt bzw. bettet map.geo.bs.ch ein (#53-Entdeckung).",
-     "retrievedAt": "2026-10-29T20:20:50.742351+00:00",
-     "sourceDate": null,
-     "confidence": "high"
-    }
-   ]
-  },
-  {
-   "id": "e-154",
-   "from": "org-bgi",
-   "to": "S20",
-   "relation": "responsible_editorially",
-   "evidence": [
-    {
-     "url": "https://www.bs.ch/themen/umwelt-und-bauen/bauen-im-kanton-basel-stadt/brauche-ich-eine-baubewilligung",
-     "support": "Seitenangabe «Für dieses Thema zuständig: Bau- und Gastgewerbeinspektorat».",
-     "retrievedAt": "2026-10-29T20:20:50.742351+00:00",
-     "sourceDate": null,
-     "confidence": "high"
-    }
-   ]
-  },
-  {
-   "id": "e-155",
-   "from": "wp-bs",
-   "to": "S21",
-   "relation": "entry_point_of",
-   "evidence": [
-    {
-     "url": "https://www.bs.ch/themen/arbeit-und-steuern/unternehmen/gruendung-ansiedlung-von-firmen",
-     "support": "Einstieg des Dienstes «Gründung & Ansiedlung von Firmen».",
-     "retrievedAt": "2026-10-29T20:21:00.742423+00:00",
-     "sourceDate": null,
-     "confidence": "high"
-    }
-   ]
-  },
-  {
-   "id": "e-156",
-   "from": "S21",
-   "to": "wp-mapgeo",
-   "relation": "embeds",
-   "evidence": [
-    {
-     "url": "https://www.bs.ch/themen/arbeit-und-steuern/unternehmen/gruendung-ansiedlung-von-firmen",
-     "support": "Dienstseite verlinkt bzw. bettet map.geo.bs.ch ein (#53-Entdeckung).",
-     "retrievedAt": "2026-10-29T20:21:00.742423+00:00",
-     "sourceDate": null,
-     "confidence": "high"
-    }
-   ]
-  },
-  {
-   "id": "e-157",
-   "from": "wp-bs",
-   "to": "S22",
-   "relation": "entry_point_of",
-   "evidence": [
-    {
-     "url": "https://www.bs.ch/themen/arbeit-und-steuern/arbeitsbewilligungen/erstmaliger-stellenantritt-der-schweiz",
-     "support": "Einstieg des Dienstes «Erstmaliger Stellenantritt (Arbeitsbewilligung)».",
-     "retrievedAt": "2026-10-29T20:21:10.742488+00:00",
-     "sourceDate": null,
-     "confidence": "high"
-    }
-   ]
-  },
-  {
-   "id": "e-158",
-   "from": "S22",
-   "to": "wp-mapgeo",
-   "relation": "embeds",
-   "evidence": [
-    {
-     "url": "https://www.bs.ch/themen/arbeit-und-steuern/arbeitsbewilligungen/erstmaliger-stellenantritt-der-schweiz",
-     "support": "Dienstseite verlinkt bzw. bettet map.geo.bs.ch ein (#53-Entdeckung).",
-     "retrievedAt": "2026-10-29T20:21:10.742488+00:00",
-     "sourceDate": null,
-     "confidence": "high"
-    }
-   ]
-  },
-  {
-   "id": "e-159",
    "from": "org-awa",
    "to": "S22",
    "relation": "responsible_editorially",
@@ -5415,14 +5055,14 @@
    ]
   },
   {
-   "id": "e-160",
+   "id": "e-136",
    "from": "wp-bs",
    "to": "S23",
    "relation": "entry_point_of",
    "evidence": [
     {
      "url": "https://www.bs.ch/gebaerdensprache",
-     "support": "Einstieg des Dienstes «Inhalte in Gebärdensprache».",
+     "support": "Einstieg des Dienstes Inhalte in Gebärdensprache.",
      "retrievedAt": "2026-10-29T20:18:23.898770+00:00",
      "sourceDate": null,
      "confidence": "high"
@@ -5430,29 +5070,14 @@
    ]
   },
   {
-   "id": "e-161",
-   "from": "S23",
-   "to": "wp-mapgeo",
-   "relation": "embeds",
-   "evidence": [
-    {
-     "url": "https://www.bs.ch/gebaerdensprache",
-     "support": "Dienstseite verlinkt bzw. bettet map.geo.bs.ch ein (#53-Entdeckung).",
-     "retrievedAt": "2026-10-29T20:18:23.898770+00:00",
-     "sourceDate": null,
-     "confidence": "high"
-    }
-   ]
-  },
-  {
-   "id": "e-162",
+   "id": "e-137",
    "from": "wp-bs",
    "to": "S24",
    "relation": "entry_point_of",
    "evidence": [
     {
      "url": "https://www.bs.ch/themen/bildung-und-kinderbetreuung/kinderbetreuung",
-     "support": "Einstieg des Dienstes «Kinderbetreuung (Übersicht)».",
+     "support": "Einstieg des Dienstes Kinderbetreuung (Übersicht).",
      "retrievedAt": "2026-10-29T20:17:13.898289+00:00",
      "sourceDate": null,
      "confidence": "high"
@@ -5460,44 +5085,14 @@
    ]
   },
   {
-   "id": "e-163",
-   "from": "S24",
-   "to": "wp-mapgeo",
-   "relation": "embeds",
-   "evidence": [
-    {
-     "url": "https://www.bs.ch/themen/bildung-und-kinderbetreuung/kinderbetreuung",
-     "support": "Dienstseite verlinkt bzw. bettet map.geo.bs.ch ein (#53-Entdeckung).",
-     "retrievedAt": "2026-10-29T20:17:13.898289+00:00",
-     "sourceDate": null,
-     "confidence": "high"
-    }
-   ]
-  },
-  {
-   "id": "e-164",
+   "id": "e-138",
    "from": "wp-bs",
    "to": "S25",
    "relation": "entry_point_of",
    "evidence": [
     {
      "url": "https://www.bs.ch/themen/arbeit-und-steuern/steuererklaerung",
-     "support": "Einstieg des Dienstes «Steuererklärung (Übersicht)».",
-     "retrievedAt": "2026-10-29T20:17:03.898219+00:00",
-     "sourceDate": null,
-     "confidence": "high"
-    }
-   ]
-  },
-  {
-   "id": "e-165",
-   "from": "S25",
-   "to": "wp-mapgeo",
-   "relation": "embeds",
-   "evidence": [
-    {
-     "url": "https://www.bs.ch/themen/arbeit-und-steuern/steuererklaerung",
-     "support": "Dienstseite verlinkt bzw. bettet map.geo.bs.ch ein (#53-Entdeckung).",
+     "support": "Einstieg des Dienstes Steuererklärung (Übersicht).",
      "retrievedAt": "2026-10-29T20:17:03.898219+00:00",
      "sourceDate": null,
      "confidence": "high"
@@ -5513,7 +5108,7 @@
    "serviceId": null,
    "ring": "core",
    "reason": "Gemeindedienste von Bettingen auf dem Kantonsauftritt – andere Trägerschaft, gleiche Vorlage.",
-   "authorisationNeeded": "existing (www.bs.ch/eportal)"
+   "authorisationNeeded": "new approval (same origin as #53; that batch is used up)"
   },
   {
    "rank": 2,
@@ -5522,7 +5117,7 @@
    "serviceId": null,
    "ring": "core",
    "reason": "Einbürgerung: wichtige Bürgeraufgabe mit Bürgergemeinde-Bezug.",
-   "authorisationNeeded": "existing (www.bs.ch/eportal)"
+   "authorisationNeeded": "new approval (same origin as #53; that batch is used up)"
   },
   {
    "rank": 3,
@@ -5531,7 +5126,7 @@
    "serviceId": null,
    "ring": "core",
    "reason": "Judikative auf dem Kantonsauftritt; Zugang zu Gerichten.",
-   "authorisationNeeded": "existing (www.bs.ch/eportal)"
+   "authorisationNeeded": "new approval (same origin as #53; that batch is used up)"
   },
   {
    "rank": 4,
@@ -5540,7 +5135,7 @@
    "serviceId": "S05",
    "ring": "core",
    "reason": "Bisher nicht geprüft; Bezahlschritt-Grenze (eServices).",
-   "authorisationNeeded": "existing (www.bs.ch/eportal)"
+   "authorisationNeeded": "new approval (same origin as #53; that batch is used up)"
   },
   {
    "rank": 5,
@@ -5549,7 +5144,7 @@
    "serviceId": "S13",
    "ring": "core",
    "reason": "Zielgruppe direkt betroffen; bisher nicht geprüft.",
-   "authorisationNeeded": "existing (www.bs.ch/eportal)"
+   "authorisationNeeded": "new approval (same origin as #53; that batch is used up)"
   },
   {
    "rank": 6,
@@ -5558,7 +5153,7 @@
    "serviceId": "S23",
    "ring": "core",
    "reason": "Barrierefreie Kommunikation; Videos (Basel nennt Videos selbst als Einschränkung).",
-   "authorisationNeeded": "existing (www.bs.ch/eportal)"
+   "authorisationNeeded": "new approval (same origin as #53; that batch is used up)"
   },
   {
    "rank": 7,
@@ -5567,7 +5162,7 @@
    "serviceId": "S09",
    "ring": "core",
    "reason": "Nachtest der reproduzierten #53-Beobachtung (Pflichtfeld-Hinweis).",
-   "authorisationNeeded": "existing (www.bs.ch/eportal)"
+   "authorisationNeeded": "new approval (same origin as #53; that batch is used up)"
   },
   {
    "rank": 8,
@@ -5575,8 +5170,8 @@
    "propertyId": "wp-riehen",
    "serviceId": null,
    "ring": "other_public",
-   "reason": "Eigene Gemeinde, eigener Betreiber (Talus), eigene Barrierefreiheitserklärung (2022).",
-   "authorisationNeeded": "new explicit scope"
+   "reason": "Eigene Gemeinde, Realisierung durch Talus Informatik AG (laut Impressum), eigene Barrierefreiheitserklärung (2022).",
+   "authorisationNeeded": "new explicit scope (new origin)"
   },
   {
    "rank": 9,
@@ -5585,7 +5180,7 @@
    "serviceId": null,
    "ring": "other_public",
    "reason": "Legislative, eigene Website mit externen Dienstleistern.",
-   "authorisationNeeded": "new explicit scope"
+   "authorisationNeeded": "new explicit scope (new origin)"
   },
   {
    "rank": 10,
@@ -5594,7 +5189,7 @@
    "serviceId": null,
    "ring": "other_public",
    "reason": "ÖV-Unternehmen des Kantons (100 %, sAöR); in der Entdeckung 502 – Erreichbarkeit vor Prüfung klären.",
-   "authorisationNeeded": "new explicit scope"
+   "authorisationNeeded": "new explicit scope (new origin)"
   },
   {
    "rank": 11,
@@ -5603,7 +5198,7 @@
    "serviceId": null,
    "ring": "other_public",
    "reason": "Spital des Kantons (100 %, sAöR); Gesundheitsaufgabe.",
-   "authorisationNeeded": "new explicit scope"
+   "authorisationNeeded": "new explicit scope (new origin)"
   },
   {
    "rank": 12,
@@ -5612,7 +5207,7 @@
    "serviceId": null,
    "ring": "other_public",
    "reason": "Versorgung (100 %, sAöR); Kundendienste.",
-   "authorisationNeeded": "new explicit scope"
+   "authorisationNeeded": "new explicit scope (new origin)"
   },
   {
    "rank": 13,
@@ -5621,7 +5216,7 @@
    "serviceId": null,
    "ring": "other_public",
    "reason": "Gemeinsam getragen (50 %); zeigt Grenze zwischen kantonaler und gemeinsamer Trägerschaft.",
-   "authorisationNeeded": "new explicit scope"
+   "authorisationNeeded": "new explicit scope (new origin)"
   },
   {
    "rank": 14,
@@ -5630,7 +5225,7 @@
    "serviceId": "S04",
    "ring": "external_dependency",
    "reason": "Transaktionsplattform der IT BS: nur öffentliche Einstiegsseite bis zur ersten Eingabe, keine Eingabe.",
-   "authorisationNeeded": "new explicit scope"
+   "authorisationNeeded": "new explicit scope (new origin)"
   },
   {
    "rank": 15,
@@ -5639,7 +5234,7 @@
    "serviceId": "S04",
    "ring": "external_dependency",
    "reason": "Externer Umzugsdienst, den der Kanton für «Umzug melden» verlinkt.",
-   "authorisationNeeded": "new explicit scope"
+   "authorisationNeeded": "new explicit scope (new origin)"
   }
  ]
 }

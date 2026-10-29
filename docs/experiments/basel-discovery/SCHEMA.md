@@ -24,19 +24,19 @@
     "id": "wp-...", "origin": "https://...", "canonicalUrl": "https://...", "alternates": ["..."],
     "name": "...", "kind": "portal|website|transaction_app|login|map|external_service|document_store",
     "status": { "discovered": true, "ownershipEvidenced": false, "selected": false, "assessed": false,
-                "outOfScope": false, "loginBoundary": false },
-    "assessmentAuthorized": false,                  // only www.bs.ch and eportal.egov.bs.ch were ever authorised
+                "outOfScope": false, "loginBoundary": false, "visitedInDiscovery": false },
+    "assessmentAuthorized": false,                  // true only for www.bs.ch / eportal: authorised for the bounded #53 batch, which is used up
     "historicalAssessmentIds": []                    // e.g. ["p01-start"]; only from the #53 batch
   }],
   "edges": [{
     "id": "e-...", "from": "<org/wp/service id>", "to": "<org/wp/service id>",
-    "relation": "parent_of|jurisdiction_over|owns_or_sponsors|jointly_sponsors|participates_in|responsible_editorially|operates_technically|publishes_property|entry_point_of|transaction_boundary|embeds|links_to",
+    "relation": "parent_of|jurisdiction_over|owns_or_sponsors|jointly_sponsors|participates_in|responsible_editorially|operates_technically|publishes_property|entry_point_of|transaction_boundary|embeds|links_to|built_by",   // built_by = design/development, not operation
     "evidence": [{ "url": "https://...", "support": "short quote or paraphrase (<=25 words)",
                    "retrievedAt": "2026-10-29T..Z", "sourceDate": "YYYY-MM-DD | null", "confidence": "high|medium|low" }]
   }],
   "batchProposal": [{ "rank": 1, "url": "...", "propertyId": "wp-...", "serviceId": "S.. | null",
                       "ring": "core|other_public|external_dependency", "reason": "...",
-                      "authorisationNeeded": "existing (www.bs.ch/eportal) | new explicit scope" }]
+                      "authorisationNeeded": "new approval (same origin as #53) | new explicit scope (new origin)" }]
 }
 ```
 

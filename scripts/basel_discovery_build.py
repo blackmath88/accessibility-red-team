@@ -49,7 +49,7 @@ ORG_STATUS = ("discovered", "ownershipEvidenced")
 RELATIONS = {"parent_of", "jurisdiction_over", "owns_or_sponsors", "jointly_sponsors",
              "participates_in", "responsible_editorially", "operates_technically",
              "publishes_property", "entry_point_of", "transaction_boundary", "embeds",
-             "links_to"}
+             "links_to", "built_by"}
 CONFIDENCE = {"high", "medium", "low"}
 RINGS = {"core", "other_public", "external_dependency"}
 
