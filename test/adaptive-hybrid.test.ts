@@ -103,3 +103,19 @@ describe("hybrid advisory may not author findings (review minor 3)", () => {
     assert.ok(advisory.dropped.some((d) => d.includes("may not author findings")));
   });
 });
+
+describe("A/B/C owner cap accounting", () => {
+  it("sums consultant and direct Mistral spend across every earlier run ledger", async () => {
+    const { mkdtemp, mkdir, writeFile, rm } = await import("node:fs/promises");
+    const { tmpdir } = await import("node:os");
+    const { join } = await import("node:path");
+    const { priorSpend } = await import("../src/experimental/adaptive/abc-trial.js");
+    const root = await mkdtemp(join(tmpdir(), "art-abc-"));
+    try {
+      await mkdir(join(root, "s1")); await writeFile(join(root, "s1", "ledger.json"), JSON.stringify({ consultant: { spend: 0.25 } }));
+      await mkdir(join(root, "s3")); await writeFile(join(root, "s3", "ledger.json"), JSON.stringify({ consultant: { spend: 0 }, direct: { spend: 1.5 } }));
+      await mkdir(join(root, "repro"));
+      assert.equal(await priorSpend(root), 1.75);
+    } finally { await rm(root, { recursive: true, force: true }); }
+  });
+});

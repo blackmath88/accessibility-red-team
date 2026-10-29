@@ -49,7 +49,7 @@ export const MANIFEST = {
 const LOCAL_KEY_ENV = "ADAPTIVE_LOCAL_NO_AUTH";
 export const OWNER_CAP_USD = 5;
 
-async function priorSpend(outRoot: string): Promise<number> {
+export async function priorSpend(outRoot: string): Promise<number> {
   let total = 0;
   for (const entry of await readdir(resolve(outRoot)).catch(() => [] as string[])) {
     const ledger = await readFile(join(resolve(outRoot), entry, "ledger.json"), "utf8").catch(() => null);

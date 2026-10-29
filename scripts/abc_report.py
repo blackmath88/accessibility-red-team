@@ -16,8 +16,8 @@ E = html.escape
 def load(p):
     return json.load(open(p))
 
-LABEL = {"A": "A · algorithmisch", "B": "B · lokales LLM", "C": "C · lokales LLM + Mistral"}
-MODEL = {"A": "keins (Frontier-Scheduler + Regeltabelle)", "B": "qwen3:1.7b (Ollama, CPU, lokal)", "C": "qwen3:1.7b lokal + mistral-small-2603 (≤2 Konsultationen)"}
+LABEL = {"A": "A · algorithmisch", "B": "B · lokales LLM", "C": "C · lokales LLM + Mistral", "M": "M · Mistral direkt"}
+MODEL = {"A": "keins (Frontier-Scheduler + Regeltabelle)", "B": "qwen3:1.7b (Ollama, CPU, lokal)", "C": "qwen3:1.7b lokal + mistral-small-2603 (≤2 Konsultationen)", "M": "mistral-small-2603 (API) als Erkundungs-Policy"}
 
 def segment_rows(seg):
     funnel = load(os.path.join(seg["dir"], "funnel.json"))["rows"]
@@ -33,7 +33,7 @@ def segment_rows(seg):
                 if c["claimId"] != "completion":
                     verdicts.setdefault(cond, []).append(c["verdict"])
     rows = []
-    for cond in ("A", "B", "C"):
+    for cond in ("A", "B", "C", "M"):
         rs = [r for r in funnel if r["condition"] == cond]
         if not rs:
             continue
@@ -51,7 +51,7 @@ def segment_rows(seg):
             "unadjudicated": sum(len(r["unadjudicated"]) for r in rs), "premature": sum(1 for r in rs if r["prematureCompletion"]),
             "calls": sum(r["modelCalls"] for r in rs), "pages": f'{sum(r["coverage"]["pagesVisited"] for r in rs)}/{sum(r["coverage"]["pagesDiscovered"] for r in rs)}',
             "probes": f'{sum(r["coverage"]["probesExecuted"] for r in rs)}/{sum(r["coverage"]["probesTotal"] for r in rs)}',
-            "seconds": None, "spend": ledger["consultant"]["spend"] if cond == "C" else None,
+            "seconds": None, "spend": ledger["consultant"]["spend"] if cond == "C" else (ledger.get("direct") or {}).get("spend") if cond == "M" else None,
         })
     return rows, ledger
 
@@ -92,7 +92,7 @@ parts.append(f"<p>{m['summaryHtml']}</p>")
 for seg in cfg["segments"]:
     rows, ledger = segment_rows(seg)
     dur = durations(seg)
-    parts.append(f"<h2>{E(seg['label'])}</h2><p class='small'>{E(seg['note'])}</p><div class='tw'><table><thead><tr><th>Bedingung</th><th>Modell(e)</th><th class='num'>Sitzungen mit Abschlussvorschlag / geplant</th><th>Sitzungsende</th><th class='num'>Verifizierte Barrieren</th><th class='num'>Behauptungen: belegt / widerlegt / unzureichend</th><th class='num'>Vorzeitiger Abschluss</th><th class='num'>Seiten besucht / entdeckt</th><th class='num'>Prüfungen ausgeführt / gesamt</th><th class='num'>Modellaufrufe (lokal)</th><th class='num'>Zeit (s)</th><th class='num'>Mistral (USD)</th></tr></thead><tbody>")
+    parts.append(f"<h2>{E(seg['label'])}</h2><p class='small'>{E(seg['note'])}</p><div class='tw'><table><thead><tr><th>Bedingung</th><th>Modell(e)</th><th class='num'>Sitzungen mit Abschlussvorschlag / geplant</th><th>Sitzungsende</th><th class='num'>Verifizierte Barrieren</th><th class='num'>Behauptungen: belegt / widerlegt / unzureichend</th><th class='num'>Vorzeitiger Abschluss</th><th class='num'>Seiten besucht / entdeckt</th><th class='num'>Prüfungen ausgeführt / gesamt</th><th class='num'>Modellaufrufe (Policy)</th><th class='num'>Zeit (s)</th><th class='num'>Mistral (USD)</th></tr></thead><tbody>")
     for r in rows:
         st = ", ".join(f"{k}: {v}" for k, v in sorted(r["statuses"].items()))
         ver_cls = "ok" if r["credited"] == r["seeded"] else "bad" if r["credited"] == 0 else "warn"
@@ -100,7 +100,8 @@ for seg in cfg["segments"]:
         spend = f'{r["spend"]:.4f}' if r["spend"] is not None else "–"
         parts.append(f"<tr><td>{E(LABEL[r['cond']])}</td><td>{E(MODEL[r['cond']])}</td><td class='num'>{r['completedFinish']} / {r['planned']}</td><td>{E(st)}</td><td class='num {ver_cls}'>{r['credited']} / {r['seeded']}</td><td class='num'>{claims}</td><td class='num'>{r['premature']}</td><td class='num'>{r['pages']}</td><td class='num'>{r['probes']}</td><td class='num'>{r['calls']}</td><td class='num'>{dur.get(r['cond'], 0):.0f}</td><td class='num'>{spend}</td></tr>")
     parts.append("</tbody></table></div>")
-    parts.append(f"<p class='small'>Mistral-Ledger dieses Segments: {ledger['consultant']['calls']} Aufrufe, {ledger['consultant']['inputTokens']} / {ledger['consultant']['outputTokens']} Tokens, geschätzt {ledger['consultant']['spend']:.4f} USD (Preise laut Konfiguration; maßgeblich ist die Rechnung). Behauptungen wurden blind (anonymisierte Arme) von einem frischen Claude-Kontext beurteilt und danach mit der Fixture-Wahrheit abgeglichen.</p>")
+    led = [ledger["consultant"]] + ([ledger["direct"]] if ledger.get("direct") else [])
+    parts.append(f"<p class='small'>Mistral-Ledger dieses Segments: {sum(x['calls'] for x in led)} Aufrufe, {sum(x['inputTokens'] for x in led)} / {sum(x['outputTokens'] for x in led)} Tokens, geschätzt {sum(x['spend'] for x in led):.4f} USD (Preise laut Konfiguration; maßgeblich ist die Rechnung). Behauptungen wurden blind (anonymisierte Arme) von einem frischen Claude-Kontext beurteilt und danach mit der Fixture-Wahrheit abgeglichen.</p>")
 
 parts.append(f"<h2>Fälle</h2><p class='small'>{E(cfg['casesNote'])}</p>")
 for c in cfg["cases"]:

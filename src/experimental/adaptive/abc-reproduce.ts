@@ -45,6 +45,20 @@ const CASES: Case[] = [
     },
   },
   {
+    // Replays condition M's dev-k3 claim exactly as it acted (s3): open "Termin buchen" (#c2), then click "Schliessen" (#x2).
+    id: "model-claim-c2-click-close", path: "/dev-k3/index.html",
+    async run(page, shot, steps) {
+      await page.click("#c2");
+      await page.waitForTimeout(100);
+      steps.push({ action: "click #c2 (Termin buchen)", focus: await focusOf(page) });
+      await page.click("#x2");
+      await page.waitForTimeout(100);
+      const after = await focusOf(page);
+      steps.push({ action: "click #x2 (Schliessen)", focus: after, note: after.id === "c2" ? "focus returned to trigger: the claim is contradicted" : "focus not returned" });
+      return { focusAfterClose: after, returned: after.id === "c2", screenshotAfterClose: await shot("after-close") };
+    },
+  },
+  {
     id: "skip-link-target", path: "/dev-k1/s/m2.html",
     repair: { find: 'href="#inhalt-x"', replace: 'href="#inhalt"', why: "the skip link points at the existing main element" },
     async run(page, shot, steps) {
