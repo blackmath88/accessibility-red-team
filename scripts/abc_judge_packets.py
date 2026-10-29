@@ -77,7 +77,7 @@ for i, s in enumerate(sessions):
                        "reproductionSteps": f.get("reproductionSteps"), "citedEvidence": [evidence(r) for r in f.get("observationRefs", [])]})
     proposal = (result.get("completion") or {}).get("proposal") if isinstance(result.get("completion"), dict) else None
     claims.append({"claimId": "completion", "kind": "completion_proposal", "claim": f"tester proposed: {proposal or 'no finish proposal (session ended without finish)'}",
-                   "finishSummary": result.get("finishSummary"), "sessionEnd": result.get("status")})
+                   "finishSummary": re.sub(r"^frontier-scheduler/v\d+:\s*", "", result.get("finishSummary") or "") or None, "sessionEnd": result.get("status")})
     packet = {"arm": arm, "userTask": "Check this synthetic municipal-style test site for keyboard and screen-reader barriers: skip links, accessible names, dialog focus handling.",
               "constraint": "Read-only exploration of loopback test pages; no form submission.", "claims": claims,
               "allEvidenceIndex": [{"id": k, "kind": v["kind"], "page": path_of(v["url"]), "targetRef": (v.get("target") or {}).get("ref"), "testerNote": note(v.get("note"))} for k, v in ev.items()]}
