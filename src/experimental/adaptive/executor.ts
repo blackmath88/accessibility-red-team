@@ -72,6 +72,9 @@ export type RunSessionOptions = {
   codeSha?: string;
   // Comparison condition; omitted means condition A (DEFAULT_CONDITION), the pinned historical executor.
   condition?: ExplorationConditionInput;
+  // Opt-in (default off, so historical runs are unchanged): refuse an inspect_semantics / capture_evidence identical to one already
+  // executed in the identical page state (same URL, open menus/dialogs and focus), naming the evidence it already produced.
+  refuseRepeatInSameState?: boolean;
 };
 
 export type ExplorationConditionInput = z.input<typeof ExplorationConditionSchema>;
@@ -171,6 +174,7 @@ class Session {
   private observation!: Observation;
   private consecutiveUnknown = 0;
   private readonly history: HistoryEntry[] = [];
+  private changeKeyNow = "";
   private readonly startedAtMs = Date.now();
 
   finishVerdict: Completion["proposal"] = null;
@@ -268,7 +272,7 @@ class Session {
     this.observation = observed.observation;
     this.elements = observed.elements;
     // Focus is part of the change key so that focus_next / escape count as changes; it is compared, never shown.
-    const changeKey = `${stateKey(this.observation, (url) => this.policy.normalize(url))} | focus=${JSON.stringify(this.observation.focus)}`;
+    const changeKey = this.changeKeyNow = `${stateKey(this.observation, (url) => this.policy.normalize(url))} | focus=${JSON.stringify(this.observation.focus)}`;
     const previous = this.history.at(-1);
     if (previous && previous.changed === null) previous.changed = previous.changeKeyBefore !== changeKey;
     this.observation.recentActions = this.history.slice(-HISTORY_LENGTH).map(({ changeKeyBefore: _key, changed, ...entry }) => ({ ...entry, stateChanged: changed ?? false }));
@@ -393,6 +397,14 @@ class Session {
     const parsed = (this.condition.incrementalCandidates ? ActionV4Schema : ActionSchema).safeParse(raw);
     if (!parsed.success) return { ok: false, reason: "invalid_action_fields", detail: `${type}: ${parsed.error.issues[0]?.path.join(".") || "action"} ${parsed.error.issues[0]?.message ?? "invalid"}` };
     const action = parsed.data;
+    if (this.options.refuseRepeatInSameState && (action.type === "capture_evidence" || action.type === "inspect_semantics")) {
+      const targetRef = action.type === "capture_evidence" ? action.targetRef ?? null : null;
+      const same = this.history.find((entry) => entry.outcome === "executed" && entry.type === action.type && entry.targetRef === targetRef && entry.changeKeyBefore === this.changeKeyNow);
+      if (same) {
+        const ids = same.evidenceIds.length ? same.evidenceIds.join(", ") : "earlier evidence";
+        return { ok: false, reason: "repeated_in_same_state", detail: `already done at step ${same.step} in this same page state (recorded ${ids}); nothing has changed since. Cite it in report_candidate or finish, or move on: another control, skip link or an outstanding page in frontier.` };
+      }
+    }
     if (action.type === "navigate") {
       let target: string;
       try { target = new URL(action.url, this.page.url()).toString(); } catch { return { ok: false, reason: "scheme_not_allowed", detail: "unparseable URL" }; }

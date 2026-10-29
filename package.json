@@ -35,7 +35,9 @@
     "adaptive:fixture-trial": "tsx src/experimental/adaptive/cli.ts",
     "adaptive:mistral-fixture-trial": "tsx src/experimental/adaptive/live-trial.ts",
     "adaptive:frontier-local": "tsx src/experimental/adaptive/frontier-compare.ts",
-    "adaptive:frontier-benchmark": "tsx src/experimental/adaptive/frontier-benchmark.ts"
+    "adaptive:frontier-benchmark": "tsx src/experimental/adaptive/frontier-benchmark.ts",
+    "adaptive:abc": "tsx src/experimental/adaptive/abc-trial.ts",
+    "adaptive:abc-reproduce": "tsx src/experimental/adaptive/abc-reproduce.ts"
   },
   "dependencies": {
     "@axe-core/playwright": "4.13.0",

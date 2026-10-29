@@ -11,6 +11,9 @@ export type MistralConfig = {
   // Pinned model id, sent verbatim. Mistral may answer with a different (e.g. dated) id; that is recorded, not hidden.
   model: string;
   baseUrl?: string;
+  // Extra request-body fields for an OpenAI-compatible loopback server (e.g. a local model's reasoning switch). Cannot override the
+  // fields set below (model, messages, limits, response format).
+  extraBody?: Record<string, unknown>;
   fetch?: typeof fetch;
   env?: Record<string, string | undefined>;
 };
@@ -42,6 +45,7 @@ export class MistralProvider implements ModelProvider {
   readonly capabilities: ProviderCapabilities = { jsonObject: true, jsonSchema: true, toolCalling: true, vision: false, verified: false };
   private readonly endpoint: string;
   private readonly apiKeyEnv: string;
+  private readonly extraBody: Record<string, unknown>;
   // #private so JSON.stringify / util.inspect of the provider can never reach the environment holding the key.
   readonly #doFetch: typeof fetch;
   readonly #env: Record<string, string | undefined>;
@@ -55,6 +59,7 @@ export class MistralProvider implements ModelProvider {
     if (base.protocol !== "https:" && !(base.protocol === "http:" && loopback)) throw new ProviderError("config", "baseUrl must be https (http only for loopback)");
     this.endpoint = `${base.origin}${base.pathname.replace(/\/+$/, "")}/v1/chat/completions`;
     this.apiKeyEnv = config.apiKeyEnv;
+    this.extraBody = config.extraBody ?? {};
     this.requestedModel = config.model;
     this.#doFetch = config.fetch ?? fetch;
     this.#env = config.env ?? process.env;
@@ -66,6 +71,7 @@ export class MistralProvider implements ModelProvider {
     if (request.signal?.aborted) throw new ProviderError("cancelled", "request cancelled before it was sent");
 
     const body = {
+      ...this.extraBody,
       model: this.requestedModel,
       messages: request.messages,
       max_tokens: request.maxOutputTokens,

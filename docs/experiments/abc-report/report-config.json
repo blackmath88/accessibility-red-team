@@ -1,0 +1,208 @@
+{
+  "out": "docs/experiments/abc-report",
+  "meta": {
+    "subtitle": "Synthetische Entwicklungs-Fixtures (dev-k1, dev-k2, dev-k3; offengelegt, nicht zurückgehalten). Lauf am 29.10.2026 auf Nebu (lokaler Rechner), 120-Minuten-Fenster.",
+    "tags": [
+      "synthetisch",
+      "Entwicklungs-Fixtures",
+      "keine öffentlichen Seiten",
+      "Modell-Beurteilung ≠ menschliche Freigabe",
+      "Mistral gesamt: 0,073 von 5 USD"
+    ],
+    "summaryHtml": "<b>Kurz:</b> Der algorithmische Arm A fand in allen drei Segmenten alle gesetzten Barrieren (4/4, 4/4, 12/12), je Sitzung in etwa einer Sekunde und ohne Modellkosten. Das lokale Modell (qwen3:1.7b, nur CPU) fand allein (B) und mit Mistral-Beratung (C) <b>keine</b>: Es verliess nie die Startseite. Eine Reparatur (Wiederholungs-Sperre) griff technisch, änderte das Ergebnis aber nicht. <b>Mistral direkt als Erkundungs-Policy (M, Segment s3, 9 Sitzungen)</b> erkundete vollständig und fand die beiden Barrieren auf dev-k2 in allen drei Wiederholungen (6/12), verfehlte aber dev-k1 (richtige Aussage, falsche Belegstelle) und dev-k3 (Escape nie ausgelöst; stattdessen eine <b>falsche Behauptung</b> über den korrekt funktionierenden ersten Dialog, in allen 3 Läufen, mit 14 Duplikaten). Die blinde Beurteilung stufte <b>20 von 31 M-Behauptungen als durch M's eigene Evidenz widerlegt</b> ein (ohne Duplikate 7; inhaltlich 4 verschiedene falsche Aussagen); A: 0 von 12. M brauchte 129 s (davon rund 111 s durch unsere eigene Ratenbegrenzung von 1,1 s je Aufruf) und 0,069 USD; A fand dasselbe und mehr in 7 s ohne Kosten.",
+    "footer": "Erzeugt mit scripts/abc_report.py aus versiegelten Läufen. Code: Runner f003529 (s1), ae1ecc9 (s2), 2f27deb (s3); Bericht/Review-Fixes siehe PR. Rohdaten archiviert ausserhalb von git (abc-runs-archive.tar.gz, SHA-256 in ARCHIVE.sha256). Alle Seiten sind synthetisch; keine Aussage über reale Websites, Screenreader-Erfahrung oder WCAG-Konformität."
+  },
+  "segments": [
+    {
+      "id": "s1",
+      "label": "Segment s1: ohne Reparatur (9 von 9 Sitzungen)",
+      "note": "Gleiche Grenzen für alle Arme: 12 Entscheidungen, 24 Browser-Schritte, 8 Seiten, 180 s je Sitzung, 30 s je Anfrage. Harness-Flags identisch (sichtbare Frontier, Abschluss-Buchhaltung, report_candidate). C: höchstens 2 Mistral-Beratungen, ausgelöst nur nach 3 Aktionen ohne Zustandsänderung.",
+      "dir": "runs/abc/s1-2026-10-29T17-52-36-299Z",
+      "judgment": "../art-abc-judging/s1-judgment.json",
+      "key": "../art-abc-judging-KEY-s1.json"
+    },
+    {
+      "id": "s2",
+      "label": "Segment s2: mit Reparatur «Wiederholungs-Sperre» (9 von 9 Sitzungen)",
+      "note": "Einzige Änderung gegenüber s1: identische inspect/capture-Aktionen im unveränderten Seitenzustand werden abgelehnt (alle Arme). Es handelt sich um eine Werkzeug-Änderung, nicht um ein anderes Modell.",
+      "dir": "runs/abc/s2-2026-10-29T18-06-28-004Z",
+      "judgment": "../art-abc-judging/s2-judgment.json",
+      "key": "../art-abc-judging-KEY-s2.json"
+    },
+    {
+      "id": "s3",
+      "label": "Segment s3: Mistral direkt (M) gegen A, 3 Wiederholungen (18 von 18 Sitzungen)",
+      "note": "Gleiche Fixtures, Werkzeuge, Grenzen und Harness-Flags wie s1 (ohne Reparatur). M: mistral-small-2603 ist selbst die Policy (keine lokale Komponente). Die B/C-Ergebnisse aus s1/s2 bleiben unverändert. Eigenes Budget pro Lauf (Worst Case ≈ 0,20 USD), in die 5-USD-Obergrenze eingerechnet.",
+      "dir": "runs/abc/s3-2026-10-29T19-12-31-430Z",
+      "judgment": "../art-abc-judging/s3-judgment.json",
+      "key": "../art-abc-judging-KEY-s3.json"
+    }
+  ],
+  "casesNote": "Alle Bildschirmfotos sind echte Aufnahmen aus einem frischen, abgeschotteten Browser (nur Tastatur, eigener Kontext je Fall), aufgenommen nach den Bewertungsläufen. Die Fixtures selbst wurden nicht verändert; die Reparatur wurde an einer Kopie der Seite vorgeführt.",
+  "cases": [
+    {
+      "title": "Fall 1 · Fokus geht nach Escape verloren (dev-k3, «Hinweise»-Dialog), mit Reparatur und Nachtest",
+      "task": "Eine Person bucht per Tastatur einen Schaltertermin und öffnet vorher die «Hinweise».",
+      "constraint": "Nur lesend erkunden; keine Formulare absenden.",
+      "shots": [
+        {
+          "src": "runs/abc/repro-final/crops/k3-open-before.png",
+          "name": "k3-open-before.png",
+          "alt": "Seite «Termine» mit geöffnetem Hinweise-Dialog; der Fokus liegt auf der Schaltfläche «Schliessen».",
+          "caption": "Vorher: Dialog «Hinweise» per Enter geöffnet, Fokus auf «Schliessen» (korrekt)."
+        },
+        {
+          "src": "runs/abc/repro-final/crops/k3-escape-before.png",
+          "name": "k3-escape-before.png",
+          "alt": "Seite «Termine» nach Escape; keine Schaltfläche zeigt einen Fokusrahmen.",
+          "caption": "Vorher: nach Escape ist der Fokus auf dem Seitenkörper, kein Element hat einen Fokusrahmen."
+        },
+        {
+          "src": "runs/abc/repro-final/crops/k3-escape-after-repair.png",
+          "name": "k3-escape-after-repair.png",
+          "alt": "Seite «Termine» nach Escape in der reparierten Kopie; die Schaltfläche «Hinweise» hat einen Fokusrahmen.",
+          "caption": "Nachher (reparierte Kopie): nach Escape kehrt der Fokus auf «Hinweise» zurück."
+        }
+      ],
+      "trace": "Frischer Browser, nur Tastatur (runs/abc/repro-final/*/repro.json):\n  Kontrolle «Termin buchen» (#c2): Enter → Fokus «Schliessen» → Escape → Fokus #c2   (zurückgegeben)\n  «Hinweise» (#c3), Original:        Enter → Fokus «Schliessen» → Escape → Fokus body  (NICHT zurückgegeben)\n  «Hinweise» (#c3), repariert:       Enter → Fokus «Schliessen» → Escape → Fokus #c3   (zurückgegeben)\nReparatur: Escape-Behandlung des zweiten Dialogs gibt den Fokus wie beim ersten an den Auslöser zurück (eine Zeile im Fixture-Skript).",
+      "abc": [
+        [
+          "A",
+          "in s1 und s2 gefunden: Dialog über #c3 geöffnet, Escape, Fokus auf body belegt (ev_5–ev_7); vom blinden Beurteiler als «belegte Beobachtung» eingestuft."
+        ],
+        [
+          "B",
+          "nicht gefunden: blieb auf der Startseite, erfasste dieselbe Schaltfläche bis zu 10-mal, öffnete den zweiten Dialog nie; Zeitlimit."
+        ],
+        [
+          "C",
+          "nicht gefunden: Mistral schlug zweimal «activate» vor (Bereiche, Termin buchen), nie den zweiten Dialog; die lokale Entscheidung blieb ohne Fortschritt; Zeitlimit."
+        ]
+      ],
+      "bodyHtml": "<b>Warum ein guter Pilotfall:</b> Das Verhalten ist nur durch Bedienen sichtbar, nicht im statischen HTML; ein Kontroll-Dialog auf derselben Seite verhält sich korrekt, sodass «erster Dialog ok» nicht für den zweiten gilt. <b>Noch offen:</b> Wie sich der Fokusverlust in einem echten Screenreader anfühlt, ist hier nicht geprüft (keine AT-Sitzung).",
+      "refs": "Befund A: runs/abc/s1-…/r1/dev-k3/A (cand_1), s2 ebenso. Reproduktion (Bilder dieses Berichts): runs/abc/repro-final/original-2026-10-29T18-31-53-666Z und repaired-2026-10-29T18-31-55-404Z, Code 87efc99 (in repro.json festgehalten); eine frühere Reproduktion mit gleichem Ergebnis liegt unter runs/abc/repro/."
+    },
+    {
+      "title": "Fall 2 · Sprunglink ohne Ziel auf der dritten von vier Unterseiten (dev-k1)",
+      "task": "Eine Person springt mit «Zum Inhalt springen» direkt zur Information des Bereichs.",
+      "constraint": "Nur lesend; vier gleich aussehende Unterseiten, nur eine ist defekt.",
+      "shots": [
+        {
+          "src": "runs/abc/repro-final/crops/k1-skip-focused.png",
+          "name": "k1-skip-focused.png",
+          "alt": "Unterseite «Bereich 3» mit fokussiertem Link «Zum Inhalt springen».",
+          "caption": "Sprunglink fokussiert (erster Tab). Sein Ziel #inhalt-x existiert nicht; das Hauptelement heisst #inhalt."
+        }
+      ],
+      "trace": "DOM (frischer Browser): href=\"#inhalt-x\" → Ziel-Element: keins.  Reparierte Kopie: href=\"#inhalt\" → <main id=\"inhalt\">.\nHinweis: Auf dieser kurzen Seite gibt es nach dem Hauptinhalt kein weiteres fokussierbares Element; der Tastatur-Weiterlauf ist deshalb nicht aussagekräftig, die Ziel-Prüfung schon.",
+      "abc": [
+        [
+          "A",
+          "alle 5 Seiten besucht, auf der dritten Unterseite das fehlende Ziel belegt (s1 und s2)."
+        ],
+        [
+          "B",
+          "1 von 5 Seiten besucht. In s2 standen die vier unbesuchten Seiten (inklusive der defekten) im Frontier und in legal.navigate; das Modell versuchte trotzdem fünfmal dieselbe abgelehnte Erfassung."
+        ],
+        [
+          "C",
+          "wie B; in s1 reichte es nach einer Beratung eine erfundene Behauptung ein (siehe Fall 3)."
+        ]
+      ],
+      "bodyHtml": "<b>Warum ein guter Pilotfall:</b> Er bildet das Muster aus Versuch 3 nach: Wer eine funktionierende Schwesterseite prüft, hat die defekte nicht geprüft. Die Frontier macht das Offene sichtbar, aber das kleine lokale Modell nutzt die Sicht nicht. <b>Noch offen:</b> echte Navigationsmuster einer Gemeindeseite.",
+      "refs": "Funnel: runs/abc/s1-…/funnel.json, s2-…/funnel.json (dev-k1). Wiederholungs-Ablehnungen: s2 dev-k1 B/C je 5 × repeated_in_same_state."
+    },
+    {
+      "title": "Fall 3 · Unbenannte Icon-Schaltfläche (dev-k2) und eine kopierte, erfundene Behauptung",
+      "task": "Eine Person mit Screenreader will herausfinden, wozu die Schaltfläche neben «Start» dient.",
+      "constraint": "Nur lesend.",
+      "shots": [
+        {
+          "src": "runs/abc/repro-final/crops/k2-icon-focused.png",
+          "name": "k2-icon-focused.png",
+          "alt": "Seite «Anliegen» mit fokussierter runder Icon-Schaltfläche ohne sichtbaren Text neben dem Link «Start».",
+          "caption": "Icon-Schaltfläche fokussiert. Barrierefreiheitsbaum: «- button» ohne Namen (kein aria-label, kein title, kein Text)."
+        }
+      ],
+      "trace": "ariaSnapshot(header):\n- banner:\n  - link \"Start\":\n    - /url: /dev-k2/index.html\n  - button",
+      "abc": [
+        [
+          "A",
+          "gefunden (ev_4, Ziel button#b-s4 ohne Namen), dazu der zweite Defekt auf dev-k2 (Sprungziel ist kein main); beide vom Beurteiler als belegt eingestuft."
+        ],
+        [
+          "B",
+          "nicht gefunden: in s1 und s2 kopierte das Modell nach drei Schritten das Beispiel aus der Anleitung wortwörtlich («search-btn», «Menu revealed two service pages»), bis die Ausgabe abbrach (ungültiges JSON)."
+        ],
+        [
+          "C",
+          "ebenso auf dev-k2. Auf dev-k1 (s1) wurde dieselbe Beispiel-Behauptung als Befund eingereicht; der blinde Beurteiler stufte sie als durch die eigene Evidenz widerlegt ein."
+        ]
+      ],
+      "bodyHtml": "<b>Warum lehrreich:</b> Die gefährlichste Fehlerart ist nicht das Übersehen, sondern eine plausibel klingende, erfundene Behauptung. Die Evidenzbindung (zitierte ev-IDs, Ziel-Element) machte sie prüfbar und widerlegbar. <b>Noch offen:</b> Ob ein Screenreader hier «Schaltfläche» ohne Namen ansagt, wurde nicht mit echter AT geprüft.",
+      "refs": "Widerlegte Behauptung: s1 dev-k1 C, cand_1 (Beurteilung s1-judgment.json). Ungültige Ausgaben: s1/s2 dev-k2 B und C, Schritt 2."
+    },
+    {
+      "title": "Fall 4 · Mistral direkt (M): vollständige Erkundung, aber falsche und falsch belegte Behauptungen",
+      "task": "Dieselbe Aufgabe wie in den Fällen 1–3, Mistral steuert den Browser selbst.",
+      "constraint": "Gleiche Werkzeuge und Grenzen wie A, B und C; nur lesend.",
+      "trace": "Frischer Browser, M's eigene Schritte auf dev-k3 nachgespielt (runs/abc/repro-m, Code ff8ff90):\n  Klick «Termin buchen» (#c2) → Fokus «Schliessen» → Klick «Schliessen» (#x2) → Fokus #c2 «Termin buchen»  (zurückgegeben)\nM's Behauptung «nach dem Schliessen kehrt der Fokus nicht zurück» ist damit widerlegt. Den echten Defekt (Escape im zweiten Dialog)\nlöste M nie aus: es schloss beide Dialoge per Klick, nie per Escape.\ndev-k1: «Sprunglink zeigt auf #inhalt-x, das nicht existiert» (inhaltlich richtig), belegt aber mit einem Schnappschuss der Startseite,\nnicht der defekten Unterseite m2: nicht belegt, nicht angerechnet.",
+      "abc": [
+        [
+          "dev-k2",
+          "alle 3 Läufe: unbenannte Icon-Schaltfläche und Sprungziel ≠ main gefunden und korrekt belegt (6/6), plus eine zweifelhafte Zusatzbehauptung («div#kopf als Hauptbereich ohne Namen»)."
+        ],
+        [
+          "dev-k1",
+          "alle 5 Seiten besucht, Prüfung auf m2 ausgeführt; 2 von 3 Läufen behaupteten den richtigen Defekt («#inhalt-x existiert nicht»), zitierten aber einen Startseiten-Schnappschuss, dessen Sprunglink funktioniert: von der blinden Beurteilung als widerlegt eingestuft, nicht angerechnet; 1 Lauf meldete nichts."
+        ],
+        [
+          "dev-k3",
+          "beide Dialoge geöffnet und per Klick geschlossen; in allen 3 Läufen «vollständig» vorgeschlagen (vorzeitig) und den funktionierenden Dialog #c2 als fehlerhaft gemeldet, 4–5 Duplikate pro Lauf; zwei weitere Behauptungen zu #c3 wurden von der Harness-Validierung abgelehnt."
+        ],
+        [
+          "Blinde Beurteilung",
+          "M: 7 belegt (alle dev-k2, eines davon Duplikat), 20 widerlegt (7 ohne Duplikate; 4 verschiedene falsche Aussagen: Fokus bei #c2, Fokus bei #c3, dev-k1-Belegstelle, «div#kopf als Hauptbereich»), 4 unzureichend. A im selben Segment: 12 belegt, 0 widerlegt. Die Urteile stimmen mit der Fixture-Wahrheit und dem Nachspielen im frischen Browser überein."
+        ],
+        [
+          "Zeit und Kosten",
+          "129 s (davon rund 111 s eigene Ratenbegrenzung, 1,1 s je Aufruf) und 0,069 USD (101 Aufrufe, 425 274 / 9 159 Tokens) gegenüber 7 s und 0 USD für A bei 12/12."
+        ]
+      ],
+      "bodyHtml": "<b>Lehre:</b> Ein stärkeres Modell löst das Erkundungsproblem des kleinen lokalen Modells, nicht aber das Interpretationsproblem: Es erkundet breit, bedient die entscheidende Interaktion (Escape) nicht und meldet trotzdem selbstsicher – teilweise falsch. Ohne Evidenzbindung und Gegenprobe wären diese Behauptungen nicht von echten zu unterscheiden. <b>Noch offen:</b> nur ein Modell, drei synthetische Fixtures.",
+      "refs": "Läufe: runs/abc/s3-2026-10-29T19-12-31-430Z (r1–r3, M). Beurteilung: s3-judgment.json. Nachspielen: runs/abc/repro-m/original-2026-10-29T19-16-12-782Z/repro.json."
+    }
+  ],
+  "contributions": [
+    [
+      "A · algorithmisch",
+      "verlässliche Abdeckung (alle Seiten, alle Prüfungen) und belegte Befunde für alle 4 gesetzten Barrieren, ohne Modellkosten. Grenze: findet nur, was seine Regeln kennen; sein «vollständig» bezieht sich nur auf die eigenen Prüfungen."
+    ],
+    [
+      "B · lokales LLM",
+      "lief vollständig lokal und gültig formatiert in den meisten Schritten, aber ohne Erkundung über die Startseite hinaus: 0 Befunde, keine wahren, eine erfundene Beispiel-Kopie (abgebrochen). Bei 18 s je Entscheidung auf CPU reicht das 180-s-Fenster für etwa 9 Entscheidungen."
+    ],
+    [
+      "C · lokal + Mistral",
+      "8 Beratungen für 0,0034 USD, jede gültig und in 1,1–2,2 s; sie deuteten die Schleife richtig und schlugen legale Aktionen vor, änderten aber nichts am Ergebnis. Das lokale Modell bleibt der Engpass."
+    ],
+    [
+      "M · Mistral direkt",
+      "vollständige Erkundung (alle Seiten in allen 9 Sitzungen, 12–18 s je Sitzung), 6/12 angerechnet – ausschliesslich Barrieren, die A ebenfalls fand. Dazu 20 widerlegte Behauptungen, u. a. (dev-k3, alle Läufe), eine richtige Aussage mit falscher Belegstelle (dev-k1), 3 vorzeitige «vollständig»-Vorschläge und 14 Duplikate. Kosten 0,069 USD."
+    ],
+    [
+      "Claude (Koordination und Beurteilung)",
+      "kein Testarm: baute die Verdrahtung, beurteilte anonymisierte Evidenz blind und glich danach mit der Fixture-Wahrheit und frischen Browser-Wiederholungen ab. Keine Freigabe, keine Veröffentlichung."
+    ]
+  ],
+  "limits": [
+    "Drei offengelegte Entwicklungs-Fixtures mit je 1–2 gesetzten Barrieren, einer Wiederholung in s1/s2 und drei in s3: keine Aussage über Zuverlässigkeit, Neuheit oder reale Gemeindeseiten.",
+    "M ist ein einzelnes Modell (mistral-small-2603) mit derselben Anleitung (skill v4) wie B und C; ein anderes Modell oder eine andere Anleitung könnte anders abschneiden. M hatte dieselbe Aktionsmenge wie A (inklusive escape), nutzte escape aber nie; A lief unter der Scheduler-Bedingung, M unter derselben Harness-Bedingung wie B und C.",
+    "Lokale Inferenz nur auf CPU (die installierte Ollama-Version hat kein Backend für die Arc-B60-GPU); ein schnelleres oder grösseres lokales Modell könnte anders abschneiden. qwen3:4b wurde vorab geprüft und verworfen (gab die Beobachtung zurück statt einer Aktion).",
+    "Blind-Beurteilung durch frische Claude-Kontexte ist modellgestützte Forschungsbewertung, keine menschliche Entscheidung. In s1 war Arm A an seinen festen Textbausteinen erkennbar; für s2 wurden URLs und feste Sätze entfernt, die Formulierung von A-Befunden bleibt erkennbar.",
+    "In C bekam der lokale Aufruf in Beratungsrunden nur die Restzeit der 30 s (Beratung 1,1–2,2 s); es trat dadurch kein Abbruch auf, offengelegt laut Code-Review.",
+    "«Verifiziert» heisst: deterministisch mit der Fixture-Wahrheit abgeglichen und vom blinden Beurteiler als belegt eingestuft. Kein Befund wurde freigegeben oder veröffentlicht.",
+    "Das M-Budget pro Lauf deckt genau 3 Wiederholungen (≤110 Aufrufe, 1 M Eingabe-Tokens); mit mehr Wiederholungen würde das Budget spätere M-Sitzungen ablehnen. Das trat hier nicht auf (0 Ablehnungen)."
+  ],
+  "nextStepHtml": "<b>Empfehlung: A als einziger bewerteter Detektor in einem begrenzten Partner-Pilot (eine konkrete Bürger-Aufgabe), Sprachmodelle nur ausserhalb der Wertung.</b> Auf diesen offengelegten Entwicklungs-Fixtures (nicht zurückgehalten) fand A die 4 gesetzten Barrieren in jeder seiner 15 Sitzungen (20/20 Fundstellen), schnell und ohne Kosten; kein Modell-Arm fand etwas, das A übersah, und M erzeugte falsche Behauptungen. <br><b>Was den Schritt rechtfertigt bzw. ändert:</b> Ein Modell kommt erst wieder in die Wertung, wenn es auf denselben eingefrorenen Fixtures mindestens A's Trefferquote erreicht <i>und</i> 0 von der blinden Beurteilung widerlegte Behauptungen hat. Der Partner-Pilot selbst ist gerechtfertigt, wenn A auf der Partner-Aufgabe belegte Befunde liefert, die eine Fachperson mit Hilfsmittel (AT) bestätigt."
+}
