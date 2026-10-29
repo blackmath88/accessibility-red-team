@@ -4,7 +4,7 @@
 //   execute  run a recorded probe in the bwrap sandbox against local fixtures and/or the one approved live URL
 //   revise   designer revises the probe from the recorded results (new attempt, new code hash)
 // Critic/judge are fresh Claude contexts run by the coordinator over the recorded packets (not part of this script).
-//   npx tsx src/experimental/investigation/m1.ts <run> design|revise <attempt> | execute <attempt> <target[,target]> <viewport[,viewport]> [--live]
+//   npx tsx src/experimental/investigation/m1.ts <run> design|revise <attempt> [from] | execute <attempt> <target[,target]> <viewport[,viewport]> [--live]
 import { createHash } from "node:crypto";
 import { mkdir, readFile, readdir, writeFile } from "node:fs/promises";
 import { join, resolve } from "node:path";
@@ -72,7 +72,7 @@ async function priorSpend() {
   return total;
 }
 
-async function designer(run: string, attempt: string, mode: "design" | "revise") {
+async function designer(run: string, attempt: string, mode: "design" | "revise", from?: string) {
   const dir = resolve("runs/ail-m1", run);
   await mkdir(join(dir, "attempts", attempt), { recursive: true });
   const spent = await priorSpend();
@@ -83,7 +83,7 @@ async function designer(run: string, attempt: string, mode: "design" | "revise")
   let context = `BASELINE EVIDENCE (frozen):\n${JSON.stringify(packet, null, 1)}`;
   if (mode === "revise") {
     // Previous designed attempt (replays are not designs); its fresh-replay results are added when present.
-    const prev = (await readdir(join(dir, "attempts"))).filter((a) => a !== attempt && !a.endsWith("-replay")).sort().at(-1)!;
+    const prev = from ?? (await readdir(join(dir, "attempts"))).filter((a) => a !== attempt && !a.endsWith("-replay")).sort().at(-1)!;
     const prevProposal = await readFile(join(dir, "attempts", prev, "proposal.json"), "utf8");
     const results = await readFile(join(dir, "attempts", prev, "results.json"), "utf8");
     const replay = await readFile(join(dir, "attempts", `${prev}-replay`, "results.json"), "utf8").catch(() => "");
@@ -147,6 +147,6 @@ async function execute(run: string, attempt: string, targets: string[], viewport
 }
 
 const [run, stage, attempt, t, v] = process.argv.slice(2);
-if (!run || !stage || !attempt) { console.error("usage: m1.ts <run> design|revise <attempt> | execute <attempt> <targets> <viewports> [--live]"); process.exit(2); }
-(stage === "accept" ? accept(run, attempt, t ?? "design") : stage === "execute" ? execute(run, attempt, t!.split(","), (v ?? "1440x900").split(","), process.argv.includes("--live")) : designer(run, attempt, stage as "design" | "revise"))
+if (!run || !stage || !attempt) { console.error("usage: m1.ts <run> design|revise <attempt> [from] | execute <attempt> <targets> <viewports> [--live]"); process.exit(2); }
+(stage === "accept" ? accept(run, attempt, t ?? "design") : stage === "execute" ? execute(run, attempt, t!.split(","), (v ?? "1440x900").split(","), process.argv.includes("--live")) : designer(run, attempt, stage as "design" | "revise", t))
   .catch((e) => { console.error(String(e?.message ?? e)); process.exit(1); });
