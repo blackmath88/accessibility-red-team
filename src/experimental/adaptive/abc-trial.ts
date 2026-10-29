@@ -72,6 +72,9 @@ export const confirmHashOf = (plan: unknown, sha: string) => sha256(JSON.stringi
 const localEndpoint = () => {
   const value = process.env[MANIFEST.local.endpointEnv];
   if (!value) throw new Error(`${MANIFEST.local.endpointEnv} is not set (the loopback URL of the local model server)`);
+  let host = "";
+  try { host = new URL(value).hostname; } catch { /* reported below */ }
+  if (!["127.0.0.1", "localhost", "[::1]"].includes(host)) throw new Error(`${MANIFEST.local.endpointEnv} must be a loopback URL: the local arm may not run remotely`);
   return value;
 };
 
@@ -83,7 +86,9 @@ async function main() {
   const a = args();
   const sha = codeSha();
   for (const repair of a.repairs) if (repair !== "repeat-guard") throw new Error(`unknown repair ${repair}`);
-  const plan = { manifest: MANIFEST, segment: a.segment, repeats: a.repeats, fixtures: a.fixtures, conditions: a.conditions, repairs: a.repairs };
+  const usesLocal = a.conditions.some((label) => label !== "A");
+  // The endpoint value is part of the plan (and so of the confirm hash); it is only written to run artifacts, never committed.
+  const plan = { manifest: MANIFEST, localEndpoint: usesLocal ? localEndpoint() : null, segment: a.segment, repeats: a.repeats, fixtures: a.fixtures, conditions: a.conditions, repairs: a.repairs };
   const hash = confirmHashOf(plan, sha);
   const sessions = a.repeats * a.fixtures.length * a.conditions.length;
   console.log(`A/B/C trial — ${a.live ? "LIVE" : "DRY RUN (no model call)"}\n  code ${sha}\n  segment ${a.segment}, repeats ${a.repeats}, fixtures ${a.fixtures.join(",")}, conditions ${a.conditions.join(",")} -> ${sessions} sessions`);
@@ -91,15 +96,15 @@ async function main() {
   console.log(`  caps per session: ${JSON.stringify(MANIFEST.limits)}\n  local ${MANIFEST.local.model} (${MANIFEST.local.base}) at loopback; consultant ${MANIFEST.consultant.model}, <= ${MAX_CONSULTS}/session, budget ${MANIFEST.consultantBudget.maxSpend} USD per invocation\n  confirm hash ${hash}`);
   if (!a.live) return;
   if (a.confirm !== hash) throw new Error("--confirm does not match this plan and code");
-  if (sha.endsWith("+dirty")) throw new Error("uncommitted code; commit before a live run");
+  if (!/^[0-9a-f]{40}$/.test(sha)) throw new Error("uncommitted code; commit before a live run");
   // Owner cap across every invocation: refuse when earlier ledgers plus this invocation's ceiling could exceed it.
-  const spent = await priorSpend(a.outRoot);
+  const spent = (await priorSpend(a.outRoot)) + (resolve(a.outRoot) === resolve("runs/abc") ? 0 : await priorSpend("runs/abc"));
   if (a.conditions.includes("C") && spent + MANIFEST.consultantBudget.maxSpend > OWNER_CAP_USD) throw new Error(`owner cap ${OWNER_CAP_USD} USD: ${spent.toFixed(4)} already spent, this run may spend ${MANIFEST.consultantBudget.maxSpend}`);
   if (a.conditions.includes("C") && !process.env[MANIFEST.consultant.apiKeyEnv]) throw new Error(`${MANIFEST.consultant.apiKeyEnv} is not set`);
 
   const dir = resolve(a.outRoot, `${a.segment}-${new Date().toISOString().replace(/[:.]/g, "-")}`);
   await mkdir(dir, { recursive: true });
-  await writeFile(join(dir, "manifest.json"), JSON.stringify({ ...plan, codeSha: sha, confirmHash: hash, localEndpoint: localEndpoint(), host: execFileSync("hostname", { encoding: "utf8" }).trim(), startedAt: new Date().toISOString() }, null, 2));
+  await writeFile(join(dir, "manifest.json"), JSON.stringify({ ...plan, codeSha: sha, confirmHash: hash, host: execFileSync("hostname", { encoding: "utf8" }).trim(), startedAt: new Date().toISOString() }, null, 2));
 
   // Preflight the local model: returned identity must match.
   const pre = await localProvider().complete({ messages: [{ role: "user", content: 'Reply with the JSON object {"ok": true}.' }], maxOutputTokens: 16, temperature: 0, responseFormat: "json_object", timeoutMs: 60_000 });
@@ -107,7 +112,7 @@ async function main() {
   if (pre.returnedModel !== pre.requestedModel) throw new Error(`local model identity mismatch: ${pre.returnedModel}`);
   // Warm-up (outside every session): evaluate the skill prompt once so the first measured session does not pay the cold prompt
   // evaluation alone. The smoke run showed that cost exceeds the 30 s request cap on CPU. Same for B and C.
-  if (a.conditions.some((label) => label !== "A")) {
+  if (usesLocal) {
     const skillText = await readFile(skillFor(MANIFEST.harnessCondition).path, "utf8");
     const warm = await localProvider().complete({ messages: [{ role: "system", content: skillText }, { role: "user", content: 'Warm-up only. Reply with the JSON object {"ok": true}.' }], maxOutputTokens: 16, temperature: 0, responseFormat: "json_object", timeoutMs: 180_000 });
     await writeFile(join(dir, "warmup-local.json"), JSON.stringify({ latencyMs: warm.latencyMs, inputTokens: warm.usage?.inputTokens ?? null }, null, 2));

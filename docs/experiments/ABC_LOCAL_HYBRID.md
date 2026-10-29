@@ -23,7 +23,8 @@ checksum in the report folder).
 ## Conditions
 
 All three use identical caps (12 decision slots, 24 browser steps, 8 surfaces, 180 s wall, 30 s per request, 1500-token
-final call), the same contained browser, the same fixtures in the same order, and the frontier-B harness flags (visible
+final call; in C the local call on a consultation turn gets the remainder of the 30 s after the 1.1-2.2 s consultation),
+the same contained browser, the same fixtures in the same order, and the frontier-B harness flags (visible
 ledger, completion accounting, `report_candidate`).
 
 - **A, algorithmic**: the existing frontier scheduler and rule table (`frontier-scheduler/v1`, `frontier-rules/v1`), no model.
@@ -65,8 +66,10 @@ It is a tool/accounting change, so any s1→s2 difference is attributed to the h
 - **Copied example, fabricated claim**: in dev-k2 (B and C) the local model reproduced the skill's `finish` example
   verbatim ("search-btn", "Menu revealed two service pages"), truncated at the output cap (invalid JSON). In s1 dev-k1 C it
   submitted that example claim as a finding; the blind judge classified it as contradicted by its own cited evidence.
-- Judging is model-assisted research evaluation (fresh Claude contexts, anonymized arm ids, no truth, no costs, scheduler
-  labels stripped), reconciled afterwards with fixture truth and a fresh-browser replay. It is not human adjudication,
+- Judging is model-assisted research evaluation (fresh Claude contexts, anonymized arm ids, no truth, no costs). The s1
+  packets were built before the review fixes: three A packets still carried the scheduler's fixed finish sentence and every
+  packet carried the session end status, so s1 judging was only partly blind; s2 packets were scrubbed (origins, fixture
+  names, fixed sentences, status), though A's templated claim wording stays recognisable, reconciled afterwards with fixture truth and a fresh-browser replay. It is not human adjudication,
   approval or authority to publish or promote anything.
 
 ## Results (completed runs; see `abc-report/`)

@@ -9,7 +9,7 @@ Ordner (eigenständig, Bilder in `img/`). Methode und Begründungen: `../ABC_LOC
 | B lokales LLM | qwen3:1.7b (Ollama, CPU) | 6 / 6 (4 Zeitlimit, 2 ungültige Ausgabe) | 0/4 · 0/4 | 0 / 0 | – |
 | C lokal + Mistral | qwen3:1.7b + mistral-small-2603 (≤2 Beratungen) | 6 / 6 (3 Zeitlimit, 2 ungültig, 1 «unklar») | 0/4 · 0/4 | 0 / 1 | 0,0034 USD (8 Aufrufe, inkl. Smoke) |
 
-- B und C sahen die unbesuchten Unterseiten (Frontier und erlaubte Navigation), verliessen aber nie die Startseite.
+- B und C sahen auf dev-k1 und dev-k2 die unbesuchten Unterseiten (Frontier und erlaubte Navigation), verliessen aber nie die Startseite; auf dev-k3 (eine Seite) öffneten sie den zweiten Dialog nie.
 - Reparatur «Wiederholungs-Sperre» (s2): griff (21 abgelehnte Wiederholungen), änderte das Ergebnis nicht. Negatives Ergebnis.
 - Fall «Fokus nach Escape» (dev-k3): im frischen Browser reproduziert, an einer Kopie repariert, Nachtest erfolgreich.
 - Erfundene Behauptung: das lokale Modell kopierte das Beispiel der Anleitung («search-btn»); die blinde Beurteilung stufte

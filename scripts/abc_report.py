@@ -92,7 +92,7 @@ parts.append(f"<p>{m['summaryHtml']}</p>")
 for seg in cfg["segments"]:
     rows, ledger = segment_rows(seg)
     dur = durations(seg)
-    parts.append(f"<h2>{E(seg['label'])}</h2><p class='small'>{E(seg['note'])}</p><div class='tw'><table><thead><tr><th>Bedingung</th><th>Modell(e)</th><th class='num'>Sitzungen mit Abschlussvorschlag / geplant</th><th>Sitzungsende</th><th class='num'>Verifizierte Barrieren</th><th class='num'>Behauptungen: belegt / widerlegt / unzureichend</th><th class='num'>Vorzeitiger Abschluss</th><th class='num'>Seiten besucht / entdeckt</th><th class='num'>Prüfungen ausgeführt / offen</th><th class='num'>Modellaufrufe (lokal)</th><th class='num'>Zeit (s)</th><th class='num'>Mistral (USD)</th></tr></thead><tbody>")
+    parts.append(f"<h2>{E(seg['label'])}</h2><p class='small'>{E(seg['note'])}</p><div class='tw'><table><thead><tr><th>Bedingung</th><th>Modell(e)</th><th class='num'>Sitzungen mit Abschlussvorschlag / geplant</th><th>Sitzungsende</th><th class='num'>Verifizierte Barrieren</th><th class='num'>Behauptungen: belegt / widerlegt / unzureichend</th><th class='num'>Vorzeitiger Abschluss</th><th class='num'>Seiten besucht / entdeckt</th><th class='num'>Prüfungen ausgeführt / gesamt</th><th class='num'>Modellaufrufe (lokal)</th><th class='num'>Zeit (s)</th><th class='num'>Mistral (USD)</th></tr></thead><tbody>")
     for r in rows:
         st = ", ".join(f"{k}: {v}" for k, v in sorted(r["statuses"].items()))
         ver_cls = "ok" if r["credited"] == r["seeded"] else "bad" if r["credited"] == 0 else "warn"

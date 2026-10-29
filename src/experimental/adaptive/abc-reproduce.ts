@@ -8,6 +8,7 @@ import { mkdir, readFile, writeFile } from "node:fs/promises";
 import { join, resolve } from "node:path";
 import type { Page } from "playwright";
 import { launchContainedBrowser } from "./containment.js";
+import { codeSha } from "./executor.js";
 import { CONTEXT_OPTIONS } from "./policy.js";
 import { FIXTURE_DIR, startFixtures } from "../../../test/fixtures/adaptive-sites/server.js";
 
@@ -107,7 +108,7 @@ async function main() {
     await contained.close();
     await server.close();
   }
-  await writeFile(join(dir, "repro.json"), JSON.stringify({ schema: "art/adaptive-abc-repro/v1", repaired, results }, null, 2));
+  await writeFile(join(dir, "repro.json"), JSON.stringify({ schema: "art/adaptive-abc-repro/v1", codeSha: codeSha(), repaired, results }, null, 2));
   console.log(dir);
 }
 
