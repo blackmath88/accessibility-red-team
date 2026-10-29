@@ -96,6 +96,8 @@ async function main() {
       const dir = join(out, item.id);
       await mkdir(dir, { recursive: true });
       const context = await browser.newContext({ viewport: VIEWPORT, userAgent: UA });
+      // tsx/esbuild wraps named functions with a __name helper that does not exist in the page; define it there.
+      await context.addInitScript("window.__name = (f) => f;");
       const page = await context.newPage();
       const at = new Date().toISOString();
       const response = await page.goto(item.url, { waitUntil: "domcontentloaded", timeout: 30_000 });
