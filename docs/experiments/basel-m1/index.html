@@ -1,0 +1,128 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Basel M1 Untersuchung</title>
+<style>
+:root{--bg:#fbfbf9;--fg:#1c1d1f;--muted:#5d6168;--line:#d9dad6;--card:#fff;--ok:#1d6b3a;--bad:#a1261e;--warn:#8a5a00;--accent:#2b4fa3;--todo:#8a5a00}
+@media (prefers-color-scheme:dark){:root:not([data-theme=light]){--bg:#141517;--fg:#e8e8e6;--muted:#a3a7ad;--line:#33363b;--card:#1c1e21;--ok:#6fcf8e;--bad:#f08a80;--warn:#e3b45a;--accent:#8fb0ff;--todo:#e3b45a}}
+:root[data-theme=dark]{--bg:#141517;--fg:#e8e8e6;--muted:#a3a7ad;--line:#33363b;--card:#1c1e21;--ok:#6fcf8e;--bad:#f08a80;--warn:#e3b45a;--accent:#8fb0ff;--todo:#e3b45a}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--fg);font:15px/1.5 system-ui,-apple-system,"Segoe UI",sans-serif}
+main{max-width:1080px;margin:0 auto;padding:24px 16px 64px}h1{font-size:1.6rem;margin:0 0 4px}h2{font-size:1.2rem;margin:36px 0 8px;border-top:1px solid var(--line);padding-top:20px}h3{font-size:1rem;margin:18px 0 6px}
+.lead,.small{color:var(--muted)}.small{font-size:.82rem}.tag{display:inline-block;border:1px solid var(--line);border-radius:4px;padding:0 6px;font-size:.8rem;color:var(--muted);margin:0 4px 4px 0}
+.todo{color:var(--todo);font-weight:600}.todo::before{content:"TODO · "}
+.case{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:14px 16px;margin:16px 0}
+.case dl{margin:0}.case dt{font-weight:700;margin-top:12px}.case dd{margin:2px 0 0}
+.tw{overflow-x:auto;border:1px solid var(--line);border-radius:6px;background:var(--card)}table{border-collapse:collapse;width:100%;font-size:.85rem}th,td{padding:6px 8px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}
+figure{margin:10px 0}figcaption{font-size:.8rem;color:var(--muted)}
+.diagram{display:block;width:100%;max-width:420px;height:auto}
+.st rect{fill:var(--card);stroke-width:2}.st .lbl{fill:var(--fg);font:600 14px system-ui,sans-serif}.st .sub{fill:var(--muted);font:12px system-ui,sans-serif}
+.st-todo rect{stroke:var(--todo);stroke-dasharray:2 4}.st-impl rect{stroke:var(--ok)}.st-prop rect{stroke:var(--muted);stroke-dasharray:7 5}
+.arr{stroke:var(--muted);stroke-width:1.5;fill:none}#ah path{fill:var(--muted)}
+.legend{list-style:none;padding:0;display:flex;flex-wrap:wrap;gap:8px 18px;font-size:.85rem}.legend span{display:inline-block;width:22px;height:12px;border:2px solid;border-radius:3px;margin-right:6px;vertical-align:-1px}
+.lg-impl{border-color:var(--ok)}.lg-prop{border-color:var(--muted);border-style:dashed!important}.lg-todo{border-color:var(--todo);border-style:dotted!important}
+a{color:var(--accent)}a:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+</style>
+</head>
+<body><main>
+<h1>Basel M1: adaptive Untersuchung des Pflichtfeld-Hinweises</h1>
+<p class="lead">Privater Arbeitsbericht (Gerüst). Alle Inhalte unten sind Platzhalter; dieses Dokument enthält noch keine Ergebnisse, keine Konformitätsaussage und keine Freigabe.</p>
+<p><span class="tag">Gerüst – nicht ausgefüllt</span><span class="tag">keine Ergebnisse</span><span class="tag">lokale Mechanismus-Kopien sind kein Basel-Beleg</span></p>
+
+<h2 id="ueberblick">Überblick</h2>
+<p class="todo" data-todo="overview">Fragestellung, Stand, Code-Commit, Laufzeit, Modelle und Kosten eintragen.</p>
+<p class="small">Ausgangsbeobachtung (aus PR #53, Basel-Feldbericht): Hinweis «* muss ausgefüllt werden» auf www.bs.ch/apps/zonensuche gerendert ≈1,12:1, berechnet 4,48:1. Ursache offen; zu prüfende Hypothesen: Ausschnitt-/Kantenfehler, geerbte Deckkraft, halbtransparente klebende Überlagerung, Scroll-/Clip-Zustand.</p>
+
+<h2 id="loop">Loop: implementiert vs. vorgeschlagen</h2>
+<figure>
+<svg class="diagram" viewBox="0 0 360 586" role="img" aria-labelledby="loop-title loop-desc">
+  <title id="loop-title">Loop: implementiert vs. vorgeschlagen</title>
+  <desc id="loop-desc">Neun Schritte von Entdecken bis Synthese; der Status jedes Schritts ist noch ein Platzhalter.</desc>
+  <defs><marker id="ah" viewBox="0 0 10 10" refX="5" refY="8" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0 0 L10 0 L5 10 z" transform="rotate(-90 5 5)"/></marker></defs>
+  <g id="step-discover" class="st st-todo" data-step="discover"><!-- TODO Koordinator: Klasse st-impl oder st-prop setzen -->
+    <rect x="20" y="10" width="320" height="46" rx="6"/>
+    <text x="36" y="30" class="lbl">1. Entdecken</text>
+    <text x="36" y="47" class="sub">TODO: Status (discover)</text>
+  </g>
+  <path class="arr" d="M180 58 V70" marker-end="url(#ah)"/>
+  <g id="step-capture" class="st st-todo" data-step="capture"><!-- TODO Koordinator: Klasse st-impl oder st-prop setzen -->
+    <rect x="20" y="74" width="320" height="46" rx="6"/>
+    <text x="36" y="94" class="lbl">2. Erfassen (Baseline)</text>
+    <text x="36" y="111" class="sub">TODO: Status (capture)</text>
+  </g>
+  <path class="arr" d="M180 122 V134" marker-end="url(#ah)"/>
+  <g id="step-hypothesize" class="st st-todo" data-step="hypothesize"><!-- TODO Koordinator: Klasse st-impl oder st-prop setzen -->
+    <rect x="20" y="138" width="320" height="46" rx="6"/>
+    <text x="36" y="158" class="lbl">3. Hypothesen bilden</text>
+    <text x="36" y="175" class="sub">TODO: Status (hypothesize)</text>
+  </g>
+  <path class="arr" d="M180 186 V198" marker-end="url(#ah)"/>
+  <g id="step-generate" class="st st-todo" data-step="generate"><!-- TODO Koordinator: Klasse st-impl oder st-prop setzen -->
+    <rect x="20" y="202" width="320" height="46" rx="6"/>
+    <text x="36" y="222" class="lbl">4. Probe generieren</text>
+    <text x="36" y="239" class="sub">TODO: Status (generate)</text>
+  </g>
+  <path class="arr" d="M180 250 V262" marker-end="url(#ah)"/>
+  <g id="step-critic" class="st st-todo" data-step="critic"><!-- TODO Koordinator: Klasse st-impl oder st-prop setzen -->
+    <rect x="20" y="266" width="320" height="46" rx="6"/>
+    <text x="36" y="286" class="lbl">5. Kritiker prüft Probe</text>
+    <text x="36" y="303" class="sub">TODO: Status (critic)</text>
+  </g>
+  <path class="arr" d="M180 314 V326" marker-end="url(#ah)"/>
+  <g id="step-execute" class="st st-todo" data-step="execute"><!-- TODO Koordinator: Klasse st-impl oder st-prop setzen -->
+    <rect x="20" y="330" width="320" height="46" rx="6"/>
+    <text x="36" y="350" class="lbl">6. Sandbox-Ausführung via Broker</text>
+    <text x="36" y="367" class="sub">TODO: Status (execute)</text>
+  </g>
+  <path class="arr" d="M180 378 V390" marker-end="url(#ah)"/>
+  <g id="step-reproduce" class="st st-todo" data-step="reproduce"><!-- TODO Koordinator: Klasse st-impl oder st-prop setzen -->
+    <rect x="20" y="394" width="320" height="46" rx="6"/>
+    <text x="36" y="414" class="lbl">7. Frisch reproduzieren</text>
+    <text x="36" y="431" class="sub">TODO: Status (reproduce)</text>
+  </g>
+  <path class="arr" d="M180 442 V454" marker-end="url(#ah)"/>
+  <g id="step-judge" class="st st-todo" data-step="judge"><!-- TODO Koordinator: Klasse st-impl oder st-prop setzen -->
+    <rect x="20" y="458" width="320" height="46" rx="6"/>
+    <text x="36" y="478" class="lbl">8. Beurteilen</text>
+    <text x="36" y="495" class="sub">TODO: Status (judge)</text>
+  </g>
+  <path class="arr" d="M180 506 V518" marker-end="url(#ah)"/>
+  <g id="step-synthesis" class="st st-todo" data-step="synthesis"><!-- TODO Koordinator: Klasse st-impl oder st-prop setzen -->
+    <rect x="20" y="522" width="320" height="46" rx="6"/>
+    <text x="36" y="542" class="lbl">9. Synthese / Fallkarte</text>
+    <text x="36" y="559" class="sub">TODO: Status (synthesis)</text>
+  </g>
+</svg>
+<figcaption>Status je Schritt ist ein Platzhalter (<code>st-todo</code>); der Koordinator setzt <code>st-impl</code> oder <code>st-prop</code> und ersetzt «TODO: Status».</figcaption>
+</figure>
+<ul class="legend">
+  <li><span class="lg-impl"></span>implementiert</li>
+  <li><span class="lg-prop"></span>vorgeschlagen / zurückgestellt</li>
+  <li><span class="lg-todo"></span>Status noch offen (TODO)</li>
+</ul>
+
+<h2 id="fall-hinweis">Fallkarte: Pflichtfeld-Hinweis</h2>
+<article class="case" id="case-hint">
+<h3>«* muss ausgefüllt werden» – www.bs.ch/apps/zonensuche</h3>
+<dl>
+  <dt>Vorher</dt><dd class="todo" data-todo="case-before">Baseline-Beobachtung und Unsicherheit.</dd>
+  <dt>KI-Beitrag</dt><dd class="todo" data-todo="case-ai">Hypothesen, generierter/angepasster Probe-Code, Iteration, Links.</dd>
+  <dt>Messung</dt><dd class="todo" data-todo="case-measurement">Was lief, was ausgeschlossen wurde, Gegenbeispiel (lokale Kontrollen), frische Wiederholung.</dd>
+  <dt>Ergebnis</dt><dd class="todo" data-todo="case-result">gestützt / verworfen / offen; Relevanz für die Aufgabe; verbleibende Hilfsmittel-Unsicherheit.</dd>
+  <dt>Verantwortung &amp; Standard</dt><dd class="todo" data-todo="case-responsibility">Geprüfte Quelle; bekannte/unbekannte Zuständigkeiten.</dd>
+  <dt>Ergebnis vs. Baseline</dt><dd class="todo" data-todo="case-vs-baseline">Neue nützliche Evidenz, falsche Hypothesen, Zeit, Prüfaufwand, Kosten.</dd>
+  <dt>Nächster Schritt</dt><dd class="todo" data-todo="case-next">Ein durch das Ergebnis begründeter Schritt.</dd>
+</dl>
+</article>
+
+<h2 id="integritaet">Integritätsmanifest</h2>
+<p class="todo" data-todo="manifest">Hashes für Code, Konfiguration, Modell, generierte Probes, Broker-Aufrufe/-Ablehnungen, Richter-Pakete, Screenshots und fehlgeschlagene Läufe; Speicherort grosser/privater Evidenz ausserhalb von Git.</p>
+<div class="tw"><table>
+<thead><tr><th>Artefakt</th><th>Pfad</th><th>SHA-256</th></tr></thead>
+<tbody><tr><td class="todo" data-todo="manifest-row">Zeile</td><td>–</td><td>–</td></tr></tbody>
+</table></div>
+
+<p class="small">Lokale Fixtures: <code>test/fixtures/investigation/</code> – illustrative Mechanismus-Tests, kein Beleg für die tatsächliche Ursache bei Basel.</p>
+</main></body>
+</html>
