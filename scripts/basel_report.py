@@ -78,7 +78,7 @@ for pg in pages:
     c = pg["counts"]; js = pg["journeys"]
     jp = sum(1 for v in js.values() if v == "pass"); jn = sum(1 for v in js.values() if v == "inapplicable"); ji = len(js) - jp - jn
     runs = " · ".join(f"{k}: {v}" for k, v in pg["runs"].items())
-    p.append(f"<tr><td><a href='{E(pg['url'])}'>{E(pg['id'])}</a><div class='small'>{E(pg['interface'])}{(" · gelandet auf " + E(pg['finalUrl'].split(".ch",1)[1]) + " (Route der Anwendung, gleiches Origin)") if pg['finalUrl'].rstrip('/') != pg['url'].rstrip('/') else ""}</div></td><td>{E(pg['task'])}</td><td class='small'>{E(runs)}</td><td class='num'>{c['violations']} / {c['incomplete']} / {c['passes']} / {c['inapplicable']}</td><td>{jp} / {ji} / {jn}</td></tr>")
+    p.append(f"<tr><td><a href='{E(pg['url'])}'>{E(pg['id'])}</a><div class='small'>{E(pg['interface'])}{(" · gelandet auf " + E(pg['finalUrl'].split(".ch",1)[1]) + " (gleiches Origin; ob Weiterleitung oder Anwendungsroute, wurde nicht festgehalten)") if pg['finalUrl'].rstrip('/') != pg['url'].rstrip('/') else ""}</div></td><td>{E(pg['task'])}</td><td class='small'>{E(runs)}</td><td class='num'>{c['violations']} / {c['incomplete']} / {c['passes']} / {c['inapplicable']}</td><td>{jp} / {ji} / {jn}</td></tr>")
 p.append("</tbody></table></div>")
 p.append("<p class='small'>Wiederkehrende Komponenten (gleiches Element auf mehreren Seiten, einmal gezählt, alle Fundstellen behalten): " + "; ".join(f"{E(c['rule'])} an <code>{E(c['target'][:40])}</code> auf {len(c['pages'])} Seiten" for c in components if len(c["pages"]) > 1) + ". Keine Gesamtnote, keine Rangliste, keine Hochrechnung auf den ganzen Webauftritt.</p>")
 
@@ -122,7 +122,7 @@ p.append(f"""<section class='case'><h3>Negativbefund · «Fokus nicht sichtbar»
 <pre>{E(chr(10).join(f"{s['press']}: {s['focus'].get('tag')} «{s['focus'].get('text','')}» · im Bild: {yn(s['focus'].get('inViewport'))} · Umrandung: {s['focus'].get('outline','–')} · im Cookie-Hinweis: {yn(s['focus'].get('insideConsentBanner'))}" for s in steps))}</pre>
 <p><b>Lehre:</b> Unsere Heuristik erkennt nur Umrandung oder Schatten und mass den Cookie-Hinweis im Feldlauf ausserhalb des Bildausschnitts. Die Markierung ist vorhanden. Das ist eine Verbesserung für unser Werkzeug, kein Befund zu Basel. Beobachtet, aber nicht bewertet: Die ersten Tab-Schritte führen in den Cookie-Hinweis; der vierte verlässt die Seite. Ob der Hinweis den übrigen Inhalt bewusst sperrt, wäre mit Tastatur- und Screenreader-Nutzenden zu klären.</p></section>""")
 
-p.append("""<h2>Alle Anfragen an die öffentlichen Seiten</h2><p class='small'>Vollständige Zählung der Seitenaufrufe auf www.bs.ch und eportal.egov.bs.ch (Unterressourcen der Seiten nicht mitgezählt). Kein anderer Host wurde aufgerufen; keine Weiterleitung, keine Wiederholung, kein Formular.</p>
+p.append("""<h2>Alle Anfragen an die öffentlichen Seiten</h2><p class='small'>Vollständige Zählung der Seitenaufrufe auf www.bs.ch und eportal.egov.bs.ch (Unterressourcen der Seiten nicht mitgezählt). Kein anderer Host wurde aufgerufen; keiner Weiterleitung auf einen anderen Host gefolgt, keine Wiederholung, kein Formular.</p>
 <div class='tw'><table><thead><tr><th>Schritt</th><th class='num'>Aufrufe</th><th>Beleg</th></tr></thead><tbody>
 <tr><td>robots.txt beider Origins (vor der Entdeckung, von Hand mit curl)</td><td class='num'>2</td><td class='small'>discovery/robots-*.txt (ePortal-Datei leer)</td></tr>
 <tr><td>Entdeckung (HTML, Tiefe ≤2, je 10 s Abstand)</td><td class='num'>32</td><td class='small'>discovery/ledger.json</td></tr>
