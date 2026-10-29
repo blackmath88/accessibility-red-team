@@ -8,7 +8,7 @@
 // the Mistral key in ADAPTIVE_MISTRAL_API_KEY. The local endpoint needs no credential.
 //   npm run adaptive:abc -- [--segment s1] [--repeats 1] [--fixtures dev-k1] [--conditions A,B] [--live --confirm <hash>]
 import { execFileSync } from "node:child_process";
-import { appendFile, mkdir, readFile, writeFile } from "node:fs/promises";
+import { appendFile, mkdir, readdir, readFile, writeFile } from "node:fs/promises";
 import { join, resolve } from "node:path";
 import { BudgetedProvider, type Pricing, type TrialBudget } from "./budget.js";
 import { type ExplorationCondition, type Limits } from "./contracts.js";
@@ -43,6 +43,16 @@ export const MANIFEST = {
 };
 
 const LOCAL_KEY_ENV = "ADAPTIVE_LOCAL_NO_AUTH";
+export const OWNER_CAP_USD = 5;
+
+async function priorSpend(outRoot: string): Promise<number> {
+  let total = 0;
+  for (const entry of await readdir(resolve(outRoot)).catch(() => [] as string[])) {
+    const ledger = await readFile(join(resolve(outRoot), entry, "ledger.json"), "utf8").catch(() => null);
+    if (ledger) total += (JSON.parse(ledger) as { consultant: { spend: number } }).consultant.spend;
+  }
+  return total;
+}
 
 function args() {
   const argv = process.argv.slice(2);
@@ -74,7 +84,10 @@ async function main() {
   console.log(`  caps per session: ${JSON.stringify(MANIFEST.limits)}\n  local ${MANIFEST.local.model} (${MANIFEST.local.base}) at loopback; consultant ${MANIFEST.consultant.model}, <= ${MAX_CONSULTS}/session, budget ${MANIFEST.consultantBudget.maxSpend} USD per invocation\n  confirm hash ${hash}`);
   if (!a.live) return;
   if (a.confirm !== hash) throw new Error("--confirm does not match this plan and code");
-  if (execFileSync("git", ["status", "--porcelain", "--", "src", "package.json", "package-lock.json", "test/fixtures"], { encoding: "utf8" }).trim()) throw new Error("uncommitted code; commit before a live run");
+  if (sha.endsWith("+dirty")) throw new Error("uncommitted code; commit before a live run");
+  // Owner cap across every invocation: refuse when earlier ledgers plus this invocation's ceiling could exceed it.
+  const spent = await priorSpend(a.outRoot);
+  if (a.conditions.includes("C") && spent + MANIFEST.consultantBudget.maxSpend > OWNER_CAP_USD) throw new Error(`owner cap ${OWNER_CAP_USD} USD: ${spent.toFixed(4)} already spent, this run may spend ${MANIFEST.consultantBudget.maxSpend}`);
   if (a.conditions.includes("C") && !process.env[MANIFEST.consultant.apiKeyEnv]) throw new Error(`${MANIFEST.consultant.apiKeyEnv} is not set`);
 
   const dir = resolve(a.outRoot, `${a.segment}-${new Date().toISOString().replace(/[:.]/g, "-")}`);
@@ -123,6 +136,7 @@ async function main() {
       }
     }
   } finally {
+    await writeFile(join(dir, "ledger.json"), JSON.stringify({ consultant: consultant.ledger, pricing: MANIFEST.consultant.pricing }, null, 2));
     await contained.close();
     await server.close();
   }

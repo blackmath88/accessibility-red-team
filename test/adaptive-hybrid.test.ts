@@ -95,3 +95,11 @@ describe("repeat-guard repair (opt-in executor option)", async () => {
     await harness.close();
   });
 });
+
+describe("hybrid advisory may not author findings (review minor 3)", () => {
+  it("drops a suggested finish", () => {
+    const advisory = validateAdvisory(JSON.stringify({ interpretation: "x", suggestedAction: { type: "finish", verdict: "complete", summary: "s", candidates: [] }, evidenceRefs: [], confidence: "high" }), observation())!;
+    assert.equal(advisory.suggestedAction, null);
+    assert.ok(advisory.dropped.some((d) => d.includes("may not author findings")));
+  });
+});

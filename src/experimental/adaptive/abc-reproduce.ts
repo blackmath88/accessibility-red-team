@@ -91,7 +91,9 @@ async function main() {
         const repair = item.repair;
         await page.route(`${server.origin}${item.path}`, async (route) => {
           const response = await route.fetch();
-          const body = (await response.text()).replace(repair.find, repair.replace);
+          const original = await response.text();
+          const body = original.replace(repair.find, repair.replace);
+          if (body === original) throw new Error(`repair for ${item.id} did not apply: "${repair.find}" not found`);
           await route.fulfill({ response, body });
         });
       }

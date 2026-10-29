@@ -63,7 +63,9 @@ export function validateAdvisory(text: string, observation: Observation): Adviso
       action.data.type === "navigate" ? observation.legal.navigate.includes(action.data.url)
         : action.data.type === "activate" ? observation.legal.activate.includes(action.data.targetRef)
           : observation.legal.simple.includes(action.data.type));
-    if (legal) suggestedAction = action.data; else dropped.push("suggestedAction not legal in this observation");
+    // Exploration advice only: a ready-made finish (with findings) would let the consultant author C's claims (review minor 3).
+    if (legal && action.data.type === "finish") dropped.push("suggestedAction finish dropped: the consultant may not author findings");
+    else if (legal) suggestedAction = action.data; else dropped.push("suggestedAction not legal in this observation");
   }
   return { interpretation: parsed.data.interpretation, suggestedAction, evidenceRefs, confidence: parsed.data.confidence, dropped };
 }

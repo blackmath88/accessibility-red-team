@@ -31,8 +31,18 @@ def path_of(url):
 
 RULE_PREFIX = re.compile(r"^R\d+-[a-z-]+:\s*")  # the scheduler's rule ids would reveal the algorithmic arm; stripped in the judge copy only
 
+URL = re.compile(r"https?://[^\s\"')]+")
+FIXTURE_DIR = re.compile(r"/dev-k\d+(?=/)")
+
+def scrub(text):
+    """Free text from any tester: drop origins and the fixture directory from quoted URLs."""
+    if not isinstance(text, str):
+        return text
+    text = URL.sub(lambda m: path_of(m.group(0)), text)
+    return FIXTURE_DIR.sub("", text)
+
 def note(text):
-    return RULE_PREFIX.sub("", text) if isinstance(text, str) else text
+    return scrub(RULE_PREFIX.sub("", text)) if isinstance(text, str) else text
 
 def facts(dom):
     keep = {}
@@ -73,11 +83,11 @@ for i, s in enumerate(sessions):
     claims = []
     for c in cands:
         f = c.get("finding") or {}
-        claims.append({"claimId": c["id"], "kind": "candidate_finding", "harnessStatus": c["status"], "category": f.get("category"), "claim": f.get("claim"),
-                       "reproductionSteps": f.get("reproductionSteps"), "citedEvidence": [evidence(r) for r in f.get("observationRefs", [])]})
+        claims.append({"claimId": c["id"], "kind": "candidate_finding", "harnessStatus": c["status"], "category": f.get("category"), "claim": scrub(f.get("claim")),
+                       "reproductionSteps": [scrub(x) for x in (f.get("reproductionSteps") or [])], "citedEvidence": [evidence(r) for r in f.get("observationRefs", [])]})
     proposal = (result.get("completion") or {}).get("proposal") if isinstance(result.get("completion"), dict) else None
     claims.append({"claimId": "completion", "kind": "completion_proposal", "claim": f"tester proposed: {proposal or 'no finish proposal (session ended without finish)'}",
-                   "finishSummary": re.sub(r"^frontier-scheduler/v\d+:\s*", "", result.get("finishSummary") or "") or None, "sessionEnd": result.get("status")})
+                   "sessionEnded": "with a finish proposal" if proposal else "without a finish proposal"})
     packet = {"arm": arm, "userTask": "Check this synthetic municipal-style test site for keyboard and screen-reader barriers: skip links, accessible names, dialog focus handling.",
               "constraint": "Read-only exploration of loopback test pages; no form submission.", "claims": claims,
               "allEvidenceIndex": [{"id": k, "kind": v["kind"], "page": path_of(v["url"]), "targetRef": (v.get("target") or {}).get("ref"), "testerNote": note(v.get("note"))} for k, v in ev.items()]}
@@ -89,4 +99,12 @@ with open(os.path.join(out_dir, "..", os.path.basename(out_dir.rstrip("/")) + ".
 digest = {f: hashlib.sha256(open(os.path.join(out_dir, f), "rb").read()).hexdigest() for f in sorted(os.listdir(out_dir)) if f.endswith(".json")}
 with open(os.path.join(out_dir, "INPUT_HASHES.json"), "w") as fh:
     json.dump(digest, fh, indent=1)
-print(f"{len(sessions)} packets -> {out_dir}")
+# Self-check: no harness origin, fixture name, scheduler label or scheduler finish sentence may reach the judge.
+FORBIDDEN = ["127.0.0.1", "localhost", "dev-k", "frontier", "scheduler", "qwen", "mistral", "report_candidate or in this finish"]
+for f in os.listdir(out_dir):
+    if f.endswith(".json") and f.startswith("arm-"):
+        text = open(os.path.join(out_dir, f)).read()
+        hits = [w for w in FORBIDDEN if w in text]
+        if hits:
+            raise SystemExit(f"leak in {f}: {hits}")
+print(f"{len(sessions)} packets -> {out_dir} (self-check passed; A's templated claim wording remains recognisable, see ABC_LOCAL_HYBRID.md)")
