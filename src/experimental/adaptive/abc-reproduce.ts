@@ -4,12 +4,12 @@
 // With --repaired, the same steps run against a repaired copy of the page served through a request route (demonstration
 // segment only; the fixture files themselves are not changed and no scored run uses the repaired copy).
 //   npm run adaptive:abc-reproduce -- [--repaired] [--out runs/abc/repro]
-import { mkdir, writeFile } from "node:fs/promises";
+import { mkdir, readFile, writeFile } from "node:fs/promises";
 import { join, resolve } from "node:path";
 import type { Page } from "playwright";
 import { launchContainedBrowser } from "./containment.js";
 import { CONTEXT_OPTIONS } from "./policy.js";
-import { startFixtures } from "../../../test/fixtures/adaptive-sites/server.js";
+import { FIXTURE_DIR, startFixtures } from "../../../test/fixtures/adaptive-sites/server.js";
 
 type Step = { action: string; focus: { tag: string; id: string | null; name: string } | null; note?: string };
 type Case = { id: string; path: string; repair?: { find: string; replace: string; why: string }; run(page: Page, shot: (name: string) => Promise<string>, steps: Step[]): Promise<Record<string, unknown>> };
@@ -89,13 +89,12 @@ async function main() {
       const page = await context.newPage();
       if (repaired && item.repair) {
         const repair = item.repair;
-        await page.route(`${server.origin}${item.path}`, async (route) => {
-          const response = await route.fetch();
-          const original = await response.text();
-          const body = original.replace(repair.find, repair.replace);
-          if (body === original) throw new Error(`repair for ${item.id} did not apply: "${repair.find}" not found`);
-          await route.fulfill({ response, body });
-        });
+        // The repaired copy is built from the fixture file on disk (route.fetch would go through the containment proxy, which
+        // refuses it); the original file is never modified.
+        const original = await readFile(join(FIXTURE_DIR, item.path), "utf8");
+        const body = original.replace(repair.find, repair.replace);
+        if (body === original) throw new Error(`repair for ${item.id} did not apply: "${repair.find}" not found`);
+        await page.route(`${server.origin}${item.path}`, (route) => route.fulfill({ status: 200, contentType: "text/html; charset=utf-8", body }));
       }
       await page.goto(`${server.origin}${item.path}`, { waitUntil: "domcontentloaded" });
       const steps: Step[] = [];
