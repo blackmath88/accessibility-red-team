@@ -108,6 +108,15 @@ def validate(data):
             err(f"{key} must be an array")
     if errors:
         return errors
+    for key in ("entries", "organisations", "webProperties", "edges", "batchProposal"):
+        for i, r in enumerate(data[key]):
+            if not isinstance(r, dict):
+                err(f"{key}[{i}]: must be an object, got {type(r).__name__}")
+    for i, e in enumerate(data["edges"]):
+        if isinstance(e, dict) and any(not isinstance(ev, dict) for ev in e.get("evidence") or []):
+            err(f"edges[{i}] ({e.get('id')}): every evidence item must be an object")
+    if errors:
+        return errors
 
     entries, orgs, wps, edges = data["entries"], data["organisations"], data["webProperties"], data["edges"]
 
@@ -258,7 +267,11 @@ def main(argv=None):
         print(f"error: {exc}", file=sys.stderr)
         return 2
 
-    errors = validate(data)
+    try:
+        errors = validate(data)
+    except (AttributeError, TypeError) as exc:
+        # A record of the wrong JSON type (e.g. a string where an object is expected).
+        errors = [f"malformed record (expected objects/arrays as in SCHEMA.md): {exc}"]
     if errors:
         print(f"{args.data}: {len(errors)} validation error(s):", file=sys.stderr)
         for e in errors:
