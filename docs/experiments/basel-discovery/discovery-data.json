@@ -5108,7 +5108,9 @@
    "serviceId": null,
    "ring": "core",
    "reason": "Gemeindedienste von Bettingen auf dem Kantonsauftritt – andere Trägerschaft, gleiche Vorlage.",
-   "authorisationNeeded": "new approval (same origin as #53; that batch is used up)"
+   "authorisationNeeded": "approved by the owner (29.10.2026) and used once in ring 1; a further run needs a new approval",
+   "executedIn": "ring1-20261029",
+   "assessmentId": "r01"
   },
   {
    "rank": 2,
@@ -5117,7 +5119,9 @@
    "serviceId": null,
    "ring": "core",
    "reason": "Einbürgerung: wichtige Bürgeraufgabe mit Bürgergemeinde-Bezug.",
-   "authorisationNeeded": "new approval (same origin as #53; that batch is used up)"
+   "authorisationNeeded": "approved by the owner (29.10.2026) and used once in ring 1; a further run needs a new approval",
+   "executedIn": "ring1-20261029",
+   "assessmentId": "r02"
   },
   {
    "rank": 3,
@@ -5126,7 +5130,9 @@
    "serviceId": null,
    "ring": "core",
    "reason": "Judikative auf dem Kantonsauftritt; Zugang zu Gerichten.",
-   "authorisationNeeded": "new approval (same origin as #53; that batch is used up)"
+   "authorisationNeeded": "approved by the owner (29.10.2026) and used once in ring 1; a further run needs a new approval",
+   "executedIn": "ring1-20261029",
+   "assessmentId": "r03"
   },
   {
    "rank": 4,
@@ -5135,7 +5141,9 @@
    "serviceId": "S05",
    "ring": "core",
    "reason": "Bisher nicht geprüft; Bezahlschritt-Grenze (eServices).",
-   "authorisationNeeded": "new approval (same origin as #53; that batch is used up)"
+   "authorisationNeeded": "approved by the owner (29.10.2026) and used once in ring 1; a further run needs a new approval",
+   "executedIn": "ring1-20261029",
+   "assessmentId": "r04-s05"
   },
   {
    "rank": 5,
@@ -5144,7 +5152,9 @@
    "serviceId": "S13",
    "ring": "core",
    "reason": "Zielgruppe direkt betroffen; bisher nicht geprüft.",
-   "authorisationNeeded": "new approval (same origin as #53; that batch is used up)"
+   "authorisationNeeded": "approved by the owner (29.10.2026) and used once in ring 1; a further run needs a new approval",
+   "executedIn": "ring1-20261029",
+   "assessmentId": "r05-s13"
   },
   {
    "rank": 6,
@@ -5153,7 +5163,9 @@
    "serviceId": "S23",
    "ring": "core",
    "reason": "Barrierefreie Kommunikation; Videos (Basel nennt Videos selbst als Einschränkung).",
-   "authorisationNeeded": "new approval (same origin as #53; that batch is used up)"
+   "authorisationNeeded": "approved by the owner (29.10.2026) and used once in ring 1; a further run needs a new approval",
+   "executedIn": "ring1-20261029",
+   "assessmentId": "r06-s23"
   },
   {
    "rank": 7,
@@ -5162,7 +5174,9 @@
    "serviceId": "S09",
    "ring": "core",
    "reason": "Nachtest der reproduzierten #53-Beobachtung (Pflichtfeld-Hinweis).",
-   "authorisationNeeded": "new approval (same origin as #53; that batch is used up)"
+   "authorisationNeeded": "approved by the owner (29.10.2026) and used once in ring 1; a further run needs a new approval",
+   "executedIn": "ring1-20261029",
+   "assessmentId": "r07-s09"
   },
   {
    "rank": 8,
@@ -5235,6 +5249,20 @@
    "ring": "external_dependency",
    "reason": "Externer Umzugsdienst, den der Kanton für «Umzug melden» verlinkt.",
    "authorisationNeeded": "new explicit scope (new origin)"
+  }
+ ],
+ "assessmentRounds": [
+  {
+   "id": "field53-20261029",
+   "pages": 12,
+   "report": "../basel-report/index.html",
+   "status": "done; approval used"
+  },
+  {
+   "id": "ring1-20261029",
+   "pages": 7,
+   "report": "../basel-ring1/index.html",
+   "status": "done; approval used"
   }
  ]
 }

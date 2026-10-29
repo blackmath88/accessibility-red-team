@@ -17,13 +17,13 @@ Unbekannt bleiben: das Verhältnis Einwohnergemeinde Stadt Basel ↔ Kantonsbeh�
 Website und Trägerschaft der Bürgergemeinde Basel (kein offizieller Rückverweis gefunden), Bürgergemeinde Riehen (nur Planungshinweis),
 technische Betreiber der meisten Institutions-Websites, Trägerschaft von Ausgleichskasse und IV-Stelle (nicht im Beteiligungsspiegel).
 
-## Nächste Prüf-Stichprobe (Vorschlag, 15 Seiten – nichts ausgeführt)
+## Nächste Prüf-Stichprobe (Vorschlag, 15 Seiten; Ränge 1–7 als Ring 1 ausgeführt)
 
 Kriterien: Bedeutung für Nutzende, Vielfalt der Oberflächen, belegte Trägerschaft und Abdeckung von Grenzen.
 
 | # | Ring | Seite | Grund | Autorisierung |
 |---|---|---|---|---|
-| 1–7 | Kern | Bettingen-Online-Dienste; Einbürgerungen; Gerichte; Wegzug melden (S05); Menschen mit Behinderung (S13); Gebärdensprache (S23); Nachtest Zonensuche (S09) | ungeprüfte Kernaufgaben, andere Träger auf gleicher Vorlage, Nachtest der #53-Beobachtung | **neue Freigabe nötig** (gleiche Origins wie #53) |
+| 1–7 | Kern | Bettingen-Online-Dienste; Einbürgerungen; Gerichte; Wegzug melden (S05); Menschen mit Behinderung (S13); Gebärdensprache (S23); Nachtest Zonensuche (S09) | ungeprüfte Kernaufgaben, andere Träger auf gleicher Vorlage, Nachtest der #53-Beobachtung | **am 29.10.2026 freigegeben und einmal ausgeführt** (Ring 1, siehe `../basel-ring1/`); weitere Läufe brauchen eine neue Freigabe |
 | 8–13 | Weitere öffentliche | riehen.ch; grosserrat.bs.ch; bvb.ch/de (in der Entdeckung 502); unispital-basel.ch; iwb.ch; unibas.ch/de | eigene Gemeinde/Legislative, 100 %-Anstalten, gemeinsame Trägerschaft | **neue ausdrückliche Freigabe nötig** |
 | 14–15 | Extern | eservices.egov.bs.ch (nur öffentliche Einstiegsseite, keine Eingabe); eumzug.swiss | Transaktionsgrenze der Aufgabe «Umzug melden» | **neue ausdrückliche Freigabe nötig** |
 
@@ -35,5 +35,6 @@ Es gibt keinen belegten Nenner aller Webangebote der Behörden; die Karte ist ni
 
 ## Ein nächster Schritt
 
-Die Eigentümerin bzw. der Eigentümer entscheidet über eine neue, gleich begrenzte Prüffreigabe: zuerst die sieben Kernseiten
-(Ring 1, gleiche Origins wie #53), danach gegebenenfalls Ring 2. Ohne neue Freigabe wird nichts geprüft.
+Ring 1 ist ausgeführt (7 Seiten, 14 Läufe, keine neuen seitenspezifischen Kandidaten; Nachtest der Abfallzonen-Suche bestätigt die
+#53-Beobachtung, siehe `../basel-ring1/`). Über Ring 2 (sechs Startseiten anderer Träger) entscheidet die Eigentümerin bzw. der Eigentümer
+separat; ohne neue Freigabe wird nichts geprüft.

@@ -215,6 +215,15 @@ data["batchProposal"] = [{"rank": i + 1, "url": u, "propertyId": wp, "serviceId"
                          for i, (ring, u, wp, sid, why) in enumerate(BATCH)]
 for p in data["webProperties"]:
     if any(b["propertyId"] == p["id"] for b in data["batchProposal"]): p["status"]["selected"] = True
+# Ring 1 (ranks 1-7): approved by the owner on 29.10.2026 and run once (docs/experiments/basel-ring1/); that approval is used.
+ring1 = {q["url"]: q["id"] for q in json.load(open("docs/experiments/basel-ring1/batch-queue.json"))}
+for b in data["batchProposal"]:
+    if b["url"] in ring1:
+        b.update(executedIn="ring1-20261029", assessmentId=ring1[b["url"]],
+                 authorisationNeeded="approved by the owner (29.10.2026) and used once in ring 1; a further run needs a new approval")
+data["assessmentRounds"] = [
+    {"id": "field53-20261029", "pages": 12, "report": "../basel-report/index.html", "status": "done; approval used"},
+    {"id": "ring1-20261029", "pages": len(ring1), "report": "../basel-ring1/index.html", "status": "done; approval used"}]
 data["lastDiscovery"] = "2026-10-29"
 json.dump(data, open(P, "w"), indent=1, ensure_ascii=False)
 print(len(orgs), "organisations,", len(props), "properties,", len(edges), "edges,", len(data["batchProposal"]), "proposed pages")

@@ -1,0 +1,270 @@
+{
+ "schema": "art/basel-ring1-results/v1",
+ "codeSha": "620e23277e12cde5620035d5c8fd8bc8c38d3b8c",
+ "startedAt": "2026-10-29T21:29:56.479965+00:00",
+ "wallSeconds": 132.3,
+ "pages": [
+  {
+   "id": "r01",
+   "url": "https://www.bs.ch/bettingen/gemeinde/dienstleistungen-behoerdengaenge-online-durchfuehren",
+   "task": "Gemeindedienste von Bettingen auf dem Kantonsauftritt – ande",
+   "serviceId": null,
+   "counts": {
+    "violations": 3,
+    "incomplete": 1,
+    "passes": 45,
+    "inapplicable": 43
+   },
+   "runs": {
+    "scan": "ok",
+    "journey": "ok"
+   },
+   "journeys": {
+    "keyboard.focus-trace": "incomplete",
+    "skip-link.same-page": "incomplete",
+    "expandable.aria-expanded": "pass",
+    "dialog.focus-behavior": "incomplete"
+   }
+  },
+  {
+   "id": "r02",
+   "url": "https://www.bs.ch/themen/persoenliches-und-wohnen/einbuergerungen",
+   "task": "Einbürgerung: wichtige Bürgeraufgabe mit Bürgergemeinde-Bezu",
+   "serviceId": null,
+   "counts": {
+    "violations": 3,
+    "incomplete": 1,
+    "passes": 44,
+    "inapplicable": 44
+   },
+   "runs": {
+    "scan": "ok",
+    "journey": "ok"
+   },
+   "journeys": {
+    "keyboard.focus-trace": "incomplete",
+    "skip-link.same-page": "incomplete",
+    "expandable.aria-expanded": "pass",
+    "dialog.focus-behavior": "incomplete"
+   }
+  },
+  {
+   "id": "r03",
+   "url": "https://www.bs.ch/willkommen-bei-den-gerichten",
+   "task": "Judikative auf dem Kantonsauftritt",
+   "serviceId": null,
+   "counts": {
+    "violations": 3,
+    "incomplete": 1,
+    "passes": 44,
+    "inapplicable": 44
+   },
+   "runs": {
+    "scan": "ok",
+    "journey": "ok"
+   },
+   "journeys": {
+    "keyboard.focus-trace": "incomplete",
+    "skip-link.same-page": "incomplete",
+    "expandable.aria-expanded": "pass",
+    "dialog.focus-behavior": "incomplete"
+   }
+  },
+  {
+   "id": "r04-s05",
+   "url": "https://www.bs.ch/themen/persoenliches-und-wohnen/umzug-und-wegzug/wegzug-vom-kanton-melden",
+   "task": "Abmeldung",
+   "serviceId": "S05",
+   "counts": {
+    "violations": 3,
+    "incomplete": 1,
+    "passes": 44,
+    "inapplicable": 44
+   },
+   "runs": {
+    "scan": "ok",
+    "journey": "ok"
+   },
+   "journeys": {
+    "keyboard.focus-trace": "incomplete",
+    "skip-link.same-page": "incomplete",
+    "expandable.aria-expanded": "pass",
+    "dialog.focus-behavior": "incomplete"
+   }
+  },
+  {
+   "id": "r05-s13",
+   "url": "https://www.bs.ch/themen/finanzielle-hilfe/menschen-mit-behinderung",
+   "task": "Leistungen finden",
+   "serviceId": "S13",
+   "counts": {
+    "violations": 3,
+    "incomplete": 1,
+    "passes": 43,
+    "inapplicable": 44
+   },
+   "runs": {
+    "scan": "ok",
+    "journey": "ok"
+   },
+   "journeys": {
+    "keyboard.focus-trace": "incomplete",
+    "skip-link.same-page": "incomplete",
+    "expandable.aria-expanded": "pass",
+    "dialog.focus-behavior": "incomplete"
+   }
+  },
+  {
+   "id": "r06-s23",
+   "url": "https://www.bs.ch/gebaerdensprache",
+   "task": "Informationen in Gebärdensprache",
+   "serviceId": "S23",
+   "counts": {
+    "violations": 2,
+    "incomplete": 1,
+    "passes": 46,
+    "inapplicable": 42
+   },
+   "runs": {
+    "scan": "ok",
+    "journey": "ok"
+   },
+   "journeys": {
+    "keyboard.focus-trace": "incomplete",
+    "skip-link.same-page": "incomplete",
+    "expandable.aria-expanded": "pass",
+    "dialog.focus-behavior": "incomplete"
+   }
+  },
+  {
+   "id": "r07-s09",
+   "url": "https://www.bs.ch/apps/zonensuche",
+   "task": "Abfuhrzone zur Adresse",
+   "serviceId": "S09",
+   "counts": {
+    "violations": 4,
+    "incomplete": 1,
+    "passes": 43,
+    "inapplicable": 45
+   },
+   "runs": {
+    "scan": "ok",
+    "journey": "ok"
+   },
+   "journeys": {
+    "keyboard.focus-trace": "incomplete",
+    "skip-link.same-page": "incomplete",
+    "expandable.aria-expanded": "pass",
+    "dialog.focus-behavior": "incomplete"
+   }
+  }
+ ],
+ "violationComponents": [
+  {
+   "rule": "axe.landmark-main-is-top-level",
+   "target": "main",
+   "pages": [
+    "r01",
+    "r02",
+    "r03",
+    "r04-s05",
+    "r05-s13",
+    "r06-s23",
+    "r07-s09"
+   ]
+  },
+  {
+   "rule": "axe.aria-allowed-attr",
+   "target": "#searchinput",
+   "pages": [
+    "r01",
+    "r02",
+    "r03",
+    "r04-s05",
+    "r05-s13",
+    "r06-s23"
+   ]
+  },
+  {
+   "rule": "axe.region",
+   "target": ".mb-30",
+   "pages": [
+    "r01",
+    "r02",
+    "r03",
+    "r04-s05",
+    "r05-s13"
+   ]
+  },
+  {
+   "rule": "axe.region",
+   "target": "#search-privacy-hint",
+   "pages": [
+    "r01",
+    "r02",
+    "r03",
+    "r04-s05",
+    "r05-s13"
+   ]
+  },
+  {
+   "rule": "axe.region",
+   "target": ".bk-main-canvas > div > h1",
+   "pages": [
+    "r01",
+    "r02",
+    "r04-s05",
+    "r05-s13"
+   ]
+  },
+  {
+   "rule": "axe.region",
+   "target": ".h-\\[250px\\] > h3",
+   "pages": [
+    "r01",
+    "r03",
+    "r04-s05",
+    "r05-s13"
+   ]
+  },
+  {
+   "rule": "axe.region",
+   "target": "h3",
+   "pages": [
+    "r02"
+   ]
+  },
+  {
+   "rule": "axe.color-contrast",
+   "target": ".text-xs",
+   "pages": [
+    "r07-s09"
+   ]
+  },
+  {
+   "rule": "axe.empty-heading",
+   "target": ".text-gray-900",
+   "pages": [
+    "r07-s09"
+   ]
+  },
+  {
+   "rule": "axe.heading-order",
+   "target": ".text-xl",
+   "pages": [
+    "r07-s09"
+   ]
+  }
+ ],
+ "zonensucheRetest": {
+  "page": "r07-s09",
+  "screenshot": "r07-s09/scan/page.png (Scanner, ganzseitig, 1440 px breit)",
+  "region": "160x20+950+382",
+  "darkestGrey": 242,
+  "contrastOnWhite": 1.12,
+  "compareWith53": {
+   "darkestGrey": 242,
+   "contrastOnWhite": 1.12
+  }
+ }
+}
