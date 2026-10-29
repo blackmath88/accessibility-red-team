@@ -1,0 +1,30 @@
+<!doctype html>
+<!-- Lokale Mechanismus-Kopie – keine Basel-Seite. Fixture «fixed-banner»: narrow single-column layout; the hint is plain #777
+     on white (no overlay), but an opaque fixed banner (bottom 0, z-index 99999) covers it in the loaded state and the
+     page is tall enough to scroll the hint above the banner. Tests whether a probe detects a fixed occluder anywhere above
+     the hint in the stack and measures the unoccluded state. Illustrative mechanism test, not evidence of Basel's deployed
+     cause. No external assets, no scripts. -->
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>fixed-banner – Lokale Mechanismus-Kopie – keine Basel-Seite</title>
+<style>
+html,body{margin:0;background:#f3f4f2;font:16px/1.5 Arial,Helvetica,sans-serif;color:#1c1d1f}
+#fixture-banner{margin:0;padding:8px 16px;background:#fff3c4;color:#3d2e00;border-bottom:2px solid #8a5a00;font-weight:700}
+#card{margin:300px 15px 1200px;padding:10px 20px 20px;background:#fff;border:1px solid #d9dad6;border-radius:8px}
+#zone-heading{margin:0 0 8px;font-size:20px;line-height:28px;font-weight:700;color:#15803d}
+#required-hint{font-size:12px;line-height:16px;color:#777}
+#consent{position:fixed;left:0;right:0;bottom:0;height:62%;z-index:99999;background:rgb(221,236,222);padding:40px 20px;box-sizing:border-box}
+#consent p{margin:0;font-size:18px;color:#1c1d1f}
+</style>
+</head>
+<body data-fixture="fixed-banner">
+  <p id="fixture-banner" class="fixture-banner" role="note">Lokale Mechanismus-Kopie – keine Basel-Seite · Fixture: fixed-banner</p>
+  <div id="card" class="fixture-card">
+    <h3 id="zone-heading" class="fixture-heading">Abfuhrzonensuche</h3>
+    <div id="hint-wrapper" class="fixture-hint-wrapper"><span id="required-hint" class="fixture-hint text-xs">* muss ausgefüllt werden</span></div>
+  </div>
+  <div id="consent" class="fixture-consent"><div><p>Zu statistischen Zwecken verwenden wir Cookies (Beispieltext der lokalen Kopie).</p></div></div>
+</body>
+</html>

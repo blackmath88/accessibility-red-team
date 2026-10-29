@@ -1,0 +1,15 @@
+{
+ "criticModel": "claude-opus-5-5",
+ "context": "findings of the fresh read-only judge (runs/ail-m1/m1/judgment.json, aiContribution) on the a5 code, transcribed by the coordinator as the a5 critique; a5 was not executed",
+ "verdict": "revise: a5 does not implement the required occluder-aware measurement",
+ "summary": "a5's revisionNote claims an occluder check, a safe scroll and no overwrite of broker fields; the code contains none of these in working form. Desktop evidence (a2) is settled; the open question is the hint at 390x844 when NOT covered by the fixed banner.",
+ "probeDefects": [
+  "isOccludedByBanner reads elementsFromPoint.results?.[0], but the broker returns a plain ARRAY [{point, stack}] (see the API doc), so the check is always false.",
+  "It checks only stack[0]; at 390x844 the banner subtree occupies stack[0..3] above the span. Consider every element ABOVE the hint span in the stack.",
+  "It matches the banner by its colour rgb(221,236,222): over-fitted. Use position === 'fixed' instead.",
+  "computeSafeScrollY is never called, and it ignores the current scrollY.",
+  "effectiveOpacity is still overwritten with style.opacity; keep the broker value and use new field names for derived values.",
+  "The revisionNote claims changes the code does not contain."
+ ],
+ "mostImportantChange": "At each viewport: after findText, call elementsFromPoint (returns an array) at 3 integer points inside the hint rect. Find the hint span's index in each stack. If any element above it has position 'fixed', use that element's rect.y as the occluder top. Then scrollTo an integer y = current scrollY + hint.rect.y - max(8, floor((occluderTop - hint.rect.height) / 2)), clamped to 0..docHeight-innerHeight. Call findText again (the rect moves), repeat elementsFromPoint, and take pixels of the hint rect only when nothing fixed is above the span. Report the stack top and pixels for both states."
+}

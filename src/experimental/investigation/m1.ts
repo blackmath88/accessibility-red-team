@@ -25,7 +25,7 @@ const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), "../../..");
 const RUNS = join(ROOT, "runs/ail-m1");
 // Earlier experiments' ledgers (A/B/C/M, USD 0.0726 reported) live in another checkout; the directory is required.
 const PRIOR_LEDGERS = process.env["AIL_PRIOR_LEDGERS"] ?? "";
-const FIXTURES = ["overlay", "no-overlay", "clean-control", "opacity-control"];
+const FIXTURES = ["overlay", "no-overlay", "clean-control", "opacity-control", "fixed-banner"];
 const sha = (s: string | Buffer) => createHash("sha256").update(s).digest("hex");
 
 export const HypothesisSchema = z.object({ id: z.string().min(1).max(80), statement: z.string().min(1).max(1500), prediction: z.string().min(1).max(1500), falsifier: z.string().min(1).max(1500) });

@@ -34,3 +34,5 @@ in that viewport for the three shared-structure pages (y ≈ 416 in `opacity-con
 Hint text, font size and colour are identical in every page. Geometry was sanity-checked once with a
 local offline headless render (`elementsFromPoint` at the hint centre returns `zone-heading` first in
 overlay/no-overlay, `required-hint` first in the controls); no pixel measurements are recorded here.
+
+- `fixed-banner.html` — narrow single-column page: plain #777 hint, no overlay, but an opaque fixed consent-style banner (bottom 0, z-index 99999) covers it in the loaded state; the page scrolls, so the hint can be brought above the banner. Added after the live 390×844 run showed this occlusion; it tests whether a probe detects a fixed occluder anywhere above the hint and measures the unoccluded state.

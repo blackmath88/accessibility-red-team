@@ -34,7 +34,7 @@ code{font-size:.85em;overflow-wrap:anywhere}
 <body><main>
 <h1>Basel M1: adaptive Untersuchung des Pflichtfeld-Hinweises</h1>
 <p class="lead">Privater Arbeitsbericht zu Draft-PR #55 (Meilenstein M1). Keine Konformitätsaussage, keine Freigabe, keine Kontaktaufnahme.</p>
-<p><span class="tag">Code-Commit a45a2d0</span><span class="tag">Chromium headless, DPR 1</span><span class="tag">8 von 16 Live-Ladevorgängen</span><span class="tag">Mistral M1: USD 0.0143</span><span class="tag">lokale Mechanismus-Kopien sind kein Basel-Beleg</span></p>
+<p><span class="tag">Code-Commit a45a2d0</span><span class="tag">Chromium headless, DPR 1</span><span class="tag">8 von 16 Live-Ladevorgängen</span><span class="tag">Mistral M1: USD 0.0188</span><span class="tag">lokale Mechanismus-Kopien sind kein Basel-Beleg</span></p>
 
 <h2 id="ueberblick">Überblick</h2>
 <p><strong>Frage:</strong> Warum wirkt der Pflichtfeld-Hinweis «* muss ausgefüllt werden» auf <code>www.bs.ch/apps/zonensuche</code> fast unsichtbar (gerendert ≈1,12:1), obwohl die berechnete Farbe #777 auf Weiss 4,48:1 ergibt?</p>
@@ -68,13 +68,13 @@ code{font-size:.85em;overflow-wrap:anywhere}
   <g id="step-generate" class="st st-impl" data-step="generate">
     <rect x="20" y="202" width="320" height="46" rx="6"/>
     <text x="36" y="222" class="lbl">4. Probe generieren</text>
-    <text x="36" y="239" class="sub">implementiert · 5 Entwürfe, 4 verschiedene Codes</text>
+    <text x="36" y="239" class="sub">implementiert · 6 Entwürfe, 5 verschiedene Codes</text>
   </g>
   <path class="arr" d="M180 250 V262" marker-end="url(#ah)"/>
   <g id="step-critic" class="st st-impl" data-step="critic">
     <rect x="20" y="266" width="320" height="46" rx="6"/>
     <text x="36" y="286" class="lbl">5. Kritiker prüft Probe</text>
-    <text x="36" y="303" class="sub">implementiert · frischer Claude-Kontext (a1, a2)</text>
+    <text x="36" y="303" class="sub">implementiert · frische Claude-Kontexte (a1, a2, a5)</text>
   </g>
   <path class="arr" d="M180 314 V326" marker-end="url(#ah)"/>
   <g id="step-execute" class="st st-impl" data-step="execute">
@@ -132,15 +132,16 @@ code{font-size:.85em;overflow-wrap:anywhere}
     <tr><td>a3 Revision</td><td><code>242c3c1a…</code></td><td>Code byte-gleich mit a2 (nur Hypothesentext geändert) – Stillstand.</td></tr>
     <tr><td>a4 Revision</td><td><code>8a784cf8…</code></td><td>Nur die ungültige 5. Scrollposition entfernt; Kernänderung des Kritikers ignoriert.</td></tr>
     <tr><td>a5 Revision</td><td><code>f3655729…</code></td><td>Kritiker-Änderungen als Pflicht übergeben. Die Begründung behauptet sie umgesetzt, der Code tut es nicht: Banner-Prüfung kann nie greifen (falsche Datenform), Scroll-Funktion wird nie aufgerufen, Überschreiben bleibt. Nicht ausgeführt.</td></tr>
-    <tr><td>c1 Gegenprobe</td><td><code>8669afea…</code></td><td><strong>Vom Koordinator handgeschrieben, nicht KI-generiert</strong>; gleiche Sandbox und gleicher Broker. Lieferte die einzige gültige 390-Messung.</td></tr>
+    <tr><td>a6 Revision</td><td><code>1b9e6d14…</code></td><td>Mit den Befunden des Richters zu a5 als Kritik. Näher dran (prüft <code>fixed</code> über dem Hinweis, rechnet mit aktuellem Scroll, überschreibt nichts mehr), übergibt der Prüfung aber das ganze Punkt-Array statt eines Stapels – die Verdeckung wird wieder nie erkannt. An der neuen lokalen Kopie mit fixiertem Banner gescheitert (misst Bannerpixel 232), daher <strong>nicht live</strong> ausgeführt. Damit ist das Limit von 6 Entwürfen erreicht.</td></tr>
+    <tr><td>c1 Gegenprobe</td><td><code>8669afea…</code></td><td><strong>Vom Koordinator handgeschrieben, nicht KI-generiert</strong>; gleiche Sandbox und gleicher Broker. Lieferte die einzige gültige 390-Messung. Auch hier lief die erste Fassung mit demselben Formfehler wie a5 (<code>.results</code>) auf den lokalen Kopien an und wurde vor dem Live-Lauf korrigiert; die API-Beschreibung für den Designer war in diesem Punkt korrekt.</td></tr>
     </tbody></table></div>
-    <p class="small">Code und Vorschläge: <a href="evidence/">evidence/</a> (a1–a5 Vorschläge, a1/a2/a5-Probe, c1, Kritiken, Urteil, Messübersicht).</p>
+    <p class="small">Code und Vorschläge: <a href="evidence/">evidence/</a> (Vorschläge a1–a6, Probes a1/a2/a4/a5/a6, Gegenprobe c1, Kritiken, Urteil, Messübersicht).</p>
   </dd>
   <dt>Messung</dt><dd>
     <p>Generierter Code lief in einer bwrap-Sandbox ohne Netz, Dateisystem, Umgebung und Kindprozesse; einzige Fähigkeit war ein Lese-Broker mit acht festen Operationen (öffnen, Viewport, Text finden, Selektor, Elemente an Punkt, Scrollen, Pixel, Screenshot) – keine Klicks, Eingaben oder DOM-Änderungen. Live nur die eine freigegebene URL, mindestens 10 s Abstand, einzeln, jeder Ladevorgang vorab im Ledger.</p>
     <ul>
       <li><strong>Desktop live</strong> (a2, a2-replay, c1, c1-replay): zuoberst an allen Hinweis-Punkten <code>h3 … sticky z-8</code>, Hintergrund <code>oklab(1 0 0 / 0.9)</code>, Rechteck 310,365 819×48 überdeckt den Hinweis 951,383 149×18; Pixel min = p05 = 242 bei Scroll 0/8/24/48; Hintergrund daneben 255.</li>
-      <li><strong>Kontrollen</strong>: Überlagerung 242 · ohne Überlagerung 119 · sauber 119 · Eltern-Deckkraft 0,12 → 238 ohne Überlagerer.</li>
+      <li><strong>Kontrollen</strong>: Überlagerung 242 · ohne Überlagerung 119 · sauber 119 · Eltern-Deckkraft 0,12 → 238 ohne Überlagerer · fixierter Banner (neu, nach dem Mobil-Befund): c1 erkennt ihn und misst nach Scrollen 119, a6 erkennt ihn nicht.</li>
       <li><strong>Mobil live</strong> (c1, c1-replay): beim Laden fixierter Banner (0,317 390×527, z 99999) über dem Hinweis; nach Scroll auf 258 ist der Hinweis zuoberst, min 119.</li>
       <li><strong>Frische Wiederholung</strong>: neuer Prozess und Browser, gleicher Code-Hash; alle Werte reproduziert.</li>
       <li><strong>Ungültig/verworfen</strong>: a1 (keine Daten), 5. Scrollposition in a2 (abgelehnt), Kopie-«Scrolls» (Seite nicht scrollbar), 390-Pixel aus a2 (Banner), von der Probe überschriebene <code>effectiveOpacity</code>.</li>
@@ -154,7 +155,7 @@ code{font-size:.85em;overflow-wrap:anywhere}
     <p class="small">Unsicherheit: nur Chromium, DPR 1; nicht geprüft sind Firefox/WebKit, hochauflösende Bildschirme, Breiten zwischen 390 und 1280 px, Desktop mit geschlossenem Banner und tiefere Scrollpositionen. Was Menschen mit Sehbehinderung tatsächlich wahrnehmen, wurde nicht untersucht.</p>
   </dd>
   <dt>Verantwortung &amp; Standard</dt><dd>Zuständigkeit laut Impressum der Seite: Inhalt bei der Webredaktion des Kantons, Betrieb bei IT BS bzw. dem genannten Dienstleister; welche Stelle die Komponente verantwortet, ist unbestätigt. Als Massstab nennt der Kanton WCAG 2.1 AA bzw. eCH-0059; einschlägig wäre Erfolgskriterium 1.4.3 (Kontrast). Dieser Bericht ist eine technische Messung, kein Prüfurteil.</dd>
-  <dt>Ergebnis vs. Baseline</dt><dd>Neu: ein nachgewiesener Mechanismus mit rechnerischer Übereinstimmung (241,4 vs. 242), Begrenzung auf Desktop-Breiten, ein zusätzlicher Banner-Befund und die widerlegte Scroll-Vermutung. Aufwand: 5 Designer-Aufrufe (USD 0,0143; gesamt mit früheren Versuchen USD 0,0869 von 5), 8 Live-Ladevorgänge, 2 Kritiken, 1 Urteil. Ehrliche Bilanz der KI-Anpassung: Eine Revision (a2) brachte den Durchbruch; die drei folgenden stagnierten oder behaupteten Änderungen, die der Code nicht enthielt. Ohne Kritiker, Richter und Gegenprobe wären der ungültige Mobilwert und die falschen Selbstauskünfte durchgerutscht.</dd>
+  <dt>Ergebnis vs. Baseline</dt><dd>Neu: ein nachgewiesener Mechanismus mit rechnerischer Übereinstimmung (241,4 vs. 242), Begrenzung auf Desktop-Breiten, ein zusätzlicher Banner-Befund und die widerlegte Scroll-Vermutung. Aufwand: 6 Designer-Aufrufe (USD 0,0188; gesamt mit früheren Versuchen USD 0,0914 von 5), 8 Live-Ladevorgänge, 3 Kritiken, 1 Urteil. Ehrliche Bilanz der KI-Anpassung: Eine Revision (a2) brachte den Durchbruch für Desktop; die vier folgenden stagnierten, behaupteten Änderungen, die der Code nicht enthielt, oder scheiterten an der lokalen Kopie. Die Mobil-Antwort stammt aus der handgeschriebenen Gegenprobe. Ohne Kritiker, Richter, lokale Kontrollen und Gegenprobe wären der ungültige Mobilwert und die falschen Selbstauskünfte durchgerutscht – genau diese Prüfschritte sind der Nutzen des Loops, nicht der Designer allein.</dd>
   <dt>Nächster Schritt</dt><dd>Mit dem Restbudget (8 Ladevorgänge) prüfen, ob der Effekt in Firefox und WebKit und bei DPR 2 besteht; erst danach einen Befund für die zuständige Redaktion entwerfen – Versand nur nach ausdrücklicher Freigabe.</dd>
 </dl>
 </article>
@@ -168,14 +169,15 @@ code{font-size:.85em;overflow-wrap:anywhere}
 <tr><td>Bootstrap</td><td><code>src/experimental/investigation/bootstrap.mjs</code></td><td><code>dc709ab1d7833ff6</code></td></tr>
 <tr><td>Broker</td><td><code>src/experimental/investigation/broker.ts</code></td><td><code>f2ffd26f48fc2336</code></td></tr>
 <tr><td>Loop-Stufen</td><td><code>src/experimental/investigation/m1.ts</code></td><td><code>65cccc10292f9716</code></td></tr>
-<tr><td>Probe a1 / a2 (=a3) / a4 / a5</td><td><code>evidence/a*-probe.mjs</code></td><td><code>2c506e05</code> / <code>242c3c1a</code> / <code>8a784cf8</code> / <code>f3655729</code></td></tr>
+<tr><td>Probe a1 / a2 (=a3) / a4 / a5 / a6</td><td><code>evidence/a*-probe.mjs</code></td><td><code>2c506e05</code> / <code>242c3c1a</code> / <code>8a784cf8</code> / <code>f3655729</code> / <code>1b9e6d14</code></td></tr>
 <tr><td>Gegenprobe c1 (handgeschrieben)</td><td><code>evidence/c1-countertest.mjs</code></td><td><code>8669afea8c3ca715</code></td></tr>
-<tr><td>Kritik a1 / a2</td><td><code>evidence/a1-critic.json</code>, <code>a2-critic.json</code></td><td><code>3c3366ae</code> / <code>4650a18a</code></td></tr>
+<tr><td>Kritik a1 / a2 / a5 (aus dem Urteil)</td><td><code>evidence/a1-critic.json</code>, <code>a2-critic.json</code>, <code>a5-critic.json</code></td><td><code>3c3366ae</code> / <code>4650a18a</code> / <code>845f4003</code></td></tr>
 <tr><td>Urteil</td><td><code>evidence/judgment.json</code></td><td><code>1616bd4c376ed9ef</code></td></tr>
-<tr><td>Messübersicht</td><td><code>evidence/measurements.json</code></td><td><code>4993311fda4003fa</code></td></tr>
+<tr><td>Messübersicht</td><td><code>evidence/measurements.json</code></td><td><code>f8c211b4e56540a8</code></td></tr>
 <tr><td>Live-Ledger (8 Ladevorgänge)</td><td><code>evidence/live-ledger.json</code></td><td><code>dd852eda7d609103</code></td></tr>
-<tr><td>Rohdaten-Archiv</td><td>ausserhalb von Git</td><td><code>1a87bf81495474a6</code> (vollständig im README)</td></tr>
+<tr><td>Rohdaten-Archiv</td><td>ausserhalb von Git</td><td><code>f24d404b0bc2cd8d</code> (vollständig im README)</td></tr>
 </tbody></table></div>
+<p class="small">Die Live-Läufe (a2, c1) liefen vor der Härtung nach dem Code-Review (a45a2d0), nacheinander mit je einem Öffnen; nach der Härtung gab es keinen Live-Lauf. Offene Review-Punkte siehe README.</p>
 <p class="small">Modelle: Designer <code>mistral-small-2603</code> (zurückgemeldet wie angefragt), Kritiker, Richter, Prüfer und Fixture-Worker <code>claude-opus-5-5</code> (Fixture-Worker über Orca, Modell aus dem Transkript geprüft). Lokale Kopien: <code>test/fixtures/investigation/</code> – illustrative Mechanismus-Tests, kein Beleg für die tatsächliche Ursache bei Basel.</p>
 </main></body>
 </html>
