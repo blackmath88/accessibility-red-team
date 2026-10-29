@@ -7,8 +7,8 @@
     "footer": "Erzeugt mit scripts/abc_report.py aus versiegelten Läufen. Code: Runner f003529 (s1), ae1ecc9 (s2); Bericht/Review-Fixes siehe PR. Rohdaten archiviert ausserhalb von git (abc-runs-archive.tar.gz, SHA-256 in ARCHIVE.sha256). Alle Seiten sind synthetisch; keine Aussage über reale Websites, Screenreader-Erfahrung oder WCAG-Konformität."
   },
   "segments": [
-    {"id": "s1", "label": "Segment s1: ohne Reparatur (9 von 9 Sitzungen)", "note": "Gleiche Grenzen für alle Arme: 12 Entscheidungen, 24 Browser-Schritte, 8 Seiten, 180 s je Sitzung, 30 s je Anfrage. Harness-Flags identisch (sichtbare Frontier, Abschluss-Buchhaltung, report_candidate). C: höchstens 2 Mistral-Beratungen, ausgelöst nur nach 3 Aktionen ohne Zustandsänderung.", "dir": "runs/abc/s1-2026-10-29T17-52-36-299Z", "judgment": "/home/achim/Work/art-abc-judging/s1-judgment.json", "key": "/home/achim/Work/art-abc-judging-KEY-s1.json"},
-    {"id": "s2", "label": "Segment s2: mit Reparatur «Wiederholungs-Sperre» (9 von 9 Sitzungen)", "note": "Einzige Änderung gegenüber s1: identische inspect/capture-Aktionen im unveränderten Seitenzustand werden abgelehnt (alle Arme). Es handelt sich um eine Werkzeug-Änderung, nicht um ein anderes Modell.", "dir": "runs/abc/s2-2026-10-29T18-06-28-004Z", "judgment": "/home/achim/Work/art-abc-judging/s2-judgment.json", "key": "/home/achim/Work/art-abc-judging-KEY-s2.json"}
+    {"id": "s1", "label": "Segment s1: ohne Reparatur (9 von 9 Sitzungen)", "note": "Gleiche Grenzen für alle Arme: 12 Entscheidungen, 24 Browser-Schritte, 8 Seiten, 180 s je Sitzung, 30 s je Anfrage. Harness-Flags identisch (sichtbare Frontier, Abschluss-Buchhaltung, report_candidate). C: höchstens 2 Mistral-Beratungen, ausgelöst nur nach 3 Aktionen ohne Zustandsänderung.", "dir": "runs/abc/s1-2026-10-29T17-52-36-299Z", "judgment": "../art-abc-judging/s1-judgment.json", "key": "../art-abc-judging-KEY-s1.json"},
+    {"id": "s2", "label": "Segment s2: mit Reparatur «Wiederholungs-Sperre» (9 von 9 Sitzungen)", "note": "Einzige Änderung gegenüber s1: identische inspect/capture-Aktionen im unveränderten Seitenzustand werden abgelehnt (alle Arme). Es handelt sich um eine Werkzeug-Änderung, nicht um ein anderes Modell.", "dir": "runs/abc/s2-2026-10-29T18-06-28-004Z", "judgment": "../art-abc-judging/s2-judgment.json", "key": "../art-abc-judging-KEY-s2.json"}
   ],
   "casesNote": "Alle Bildschirmfotos sind echte Aufnahmen aus einem frischen, abgeschotteten Browser (nur Tastatur, eigener Kontext je Fall), aufgenommen nach den Bewertungsläufen. Die Fixtures selbst wurden nicht verändert; die Reparatur wurde an einer Kopie der Seite vorgeführt.",
   "cases": [
@@ -17,25 +17,25 @@
       "task": "Eine Person bucht per Tastatur einen Schaltertermin und öffnet vorher die «Hinweise».",
       "constraint": "Nur lesend erkunden; keine Formulare absenden.",
       "shots": [
-        {"src": "/home/achim/Work/art-abc-report-staging/k3-open-before.png", "name": "k3-open-before.png", "alt": "Seite «Termine» mit geöffnetem Hinweise-Dialog; der Fokus liegt auf der Schaltfläche «Schliessen».", "caption": "Vorher: Dialog «Hinweise» per Enter geöffnet, Fokus auf «Schliessen» (korrekt)."},
-        {"src": "/home/achim/Work/art-abc-report-staging/k3-escape-before.png", "name": "k3-escape-before.png", "alt": "Seite «Termine» nach Escape; keine Schaltfläche zeigt einen Fokusrahmen.", "caption": "Vorher: nach Escape ist der Fokus auf dem Seitenkörper, kein Element hat einen Fokusrahmen."},
-        {"src": "/home/achim/Work/art-abc-report-staging/k3-escape-after-repair.png", "name": "k3-escape-after-repair.png", "alt": "Seite «Termine» nach Escape in der reparierten Kopie; die Schaltfläche «Hinweise» hat einen Fokusrahmen.", "caption": "Nachher (reparierte Kopie): nach Escape kehrt der Fokus auf «Hinweise» zurück."}
+        {"src": "runs/abc/repro-final/crops/k3-open-before.png", "name": "k3-open-before.png", "alt": "Seite «Termine» mit geöffnetem Hinweise-Dialog; der Fokus liegt auf der Schaltfläche «Schliessen».", "caption": "Vorher: Dialog «Hinweise» per Enter geöffnet, Fokus auf «Schliessen» (korrekt)."},
+        {"src": "runs/abc/repro-final/crops/k3-escape-before.png", "name": "k3-escape-before.png", "alt": "Seite «Termine» nach Escape; keine Schaltfläche zeigt einen Fokusrahmen.", "caption": "Vorher: nach Escape ist der Fokus auf dem Seitenkörper, kein Element hat einen Fokusrahmen."},
+        {"src": "runs/abc/repro-final/crops/k3-escape-after-repair.png", "name": "k3-escape-after-repair.png", "alt": "Seite «Termine» nach Escape in der reparierten Kopie; die Schaltfläche «Hinweise» hat einen Fokusrahmen.", "caption": "Nachher (reparierte Kopie): nach Escape kehrt der Fokus auf «Hinweise» zurück."}
       ],
-      "trace": "Frischer Browser, nur Tastatur (runs/abc/repro/*/repro.json):\n  Kontrolle «Termin buchen» (#c2): Enter → Fokus «Schliessen» → Escape → Fokus #c2   (zurückgegeben)\n  «Hinweise» (#c3), Original:        Enter → Fokus «Schliessen» → Escape → Fokus body  (NICHT zurückgegeben)\n  «Hinweise» (#c3), repariert:       Enter → Fokus «Schliessen» → Escape → Fokus #c3   (zurückgegeben)\nReparatur: Escape-Behandlung des zweiten Dialogs gibt den Fokus wie beim ersten an den Auslöser zurück (eine Zeile im Fixture-Skript).",
+      "trace": "Frischer Browser, nur Tastatur (runs/abc/repro-final/*/repro.json):\n  Kontrolle «Termin buchen» (#c2): Enter → Fokus «Schliessen» → Escape → Fokus #c2   (zurückgegeben)\n  «Hinweise» (#c3), Original:        Enter → Fokus «Schliessen» → Escape → Fokus body  (NICHT zurückgegeben)\n  «Hinweise» (#c3), repariert:       Enter → Fokus «Schliessen» → Escape → Fokus #c3   (zurückgegeben)\nReparatur: Escape-Behandlung des zweiten Dialogs gibt den Fokus wie beim ersten an den Auslöser zurück (eine Zeile im Fixture-Skript).",
       "abc": [
         ["A", "in s1 und s2 gefunden: Dialog über #c3 geöffnet, Escape, Fokus auf body belegt (ev_5–ev_7); vom blinden Beurteiler als «belegte Beobachtung» eingestuft."],
         ["B", "nicht gefunden: blieb auf der Startseite, erfasste dieselbe Schaltfläche bis zu 10-mal, öffnete den zweiten Dialog nie; Zeitlimit."],
         ["C", "nicht gefunden: Mistral schlug zweimal «activate» vor (Bereiche, Termin buchen), nie den zweiten Dialog; die lokale Entscheidung blieb ohne Fortschritt; Zeitlimit."]
       ],
       "bodyHtml": "<b>Warum ein guter Pilotfall:</b> Das Verhalten ist nur durch Bedienen sichtbar, nicht im statischen HTML; ein Kontroll-Dialog auf derselben Seite verhält sich korrekt, sodass «erster Dialog ok» nicht für den zweiten gilt. <b>Noch offen:</b> Wie sich der Fokusverlust in einem echten Screenreader anfühlt, ist hier nicht geprüft (keine AT-Sitzung).",
-      "refs": "Befund A: runs/abc/s1-…/r1/dev-k3/A (cand_1), s2 ebenso. Reproduktion: runs/abc/repro/original-2026-10-29T18-20-37-753Z, repaired-2026-10-29T18-21-34-641Z. Code: abc-reproduce.ts @ afc89c1."
+      "refs": "Befund A: runs/abc/s1-…/r1/dev-k3/A (cand_1), s2 ebenso. Reproduktion (Bilder dieses Berichts): runs/abc/repro-final/original-2026-10-29T18-31-53-666Z und repaired-2026-10-29T18-31-55-404Z, Code 87efc99 (in repro.json festgehalten); eine frühere Reproduktion mit gleichem Ergebnis liegt unter runs/abc/repro/."
     },
     {
       "title": "Fall 2 · Sprunglink ohne Ziel auf der dritten von vier Unterseiten (dev-k1)",
       "task": "Eine Person springt mit «Zum Inhalt springen» direkt zur Information des Bereichs.",
       "constraint": "Nur lesend; vier gleich aussehende Unterseiten, nur eine ist defekt.",
       "shots": [
-        {"src": "/home/achim/Work/art-abc-report-staging/k1-skip-focused.png", "name": "k1-skip-focused.png", "alt": "Unterseite «Bereich 3» mit fokussiertem Link «Zum Inhalt springen».", "caption": "Sprunglink fokussiert (erster Tab). Sein Ziel #inhalt-x existiert nicht; das Hauptelement heisst #inhalt."}
+        {"src": "runs/abc/repro-final/crops/k1-skip-focused.png", "name": "k1-skip-focused.png", "alt": "Unterseite «Bereich 3» mit fokussiertem Link «Zum Inhalt springen».", "caption": "Sprunglink fokussiert (erster Tab). Sein Ziel #inhalt-x existiert nicht; das Hauptelement heisst #inhalt."}
       ],
       "trace": "DOM (frischer Browser): href=\"#inhalt-x\" → Ziel-Element: keins.  Reparierte Kopie: href=\"#inhalt\" → <main id=\"inhalt\">.\nHinweis: Auf dieser kurzen Seite gibt es nach dem Hauptinhalt kein weiteres fokussierbares Element; der Tastatur-Weiterlauf ist deshalb nicht aussagekräftig, die Ziel-Prüfung schon.",
       "abc": [
@@ -51,7 +51,7 @@
       "task": "Eine Person mit Screenreader will herausfinden, wozu die Schaltfläche neben «Start» dient.",
       "constraint": "Nur lesend.",
       "shots": [
-        {"src": "/home/achim/Work/art-abc-report-staging/k2-icon-focused.png", "name": "k2-icon-focused.png", "alt": "Seite «Anliegen» mit fokussierter runder Icon-Schaltfläche ohne sichtbaren Text neben dem Link «Start».", "caption": "Icon-Schaltfläche fokussiert. Barrierefreiheitsbaum: «- button» ohne Namen (kein aria-label, kein title, kein Text)."}
+        {"src": "runs/abc/repro-final/crops/k2-icon-focused.png", "name": "k2-icon-focused.png", "alt": "Seite «Anliegen» mit fokussierter runder Icon-Schaltfläche ohne sichtbaren Text neben dem Link «Start».", "caption": "Icon-Schaltfläche fokussiert. Barrierefreiheitsbaum: «- button» ohne Namen (kein aria-label, kein title, kein Text)."}
       ],
       "trace": "ariaSnapshot(header):\n- banner:\n  - link \"Start\":\n    - /url: /dev-k2/index.html\n  - button",
       "abc": [
