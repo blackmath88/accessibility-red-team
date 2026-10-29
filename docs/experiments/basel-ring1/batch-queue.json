@@ -1,0 +1,58 @@
+[
+ {
+  "id": "r01",
+  "url": "https://www.bs.ch/bettingen/gemeinde/dienstleistungen-behoerdengaenge-online-durchfuehren",
+  "task": "Gemeindedienste von Bettingen auf dem Kantonsauftritt – ande",
+  "interface": "Informations-/Einstiegsseite",
+  "reason": "Gemeindedienste von Bettingen auf dem Kantonsauftritt – andere Trägerschaft, gleiche Vorlage.",
+  "serviceId": null
+ },
+ {
+  "id": "r02",
+  "url": "https://www.bs.ch/themen/persoenliches-und-wohnen/einbuergerungen",
+  "task": "Einbürgerung: wichtige Bürgeraufgabe mit Bürgergemeinde-Bezu",
+  "interface": "Informations-/Einstiegsseite",
+  "reason": "Einbürgerung: wichtige Bürgeraufgabe mit Bürgergemeinde-Bezug.",
+  "serviceId": null
+ },
+ {
+  "id": "r03",
+  "url": "https://www.bs.ch/willkommen-bei-den-gerichten",
+  "task": "Judikative auf dem Kantonsauftritt",
+  "interface": "Informations-/Einstiegsseite",
+  "reason": "Judikative auf dem Kantonsauftritt; Zugang zu Gerichten.",
+  "serviceId": null
+ },
+ {
+  "id": "r04-s05",
+  "url": "https://www.bs.ch/themen/persoenliches-und-wohnen/umzug-und-wegzug/wegzug-vom-kanton-melden",
+  "task": "Abmeldung",
+  "interface": "Informations-/Einstiegsseite",
+  "reason": "Bisher nicht geprüft; Bezahlschritt-Grenze (eServices).",
+  "serviceId": "S05"
+ },
+ {
+  "id": "r05-s13",
+  "url": "https://www.bs.ch/themen/finanzielle-hilfe/menschen-mit-behinderung",
+  "task": "Leistungen finden",
+  "interface": "Informations-/Einstiegsseite",
+  "reason": "Zielgruppe direkt betroffen; bisher nicht geprüft.",
+  "serviceId": "S13"
+ },
+ {
+  "id": "r06-s23",
+  "url": "https://www.bs.ch/gebaerdensprache",
+  "task": "Informationen in Gebärdensprache",
+  "interface": "Informations-/Einstiegsseite",
+  "reason": "Barrierefreie Kommunikation; Videos (Basel nennt Videos selbst als Einschränkung).",
+  "serviceId": "S23"
+ },
+ {
+  "id": "r07-s09",
+  "url": "https://www.bs.ch/apps/zonensuche",
+  "task": "Abfuhrzone zur Adresse",
+  "interface": "App/Formular",
+  "reason": "Nachtest der reproduzierten #53-Beobachtung (Pflichtfeld-Hinweis).",
+  "serviceId": "S09"
+ }
+]

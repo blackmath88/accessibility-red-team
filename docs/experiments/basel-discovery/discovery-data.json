@@ -1,0 +1,5268 @@
+{
+ "schema": "art/basel-discovery/v2",
+ "generatedAt": "2026-10-29",
+ "lastDiscovery": "2026-10-29",
+ "note": "Startbestand aus dem Basel-Feldlauf; keine vollständige Inventur. Neue Bereiche sind Rechercheaufträge, keine geprüften Eigentumsbehauptungen.",
+ "entries": [
+  {
+   "serviceId": "S01",
+   "title": "Startseite bs.ch",
+   "audience": "alle",
+   "civicTask": "Einstieg, Suche, Navigation zu Diensten",
+   "entryUrl": "https://www.bs.ch/",
+   "transactionUrls": [],
+   "responsibility": "unknown",
+   "responsibilityNote": "Zuordnung Stadt/Kanton/Gemeinde nicht aus einer offiziellen Quelle belegt (siehe Bericht); Riehen/Bettingen nur als Kontext.",
+   "operator": null,
+   "operatorSource": null,
+   "operatorConfidence": "unknown",
+   "boundary": {
+    "public": true,
+    "loginOrAccount": true,
+    "thirdPartyHosts": [],
+    "transactionHosts": [],
+    "embeddedOrMapHosts": [
+     "map.geo.bs.ch"
+    ],
+    "pdfLinks": 0
+   },
+   "languages": [
+    "de (nur Deutsch beobachtet)"
+   ],
+   "interface": "Informations-/Einstiegsseite",
+   "provenance": {
+    "url": "https://www.bs.ch/",
+    "retrievedAt": "2026-10-29T20:15:46.891062+00:00",
+    "sha256": "5feb8c995647b7ae0a04ddfc33b5cb40685342d33c20133a944dc9bf523c8c3c",
+    "status": 200
+   },
+   "accessibilityDisclosure": "Erklärung zur Barrierefreiheit (bs.ch): teilweise konform; PDFs, Videos, iFrames als Einschränkungen genannt",
+   "priority": "hoch",
+   "priorityReason": "Gemeinsamer Einstieg aller Aufgaben",
+   "status": {
+    "discovered": true,
+    "queuedForAssessment": true,
+    "assessmentId": "p01-start"
+   },
+   "exclusionReason": null,
+   "labels": {
+    "observed": [
+     "entryUrl",
+     "transactionUrls",
+     "operator",
+     "boundary",
+     "languages",
+     "provenance"
+    ],
+    "inferred": [
+     "audience",
+     "civicTask",
+     "priority",
+     "interface"
+    ]
+   }
+  },
+  {
+   "serviceId": "S02",
+   "title": "ePortal (öffentliche Startseite)",
+   "audience": "alle",
+   "civicTask": "Online-Dienste finden",
+   "entryUrl": "https://eportal.egov.bs.ch/",
+   "transactionUrls": [],
+   "responsibility": "unknown",
+   "responsibilityNote": "Zuordnung Stadt/Kanton/Gemeinde nicht aus einer offiziellen Quelle belegt (siehe Bericht); Riehen/Bettingen nur als Kontext.",
+   "operator": null,
+   "operatorSource": null,
+   "operatorConfidence": "unknown",
+   "boundary": {
+    "public": true,
+    "loginOrAccount": false,
+    "thirdPartyHosts": [],
+    "transactionHosts": [],
+    "embeddedOrMapHosts": [],
+    "pdfLinks": 0
+   },
+   "languages": [
+    "de (nur Deutsch beobachtet)"
+   ],
+   "interface": "JavaScript-Anwendung",
+   "provenance": {
+    "url": "https://eportal.egov.bs.ch/",
+    "retrievedAt": "2026-10-29T20:15:56.891134+00:00",
+    "sha256": "886c8b5cc07987f09574b3123b4e3516fe855be4d011f683ec9d5d904151c247",
+    "status": 200
+   },
+   "accessibilityDisclosure": null,
+   "priority": "hoch",
+   "priorityReason": "Zweites autorisiertes Origin, JavaScript-Anwendung",
+   "status": {
+    "discovered": true,
+    "queuedForAssessment": true,
+    "assessmentId": "p12-eportal"
+   },
+   "exclusionReason": null,
+   "labels": {
+    "observed": [
+     "entryUrl",
+     "transactionUrls",
+     "operator",
+     "boundary",
+     "languages",
+     "provenance"
+    ],
+    "inferred": [
+     "audience",
+     "civicTask",
+     "priority",
+     "interface"
+    ]
+   }
+  },
+  {
+   "serviceId": "S03",
+   "title": "Erklärung zur Barrierefreiheit",
+   "audience": "alle",
+   "civicTask": "Barrieren melden, Stand erfahren",
+   "entryUrl": "https://www.bs.ch/erklaerung-zur-barrierefreiheit",
+   "transactionUrls": [],
+   "responsibility": "unknown",
+   "responsibilityNote": "Zuordnung Stadt/Kanton/Gemeinde nicht aus einer offiziellen Quelle belegt (siehe Bericht); Riehen/Bettingen nur als Kontext.",
+   "operator": null,
+   "operatorSource": null,
+   "operatorConfidence": "unknown",
+   "boundary": {
+    "public": true,
+    "loginOrAccount": true,
+    "thirdPartyHosts": [],
+    "transactionHosts": [],
+    "embeddedOrMapHosts": [
+     "map.geo.bs.ch"
+    ],
+    "pdfLinks": 0
+   },
+   "languages": [
+    "de (nur Deutsch beobachtet)"
+   ],
+   "interface": "Informations-/Einstiegsseite",
+   "provenance": {
+    "url": "https://www.bs.ch/erklaerung-zur-barrierefreiheit",
+    "retrievedAt": "2026-10-29T20:16:06.891199+00:00",
+    "sha256": "3c70d563cf85fe3dcf60e415bf3dfc58d08025ff6846fc569917ea6ea2f72ff1",
+    "status": 200
+   },
+   "accessibilityDisclosure": "Erklärung zur Barrierefreiheit (bs.ch): teilweise konform; PDFs, Videos, iFrames als Einschränkungen genannt",
+   "priority": "mittel",
+   "priorityReason": "Selbstauskunft des Kantons (Kontext, keine Prüfung)",
+   "status": {
+    "discovered": true,
+    "queuedForAssessment": false,
+    "assessmentId": null
+   },
+   "exclusionReason": "nicht in die 12 Bewertungsseiten aufgenommen (Stichprobe nach Aufgabe und Seitentyp)",
+   "labels": {
+    "observed": [
+     "entryUrl",
+     "transactionUrls",
+     "operator",
+     "boundary",
+     "languages",
+     "provenance"
+    ],
+    "inferred": [
+     "audience",
+     "civicTask",
+     "priority",
+     "interface"
+    ]
+   }
+  },
+  {
+   "serviceId": "S04",
+   "title": "Umzug innerhalb des Kantons melden",
+   "audience": "Einwohnende",
+   "civicTask": "Adressänderung",
+   "entryUrl": "https://www.bs.ch/themen/persoenliches-und-wohnen/umzug-und-wegzug/umzug-innerhalb-des-kantons-melden",
+   "transactionUrls": [
+    "https://eservices.egov.bs.ch/e/20884/p/001/wohnungswechsel-innerhalb-des-kantons",
+    "https://eservices.egov.bs.ch/e/20887/p/001/kontaktformular-bevoelkerungsdienste-und-migration",
+    "https://www.eumzug.swiss/"
+   ],
+   "responsibility": "unknown",
+   "responsibilityNote": "Zuordnung Stadt/Kanton/Gemeinde nicht aus einer offiziellen Quelle belegt (siehe Bericht); Riehen/Bettingen nur als Kontext.",
+   "operator": "Einwohneramt",
+   "operatorSource": "https://www.bs.ch/themen/persoenliches-und-wohnen/umzug-und-wegzug/umzug-innerhalb-des-kantons-melden",
+   "operatorConfidence": "observed (Seitenangabe «Für dieses Thema zuständig»)",
+   "boundary": {
+    "public": true,
+    "loginOrAccount": true,
+    "thirdPartyHosts": [
+     "www.eumzug.swiss"
+    ],
+    "transactionHosts": [
+     "eservices.egov.bs.ch",
+     "www.eumzug.swiss"
+    ],
+    "embeddedOrMapHosts": [
+     "map.geo.bs.ch"
+    ],
+    "pdfLinks": 1
+   },
+   "languages": [
+    "de (nur Deutsch beobachtet)"
+   ],
+   "interface": "Informations-/Einstiegsseite",
+   "provenance": {
+    "url": "https://www.bs.ch/themen/persoenliches-und-wohnen/umzug-und-wegzug/umzug-innerhalb-des-kantons-melden",
+    "retrievedAt": "2026-10-29T20:19:00.741599+00:00",
+    "sha256": "5cb16e9acd37eba996d215586937631e510d3454a24958db8a0013800f1d6b73",
+    "status": 200
+   },
+   "accessibilityDisclosure": "Erklärung zur Barrierefreiheit (bs.ch): teilweise konform; PDFs, Videos, iFrames als Einschränkungen genannt",
+   "priority": "hoch",
+   "priorityReason": "Häufige Aufgabe, Transaktion extern (eUmzug/eServices)",
+   "status": {
+    "discovered": true,
+    "queuedForAssessment": true,
+    "assessmentId": "p02-umzug"
+   },
+   "exclusionReason": null,
+   "labels": {
+    "observed": [
+     "entryUrl",
+     "transactionUrls",
+     "operator",
+     "boundary",
+     "languages",
+     "provenance"
+    ],
+    "inferred": [
+     "audience",
+     "civicTask",
+     "priority",
+     "interface"
+    ]
+   }
+  },
+  {
+   "serviceId": "S05",
+   "title": "Wegzug vom Kanton melden",
+   "audience": "Einwohnende",
+   "civicTask": "Abmeldung",
+   "entryUrl": "https://www.bs.ch/themen/persoenliches-und-wohnen/umzug-und-wegzug/wegzug-vom-kanton-melden",
+   "transactionUrls": [
+    "https://eservices.egov.bs.ch/e/20887/p/001/kontaktformular-bevoelkerungsdienste-und-migration",
+    "https://eservices.egov.bs.ch/pay/401/p/001/wegzug-vom-kanton-basel-stadt",
+    "https://formulare.bs.ch/bdm/wegzug-vom-kanton-basel-stadt",
+    "https://www.eumzug.swiss/"
+   ],
+   "responsibility": "unknown",
+   "responsibilityNote": "Zuordnung Stadt/Kanton/Gemeinde nicht aus einer offiziellen Quelle belegt (siehe Bericht); Riehen/Bettingen nur als Kontext.",
+   "operator": "Einwohneramt",
+   "operatorSource": "https://www.bs.ch/themen/persoenliches-und-wohnen/umzug-und-wegzug/wegzug-vom-kanton-melden",
+   "operatorConfidence": "observed (Seitenangabe «Für dieses Thema zuständig»)",
+   "boundary": {
+    "public": true,
+    "loginOrAccount": true,
+    "thirdPartyHosts": [
+     "www.eumzug.swiss"
+    ],
+    "transactionHosts": [
+     "eservices.egov.bs.ch",
+     "formulare.bs.ch",
+     "www.eumzug.swiss"
+    ],
+    "embeddedOrMapHosts": [
+     "map.geo.bs.ch"
+    ],
+    "pdfLinks": 0
+   },
+   "languages": [
+    "de (nur Deutsch beobachtet)"
+   ],
+   "interface": "Informations-/Einstiegsseite",
+   "provenance": {
+    "url": "https://www.bs.ch/themen/persoenliches-und-wohnen/umzug-und-wegzug/wegzug-vom-kanton-melden",
+    "retrievedAt": "2026-10-29T20:19:10.741673+00:00",
+    "sha256": "efc538ca6c3d9124b8af36540096a37ecb02860d3bece7342f64979a6bf667e0",
+    "status": 200
+   },
+   "accessibilityDisclosure": "Erklärung zur Barrierefreiheit (bs.ch): teilweise konform; PDFs, Videos, iFrames als Einschränkungen genannt",
+   "priority": "mittel",
+   "priorityReason": "Transaktion mit Bezahlschritt extern",
+   "status": {
+    "discovered": true,
+    "queuedForAssessment": false,
+    "assessmentId": null
+   },
+   "exclusionReason": "nicht in die 12 Bewertungsseiten aufgenommen (Stichprobe nach Aufgabe und Seitentyp)",
+   "labels": {
+    "observed": [
+     "entryUrl",
+     "transactionUrls",
+     "operator",
+     "boundary",
+     "languages",
+     "provenance"
+    ],
+    "inferred": [
+     "audience",
+     "civicTask",
+     "priority",
+     "interface"
+    ]
+   }
+  },
+  {
+   "serviceId": "S06",
+   "title": "Zuzug in den Kanton",
+   "audience": "Neuzuziehende",
+   "civicTask": "Anmeldung, Begrüssungstermin",
+   "entryUrl": "https://www.bs.ch/themen/persoenliches-und-wohnen/zuzug-und-aufenthalt/zuzug-den-kanton-basel-stadt",
+   "transactionUrls": [
+    "https://eservices.egov.bs.ch/e/20887/p/001/kontaktformular-bevoelkerungsdienste-und-migration",
+    "https://eservices.egov.bs.ch/e/23102/p/001/terminbuchung-begruessungsgespraech-einwohneramt",
+    "https://eservices.egov.bs.ch/pay/22965/p/001/anmeldeformular-einwohneramt"
+   ],
+   "responsibility": "unknown",
+   "responsibilityNote": "Zuordnung Stadt/Kanton/Gemeinde nicht aus einer offiziellen Quelle belegt (siehe Bericht); Riehen/Bettingen nur als Kontext.",
+   "operator": "Einwohneramt",
+   "operatorSource": "https://www.bs.ch/themen/persoenliches-und-wohnen/zuzug-und-aufenthalt/zuzug-den-kanton-basel-stadt",
+   "operatorConfidence": "observed (Seitenangabe «Für dieses Thema zuständig»)",
+   "boundary": {
+    "public": true,
+    "loginOrAccount": true,
+    "thirdPartyHosts": [],
+    "transactionHosts": [
+     "eservices.egov.bs.ch"
+    ],
+    "embeddedOrMapHosts": [
+     "map.geo.bs.ch"
+    ],
+    "pdfLinks": 3
+   },
+   "languages": [
+    "de (nur Deutsch beobachtet)"
+   ],
+   "interface": "Informations-/Einstiegsseite",
+   "provenance": {
+    "url": "https://www.bs.ch/themen/persoenliches-und-wohnen/zuzug-und-aufenthalt/zuzug-den-kanton-basel-stadt",
+    "retrievedAt": "2026-10-29T20:19:30.741807+00:00",
+    "sha256": "21f20b03564fa5c6abc948dc83be1f24a063ab6ba02cbdc1dac602e7d7160f38",
+    "status": 200
+   },
+   "accessibilityDisclosure": "Erklärung zur Barrierefreiheit (bs.ch): teilweise konform; PDFs, Videos, iFrames als Einschränkungen genannt",
+   "priority": "hoch",
+   "priorityReason": "Erster Kontakt mit dem Kanton",
+   "status": {
+    "discovered": true,
+    "queuedForAssessment": true,
+    "assessmentId": "p04-zuzug"
+   },
+   "exclusionReason": null,
+   "labels": {
+    "observed": [
+     "entryUrl",
+     "transactionUrls",
+     "operator",
+     "boundary",
+     "languages",
+     "provenance"
+    ],
+    "inferred": [
+     "audience",
+     "civicTask",
+     "priority",
+     "interface"
+    ]
+   }
+  },
+  {
+   "serviceId": "S07",
+   "title": "Pass / Identitätskarte bestellen",
+   "audience": "Einwohnende",
+   "civicTask": "Identität, Termin",
+   "entryUrl": "https://www.bs.ch/themen/persoenliches-und-wohnen/pass-identitaetskarte-und-beglaubigungen/ich-brauche-einen-neuen-pass-eine-neue-identitaetskarte",
+   "transactionUrls": [
+    "https://eservices.egov.bs.ch/e/22310/p/001/online-polizeiposten"
+   ],
+   "responsibility": "unknown",
+   "responsibilityNote": "Zuordnung Stadt/Kanton/Gemeinde nicht aus einer offiziellen Quelle belegt (siehe Bericht); Riehen/Bettingen nur als Kontext.",
+   "operator": "Passamt",
+   "operatorSource": "https://www.bs.ch/themen/persoenliches-und-wohnen/pass-identitaetskarte-und-beglaubigungen/ich-brauche-einen-neuen-pass-eine-neue-identitaetskarte",
+   "operatorConfidence": "observed (Seitenangabe «Für dieses Thema zuständig»)",
+   "boundary": {
+    "public": true,
+    "loginOrAccount": true,
+    "thirdPartyHosts": [],
+    "transactionHosts": [
+     "eservices.egov.bs.ch"
+    ],
+    "embeddedOrMapHosts": [
+     "map.geo.bs.ch"
+    ],
+    "pdfLinks": 3
+   },
+   "languages": [
+    "de (nur Deutsch beobachtet)"
+   ],
+   "interface": "Informations-/Einstiegsseite",
+   "provenance": {
+    "url": "https://www.bs.ch/themen/persoenliches-und-wohnen/pass-identitaetskarte-und-beglaubigungen/ich-brauche-einen-neuen-pass-eine-neue-identitaetskarte",
+    "retrievedAt": "2026-10-29T20:19:20.741742+00:00",
+    "sha256": "5d63da5b7c65439625bdf0f5427358af61469a453f2c4b50741ccf0b93d2899b",
+    "status": 200
+   },
+   "accessibilityDisclosure": "Erklärung zur Barrierefreiheit (bs.ch): teilweise konform; PDFs, Videos, iFrames als Einschränkungen genannt",
+   "priority": "hoch",
+   "priorityReason": "Termin über Bundesstellen; viele Absprünge",
+   "status": {
+    "discovered": true,
+    "queuedForAssessment": true,
+    "assessmentId": "p03-pass"
+   },
+   "exclusionReason": null,
+   "labels": {
+    "observed": [
+     "entryUrl",
+     "transactionUrls",
+     "operator",
+     "boundary",
+     "languages",
+     "provenance"
+    ],
+    "inferred": [
+     "audience",
+     "civicTask",
+     "priority",
+     "interface"
+    ]
+   }
+  },
+  {
+   "serviceId": "S08",
+   "title": "Abfallabfuhr",
+   "audience": "Einwohnende",
+   "civicTask": "Abfuhrtermine und Zone",
+   "entryUrl": "https://www.bs.ch/themen/umwelt-und-bauen/abfall-und-sauberkeit/abfallabfuhr",
+   "transactionUrls": [
+    "https://app.draeggwaegg.ch/formular",
+    "https://eservices.egov.bs.ch/e/21146/p/001/container-bestellung"
+   ],
+   "responsibility": "unknown",
+   "responsibilityNote": "Zuordnung Stadt/Kanton/Gemeinde nicht aus einer offiziellen Quelle belegt (siehe Bericht); Riehen/Bettingen nur als Kontext.",
+   "operator": "Tiefbauamt",
+   "operatorSource": "https://www.bs.ch/themen/umwelt-und-bauen/abfall-und-sauberkeit/abfallabfuhr",
+   "operatorConfidence": "observed (Seitenangabe «Für dieses Thema zuständig»)",
+   "boundary": {
+    "public": true,
+    "loginOrAccount": true,
+    "thirdPartyHosts": [
+     "app.draeggwaegg.ch",
+     "trashcal.maxgfeller.com"
+    ],
+    "transactionHosts": [
+     "app.draeggwaegg.ch",
+     "eservices.egov.bs.ch"
+    ],
+    "embeddedOrMapHosts": [
+     "geo.bs.ch",
+     "map.geo.bs.ch"
+    ],
+    "pdfLinks": 11
+   },
+   "languages": [
+    "de (nur Deutsch beobachtet)"
+   ],
+   "interface": "Informations-/Einstiegsseite",
+   "provenance": {
+    "url": "https://www.bs.ch/themen/umwelt-und-bauen/abfall-und-sauberkeit/abfallabfuhr",
+    "retrievedAt": "2026-10-29T20:16:53.898152+00:00",
+    "sha256": "6f02d5c80dc26b0552aa95d8f145ddb4ca65669398b6685469eda2f4a4186a34",
+    "status": 200
+   },
+   "accessibilityDisclosure": "Erklärung zur Barrierefreiheit (bs.ch): teilweise konform; PDFs, Videos, iFrames als Einschränkungen genannt",
+   "priority": "hoch",
+   "priorityReason": "Alltagsaufgabe; Karten-iFrame und PDF-Pläne",
+   "status": {
+    "discovered": true,
+    "queuedForAssessment": true,
+    "assessmentId": "p05-abfall"
+   },
+   "exclusionReason": null,
+   "labels": {
+    "observed": [
+     "entryUrl",
+     "transactionUrls",
+     "operator",
+     "boundary",
+     "languages",
+     "provenance"
+    ],
+    "inferred": [
+     "audience",
+     "civicTask",
+     "priority",
+     "interface"
+    ]
+   }
+  },
+  {
+   "serviceId": "S09",
+   "title": "Zonensuche (App)",
+   "audience": "Einwohnende",
+   "civicTask": "Abfuhrzone zur Adresse",
+   "entryUrl": "https://www.bs.ch/apps/zonensuche",
+   "transactionUrls": [],
+   "responsibility": "unknown",
+   "responsibilityNote": "Zuordnung Stadt/Kanton/Gemeinde nicht aus einer offiziellen Quelle belegt (siehe Bericht); Riehen/Bettingen nur als Kontext.",
+   "operator": null,
+   "operatorSource": null,
+   "operatorConfidence": "unknown",
+   "boundary": {
+    "public": true,
+    "loginOrAccount": true,
+    "thirdPartyHosts": [],
+    "transactionHosts": [],
+    "embeddedOrMapHosts": [
+     "map.geo.bs.ch"
+    ],
+    "pdfLinks": 0
+   },
+   "languages": [
+    "de (nur Deutsch beobachtet)"
+   ],
+   "interface": "App/Formular",
+   "provenance": {
+    "url": "https://www.bs.ch/apps/zonensuche",
+    "retrievedAt": "2026-10-29T20:20:30.742216+00:00",
+    "sha256": "268e9fd1394c32e635c5b0f26027d71cf74683b71d39c7f7e0bd628425daf6a7",
+    "status": 200
+   },
+   "accessibilityDisclosure": "Erklärung zur Barrierefreiheit (bs.ch): teilweise konform; PDFs, Videos, iFrames als Einschränkungen genannt",
+   "priority": "mittel",
+   "priorityReason": "Interaktive App",
+   "status": {
+    "discovered": true,
+    "queuedForAssessment": true,
+    "assessmentId": "p06-zonensuche"
+   },
+   "exclusionReason": null,
+   "labels": {
+    "observed": [
+     "entryUrl",
+     "transactionUrls",
+     "operator",
+     "boundary",
+     "languages",
+     "provenance"
+    ],
+    "inferred": [
+     "audience",
+     "civicTask",
+     "priority",
+     "interface"
+    ]
+   }
+  },
+  {
+   "serviceId": "S10",
+   "title": "Abfall-ABC",
+   "audience": "Einwohnende",
+   "civicTask": "Entsorgung nachschlagen",
+   "entryUrl": "https://www.bs.ch/themen/umwelt-und-bauen/abfall-und-sauberkeit/abfall-abc",
+   "transactionUrls": [],
+   "responsibility": "unknown",
+   "responsibilityNote": "Zuordnung Stadt/Kanton/Gemeinde nicht aus einer offiziellen Quelle belegt (siehe Bericht); Riehen/Bettingen nur als Kontext.",
+   "operator": null,
+   "operatorSource": null,
+   "operatorConfidence": "unknown",
+   "boundary": {
+    "public": true,
+    "loginOrAccount": true,
+    "thirdPartyHosts": [],
+    "transactionHosts": [],
+    "embeddedOrMapHosts": [
+     "map.geo.bs.ch"
+    ],
+    "pdfLinks": 0
+   },
+   "languages": [
+    "de (nur Deutsch beobachtet)"
+   ],
+   "interface": "Informations-/Einstiegsseite",
+   "provenance": {
+    "url": "https://www.bs.ch/themen/umwelt-und-bauen/abfall-und-sauberkeit/abfall-abc",
+    "retrievedAt": "2026-10-29T20:21:30.742639+00:00",
+    "sha256": "5ba66801998deee35a76abc675ca8820d48215e1269fd61fc6ae033302e09757",
+    "status": 200
+   },
+   "accessibilityDisclosure": "Erklärung zur Barrierefreiheit (bs.ch): teilweise konform; PDFs, Videos, iFrames als Einschränkungen genannt",
+   "priority": "niedrig",
+   "priorityReason": "Nachschlage-Verzeichnis",
+   "status": {
+    "discovered": true,
+    "queuedForAssessment": false,
+    "assessmentId": null
+   },
+   "exclusionReason": "nicht in die 12 Bewertungsseiten aufgenommen (Stichprobe nach Aufgabe und Seitentyp)",
+   "labels": {
+    "observed": [
+     "entryUrl",
+     "transactionUrls",
+     "operator",
+     "boundary",
+     "languages",
+     "provenance"
+    ],
+    "inferred": [
+     "audience",
+     "civicTask",
+     "priority",
+     "interface"
+    ]
+   }
+  },
+  {
+   "serviceId": "S11",
+   "title": "Sozialhilferechner (App)",
+   "audience": "Personen mit wenig Einkommen",
+   "civicTask": "Anspruch abschätzen",
+   "entryUrl": "https://www.bs.ch/apps/sozialhilferechner",
+   "transactionUrls": [],
+   "responsibility": "unknown",
+   "responsibilityNote": "Zuordnung Stadt/Kanton/Gemeinde nicht aus einer offiziellen Quelle belegt (siehe Bericht); Riehen/Bettingen nur als Kontext.",
+   "operator": null,
+   "operatorSource": null,
+   "operatorConfidence": "unknown",
+   "boundary": {
+    "public": true,
+    "loginOrAccount": true,
+    "thirdPartyHosts": [],
+    "transactionHosts": [],
+    "embeddedOrMapHosts": [
+     "map.geo.bs.ch"
+    ],
+    "pdfLinks": 0
+   },
+   "languages": [
+    "de (nur Deutsch beobachtet)"
+   ],
+   "interface": "App/Formular",
+   "provenance": {
+    "url": "https://www.bs.ch/apps/sozialhilferechner",
+    "retrievedAt": "2026-10-29T20:20:20.742147+00:00",
+    "sha256": "60ffd3397bc4d5fec44f9875db73f1558e128b6312f7b931843297c791522384",
+    "status": 200
+   },
+   "accessibilityDisclosure": "Erklärung zur Barrierefreiheit (bs.ch): teilweise konform; PDFs, Videos, iFrames als Einschränkungen genannt",
+   "priority": "hoch",
+   "priorityReason": "Unterstützungsleistung, Formular-App",
+   "status": {
+    "discovered": true,
+    "queuedForAssessment": true,
+    "assessmentId": "p07-sozialhilferechner"
+   },
+   "exclusionReason": null,
+   "labels": {
+    "observed": [
+     "entryUrl",
+     "transactionUrls",
+     "operator",
+     "boundary",
+     "languages",
+     "provenance"
+    ],
+    "inferred": [
+     "audience",
+     "civicTask",
+     "priority",
+     "interface"
+    ]
+   }
+  },
+  {
+   "serviceId": "S12",
+   "title": "Leistungsrechner (Übersicht)",
+   "audience": "Personen mit wenig Einkommen",
+   "civicTask": "Passende Leistung finden",
+   "entryUrl": "https://www.bs.ch/themen/finanzielle-hilfe/leistungsrechner",
+   "transactionUrls": [],
+   "responsibility": "unknown",
+   "responsibilityNote": "Zuordnung Stadt/Kanton/Gemeinde nicht aus einer offiziellen Quelle belegt (siehe Bericht); Riehen/Bettingen nur als Kontext.",
+   "operator": null,
+   "operatorSource": null,
+   "operatorConfidence": "unknown",
+   "boundary": {
+    "public": true,
+    "loginOrAccount": true,
+    "thirdPartyHosts": [],
+    "transactionHosts": [],
+    "embeddedOrMapHosts": [
+     "map.geo.bs.ch"
+    ],
+    "pdfLinks": 0
+   },
+   "languages": [
+    "de (nur Deutsch beobachtet)"
+   ],
+   "interface": "Informations-/Einstiegsseite",
+   "provenance": {
+    "url": "https://www.bs.ch/themen/finanzielle-hilfe/leistungsrechner",
+    "retrievedAt": "2026-10-29T20:17:23.898356+00:00",
+    "sha256": "883728b64db3d72d6af72f84e546f39dcadd0ad4eb3bac29ed066b554f227042",
+    "status": 200
+   },
+   "accessibilityDisclosure": "Erklärung zur Barrierefreiheit (bs.ch): teilweise konform; PDFs, Videos, iFrames als Einschränkungen genannt",
+   "priority": "mittel",
+   "priorityReason": "Einstieg zu drei Rechnern",
+   "status": {
+    "discovered": true,
+    "queuedForAssessment": false,
+    "assessmentId": null
+   },
+   "exclusionReason": "nicht in die 12 Bewertungsseiten aufgenommen (Stichprobe nach Aufgabe und Seitentyp)",
+   "labels": {
+    "observed": [
+     "entryUrl",
+     "transactionUrls",
+     "operator",
+     "boundary",
+     "languages",
+     "provenance"
+    ],
+    "inferred": [
+     "audience",
+     "civicTask",
+     "priority",
+     "interface"
+    ]
+   }
+  },
+  {
+   "serviceId": "S13",
+   "title": "Finanzielle Hilfe für Menschen mit Behinderung",
+   "audience": "Menschen mit Behinderung",
+   "civicTask": "Leistungen finden",
+   "entryUrl": "https://www.bs.ch/themen/finanzielle-hilfe/menschen-mit-behinderung",
+   "transactionUrls": [],
+   "responsibility": "unknown",
+   "responsibilityNote": "Zuordnung Stadt/Kanton/Gemeinde nicht aus einer offiziellen Quelle belegt (siehe Bericht); Riehen/Bettingen nur als Kontext.",
+   "operator": null,
+   "operatorSource": null,
+   "operatorConfidence": "unknown",
+   "boundary": {
+    "public": true,
+    "loginOrAccount": true,
+    "thirdPartyHosts": [],
+    "transactionHosts": [],
+    "embeddedOrMapHosts": [
+     "map.geo.bs.ch"
+    ],
+    "pdfLinks": 0
+   },
+   "languages": [
+    "de (nur Deutsch beobachtet)"
+   ],
+   "interface": "Informations-/Einstiegsseite",
+   "provenance": {
+    "url": "https://www.bs.ch/themen/finanzielle-hilfe/menschen-mit-behinderung",
+    "retrievedAt": "2026-10-29T20:17:33.898425+00:00",
+    "sha256": "16354cff8cce5f816b84cd73059d9029640cbcb48cd49b832f9ecfc86bcd82b5",
+    "status": 200
+   },
+   "accessibilityDisclosure": "Erklärung zur Barrierefreiheit (bs.ch): teilweise konform; PDFs, Videos, iFrames als Einschränkungen genannt",
+   "priority": "hoch",
+   "priorityReason": "Zielgruppe direkt betroffen",
+   "status": {
+    "discovered": true,
+    "queuedForAssessment": false,
+    "assessmentId": null
+   },
+   "exclusionReason": "nicht in die 12 Bewertungsseiten aufgenommen (Stichprobe nach Aufgabe und Seitentyp)",
+   "labels": {
+    "observed": [
+     "entryUrl",
+     "transactionUrls",
+     "operator",
+     "boundary",
+     "languages",
+     "provenance"
+    ],
+    "inferred": [
+     "audience",
+     "civicTask",
+     "priority",
+     "interface"
+    ]
+   }
+  },
+  {
+   "serviceId": "S14",
+   "title": "Anwohnerparkkarte",
+   "audience": "Einwohnende",
+   "civicTask": "Bewilligung beantragen",
+   "entryUrl": "https://www.bs.ch/themen/mobilitaet/fahren-und-parkieren/parkkarten/anwohnerparkkarte",
+   "transactionUrls": [
+    "https://eservices.egov.bs.ch/pay/101/p/001/gesuch-anwohnerparkkarte",
+    "https://formulare.bs.ch/mfk/formular-kontakt"
+   ],
+   "responsibility": "unknown",
+   "responsibilityNote": "Zuordnung Stadt/Kanton/Gemeinde nicht aus einer offiziellen Quelle belegt (siehe Bericht); Riehen/Bettingen nur als Kontext.",
+   "operator": "Kantonspolizei",
+   "operatorSource": "https://www.bs.ch/themen/mobilitaet/fahren-und-parkieren/parkkarten/anwohnerparkkarte",
+   "operatorConfidence": "observed (Seitenangabe «Für dieses Thema zuständig»)",
+   "boundary": {
+    "public": true,
+    "loginOrAccount": true,
+    "thirdPartyHosts": [],
+    "transactionHosts": [
+     "eservices.egov.bs.ch",
+     "formulare.bs.ch"
+    ],
+    "embeddedOrMapHosts": [
+     "map.geo.bs.ch"
+    ],
+    "pdfLinks": 1
+   },
+   "languages": [
+    "de (nur Deutsch beobachtet)"
+   ],
+   "interface": "Informations-/Einstiegsseite",
+   "provenance": {
+    "url": "https://www.bs.ch/themen/mobilitaet/fahren-und-parkieren/parkkarten/anwohnerparkkarte",
+    "retrievedAt": "2026-10-29T20:19:40.741877+00:00",
+    "sha256": "2123d5221e8f28ab3e17eb234376f5f0b6f839e6a85eeb9a2b125c03ed913759",
+    "status": 200
+   },
+   "accessibilityDisclosure": "Erklärung zur Barrierefreiheit (bs.ch): teilweise konform; PDFs, Videos, iFrames als Einschränkungen genannt",
+   "priority": "mittel",
+   "priorityReason": "eService mit Bezahlschritt",
+   "status": {
+    "discovered": true,
+    "queuedForAssessment": true,
+    "assessmentId": "p08-anwohnerparkkarte"
+   },
+   "exclusionReason": null,
+   "labels": {
+    "observed": [
+     "entryUrl",
+     "transactionUrls",
+     "operator",
+     "boundary",
+     "languages",
+     "provenance"
+    ],
+    "inferred": [
+     "audience",
+     "civicTask",
+     "priority",
+     "interface"
+    ]
+   }
+  },
+  {
+   "serviceId": "S15",
+   "title": "Behindertenparkkarte",
+   "audience": "Menschen mit Gehbehinderung",
+   "civicTask": "Bewilligung beantragen",
+   "entryUrl": "https://www.bs.ch/themen/mobilitaet/fahren-und-parkieren/parkkarten/behindertenparkkarte",
+   "transactionUrls": [
+    "https://formulare.bs.ch/mfk/formular-kontakt"
+   ],
+   "responsibility": "unknown",
+   "responsibilityNote": "Zuordnung Stadt/Kanton/Gemeinde nicht aus einer offiziellen Quelle belegt (siehe Bericht); Riehen/Bettingen nur als Kontext.",
+   "operator": "Kantonspolizei",
+   "operatorSource": "https://www.bs.ch/themen/mobilitaet/fahren-und-parkieren/parkkarten/behindertenparkkarte",
+   "operatorConfidence": "observed (Seitenangabe «Für dieses Thema zuständig»)",
+   "boundary": {
+    "public": true,
+    "loginOrAccount": true,
+    "thirdPartyHosts": [],
+    "transactionHosts": [
+     "formulare.bs.ch"
+    ],
+    "embeddedOrMapHosts": [
+     "map.geo.bs.ch"
+    ],
+    "pdfLinks": 3
+   },
+   "languages": [
+    "de (nur Deutsch beobachtet)"
+   ],
+   "interface": "Informations-/Einstiegsseite",
+   "provenance": {
+    "url": "https://www.bs.ch/themen/mobilitaet/fahren-und-parkieren/parkkarten/behindertenparkkarte",
+    "retrievedAt": "2026-10-29T20:19:50.741945+00:00",
+    "sha256": "637540e36f58ffffb31ad7748a272047394866d3a682b9cba75b164efb937d54",
+    "status": 200
+   },
+   "accessibilityDisclosure": "Erklärung zur Barrierefreiheit (bs.ch): teilweise konform; PDFs, Videos, iFrames als Einschränkungen genannt",
+   "priority": "hoch",
+   "priorityReason": "Zielgruppe direkt betroffen",
+   "status": {
+    "discovered": true,
+    "queuedForAssessment": true,
+    "assessmentId": "p09-behindertenparkkarte"
+   },
+   "exclusionReason": null,
+   "labels": {
+    "observed": [
+     "entryUrl",
+     "transactionUrls",
+     "operator",
+     "boundary",
+     "languages",
+     "provenance"
+    ],
+    "inferred": [
+     "audience",
+     "civicTask",
+     "priority",
+     "interface"
+    ]
+   }
+  },
+  {
+   "serviceId": "S16",
+   "title": "Busse bezahlen",
+   "audience": "alle",
+   "civicTask": "Busse begleichen",
+   "entryUrl": "https://www.bs.ch/themen/mobilitaet/fahren-und-parkieren/busse-bezahlen",
+   "transactionUrls": [
+    "https://bussen.egov.bs.ch/search/fine-number"
+   ],
+   "responsibility": "unknown",
+   "responsibilityNote": "Zuordnung Stadt/Kanton/Gemeinde nicht aus einer offiziellen Quelle belegt (siehe Bericht); Riehen/Bettingen nur als Kontext.",
+   "operator": "Kantonspolizei",
+   "operatorSource": "https://www.bs.ch/themen/mobilitaet/fahren-und-parkieren/busse-bezahlen",
+   "operatorConfidence": "observed (Seitenangabe «Für dieses Thema zuständig»)",
+   "boundary": {
+    "public": true,
+    "loginOrAccount": true,
+    "thirdPartyHosts": [],
+    "transactionHosts": [
+     "bussen.egov.bs.ch"
+    ],
+    "embeddedOrMapHosts": [
+     "map.geo.bs.ch"
+    ],
+    "pdfLinks": 0
+   },
+   "languages": [
+    "de (nur Deutsch beobachtet)"
+   ],
+   "interface": "Informations-/Einstiegsseite",
+   "provenance": {
+    "url": "https://www.bs.ch/themen/mobilitaet/fahren-und-parkieren/busse-bezahlen",
+    "retrievedAt": "2026-10-29T20:21:20.742563+00:00",
+    "sha256": "9e7a165c0a237df214c26ed2d986c0e70d06e36fbe1c20706e37796c3e1dc3ee",
+    "status": 200
+   },
+   "accessibilityDisclosure": "Erklärung zur Barrierefreiheit (bs.ch): teilweise konform; PDFs, Videos, iFrames als Einschränkungen genannt",
+   "priority": "niedrig",
+   "priorityReason": "Zahlung extern (bussen.egov.bs.ch)",
+   "status": {
+    "discovered": true,
+    "queuedForAssessment": false,
+    "assessmentId": null
+   },
+   "exclusionReason": "nicht in die 12 Bewertungsseiten aufgenommen (Stichprobe nach Aufgabe und Seitentyp)",
+   "labels": {
+    "observed": [
+     "entryUrl",
+     "transactionUrls",
+     "operator",
+     "boundary",
+     "languages",
+     "provenance"
+    ],
+    "inferred": [
+     "audience",
+     "civicTask",
+     "priority",
+     "interface"
+    ]
+   }
+  },
+  {
+   "serviceId": "S17",
+   "title": "Online-Formulare Steuerverwaltung",
+   "audience": "Steuerpflichtige",
+   "civicTask": "Steuerformulare und Anfragen",
+   "entryUrl": "https://www.bs.ch/themen/arbeit-und-steuern/steuererklaerung/online-formulare-steuerverwaltung",
+   "transactionUrls": [
+    "https://eservices.egov.bs.ch/e/21117/p/001/anfragen-zu-den-steuern-von-nat%C3%BCrlichen-personen",
+    "https://eservices.egov.bs.ch/e/21118/p/001/anfragen-zu-den-steuern-von-juristischen-personen",
+    "https://eservices.egov.bs.ch/e/21119/p/001/anfragen-zur-quellensteuer",
+    "https://eservices.egov.bs.ch/e/21120/p/001/anfragen-zur-grundstueckgewinnsteuer-handaenderung",
+    "https://eservices.egov.bs.ch/e/21121/p/001/anfragen-zur-schenkungssteuer-erbschaftssteuer",
+    "https://eservices.egov.bs.ch/e/21122/p/001/anfragen-zur-steuerzahlung",
+    "https://eservices.egov.bs.ch/e/21123/p/001/allgemeine-steueranfragen-mitteilung",
+    "https://eservices.egov.bs.ch/e/21129/p/001/schulden-anfragen",
+    "https://eservices.egov.bs.ch/e/21135/p/001/betreibungen-anfragen",
+    "https://eservices.egov.bs.ch/e/21136/p/001/bestellung-einer-steuerbest%C3%A4tigung-f%C3%BCr-%C3%B6ffentliche-submissione",
+    "https://eservices.egov.bs.ch/pay/20371/p/001/bestellung-steuerausweise-extern",
+    "https://esteuern.bs.ch/private/fristerstreckung",
+    "https://esteuern.bs.ch/unternehmen/fristerstreckung",
+    "https://formulare.bs.ch/steuerverwaltung/adressaenderung",
+    "https://formulare.bs.ch/steuerverwaltung/duplikat-steuererklaerung-jp",
+    "https://formulare.bs.ch/steuerverwaltung/duplikat-steuererklaerung-np",
+    "https://formulare.bs.ch/steuerverwaltung/einzahlungsscheine-bestellen",
+    "https://formulare.bs.ch/steuerverwaltung/inkasso-zahlungsfrist-erstrecken",
+    "https://formulare.bs.ch/steuerverwaltung/kontoauszuege-bestellen",
+    "https://formulare.bs.ch/steuerverwaltung/zahlungsfrist-erstrecken"
+   ],
+   "responsibility": "unknown",
+   "responsibilityNote": "Zuordnung Stadt/Kanton/Gemeinde nicht aus einer offiziellen Quelle belegt (siehe Bericht); Riehen/Bettingen nur als Kontext.",
+   "operator": null,
+   "operatorSource": null,
+   "operatorConfidence": "unknown",
+   "boundary": {
+    "public": true,
+    "loginOrAccount": true,
+    "thirdPartyHosts": [],
+    "transactionHosts": [
+     "eservices.egov.bs.ch",
+     "esteuern.bs.ch",
+     "formulare.bs.ch"
+    ],
+    "embeddedOrMapHosts": [
+     "map.geo.bs.ch"
+    ],
+    "pdfLinks": 0
+   },
+   "languages": [
+    "de (nur Deutsch beobachtet)"
+   ],
+   "interface": "Informations-/Einstiegsseite",
+   "provenance": {
+    "url": "https://www.bs.ch/themen/arbeit-und-steuern/steuererklaerung/online-formulare-steuerverwaltung",
+    "retrievedAt": "2026-10-29T20:20:00.742010+00:00",
+    "sha256": "92c9158d3c4130b41e2d4afa79e92765d6714371d8b0e54458a98e14363d4ea5",
+    "status": 200
+   },
+   "accessibilityDisclosure": "Erklärung zur Barrierefreiheit (bs.ch): teilweise konform; PDFs, Videos, iFrames als Einschränkungen genannt",
+   "priority": "hoch",
+   "priorityReason": "Absprung in mehrere Transaktionssysteme",
+   "status": {
+    "discovered": true,
+    "queuedForAssessment": true,
+    "assessmentId": "p10-steuerformulare"
+   },
+   "exclusionReason": null,
+   "labels": {
+    "observed": [
+     "entryUrl",
+     "transactionUrls",
+     "operator",
+     "boundary",
+     "languages",
+     "provenance"
+    ],
+    "inferred": [
+     "audience",
+     "civicTask",
+     "priority",
+     "interface"
+    ]
+   }
+  },
+  {
+   "serviceId": "S18",
+   "title": "Steuern berechnen",
+   "audience": "Steuerpflichtige",
+   "civicTask": "Steuerbelastung abschätzen",
+   "entryUrl": "https://www.bs.ch/themen/arbeit-und-steuern/steuererklaerung/steuerrechner",
+   "transactionUrls": [],
+   "responsibility": "unknown",
+   "responsibilityNote": "Zuordnung Stadt/Kanton/Gemeinde nicht aus einer offiziellen Quelle belegt (siehe Bericht); Riehen/Bettingen nur als Kontext.",
+   "operator": null,
+   "operatorSource": null,
+   "operatorConfidence": "unknown",
+   "boundary": {
+    "public": true,
+    "loginOrAccount": true,
+    "thirdPartyHosts": [],
+    "transactionHosts": [],
+    "embeddedOrMapHosts": [
+     "map.geo.bs.ch"
+    ],
+    "pdfLinks": 0
+   },
+   "languages": [
+    "de (nur Deutsch beobachtet)"
+   ],
+   "interface": "Informations-/Einstiegsseite",
+   "provenance": {
+    "url": "https://www.bs.ch/themen/arbeit-und-steuern/steuererklaerung/steuerrechner",
+    "retrievedAt": "2026-10-29T20:20:10.742081+00:00",
+    "sha256": "cc5babffa3a721ef43a9984110e0159be99442e008830914d19418ec07f3506c",
+    "status": 200
+   },
+   "accessibilityDisclosure": "Erklärung zur Barrierefreiheit (bs.ch): teilweise konform; PDFs, Videos, iFrames als Einschränkungen genannt",
+   "priority": "niedrig",
+   "priorityReason": "Rechner teilweise extern",
+   "status": {
+    "discovered": true,
+    "queuedForAssessment": false,
+    "assessmentId": null
+   },
+   "exclusionReason": "nicht in die 12 Bewertungsseiten aufgenommen (Stichprobe nach Aufgabe und Seitentyp)",
+   "labels": {
+    "observed": [
+     "entryUrl",
+     "transactionUrls",
+     "operator",
+     "boundary",
+     "languages",
+     "provenance"
+    ],
+    "inferred": [
+     "audience",
+     "civicTask",
+     "priority",
+     "interface"
+    ]
+   }
+  },
+  {
+   "serviceId": "S19",
+   "title": "Kita",
+   "audience": "Familien",
+   "civicTask": "Kita-Platz und Beiträge",
+   "entryUrl": "https://www.bs.ch/themen/bildung-und-kinderbetreuung/kinderbetreuung/kita",
+   "transactionUrls": [
+    "https://ed-kinderbetreuung.edubs.ch/directories/kinderbetreuung",
+    "https://eservices.egov.bs.ch/e/20975/p/001/gesuch-betreuungsbeitraege"
+   ],
+   "responsibility": "unknown",
+   "responsibilityNote": "Zuordnung Stadt/Kanton/Gemeinde nicht aus einer offiziellen Quelle belegt (siehe Bericht); Riehen/Bettingen nur als Kontext.",
+   "operator": "Fachstelle Tagesbetreuung",
+   "operatorSource": "https://www.bs.ch/themen/bildung-und-kinderbetreuung/kinderbetreuung/kita",
+   "operatorConfidence": "observed (Seitenangabe «Für dieses Thema zuständig»)",
+   "boundary": {
+    "public": true,
+    "loginOrAccount": true,
+    "thirdPartyHosts": [],
+    "transactionHosts": [
+     "ed-kinderbetreuung.edubs.ch",
+     "eservices.egov.bs.ch"
+    ],
+    "embeddedOrMapHosts": [
+     "map.geo.bs.ch"
+    ],
+    "pdfLinks": 8
+   },
+   "languages": [
+    "de (nur Deutsch beobachtet)"
+   ],
+   "interface": "Informations-/Einstiegsseite",
+   "provenance": {
+    "url": "https://www.bs.ch/themen/bildung-und-kinderbetreuung/kinderbetreuung/kita",
+    "retrievedAt": "2026-10-29T20:20:40.742288+00:00",
+    "sha256": "6caac822e086c1746c2632f15bae3ae2ad161bd5a236e2719ac0f582be82e617",
+    "status": 200
+   },
+   "accessibilityDisclosure": "Erklärung zur Barrierefreiheit (bs.ch): teilweise konform; PDFs, Videos, iFrames als Einschränkungen genannt",
+   "priority": "hoch",
+   "priorityReason": "Viele PDFs, Fachportal",
+   "status": {
+    "discovered": true,
+    "queuedForAssessment": true,
+    "assessmentId": "p11-kita"
+   },
+   "exclusionReason": null,
+   "labels": {
+    "observed": [
+     "entryUrl",
+     "transactionUrls",
+     "operator",
+     "boundary",
+     "languages",
+     "provenance"
+    ],
+    "inferred": [
+     "audience",
+     "civicTask",
+     "priority",
+     "interface"
+    ]
+   }
+  },
+  {
+   "serviceId": "S20",
+   "title": "Brauche ich eine Baubewilligung?",
+   "audience": "Einwohnende, Unternehmen",
+   "civicTask": "Bewilligungspflicht klären",
+   "entryUrl": "https://www.bs.ch/themen/umwelt-und-bauen/bauen-im-kanton-basel-stadt/brauche-ich-eine-baubewilligung",
+   "transactionUrls": [
+    "https://jaxforms.cloud.bs.ch/formservice/services/rest/template/public/KTBS/de/index.html"
+   ],
+   "responsibility": "unknown",
+   "responsibilityNote": "Zuordnung Stadt/Kanton/Gemeinde nicht aus einer offiziellen Quelle belegt (siehe Bericht); Riehen/Bettingen nur als Kontext.",
+   "operator": "Bau- und Gastgewerbeinspektorat",
+   "operatorSource": "https://www.bs.ch/themen/umwelt-und-bauen/bauen-im-kanton-basel-stadt/brauche-ich-eine-baubewilligung",
+   "operatorConfidence": "observed (Seitenangabe «Für dieses Thema zuständig»)",
+   "boundary": {
+    "public": true,
+    "loginOrAccount": true,
+    "thirdPartyHosts": [],
+    "transactionHosts": [
+     "jaxforms.cloud.bs.ch"
+    ],
+    "embeddedOrMapHosts": [
+     "map.geo.bs.ch"
+    ],
+    "pdfLinks": 0
+   },
+   "languages": [
+    "de (nur Deutsch beobachtet)"
+   ],
+   "interface": "Informations-/Einstiegsseite",
+   "provenance": {
+    "url": "https://www.bs.ch/themen/umwelt-und-bauen/bauen-im-kanton-basel-stadt/brauche-ich-eine-baubewilligung",
+    "retrievedAt": "2026-10-29T20:20:50.742351+00:00",
+    "sha256": "83ec6516ce42398d0b616197f592831a9d0383128fab9b227d386fee69def438",
+    "status": 200
+   },
+   "accessibilityDisclosure": "Erklärung zur Barrierefreiheit (bs.ch): teilweise konform; PDFs, Videos, iFrames als Einschränkungen genannt",
+   "priority": "mittel",
+   "priorityReason": "Formular-Dienst extern (jaxforms)",
+   "status": {
+    "discovered": true,
+    "queuedForAssessment": false,
+    "assessmentId": null
+   },
+   "exclusionReason": "nicht in die 12 Bewertungsseiten aufgenommen (Stichprobe nach Aufgabe und Seitentyp)",
+   "labels": {
+    "observed": [
+     "entryUrl",
+     "transactionUrls",
+     "operator",
+     "boundary",
+     "languages",
+     "provenance"
+    ],
+    "inferred": [
+     "audience",
+     "civicTask",
+     "priority",
+     "interface"
+    ]
+   }
+  },
+  {
+   "serviceId": "S21",
+   "title": "Gründung & Ansiedlung von Firmen",
+   "audience": "Unternehmen",
+   "civicTask": "Firma gründen",
+   "entryUrl": "https://www.bs.ch/themen/arbeit-und-steuern/unternehmen/gruendung-ansiedlung-von-firmen",
+   "transactionUrls": [],
+   "responsibility": "unknown",
+   "responsibilityNote": "Zuordnung Stadt/Kanton/Gemeinde nicht aus einer offiziellen Quelle belegt (siehe Bericht); Riehen/Bettingen nur als Kontext.",
+   "operator": null,
+   "operatorSource": null,
+   "operatorConfidence": "unknown",
+   "boundary": {
+    "public": true,
+    "loginOrAccount": true,
+    "thirdPartyHosts": [],
+    "transactionHosts": [],
+    "embeddedOrMapHosts": [
+     "map.geo.bs.ch"
+    ],
+    "pdfLinks": 0
+   },
+   "languages": [
+    "de (nur Deutsch beobachtet)"
+   ],
+   "interface": "Informations-/Einstiegsseite",
+   "provenance": {
+    "url": "https://www.bs.ch/themen/arbeit-und-steuern/unternehmen/gruendung-ansiedlung-von-firmen",
+    "retrievedAt": "2026-10-29T20:21:00.742423+00:00",
+    "sha256": "e579126e8b5bb53ec74ca8e16f31dbfd4439e2a9f5a950b052f6c496cf66faa3",
+    "status": 200
+   },
+   "accessibilityDisclosure": "Erklärung zur Barrierefreiheit (bs.ch): teilweise konform; PDFs, Videos, iFrames als Einschränkungen genannt",
+   "priority": "mittel",
+   "priorityReason": "Unternehmensaufgabe",
+   "status": {
+    "discovered": true,
+    "queuedForAssessment": false,
+    "assessmentId": null
+   },
+   "exclusionReason": "nicht in die 12 Bewertungsseiten aufgenommen (Stichprobe nach Aufgabe und Seitentyp)",
+   "labels": {
+    "observed": [
+     "entryUrl",
+     "transactionUrls",
+     "operator",
+     "boundary",
+     "languages",
+     "provenance"
+    ],
+    "inferred": [
+     "audience",
+     "civicTask",
+     "priority",
+     "interface"
+    ]
+   }
+  },
+  {
+   "serviceId": "S22",
+   "title": "Erstmaliger Stellenantritt (Arbeitsbewilligung)",
+   "audience": "Arbeitgebende, Arbeitnehmende",
+   "civicTask": "Arbeitsbewilligung",
+   "entryUrl": "https://www.bs.ch/themen/arbeit-und-steuern/arbeitsbewilligungen/erstmaliger-stellenantritt-der-schweiz",
+   "transactionUrls": [],
+   "responsibility": "unknown",
+   "responsibilityNote": "Zuordnung Stadt/Kanton/Gemeinde nicht aus einer offiziellen Quelle belegt (siehe Bericht); Riehen/Bettingen nur als Kontext.",
+   "operator": "Arbeitsbeziehungen (ABZ) Amt für Wirtschaft und Arbeit (AWA)",
+   "operatorSource": "https://www.bs.ch/themen/arbeit-und-steuern/arbeitsbewilligungen/erstmaliger-stellenantritt-der-schweiz",
+   "operatorConfidence": "observed (Seitenangabe «Für dieses Thema zuständig»)",
+   "boundary": {
+    "public": true,
+    "loginOrAccount": true,
+    "thirdPartyHosts": [],
+    "transactionHosts": [],
+    "embeddedOrMapHosts": [
+     "map.geo.bs.ch"
+    ],
+    "pdfLinks": 0
+   },
+   "languages": [
+    "de (nur Deutsch beobachtet)"
+   ],
+   "interface": "Informations-/Einstiegsseite",
+   "provenance": {
+    "url": "https://www.bs.ch/themen/arbeit-und-steuern/arbeitsbewilligungen/erstmaliger-stellenantritt-der-schweiz",
+    "retrievedAt": "2026-10-29T20:21:10.742488+00:00",
+    "sha256": "e7d497a80b600f18d00a919b02473e540beb1a832402663f473219fed27b0e2c",
+    "status": 200
+   },
+   "accessibilityDisclosure": "Erklärung zur Barrierefreiheit (bs.ch): teilweise konform; PDFs, Videos, iFrames als Einschränkungen genannt",
+   "priority": "mittel",
+   "priorityReason": "Unternehmens- und Migrationsaufgabe",
+   "status": {
+    "discovered": true,
+    "queuedForAssessment": false,
+    "assessmentId": null
+   },
+   "exclusionReason": "nicht in die 12 Bewertungsseiten aufgenommen (Stichprobe nach Aufgabe und Seitentyp)",
+   "labels": {
+    "observed": [
+     "entryUrl",
+     "transactionUrls",
+     "operator",
+     "boundary",
+     "languages",
+     "provenance"
+    ],
+    "inferred": [
+     "audience",
+     "civicTask",
+     "priority",
+     "interface"
+    ]
+   }
+  },
+  {
+   "serviceId": "S23",
+   "title": "Inhalte in Gebärdensprache",
+   "audience": "gehörlose Menschen",
+   "civicTask": "Informationen in Gebärdensprache",
+   "entryUrl": "https://www.bs.ch/gebaerdensprache",
+   "transactionUrls": [],
+   "responsibility": "unknown",
+   "responsibilityNote": "Zuordnung Stadt/Kanton/Gemeinde nicht aus einer offiziellen Quelle belegt (siehe Bericht); Riehen/Bettingen nur als Kontext.",
+   "operator": null,
+   "operatorSource": null,
+   "operatorConfidence": "unknown",
+   "boundary": {
+    "public": true,
+    "loginOrAccount": true,
+    "thirdPartyHosts": [],
+    "transactionHosts": [],
+    "embeddedOrMapHosts": [
+     "map.geo.bs.ch"
+    ],
+    "pdfLinks": 0
+   },
+   "languages": [
+    "de (nur Deutsch beobachtet)"
+   ],
+   "interface": "Informations-/Einstiegsseite",
+   "provenance": {
+    "url": "https://www.bs.ch/gebaerdensprache",
+    "retrievedAt": "2026-10-29T20:18:23.898770+00:00",
+    "sha256": "92730568b6aafdf18311f603e504fd4c862fe89bc2885317f80dbba25e37ef9b",
+    "status": 200
+   },
+   "accessibilityDisclosure": "Erklärung zur Barrierefreiheit (bs.ch): teilweise konform; PDFs, Videos, iFrames als Einschränkungen genannt",
+   "priority": "mittel",
+   "priorityReason": "Barrierefreie Kommunikation, Videos",
+   "status": {
+    "discovered": true,
+    "queuedForAssessment": false,
+    "assessmentId": null
+   },
+   "exclusionReason": "nicht in die 12 Bewertungsseiten aufgenommen (Stichprobe nach Aufgabe und Seitentyp)",
+   "labels": {
+    "observed": [
+     "entryUrl",
+     "transactionUrls",
+     "operator",
+     "boundary",
+     "languages",
+     "provenance"
+    ],
+    "inferred": [
+     "audience",
+     "civicTask",
+     "priority",
+     "interface"
+    ]
+   }
+  },
+  {
+   "serviceId": "S24",
+   "title": "Kinderbetreuung (Übersicht)",
+   "audience": "Familien",
+   "civicTask": "Betreuung finden",
+   "entryUrl": "https://www.bs.ch/themen/bildung-und-kinderbetreuung/kinderbetreuung",
+   "transactionUrls": [],
+   "responsibility": "unknown",
+   "responsibilityNote": "Zuordnung Stadt/Kanton/Gemeinde nicht aus einer offiziellen Quelle belegt (siehe Bericht); Riehen/Bettingen nur als Kontext.",
+   "operator": null,
+   "operatorSource": null,
+   "operatorConfidence": "unknown",
+   "boundary": {
+    "public": true,
+    "loginOrAccount": true,
+    "thirdPartyHosts": [],
+    "transactionHosts": [],
+    "embeddedOrMapHosts": [
+     "map.geo.bs.ch"
+    ],
+    "pdfLinks": 0
+   },
+   "languages": [
+    "de (nur Deutsch beobachtet)"
+   ],
+   "interface": "Informations-/Einstiegsseite",
+   "provenance": {
+    "url": "https://www.bs.ch/themen/bildung-und-kinderbetreuung/kinderbetreuung",
+    "retrievedAt": "2026-10-29T20:17:13.898289+00:00",
+    "sha256": "1fb9e36881798afe56fe2fd8db2fad677b7ac7b811ad04da4625749bcd6b1960",
+    "status": 200
+   },
+   "accessibilityDisclosure": "Erklärung zur Barrierefreiheit (bs.ch): teilweise konform; PDFs, Videos, iFrames als Einschränkungen genannt",
+   "priority": "niedrig",
+   "priorityReason": "Themenseite",
+   "status": {
+    "discovered": true,
+    "queuedForAssessment": false,
+    "assessmentId": null
+   },
+   "exclusionReason": "nicht in die 12 Bewertungsseiten aufgenommen (Stichprobe nach Aufgabe und Seitentyp)",
+   "labels": {
+    "observed": [
+     "entryUrl",
+     "transactionUrls",
+     "operator",
+     "boundary",
+     "languages",
+     "provenance"
+    ],
+    "inferred": [
+     "audience",
+     "civicTask",
+     "priority",
+     "interface"
+    ]
+   }
+  },
+  {
+   "serviceId": "S25",
+   "title": "Steuererklärung (Übersicht)",
+   "audience": "Steuerpflichtige",
+   "civicTask": "Steuererklärung einreichen",
+   "entryUrl": "https://www.bs.ch/themen/arbeit-und-steuern/steuererklaerung",
+   "transactionUrls": [],
+   "responsibility": "unknown",
+   "responsibilityNote": "Zuordnung Stadt/Kanton/Gemeinde nicht aus einer offiziellen Quelle belegt (siehe Bericht); Riehen/Bettingen nur als Kontext.",
+   "operator": null,
+   "operatorSource": null,
+   "operatorConfidence": "unknown",
+   "boundary": {
+    "public": true,
+    "loginOrAccount": true,
+    "thirdPartyHosts": [],
+    "transactionHosts": [],
+    "embeddedOrMapHosts": [
+     "map.geo.bs.ch"
+    ],
+    "pdfLinks": 0
+   },
+   "languages": [
+    "de (nur Deutsch beobachtet)"
+   ],
+   "interface": "Informations-/Einstiegsseite",
+   "provenance": {
+    "url": "https://www.bs.ch/themen/arbeit-und-steuern/steuererklaerung",
+    "retrievedAt": "2026-10-29T20:17:03.898219+00:00",
+    "sha256": "412f3aa697543b21a999bc96d2b7bc7d475183abdf56ecffa38968f108cc125a",
+    "status": 200
+   },
+   "accessibilityDisclosure": "Erklärung zur Barrierefreiheit (bs.ch): teilweise konform; PDFs, Videos, iFrames als Einschränkungen genannt",
+   "priority": "mittel",
+   "priorityReason": "Themenseite, BalTax",
+   "status": {
+    "discovered": true,
+    "queuedForAssessment": false,
+    "assessmentId": null
+   },
+   "exclusionReason": "nicht in die 12 Bewertungsseiten aufgenommen (Stichprobe nach Aufgabe und Seitentyp)",
+   "labels": {
+    "observed": [
+     "entryUrl",
+     "transactionUrls",
+     "operator",
+     "boundary",
+     "languages",
+     "provenance"
+    ],
+    "inferred": [
+     "audience",
+     "civicTask",
+     "priority",
+     "interface"
+    ]
+   }
+  }
+ ],
+ "hosts": [
+  {
+   "host": "app.draeggwaegg.ch",
+   "status": "nicht getestet: anderes Origin, nicht autorisiert"
+  },
+  {
+   "host": "bussen.egov.bs.ch",
+   "status": "nicht getestet: anderes Origin, nicht autorisiert"
+  },
+  {
+   "host": "ed-kinderbetreuung.edubs.ch",
+   "status": "nicht getestet: anderes Origin, nicht autorisiert"
+  },
+  {
+   "host": "eservices.egov.bs.ch",
+   "status": "nicht getestet: anderes Origin, nicht autorisiert"
+  },
+  {
+   "host": "esteuern.bs.ch",
+   "status": "nicht getestet: anderes Origin, nicht autorisiert"
+  },
+  {
+   "host": "formulare.bs.ch",
+   "status": "nicht getestet: anderes Origin, nicht autorisiert"
+  },
+  {
+   "host": "geo.bs.ch",
+   "status": "nicht getestet: anderes Origin, nicht autorisiert"
+  },
+  {
+   "host": "jaxforms.cloud.bs.ch",
+   "status": "nicht getestet: anderes Origin, nicht autorisiert"
+  },
+  {
+   "host": "map.geo.bs.ch",
+   "status": "nicht getestet: anderes Origin, nicht autorisiert"
+  },
+  {
+   "host": "trashcal.maxgfeller.com",
+   "status": "nicht getestet: anderes Origin, nicht autorisiert"
+  },
+  {
+   "host": "www.eumzug.swiss",
+   "status": "nicht getestet: anderes Origin, nicht autorisiert"
+  }
+ ],
+ "areas": [
+  {
+   "id": "verwaltung",
+   "name": "Kanton & Stadtverwaltung",
+   "status": "Recherche vertiefen",
+   "description": "Departemente, Dienststellen und Aufgaben der Einwohnergemeinde Basel. 25 Einträge aus dem bisherigen Feldlauf.",
+   "source": "https://www.bs.ch/regierungsrat/aufgaben-und-kompetenzen-des-regierungsrates",
+   "scope": "Im bisherigen Feldlauf: nur www.bs.ch und eportal.egov.bs.ch."
+  },
+  {
+   "id": "gemeinden",
+   "name": "Riehen & Bettingen",
+   "status": "Nur Kontext / neu zu inventarisieren",
+   "description": "Eigene Einwohnergemeinden; nicht pauschal mit Stadt- oder Kantonsverwaltung gleichsetzen.",
+   "source": "https://www.bs.ch/it/node/28398",
+   "scope": "Öffentliche Einstiegs-, Organisations- und Impressumsseiten entdecken; noch keine Accessibility-Prüfung."
+  },
+  {
+   "id": "politik",
+   "name": "Politik, Justiz & Bürgergemeinden",
+   "status": "Rechercheauftrag",
+   "description": "Parlament, Gerichte, Bürgergemeinden: Trägerschaft und Webangebote getrennt belegen.",
+   "source": "https://www.buergergemeinde-riehen.ch/buergergemeinde.html",
+   "scope": "Keine Liste behaupteter Staatsdomains; zuerst offizielle Belege sammeln."
+  },
+  {
+   "id": "institutionen",
+   "name": "Öffentliche Institutionen & Beteiligungen",
+   "status": "Rechercheauftrag",
+   "description": "Verkehr, Versorgung und öffentliche Spitäler sind eigene Organisationen. Eigentum, Rechtsform und Website-Betreiber müssen einzeln belegt werden.",
+   "source": "https://www.bs.ch/medienmitteilungen/2026-pensionskassengesetz-punktuelle-anpassungen-bewaehrtem-gesetz",
+   "scope": "Öffentliche Institution ≠ Website im Eigentum des Kantons ≠ bereits erlaubter Test."
+  },
+  {
+   "id": "bildung",
+   "name": "Bildung, Kultur & Wissenschaft",
+   "status": "Rechercheauftrag",
+   "description": "Schulen, Museen, Bibliotheken und gemeinsam getragene Einrichtungen: über offizielle Verzeichnisse erschliessen, Zuständigkeit offen lassen bis belegt.",
+   "source": "https://www.bs.ch/",
+   "scope": "Kandidatengruppe; noch keine vollständige Organisations- oder Domainliste."
+  },
+  {
+   "id": "plattformen",
+   "name": "Transaktionen & externe Plattformen",
+   "status": "11 Hosts verlinkt / nicht getestet",
+   "description": "Fachportale, Formulare, Karten und überkantonale oder private Anbieter. Öffentliche Aufgabe und technischer Betreiber getrennt erfassen.",
+   "source": "https://eportal.egov.bs.ch/",
+   "scope": "Verlinkung ist beobachtet; Betreiber/Eigentum und Login-Grenze sind noch zu prüfen."
+  }
+ ],
+ "organisations": [
+  {
+   "id": "org-kanton-bs",
+   "name": "Kanton Basel-Stadt",
+   "area": "verwaltung",
+   "type": "canton_unit",
+   "legalForm": null,
+   "sponsorship": "canton_unit",
+   "sponsorshipNote": null,
+   "parentId": null,
+   "status": {
+    "discovered": true,
+    "ownershipEvidenced": true
+   }
+  },
+  {
+   "id": "org-regierungsrat",
+   "name": "Regierungsrat",
+   "area": "verwaltung",
+   "type": "canton_unit",
+   "legalForm": null,
+   "sponsorship": "canton_unit",
+   "sponsorshipNote": null,
+   "parentId": "org-kanton-bs",
+   "status": {
+    "discovered": true,
+    "ownershipEvidenced": true
+   }
+  },
+  {
+   "id": "org-pd",
+   "name": "Präsidialdepartement",
+   "area": "verwaltung",
+   "type": "canton_unit",
+   "legalForm": null,
+   "sponsorship": "canton_unit",
+   "sponsorshipNote": null,
+   "parentId": "org-regierungsrat",
+   "status": {
+    "discovered": true,
+    "ownershipEvidenced": true
+   }
+  },
+  {
+   "id": "org-bvd",
+   "name": "Bau- und Verkehrsdepartement",
+   "area": "verwaltung",
+   "type": "canton_unit",
+   "legalForm": null,
+   "sponsorship": "canton_unit",
+   "sponsorshipNote": null,
+   "parentId": "org-regierungsrat",
+   "status": {
+    "discovered": true,
+    "ownershipEvidenced": true
+   }
+  },
+  {
+   "id": "org-ed",
+   "name": "Erziehungsdepartement",
+   "area": "verwaltung",
+   "type": "canton_unit",
+   "legalForm": null,
+   "sponsorship": "canton_unit",
+   "sponsorshipNote": null,
+   "parentId": "org-regierungsrat",
+   "status": {
+    "discovered": true,
+    "ownershipEvidenced": true
+   }
+  },
+  {
+   "id": "org-fd",
+   "name": "Finanzdepartement",
+   "area": "verwaltung",
+   "type": "canton_unit",
+   "legalForm": null,
+   "sponsorship": "canton_unit",
+   "sponsorshipNote": null,
+   "parentId": "org-regierungsrat",
+   "status": {
+    "discovered": true,
+    "ownershipEvidenced": true
+   }
+  },
+  {
+   "id": "org-gd",
+   "name": "Gesundheitsdepartement",
+   "area": "verwaltung",
+   "type": "canton_unit",
+   "legalForm": null,
+   "sponsorship": "canton_unit",
+   "sponsorshipNote": null,
+   "parentId": "org-regierungsrat",
+   "status": {
+    "discovered": true,
+    "ownershipEvidenced": true
+   }
+  },
+  {
+   "id": "org-jsd",
+   "name": "Justiz- und Sicherheitsdepartement",
+   "area": "verwaltung",
+   "type": "canton_unit",
+   "legalForm": null,
+   "sponsorship": "canton_unit",
+   "sponsorshipNote": null,
+   "parentId": "org-regierungsrat",
+   "status": {
+    "discovered": true,
+    "ownershipEvidenced": true
+   }
+  },
+  {
+   "id": "org-wsu",
+   "name": "Departement für Wirtschaft, Soziales und Umwelt",
+   "area": "verwaltung",
+   "type": "canton_unit",
+   "legalForm": null,
+   "sponsorship": "canton_unit",
+   "sponsorshipNote": null,
+   "parentId": "org-regierungsrat",
+   "status": {
+    "discovered": true,
+    "ownershipEvidenced": true
+   }
+  },
+  {
+   "id": "org-bdm",
+   "name": "Bevölkerungsdienste und Migration",
+   "area": "verwaltung",
+   "type": "canton_unit",
+   "legalForm": null,
+   "sponsorship": "canton_unit",
+   "sponsorshipNote": null,
+   "parentId": "org-jsd",
+   "status": {
+    "discovered": true,
+    "ownershipEvidenced": true
+   }
+  },
+  {
+   "id": "org-einwohneramt",
+   "name": "Einwohneramt",
+   "area": "verwaltung",
+   "type": "canton_unit",
+   "legalForm": null,
+   "sponsorship": "unknown",
+   "sponsorshipNote": "Übergeordnete Stelle in dieser Runde nicht belegt.",
+   "parentId": null,
+   "status": {
+    "discovered": true,
+    "ownershipEvidenced": false
+   }
+  },
+  {
+   "id": "org-passamt",
+   "name": "Passamt",
+   "area": "verwaltung",
+   "type": "canton_unit",
+   "legalForm": null,
+   "sponsorship": "unknown",
+   "sponsorshipNote": "Übergeordnete Stelle in dieser Runde nicht belegt.",
+   "parentId": null,
+   "status": {
+    "discovered": true,
+    "ownershipEvidenced": false
+   }
+  },
+  {
+   "id": "org-kapo",
+   "name": "Kantonspolizei",
+   "area": "verwaltung",
+   "type": "canton_unit",
+   "legalForm": null,
+   "sponsorship": "canton_unit",
+   "sponsorshipNote": null,
+   "parentId": "org-jsd",
+   "status": {
+    "discovered": true,
+    "ownershipEvidenced": true
+   }
+  },
+  {
+   "id": "org-tiefbauamt",
+   "name": "Tiefbauamt",
+   "area": "verwaltung",
+   "type": "canton_unit",
+   "legalForm": null,
+   "sponsorship": "canton_unit",
+   "sponsorshipNote": null,
+   "parentId": "org-bvd",
+   "status": {
+    "discovered": true,
+    "ownershipEvidenced": true
+   }
+  },
+  {
+   "id": "org-bgi",
+   "name": "Bau- und Gastgewerbeinspektorat",
+   "area": "verwaltung",
+   "type": "canton_unit",
+   "legalForm": null,
+   "sponsorship": "canton_unit",
+   "sponsorshipNote": null,
+   "parentId": "org-bvd",
+   "status": {
+    "discovered": true,
+    "ownershipEvidenced": true
+   }
+  },
+  {
+   "id": "org-steuerverwaltung",
+   "name": "Steuerverwaltung",
+   "area": "verwaltung",
+   "type": "canton_unit",
+   "legalForm": null,
+   "sponsorship": "canton_unit",
+   "sponsorshipNote": null,
+   "parentId": "org-fd",
+   "status": {
+    "discovered": true,
+    "ownershipEvidenced": true
+   }
+  },
+  {
+   "id": "org-itbs",
+   "name": "IT BS",
+   "area": "verwaltung",
+   "type": "canton_unit",
+   "legalForm": null,
+   "sponsorship": "canton_unit",
+   "sponsorshipNote": null,
+   "parentId": "org-fd",
+   "status": {
+    "discovered": true,
+    "ownershipEvidenced": true
+   }
+  },
+  {
+   "id": "org-awa",
+   "name": "Amt für Wirtschaft und Arbeit",
+   "area": "verwaltung",
+   "type": "canton_unit",
+   "legalForm": null,
+   "sponsorship": "canton_unit",
+   "sponsorshipNote": null,
+   "parentId": "org-wsu",
+   "status": {
+    "discovered": true,
+    "ownershipEvidenced": true
+   }
+  },
+  {
+   "id": "org-asb",
+   "name": "Amt für Sozialbeiträge",
+   "area": "verwaltung",
+   "type": "canton_unit",
+   "legalForm": null,
+   "sponsorship": "canton_unit",
+   "sponsorshipNote": null,
+   "parentId": "org-wsu",
+   "status": {
+    "discovered": true,
+    "ownershipEvidenced": true
+   }
+  },
+  {
+   "id": "org-jfs",
+   "name": "Jugend, Familie und Sport",
+   "area": "verwaltung",
+   "type": "canton_unit",
+   "legalForm": null,
+   "sponsorship": "canton_unit",
+   "sponsorshipNote": null,
+   "parentId": "org-ed",
+   "status": {
+    "discovered": true,
+    "ownershipEvidenced": true
+   }
+  },
+  {
+   "id": "org-webredaktion",
+   "name": "Webredaktion bs.ch",
+   "area": "verwaltung",
+   "type": "canton_unit",
+   "legalForm": null,
+   "sponsorship": "unknown",
+   "sponsorshipNote": "Übergeordnete Stelle in dieser Runde nicht belegt.",
+   "parentId": null,
+   "status": {
+    "discovered": true,
+    "ownershipEvidenced": false
+   }
+  },
+  {
+   "id": "org-grosser-rat",
+   "name": "Grosser Rat (Legislative)",
+   "area": "politik",
+   "type": "parliament",
+   "legalForm": null,
+   "sponsorship": "canton_unit",
+   "sponsorshipNote": null,
+   "parentId": "org-kanton-bs",
+   "status": {
+    "discovered": true,
+    "ownershipEvidenced": true
+   }
+  },
+  {
+   "id": "org-gerichte",
+   "name": "Gerichte Basel-Stadt (Judikative)",
+   "area": "politik",
+   "type": "judiciary",
+   "legalForm": null,
+   "sponsorship": "canton_unit",
+   "sponsorshipNote": null,
+   "parentId": "org-kanton-bs",
+   "status": {
+    "discovered": true,
+    "ownershipEvidenced": true
+   }
+  },
+  {
+   "id": "org-datenschutz",
+   "name": "Datenschutzbeauftragte",
+   "area": "politik",
+   "type": "canton_unit",
+   "legalForm": null,
+   "sponsorship": "canton_unit",
+   "sponsorshipNote": null,
+   "parentId": "org-kanton-bs",
+   "status": {
+    "discovered": true,
+    "ownershipEvidenced": true
+   }
+  },
+  {
+   "id": "org-ombudsstelle",
+   "name": "Ombudsstelle",
+   "area": "politik",
+   "type": "canton_unit",
+   "legalForm": null,
+   "sponsorship": "canton_unit",
+   "sponsorshipNote": null,
+   "parentId": "org-kanton-bs",
+   "status": {
+    "discovered": true,
+    "ownershipEvidenced": true
+   }
+  },
+  {
+   "id": "org-finanzkontrolle",
+   "name": "Finanzkontrolle",
+   "area": "politik",
+   "type": "canton_unit",
+   "legalForm": null,
+   "sponsorship": "canton_unit",
+   "sponsorshipNote": null,
+   "parentId": "org-kanton-bs",
+   "status": {
+    "discovered": true,
+    "ownershipEvidenced": true
+   }
+  },
+  {
+   "id": "org-stadt-basel",
+   "name": "Einwohnergemeinde der Stadt Basel",
+   "area": "gemeinden",
+   "type": "municipality",
+   "legalForm": null,
+   "sponsorship": "unknown",
+   "sponsorshipNote": "Verhältnis zu den Kantonsbehörden in dieser Runde nicht aus einer Primärquelle belegt; Dienste der Stadt erscheinen auf www.bs.ch.",
+   "parentId": null,
+   "status": {
+    "discovered": true,
+    "ownershipEvidenced": false
+   }
+  },
+  {
+   "id": "org-riehen",
+   "name": "Einwohnergemeinde Riehen",
+   "area": "gemeinden",
+   "type": "municipality",
+   "legalForm": null,
+   "sponsorship": "unknown",
+   "sponsorshipNote": "Eigene Gemeinde; Trägerschaft des Webauftritts siehe Kanten.",
+   "parentId": null,
+   "status": {
+    "discovered": true,
+    "ownershipEvidenced": false
+   }
+  },
+  {
+   "id": "org-bettingen",
+   "name": "Einwohnergemeinde Bettingen",
+   "area": "gemeinden",
+   "type": "municipality",
+   "legalForm": null,
+   "sponsorship": "unknown",
+   "sponsorshipNote": "Eigene Gemeinde; Webauftritt liegt auf www.bs.ch.",
+   "parentId": null,
+   "status": {
+    "discovered": true,
+    "ownershipEvidenced": false
+   }
+  },
+  {
+   "id": "org-bg-bettingen",
+   "name": "Bürgergemeinde Bettingen",
+   "area": "politik",
+   "type": "buergergemeinde",
+   "legalForm": "öffentlich-rechtliche Körperschaft",
+   "sponsorship": "unknown",
+   "sponsorshipNote": "Körperschaft des kantonalen Rechts; keine Eigentümerschaft des Kantons behauptet.",
+   "parentId": null,
+   "status": {
+    "discovered": true,
+    "ownershipEvidenced": false
+   }
+  },
+  {
+   "id": "org-bg-riehen",
+   "name": "Bürgergemeinde Riehen",
+   "area": "politik",
+   "type": "buergergemeinde",
+   "legalForm": null,
+   "sponsorship": "unknown",
+   "sponsorshipNote": "Nur Planungshinweis (https://www.buergergemeinde-riehen.ch/buergergemeinde.html); in dieser Runde nicht abgerufen, daher ohne belegte Beziehung.",
+   "parentId": null,
+   "status": {
+    "discovered": true,
+    "ownershipEvidenced": false
+   }
+  },
+  {
+   "id": "org-bg-basel",
+   "name": "Bürgergemeinde der Stadt Basel",
+   "area": "politik",
+   "type": "buergergemeinde",
+   "legalForm": null,
+   "sponsorship": "unknown",
+   "sponsorshipNote": "Webauftritt: Websuche nennt bgbasel.ch, kein offizieller Rückverweis geprüft → unbekannt.",
+   "parentId": null,
+   "status": {
+    "discovered": true,
+    "ownershipEvidenced": false
+   }
+  },
+  {
+   "id": "org-bvb",
+   "name": "Basler Verkehrs-Betriebe (BVB)",
+   "area": "institutionen",
+   "type": "public_institution",
+   "legalForm": "sAöR",
+   "sponsorship": "owned_public_entity",
+   "sponsorshipNote": "Kantonsanteil 100 % (beherrscht)",
+   "parentId": null,
+   "status": {
+    "discovered": true,
+    "ownershipEvidenced": true
+   }
+  },
+  {
+   "id": "org-iwb",
+   "name": "Industrielle Werke Basel (IWB)",
+   "area": "institutionen",
+   "type": "public_institution",
+   "legalForm": "sAöR",
+   "sponsorship": "owned_public_entity",
+   "sponsorshipNote": "Kantonsanteil 100 % (beherrscht)",
+   "parentId": null,
+   "status": {
+    "discovered": true,
+    "ownershipEvidenced": true
+   }
+  },
+  {
+   "id": "org-usb",
+   "name": "Universitätsspital Basel",
+   "area": "institutionen",
+   "type": "public_institution",
+   "legalForm": "sAöR",
+   "sponsorship": "owned_public_entity",
+   "sponsorshipNote": "Kantonsanteil 100 % (beherrscht)",
+   "parentId": null,
+   "status": {
+    "discovered": true,
+    "ownershipEvidenced": true
+   }
+  },
+  {
+   "id": "org-upk",
+   "name": "Universitäre Psychiatrische Kliniken Basel",
+   "area": "institutionen",
+   "type": "public_institution",
+   "legalForm": "sAöR",
+   "sponsorship": "owned_public_entity",
+   "sponsorshipNote": "Kantonsanteil 100 % (beherrscht)",
+   "parentId": null,
+   "status": {
+    "discovered": true,
+    "ownershipEvidenced": true
+   }
+  },
+  {
+   "id": "org-felix-platter",
+   "name": "Universitäre Altersmedizin Felix Platter",
+   "area": "institutionen",
+   "type": "public_institution",
+   "legalForm": "sAöR",
+   "sponsorship": "owned_public_entity",
+   "sponsorshipNote": "Kantonsanteil 100 % (beherrscht)",
+   "parentId": null,
+   "status": {
+    "discovered": true,
+    "ownershipEvidenced": true
+   }
+  },
+  {
+   "id": "org-uzb",
+   "name": "Universitäres Zentrum für Zahnmedizin Basel (UZB)",
+   "area": "institutionen",
+   "type": "public_institution",
+   "legalForm": "sAöR",
+   "sponsorship": "owned_public_entity",
+   "sponsorshipNote": "Kantonsanteil 100 % (beherrscht)",
+   "parentId": null,
+   "status": {
+    "discovered": true,
+    "ownershipEvidenced": true
+   }
+  },
+  {
+   "id": "org-bkb",
+   "name": "Basler Kantonalbank",
+   "area": "institutionen",
+   "type": "public_institution",
+   "legalForm": "sAöR",
+   "sponsorship": "owned_public_entity",
+   "sponsorshipNote": "Kantonsanteil 85,5 % (beherrscht)",
+   "parentId": null,
+   "status": {
+    "discovered": true,
+    "ownershipEvidenced": true
+   }
+  },
+  {
+   "id": "org-unibas",
+   "name": "Universität Basel",
+   "area": "bildung",
+   "type": "joint_institution",
+   "legalForm": "sAöR",
+   "sponsorship": "jointly_sponsored",
+   "sponsorshipNote": "gemeinschaftlich mit anderen Kantonen, Anteil 50 %",
+   "parentId": null,
+   "status": {
+    "discovered": true,
+    "ownershipEvidenced": true
+   }
+  },
+  {
+   "id": "org-ukbb",
+   "name": "Universitäts-Kinderspital beider Basel (UKBB)",
+   "area": "institutionen",
+   "type": "joint_institution",
+   "legalForm": "sAöR",
+   "sponsorship": "jointly_sponsored",
+   "sponsorshipNote": "gemeinschaftlich, Anteil 50 %",
+   "parentId": null,
+   "status": {
+    "discovered": true,
+    "ownershipEvidenced": true
+   }
+  },
+  {
+   "id": "org-fhnw",
+   "name": "Fachhochschule Nordwestschweiz (FHNW)",
+   "area": "bildung",
+   "type": "joint_institution",
+   "legalForm": "sAöR",
+   "sponsorship": "jointly_sponsored",
+   "sponsorshipNote": "gemeinschaftlich, Anteil 19 %",
+   "parentId": null,
+   "status": {
+    "discovered": true,
+    "ownershipEvidenced": true
+   }
+  },
+  {
+   "id": "org-srh",
+   "name": "Schweizerische Rheinhäfen (SRH)",
+   "area": "institutionen",
+   "type": "joint_institution",
+   "legalForm": "sAöR",
+   "sponsorship": "jointly_sponsored",
+   "sponsorshipNote": "gemeinschaftlich, Anteil 66 %",
+   "parentId": null,
+   "status": {
+    "discovered": true,
+    "ownershipEvidenced": true
+   }
+  },
+  {
+   "id": "org-mfp",
+   "name": "Motorfahrzeugprüfstation beider Basel",
+   "area": "institutionen",
+   "type": "joint_institution",
+   "legalForm": "sAöR",
+   "sponsorship": "jointly_sponsored",
+   "sponsorshipNote": "gemeinschaftlich, Anteil 60 %",
+   "parentId": null,
+   "status": {
+    "discovered": true,
+    "ownershipEvidenced": true
+   }
+  },
+  {
+   "id": "org-swisstph",
+   "name": "Schweizerisches Tropen- und Public Health-Institut",
+   "area": "bildung",
+   "type": "joint_institution",
+   "legalForm": "sAöR",
+   "sponsorship": "jointly_sponsored",
+   "sponsorshipNote": "gemeinschaftlich, Anteil 50 %",
+   "parentId": null,
+   "status": {
+    "discovered": true,
+    "ownershipEvidenced": true
+   }
+  },
+  {
+   "id": "org-gvbs",
+   "name": "Gebäudeversicherung des Kantons Basel-Stadt",
+   "area": "institutionen",
+   "type": "public_institution",
+   "legalForm": "sAöR",
+   "sponsorship": "state_participation",
+   "sponsorshipNote": "massgeblicher Einfluss, keine kapitalmässige Beteiligung",
+   "parentId": null,
+   "status": {
+    "discovered": true,
+    "ownershipEvidenced": true
+   }
+  },
+  {
+   "id": "org-mch",
+   "name": "MCH Group AG",
+   "area": "institutionen",
+   "type": "unknown",
+   "legalForm": "AG",
+   "sponsorship": "state_participation",
+   "sponsorshipNote": "massgeblicher Einfluss, Anteil 37,5 %",
+   "parentId": null,
+   "status": {
+    "discovered": true,
+    "ownershipEvidenced": true
+   }
+  },
+  {
+   "id": "org-ak-bs",
+   "name": "Ausgleichskasse Basel-Stadt",
+   "area": "institutionen",
+   "type": "public_institution",
+   "legalForm": null,
+   "sponsorship": "unknown",
+   "sponsorshipNote": "Unter «Selbständige Betriebe» verlinkt, nicht im Beteiligungsspiegel 2024; Trägerschaft nicht belegt.",
+   "parentId": null,
+   "status": {
+    "discovered": true,
+    "ownershipEvidenced": false
+   }
+  },
+  {
+   "id": "org-ivbs",
+   "name": "IV-Stelle Basel-Stadt",
+   "area": "institutionen",
+   "type": "public_institution",
+   "legalForm": null,
+   "sponsorship": "unknown",
+   "sponsorshipNote": "Unter «Selbständige Betriebe» verlinkt, nicht im Beteiligungsspiegel 2024; Trägerschaft nicht belegt.",
+   "parentId": null,
+   "status": {
+    "discovered": true,
+    "ownershipEvidenced": false
+   }
+  },
+  {
+   "id": "org-liip",
+   "name": "Liip AG",
+   "area": "plattformen",
+   "type": "private_partner",
+   "legalForm": null,
+   "sponsorship": "private",
+   "sponsorshipNote": null,
+   "parentId": null,
+   "status": {
+    "discovered": true,
+    "ownershipEvidenced": false
+   }
+  },
+  {
+   "id": "org-oriented",
+   "name": "oriented.net GmbH",
+   "area": "plattformen",
+   "type": "private_partner",
+   "legalForm": null,
+   "sponsorship": "private",
+   "sponsorshipNote": null,
+   "parentId": null,
+   "status": {
+    "discovered": true,
+    "ownershipEvidenced": false
+   }
+  },
+  {
+   "id": "org-seantis",
+   "name": "Seantis (Firma)",
+   "area": "plattformen",
+   "type": "private_partner",
+   "legalForm": null,
+   "sponsorship": "private",
+   "sponsorshipNote": null,
+   "parentId": null,
+   "status": {
+    "discovered": true,
+    "ownershipEvidenced": false
+   }
+  },
+  {
+   "id": "org-talus",
+   "name": "Talus Informatik AG",
+   "area": "plattformen",
+   "type": "private_partner",
+   "legalForm": null,
+   "sponsorship": "private",
+   "sponsorshipNote": null,
+   "parentId": null,
+   "status": {
+    "discovered": true,
+    "ownershipEvidenced": false
+   }
+  },
+  {
+   "id": "org-eyeloveyou",
+   "name": "eyeloveyou GmbH",
+   "area": "plattformen",
+   "type": "private_partner",
+   "legalForm": null,
+   "sponsorship": "private",
+   "sponsorshipNote": null,
+   "parentId": null,
+   "status": {
+    "discovered": true,
+    "ownershipEvidenced": false
+   }
+  },
+  {
+   "id": "org-lab5",
+   "name": "Lab5",
+   "area": "plattformen",
+   "type": "private_partner",
+   "legalForm": null,
+   "sponsorship": "private",
+   "sponsorshipNote": null,
+   "parentId": null,
+   "status": {
+    "discovered": true,
+    "ownershipEvidenced": false
+   }
+  },
+  {
+   "id": "org-exoscale",
+   "name": "Exoscale",
+   "area": "plattformen",
+   "type": "private_partner",
+   "legalForm": null,
+   "sponsorship": "private",
+   "sponsorshipNote": null,
+   "parentId": null,
+   "status": {
+    "discovered": true,
+    "ownershipEvidenced": false
+   }
+  },
+  {
+   "id": "org-agov",
+   "name": "Bund – Authentifizierungsdienst AGOV",
+   "area": "plattformen",
+   "type": "federal",
+   "legalForm": null,
+   "sponsorship": "unknown",
+   "sponsorshipNote": null,
+   "parentId": null,
+   "status": {
+    "discovered": true,
+    "ownershipEvidenced": false
+   }
+  }
+ ],
+ "webProperties": [
+  {
+   "id": "wp-bs",
+   "origin": "https://www.bs.ch",
+   "canonicalUrl": "https://www.bs.ch/",
+   "alternates": [],
+   "name": "www.bs.ch – Webauftritt Kanton (inkl. Stadt- und Bettingen-Seiten)",
+   "kind": "portal",
+   "status": {
+    "discovered": true,
+    "ownershipEvidenced": true,
+    "selected": true,
+    "assessed": true,
+    "outOfScope": false,
+    "loginBoundary": false,
+    "visitedInDiscovery": true
+   },
+   "assessmentAuthorized": true,
+   "historicalAssessmentIds": [
+    "p01-start",
+    "p02-umzug",
+    "p03-pass",
+    "p04-zuzug",
+    "p05-abfall",
+    "p06-zonensuche",
+    "p07-sozialhilferechner",
+    "p08-anwohnerparkkarte",
+    "p09-behindertenparkkarte",
+    "p10-steuerformulare",
+    "p11-kita"
+   ]
+  },
+  {
+   "id": "wp-eportal",
+   "origin": "https://eportal.egov.bs.ch",
+   "canonicalUrl": "https://eportal.egov.bs.ch/",
+   "alternates": [],
+   "name": "ePortal",
+   "kind": "portal",
+   "status": {
+    "discovered": true,
+    "ownershipEvidenced": true,
+    "selected": false,
+    "assessed": true,
+    "outOfScope": false,
+    "loginBoundary": true,
+    "visitedInDiscovery": true
+   },
+   "assessmentAuthorized": true,
+   "historicalAssessmentIds": [
+    "p12-eportal"
+   ]
+  },
+  {
+   "id": "wp-ekonto",
+   "origin": "https://ekonto.egov.bs.ch",
+   "canonicalUrl": "https://ekonto.egov.bs.ch/",
+   "alternates": [],
+   "name": "eKonto (Anmeldung)",
+   "kind": "login",
+   "status": {
+    "discovered": true,
+    "ownershipEvidenced": false,
+    "selected": false,
+    "assessed": false,
+    "outOfScope": false,
+    "loginBoundary": true,
+    "visitedInDiscovery": false
+   },
+   "assessmentAuthorized": false,
+   "historicalAssessmentIds": []
+  },
+  {
+   "id": "wp-eservices",
+   "origin": "https://eservices.egov.bs.ch",
+   "canonicalUrl": "https://eservices.egov.bs.ch/",
+   "alternates": [],
+   "name": "eServices (Transaktionen)",
+   "kind": "transaction_app",
+   "status": {
+    "discovered": true,
+    "ownershipEvidenced": false,
+    "selected": true,
+    "assessed": false,
+    "outOfScope": false,
+    "loginBoundary": true,
+    "visitedInDiscovery": false
+   },
+   "assessmentAuthorized": false,
+   "historicalAssessmentIds": []
+  },
+  {
+   "id": "wp-esteuern",
+   "origin": "https://esteuern.bs.ch",
+   "canonicalUrl": "https://esteuern.bs.ch/",
+   "alternates": [],
+   "name": "eSteuern.BS",
+   "kind": "transaction_app",
+   "status": {
+    "discovered": true,
+    "ownershipEvidenced": false,
+    "selected": false,
+    "assessed": false,
+    "outOfScope": false,
+    "loginBoundary": true,
+    "visitedInDiscovery": false
+   },
+   "assessmentAuthorized": false,
+   "historicalAssessmentIds": []
+  },
+  {
+   "id": "wp-formulare",
+   "origin": "https://formulare.bs.ch",
+   "canonicalUrl": "https://formulare.bs.ch/",
+   "alternates": [],
+   "name": "Formulare BS",
+   "kind": "transaction_app",
+   "status": {
+    "discovered": true,
+    "ownershipEvidenced": false,
+    "selected": false,
+    "assessed": false,
+    "outOfScope": false,
+    "loginBoundary": false,
+    "visitedInDiscovery": false
+   },
+   "assessmentAuthorized": false,
+   "historicalAssessmentIds": []
+  },
+  {
+   "id": "wp-jaxforms",
+   "origin": "https://jaxforms.cloud.bs.ch",
+   "canonicalUrl": "https://jaxforms.cloud.bs.ch/",
+   "alternates": [],
+   "name": "jaxforms (Formulardienst)",
+   "kind": "transaction_app",
+   "status": {
+    "discovered": true,
+    "ownershipEvidenced": false,
+    "selected": false,
+    "assessed": false,
+    "outOfScope": false,
+    "loginBoundary": false,
+    "visitedInDiscovery": false
+   },
+   "assessmentAuthorized": false,
+   "historicalAssessmentIds": []
+  },
+  {
+   "id": "wp-bussen",
+   "origin": "https://bussen.egov.bs.ch",
+   "canonicalUrl": "https://bussen.egov.bs.ch/",
+   "alternates": [],
+   "name": "Bussen bezahlen",
+   "kind": "transaction_app",
+   "status": {
+    "discovered": true,
+    "ownershipEvidenced": false,
+    "selected": false,
+    "assessed": false,
+    "outOfScope": false,
+    "loginBoundary": false,
+    "visitedInDiscovery": false
+   },
+   "assessmentAuthorized": false,
+   "historicalAssessmentIds": []
+  },
+  {
+   "id": "wp-eumzug",
+   "origin": "https://www.eumzug.swiss",
+   "canonicalUrl": "https://www.eumzug.swiss/",
+   "alternates": [],
+   "name": "eUmzug Schweiz",
+   "kind": "external_service",
+   "status": {
+    "discovered": true,
+    "ownershipEvidenced": false,
+    "selected": true,
+    "assessed": false,
+    "outOfScope": false,
+    "loginBoundary": false,
+    "visitedInDiscovery": false
+   },
+   "assessmentAuthorized": false,
+   "historicalAssessmentIds": []
+  },
+  {
+   "id": "wp-media",
+   "origin": "https://media.bs.ch",
+   "canonicalUrl": "https://media.bs.ch/",
+   "alternates": [],
+   "name": "media.bs.ch (Dokumente)",
+   "kind": "document_store",
+   "status": {
+    "discovered": true,
+    "ownershipEvidenced": false,
+    "selected": false,
+    "assessed": false,
+    "outOfScope": false,
+    "loginBoundary": false,
+    "visitedInDiscovery": true
+   },
+   "assessmentAuthorized": false,
+   "historicalAssessmentIds": []
+  },
+  {
+   "id": "wp-mapgeo",
+   "origin": "https://map.geo.bs.ch",
+   "canonicalUrl": "https://map.geo.bs.ch/",
+   "alternates": [],
+   "name": "MapBS (Stadtplan)",
+   "kind": "map",
+   "status": {
+    "discovered": true,
+    "ownershipEvidenced": false,
+    "selected": false,
+    "assessed": false,
+    "outOfScope": false,
+    "loginBoundary": false,
+    "visitedInDiscovery": false
+   },
+   "assessmentAuthorized": false,
+   "historicalAssessmentIds": []
+  },
+  {
+   "id": "wp-staatskalender",
+   "origin": "https://staatskalender.bs.ch",
+   "canonicalUrl": "https://staatskalender.bs.ch/",
+   "alternates": [
+    "https://www.staatskalender.bs.ch/"
+   ],
+   "name": "Staatskalender",
+   "kind": "website",
+   "status": {
+    "discovered": true,
+    "ownershipEvidenced": false,
+    "selected": false,
+    "assessed": false,
+    "outOfScope": false,
+    "loginBoundary": false,
+    "visitedInDiscovery": true
+   },
+   "assessmentAuthorized": false,
+   "historicalAssessmentIds": []
+  },
+  {
+   "id": "wp-riehen",
+   "origin": "https://www.riehen.ch",
+   "canonicalUrl": "https://www.riehen.ch/",
+   "alternates": [],
+   "name": "riehen.ch – Gemeinde Riehen",
+   "kind": "website",
+   "status": {
+    "discovered": true,
+    "ownershipEvidenced": false,
+    "selected": true,
+    "assessed": false,
+    "outOfScope": false,
+    "loginBoundary": false,
+    "visitedInDiscovery": true
+   },
+   "assessmentAuthorized": false,
+   "historicalAssessmentIds": []
+  },
+  {
+   "id": "wp-riehen-jobs",
+   "origin": "https://app.jobportal.abaservices.ch",
+   "canonicalUrl": "https://app.jobportal.abaservices.ch/",
+   "alternates": [],
+   "name": "Stellenportal (Abacus-Dienst, von Riehen verlinkt)",
+   "kind": "external_service",
+   "status": {
+    "discovered": true,
+    "ownershipEvidenced": false,
+    "selected": false,
+    "assessed": false,
+    "outOfScope": false,
+    "loginBoundary": false,
+    "visitedInDiscovery": false
+   },
+   "assessmentAuthorized": false,
+   "historicalAssessmentIds": []
+  },
+  {
+   "id": "wp-grosserrat",
+   "origin": "https://grosserrat.bs.ch",
+   "canonicalUrl": "https://grosserrat.bs.ch/",
+   "alternates": [],
+   "name": "grosserrat.bs.ch",
+   "kind": "website",
+   "status": {
+    "discovered": true,
+    "ownershipEvidenced": false,
+    "selected": true,
+    "assessed": false,
+    "outOfScope": false,
+    "loginBoundary": false,
+    "visitedInDiscovery": true
+   },
+   "assessmentAuthorized": false,
+   "historicalAssessmentIds": []
+  },
+  {
+   "id": "wp-pixas",
+   "origin": "https://grosserratbs.pixas.ch",
+   "canonicalUrl": "https://grosserratbs.pixas.ch/",
+   "alternates": [],
+   "name": "Grosser Rat intern (PIXAS)",
+   "kind": "login",
+   "status": {
+    "discovered": true,
+    "ownershipEvidenced": false,
+    "selected": false,
+    "assessed": false,
+    "outOfScope": false,
+    "loginBoundary": true,
+    "visitedInDiscovery": false
+   },
+   "assessmentAuthorized": false,
+   "historicalAssessmentIds": []
+  },
+  {
+   "id": "wp-bvb",
+   "origin": "https://www.bvb.ch",
+   "canonicalUrl": "https://www.bvb.ch/de/",
+   "alternates": [],
+   "name": "bvb.ch",
+   "kind": "website",
+   "status": {
+    "discovered": true,
+    "ownershipEvidenced": false,
+    "selected": true,
+    "assessed": false,
+    "outOfScope": false,
+    "loginBoundary": false,
+    "visitedInDiscovery": true
+   },
+   "assessmentAuthorized": false,
+   "historicalAssessmentIds": []
+  },
+  {
+   "id": "wp-iwb",
+   "origin": "https://www.iwb.ch",
+   "canonicalUrl": "https://www.iwb.ch/",
+   "alternates": [],
+   "name": "iwb.ch",
+   "kind": "website",
+   "status": {
+    "discovered": true,
+    "ownershipEvidenced": false,
+    "selected": true,
+    "assessed": false,
+    "outOfScope": false,
+    "loginBoundary": false,
+    "visitedInDiscovery": true
+   },
+   "assessmentAuthorized": false,
+   "historicalAssessmentIds": []
+  },
+  {
+   "id": "wp-usb",
+   "origin": "https://www.unispital-basel.ch",
+   "canonicalUrl": "https://www.unispital-basel.ch/",
+   "alternates": [],
+   "name": "unispital-basel.ch",
+   "kind": "website",
+   "status": {
+    "discovered": true,
+    "ownershipEvidenced": false,
+    "selected": true,
+    "assessed": false,
+    "outOfScope": false,
+    "loginBoundary": false,
+    "visitedInDiscovery": true
+   },
+   "assessmentAuthorized": false,
+   "historicalAssessmentIds": []
+  },
+  {
+   "id": "wp-unibas",
+   "origin": "https://www.unibas.ch",
+   "canonicalUrl": "https://www.unibas.ch/de",
+   "alternates": [],
+   "name": "unibas.ch",
+   "kind": "website",
+   "status": {
+    "discovered": true,
+    "ownershipEvidenced": false,
+    "selected": true,
+    "assessed": false,
+    "outOfScope": false,
+    "loginBoundary": false,
+    "visitedInDiscovery": true
+   },
+   "assessmentAuthorized": false,
+   "historicalAssessmentIds": []
+  },
+  {
+   "id": "wp-unibas-services",
+   "origin": "https://services.unibas.ch",
+   "canonicalUrl": "https://services.unibas.ch/",
+   "alternates": [],
+   "name": "Universität: Online Services",
+   "kind": "login",
+   "status": {
+    "discovered": true,
+    "ownershipEvidenced": false,
+    "selected": false,
+    "assessed": false,
+    "outOfScope": false,
+    "loginBoundary": true,
+    "visitedInDiscovery": false
+   },
+   "assessmentAuthorized": false,
+   "historicalAssessmentIds": []
+  },
+  {
+   "id": "wp-ak",
+   "origin": "https://ak-bs.ch",
+   "canonicalUrl": "https://ak-bs.ch/",
+   "alternates": [
+    "https://www.ausgleichskasse-bs.ch/"
+   ],
+   "name": "Ausgleichskasse Basel-Stadt",
+   "kind": "website",
+   "status": {
+    "discovered": true,
+    "ownershipEvidenced": false,
+    "selected": false,
+    "assessed": false,
+    "outOfScope": false,
+    "loginBoundary": false,
+    "visitedInDiscovery": false
+   },
+   "assessmentAuthorized": false,
+   "historicalAssessmentIds": []
+  },
+  {
+   "id": "wp-ivbs",
+   "origin": "https://www.ivbs.ch",
+   "canonicalUrl": "https://www.ivbs.ch/",
+   "alternates": [],
+   "name": "ivbs.ch",
+   "kind": "website",
+   "status": {
+    "discovered": true,
+    "ownershipEvidenced": false,
+    "selected": false,
+    "assessed": false,
+    "outOfScope": false,
+    "loginBoundary": false,
+    "visitedInDiscovery": true
+   },
+   "assessmentAuthorized": false,
+   "historicalAssessmentIds": []
+  },
+  {
+   "id": "wp-fhnw",
+   "origin": "https://www.fhnw.ch",
+   "canonicalUrl": "https://www.fhnw.ch/",
+   "alternates": [],
+   "name": "fhnw.ch (Kantonsseite verlinkt http://; https nicht geprüft)",
+   "kind": "website",
+   "status": {
+    "discovered": true,
+    "ownershipEvidenced": false,
+    "selected": false,
+    "assessed": false,
+    "outOfScope": false,
+    "loginBoundary": false,
+    "visitedInDiscovery": false
+   },
+   "assessmentAuthorized": false,
+   "historicalAssessmentIds": []
+  },
+  {
+   "id": "wp-upk",
+   "origin": "https://www.upkbs.ch",
+   "canonicalUrl": "https://www.upkbs.ch/",
+   "alternates": [],
+   "name": "upkbs.ch (Kantonsseite verlinkt http://; https nicht geprüft)",
+   "kind": "website",
+   "status": {
+    "discovered": true,
+    "ownershipEvidenced": false,
+    "selected": false,
+    "assessed": false,
+    "outOfScope": false,
+    "loginBoundary": false,
+    "visitedInDiscovery": false
+   },
+   "assessmentAuthorized": false,
+   "historicalAssessmentIds": []
+  },
+  {
+   "id": "wp-felixplatter",
+   "origin": "https://www.felixplatter.ch",
+   "canonicalUrl": "https://www.felixplatter.ch/",
+   "alternates": [],
+   "name": "felixplatter.ch",
+   "kind": "website",
+   "status": {
+    "discovered": true,
+    "ownershipEvidenced": false,
+    "selected": false,
+    "assessed": false,
+    "outOfScope": false,
+    "loginBoundary": false,
+    "visitedInDiscovery": false
+   },
+   "assessmentAuthorized": false,
+   "historicalAssessmentIds": []
+  },
+  {
+   "id": "wp-uzb",
+   "origin": "https://www.uzb.ch",
+   "canonicalUrl": "https://www.uzb.ch/",
+   "alternates": [],
+   "name": "uzb.ch (Kantonsseite verlinkt http://; https nicht geprüft)",
+   "kind": "website",
+   "status": {
+    "discovered": true,
+    "ownershipEvidenced": false,
+    "selected": false,
+    "assessed": false,
+    "outOfScope": false,
+    "loginBoundary": false,
+    "visitedInDiscovery": false
+   },
+   "assessmentAuthorized": false,
+   "historicalAssessmentIds": []
+  },
+  {
+   "id": "wp-srh",
+   "origin": "https://www.portofbasel.ch",
+   "canonicalUrl": "https://www.portofbasel.ch/",
+   "alternates": [],
+   "name": "portofbasel.ch (Kantonsseite verlinkt http://; https nicht geprüft)",
+   "kind": "website",
+   "status": {
+    "discovered": true,
+    "ownershipEvidenced": false,
+    "selected": false,
+    "assessed": false,
+    "outOfScope": false,
+    "loginBoundary": false,
+    "visitedInDiscovery": false
+   },
+   "assessmentAuthorized": false,
+   "historicalAssessmentIds": []
+  },
+  {
+   "id": "wp-edkb",
+   "origin": "https://ed-kinderbetreuung.edubs.ch",
+   "canonicalUrl": "https://ed-kinderbetreuung.edubs.ch/",
+   "alternates": [],
+   "name": "Kinderbetreuung (Fachportal)",
+   "kind": "external_service",
+   "status": {
+    "discovered": true,
+    "ownershipEvidenced": false,
+    "selected": false,
+    "assessed": false,
+    "outOfScope": false,
+    "loginBoundary": false,
+    "visitedInDiscovery": false
+   },
+   "assessmentAuthorized": false,
+   "historicalAssessmentIds": []
+  },
+  {
+   "id": "wp-draeggwaegg",
+   "origin": "https://app.draeggwaegg.ch",
+   "canonicalUrl": "https://app.draeggwaegg.ch/",
+   "alternates": [],
+   "name": "Dräggwägg (Abholung anmelden)",
+   "kind": "external_service",
+   "status": {
+    "discovered": true,
+    "ownershipEvidenced": false,
+    "selected": false,
+    "assessed": false,
+    "outOfScope": false,
+    "loginBoundary": false,
+    "visitedInDiscovery": false
+   },
+   "assessmentAuthorized": false,
+   "historicalAssessmentIds": []
+  }
+ ],
+ "edges": [
+  {
+   "id": "e-001",
+   "from": "org-kanton-bs",
+   "to": "org-regierungsrat",
+   "relation": "parent_of",
+   "evidence": [
+    {
+     "url": "https://www.bs.ch/regierungsrat/aufgaben-und-kompetenzen-des-regierungsrates",
+     "support": "«Gemäss dem Organisationsgesetz ist der Regierungsrat die oberste leitende und vollziehende Behörde des Kantons.»",
+     "retrievedAt": "2026-10-29T21:03:26.270934+00:00",
+     "sourceDate": null,
+     "confidence": "high"
+    }
+   ]
+  },
+  {
+   "id": "e-002",
+   "from": "org-regierungsrat",
+   "to": "org-pd",
+   "relation": "parent_of",
+   "evidence": [
+    {
+     "url": "https://www.bs.ch/organisation",
+     "support": "Kantonale Organisationsseite führt Präsidialdepartement unter Verwaltung.",
+     "retrievedAt": "2026-10-29T21:03:16.270827+00:00",
+     "sourceDate": null,
+     "confidence": "medium"
+    }
+   ]
+  },
+  {
+   "id": "e-003",
+   "from": "org-regierungsrat",
+   "to": "org-bvd",
+   "relation": "parent_of",
+   "evidence": [
+    {
+     "url": "https://www.bs.ch/organisation",
+     "support": "Kantonale Organisationsseite führt Bau- und Verkehrsdepartement unter Verwaltung.",
+     "retrievedAt": "2026-10-29T21:03:16.270827+00:00",
+     "sourceDate": null,
+     "confidence": "medium"
+    }
+   ]
+  },
+  {
+   "id": "e-004",
+   "from": "org-regierungsrat",
+   "to": "org-ed",
+   "relation": "parent_of",
+   "evidence": [
+    {
+     "url": "https://www.bs.ch/organisation",
+     "support": "Kantonale Organisationsseite führt Erziehungsdepartement unter Verwaltung.",
+     "retrievedAt": "2026-10-29T21:03:16.270827+00:00",
+     "sourceDate": null,
+     "confidence": "medium"
+    }
+   ]
+  },
+  {
+   "id": "e-005",
+   "from": "org-regierungsrat",
+   "to": "org-fd",
+   "relation": "parent_of",
+   "evidence": [
+    {
+     "url": "https://www.bs.ch/organisation",
+     "support": "Kantonale Organisationsseite führt Finanzdepartement unter Verwaltung.",
+     "retrievedAt": "2026-10-29T21:03:16.270827+00:00",
+     "sourceDate": null,
+     "confidence": "medium"
+    }
+   ]
+  },
+  {
+   "id": "e-006",
+   "from": "org-regierungsrat",
+   "to": "org-gd",
+   "relation": "parent_of",
+   "evidence": [
+    {
+     "url": "https://www.bs.ch/organisation",
+     "support": "Kantonale Organisationsseite führt Gesundheitsdepartement unter Verwaltung.",
+     "retrievedAt": "2026-10-29T21:03:16.270827+00:00",
+     "sourceDate": null,
+     "confidence": "medium"
+    }
+   ]
+  },
+  {
+   "id": "e-007",
+   "from": "org-regierungsrat",
+   "to": "org-jsd",
+   "relation": "parent_of",
+   "evidence": [
+    {
+     "url": "https://www.bs.ch/organisation",
+     "support": "Kantonale Organisationsseite führt Justiz- und Sicherheitsdepartement unter Verwaltung.",
+     "retrievedAt": "2026-10-29T21:03:16.270827+00:00",
+     "sourceDate": null,
+     "confidence": "medium"
+    }
+   ]
+  },
+  {
+   "id": "e-008",
+   "from": "org-regierungsrat",
+   "to": "org-wsu",
+   "relation": "parent_of",
+   "evidence": [
+    {
+     "url": "https://www.bs.ch/organisation",
+     "support": "Kantonale Organisationsseite führt Departement für Wirtschaft, Soziales und Umwelt unter Verwaltung.",
+     "retrievedAt": "2026-10-29T21:03:16.270827+00:00",
+     "sourceDate": null,
+     "confidence": "medium"
+    }
+   ]
+  },
+  {
+   "id": "e-009",
+   "from": "org-jsd",
+   "to": "org-bdm",
+   "relation": "parent_of",
+   "evidence": [
+    {
+     "url": "https://www.bs.ch/organisation",
+     "support": "Kantonale Organisationsseite führt Bevölkerungsdienste und Migration unter dem Departement.",
+     "retrievedAt": "2026-10-29T21:03:16.270827+00:00",
+     "sourceDate": null,
+     "confidence": "medium"
+    }
+   ]
+  },
+  {
+   "id": "e-010",
+   "from": "org-jsd",
+   "to": "org-kapo",
+   "relation": "parent_of",
+   "evidence": [
+    {
+     "url": "https://www.bs.ch/organisation",
+     "support": "Kantonale Organisationsseite führt Kantonspolizei unter dem Departement.",
+     "retrievedAt": "2026-10-29T21:03:16.270827+00:00",
+     "sourceDate": null,
+     "confidence": "medium"
+    }
+   ]
+  },
+  {
+   "id": "e-011",
+   "from": "org-bvd",
+   "to": "org-tiefbauamt",
+   "relation": "parent_of",
+   "evidence": [
+    {
+     "url": "https://www.bs.ch/organisation",
+     "support": "Kantonale Organisationsseite führt Tiefbauamt unter dem Departement.",
+     "retrievedAt": "2026-10-29T21:03:16.270827+00:00",
+     "sourceDate": null,
+     "confidence": "medium"
+    }
+   ]
+  },
+  {
+   "id": "e-012",
+   "from": "org-bvd",
+   "to": "org-bgi",
+   "relation": "parent_of",
+   "evidence": [
+    {
+     "url": "https://www.bs.ch/organisation",
+     "support": "Kantonale Organisationsseite führt Bau- und Gastgewerbeinspektorat unter dem Departement.",
+     "retrievedAt": "2026-10-29T21:03:16.270827+00:00",
+     "sourceDate": null,
+     "confidence": "medium"
+    }
+   ]
+  },
+  {
+   "id": "e-013",
+   "from": "org-fd",
+   "to": "org-steuerverwaltung",
+   "relation": "parent_of",
+   "evidence": [
+    {
+     "url": "https://www.bs.ch/organisation",
+     "support": "Kantonale Organisationsseite führt Steuerverwaltung unter dem Departement.",
+     "retrievedAt": "2026-10-29T21:03:16.270827+00:00",
+     "sourceDate": null,
+     "confidence": "medium"
+    }
+   ]
+  },
+  {
+   "id": "e-014",
+   "from": "org-fd",
+   "to": "org-itbs",
+   "relation": "parent_of",
+   "evidence": [
+    {
+     "url": "https://www.bs.ch/organisation",
+     "support": "Kantonale Organisationsseite führt IT BS unter dem Departement.",
+     "retrievedAt": "2026-10-29T21:03:16.270827+00:00",
+     "sourceDate": null,
+     "confidence": "medium"
+    }
+   ]
+  },
+  {
+   "id": "e-015",
+   "from": "org-wsu",
+   "to": "org-awa",
+   "relation": "parent_of",
+   "evidence": [
+    {
+     "url": "https://www.bs.ch/organisation",
+     "support": "Kantonale Organisationsseite führt Amt für Wirtschaft und Arbeit unter dem Departement.",
+     "retrievedAt": "2026-10-29T21:03:16.270827+00:00",
+     "sourceDate": null,
+     "confidence": "medium"
+    }
+   ]
+  },
+  {
+   "id": "e-016",
+   "from": "org-wsu",
+   "to": "org-asb",
+   "relation": "parent_of",
+   "evidence": [
+    {
+     "url": "https://www.bs.ch/organisation",
+     "support": "Kantonale Organisationsseite führt Amt für Sozialbeiträge unter dem Departement.",
+     "retrievedAt": "2026-10-29T21:03:16.270827+00:00",
+     "sourceDate": null,
+     "confidence": "medium"
+    }
+   ]
+  },
+  {
+   "id": "e-017",
+   "from": "org-ed",
+   "to": "org-jfs",
+   "relation": "parent_of",
+   "evidence": [
+    {
+     "url": "https://www.bs.ch/organisation",
+     "support": "Kantonale Organisationsseite führt Jugend, Familie und Sport unter dem Departement.",
+     "retrievedAt": "2026-10-29T21:03:16.270827+00:00",
+     "sourceDate": null,
+     "confidence": "medium"
+    }
+   ]
+  },
+  {
+   "id": "e-018",
+   "from": "org-kanton-bs",
+   "to": "org-grosser-rat",
+   "relation": "parent_of",
+   "evidence": [
+    {
+     "url": "https://www.bs.ch/organisation",
+     "support": "Unter Staatspolitische Organe im Kanton Basel-Stadt: Grosser Rat, Legislative.",
+     "retrievedAt": "2026-10-29T21:03:16.270827+00:00",
+     "sourceDate": null,
+     "confidence": "medium"
+    }
+   ]
+  },
+  {
+   "id": "e-019",
+   "from": "org-kanton-bs",
+   "to": "org-gerichte",
+   "relation": "parent_of",
+   "evidence": [
+    {
+     "url": "https://www.bs.ch/organisation",
+     "support": "Unter Staatspolitische Organe im Kanton Basel-Stadt: Gerichte, Judikative.",
+     "retrievedAt": "2026-10-29T21:03:16.270827+00:00",
+     "sourceDate": null,
+     "confidence": "medium"
+    }
+   ]
+  },
+  {
+   "id": "e-020",
+   "from": "org-kanton-bs",
+   "to": "org-datenschutz",
+   "relation": "parent_of",
+   "evidence": [
+    {
+     "url": "https://www.bs.ch/organisation",
+     "support": "Unter Unabhängige Stellen: Datenschutzbeauftragte.",
+     "retrievedAt": "2026-10-29T21:03:16.270827+00:00",
+     "sourceDate": null,
+     "confidence": "medium"
+    }
+   ]
+  },
+  {
+   "id": "e-021",
+   "from": "org-kanton-bs",
+   "to": "org-ombudsstelle",
+   "relation": "parent_of",
+   "evidence": [
+    {
+     "url": "https://www.bs.ch/organisation",
+     "support": "Unter Unabhängige Stellen: Ombudsstelle.",
+     "retrievedAt": "2026-10-29T21:03:16.270827+00:00",
+     "sourceDate": null,
+     "confidence": "medium"
+    }
+   ]
+  },
+  {
+   "id": "e-022",
+   "from": "org-kanton-bs",
+   "to": "org-finanzkontrolle",
+   "relation": "parent_of",
+   "evidence": [
+    {
+     "url": "https://www.bs.ch/organisation",
+     "support": "Unter Unabhängige Stellen: Finanzkontrolle.",
+     "retrievedAt": "2026-10-29T21:03:16.270827+00:00",
+     "sourceDate": null,
+     "confidence": "medium"
+    }
+   ]
+  },
+  {
+   "id": "e-023",
+   "from": "org-kanton-bs",
+   "to": "org-riehen",
+   "relation": "jurisdiction_over",
+   "evidence": [
+    {
+     "url": "https://www.bs.ch/bettingen/gemeinde",
+     "support": "«Bettingen ist neben Riehen die einzige Landgemeinde des Kantons Basel-Stadt.»",
+     "retrievedAt": "2026-10-29T21:03:36.270983+00:00",
+     "sourceDate": null,
+     "confidence": "high"
+    }
+   ]
+  },
+  {
+   "id": "e-024",
+   "from": "org-kanton-bs",
+   "to": "org-bettingen",
+   "relation": "jurisdiction_over",
+   "evidence": [
+    {
+     "url": "https://www.bs.ch/bettingen/gemeinde",
+     "support": "«Bettingen ist neben Riehen die einzige Landgemeinde des Kantons Basel-Stadt.»",
+     "retrievedAt": "2026-10-29T21:03:36.270983+00:00",
+     "sourceDate": null,
+     "confidence": "high"
+    }
+   ]
+  },
+  {
+   "id": "e-025",
+   "from": "org-kanton-bs",
+   "to": "org-bg-bettingen",
+   "relation": "jurisdiction_over",
+   "evidence": [
+    {
+     "url": "https://www.bs.ch/bettingen/politik/buergergemeinde",
+     "support": "«Die Bürgergemeinde Bettingen ist gemäss Gemeindegesetz eine öffentlich-rechtliche Körperschaft des Kantons Basel-Stadt. Sie erteilt das Gemeindebürgerrecht.»",
+     "retrievedAt": "2026-10-29T21:07:33.716536+00:00",
+     "sourceDate": null,
+     "confidence": "high"
+    }
+   ]
+  },
+  {
+   "id": "e-026",
+   "from": "org-kanton-bs",
+   "to": "org-bvb",
+   "relation": "owns_or_sponsors",
+   "evidence": [
+    {
+     "url": "https://media.bs.ch/original_file/4a2245c56aa3f5b4558440ac5a7bc87ccdbfc911/beteiligungsbericht-2024.pdf",
+     "support": "Beteiligungsspiegel 2024 (Stand 31.12.2024): Basler Verkehrs-Betriebe (BVB), Kantonsanteil 100 % (beherrscht); Rechtsform sAöR.",
+     "retrievedAt": "2026-10-29T21:04:50.422695+00:00",
+     "sourceDate": "2024-12-31",
+     "confidence": "high"
+    }
+   ]
+  },
+  {
+   "id": "e-027",
+   "from": "org-kanton-bs",
+   "to": "org-bvb",
+   "relation": "links_to",
+   "evidence": [
+    {
+     "url": "https://www.bs.ch/organisation",
+     "support": "Auf der kantonalen Organisationsseite unter «Selbständige Betriebe» verlinkt.",
+     "retrievedAt": "2026-10-29T21:03:16.270827+00:00",
+     "sourceDate": null,
+     "confidence": "high"
+    }
+   ]
+  },
+  {
+   "id": "e-028",
+   "from": "org-kanton-bs",
+   "to": "org-iwb",
+   "relation": "owns_or_sponsors",
+   "evidence": [
+    {
+     "url": "https://media.bs.ch/original_file/4a2245c56aa3f5b4558440ac5a7bc87ccdbfc911/beteiligungsbericht-2024.pdf",
+     "support": "Beteiligungsspiegel 2024 (Stand 31.12.2024): Industrielle Werke Basel (IWB), Kantonsanteil 100 % (beherrscht); Rechtsform sAöR.",
+     "retrievedAt": "2026-10-29T21:04:50.422695+00:00",
+     "sourceDate": "2024-12-31",
+     "confidence": "high"
+    }
+   ]
+  },
+  {
+   "id": "e-029",
+   "from": "org-kanton-bs",
+   "to": "org-iwb",
+   "relation": "links_to",
+   "evidence": [
+    {
+     "url": "https://www.bs.ch/organisation",
+     "support": "Auf der kantonalen Organisationsseite unter «Selbständige Betriebe» verlinkt.",
+     "retrievedAt": "2026-10-29T21:03:16.270827+00:00",
+     "sourceDate": null,
+     "confidence": "high"
+    }
+   ]
+  },
+  {
+   "id": "e-030",
+   "from": "org-kanton-bs",
+   "to": "org-usb",
+   "relation": "owns_or_sponsors",
+   "evidence": [
+    {
+     "url": "https://media.bs.ch/original_file/4a2245c56aa3f5b4558440ac5a7bc87ccdbfc911/beteiligungsbericht-2024.pdf",
+     "support": "Beteiligungsspiegel 2024 (Stand 31.12.2024): Universitätsspital Basel, Kantonsanteil 100 % (beherrscht); Rechtsform sAöR.",
+     "retrievedAt": "2026-10-29T21:04:50.422695+00:00",
+     "sourceDate": "2024-12-31",
+     "confidence": "high"
+    }
+   ]
+  },
+  {
+   "id": "e-031",
+   "from": "org-kanton-bs",
+   "to": "org-usb",
+   "relation": "links_to",
+   "evidence": [
+    {
+     "url": "https://www.bs.ch/organisation",
+     "support": "Auf der kantonalen Organisationsseite unter «Selbständige Betriebe» verlinkt.",
+     "retrievedAt": "2026-10-29T21:03:16.270827+00:00",
+     "sourceDate": null,
+     "confidence": "high"
+    }
+   ]
+  },
+  {
+   "id": "e-032",
+   "from": "org-kanton-bs",
+   "to": "org-upk",
+   "relation": "owns_or_sponsors",
+   "evidence": [
+    {
+     "url": "https://media.bs.ch/original_file/4a2245c56aa3f5b4558440ac5a7bc87ccdbfc911/beteiligungsbericht-2024.pdf",
+     "support": "Beteiligungsspiegel 2024 (Stand 31.12.2024): Universitäre Psychiatrische Kliniken Basel, Kantonsanteil 100 % (beherrscht); Rechtsform sAöR.",
+     "retrievedAt": "2026-10-29T21:04:50.422695+00:00",
+     "sourceDate": "2024-12-31",
+     "confidence": "high"
+    }
+   ]
+  },
+  {
+   "id": "e-033",
+   "from": "org-kanton-bs",
+   "to": "org-upk",
+   "relation": "links_to",
+   "evidence": [
+    {
+     "url": "https://www.bs.ch/organisation",
+     "support": "Auf der kantonalen Organisationsseite unter «Selbständige Betriebe» verlinkt.",
+     "retrievedAt": "2026-10-29T21:03:16.270827+00:00",
+     "sourceDate": null,
+     "confidence": "high"
+    }
+   ]
+  },
+  {
+   "id": "e-034",
+   "from": "org-kanton-bs",
+   "to": "org-felix-platter",
+   "relation": "owns_or_sponsors",
+   "evidence": [
+    {
+     "url": "https://media.bs.ch/original_file/4a2245c56aa3f5b4558440ac5a7bc87ccdbfc911/beteiligungsbericht-2024.pdf",
+     "support": "Beteiligungsspiegel 2024 (Stand 31.12.2024): Universitäre Altersmedizin Felix Platter, Kantonsanteil 100 % (beherrscht); Rechtsform sAöR.",
+     "retrievedAt": "2026-10-29T21:04:50.422695+00:00",
+     "sourceDate": "2024-12-31",
+     "confidence": "high"
+    }
+   ]
+  },
+  {
+   "id": "e-035",
+   "from": "org-kanton-bs",
+   "to": "org-felix-platter",
+   "relation": "links_to",
+   "evidence": [
+    {
+     "url": "https://www.bs.ch/organisation",
+     "support": "Auf der kantonalen Organisationsseite unter «Selbständige Betriebe» verlinkt.",
+     "retrievedAt": "2026-10-29T21:03:16.270827+00:00",
+     "sourceDate": null,
+     "confidence": "high"
+    }
+   ]
+  },
+  {
+   "id": "e-036",
+   "from": "org-kanton-bs",
+   "to": "org-uzb",
+   "relation": "owns_or_sponsors",
+   "evidence": [
+    {
+     "url": "https://media.bs.ch/original_file/4a2245c56aa3f5b4558440ac5a7bc87ccdbfc911/beteiligungsbericht-2024.pdf",
+     "support": "Beteiligungsspiegel 2024 (Stand 31.12.2024): Universitäres Zentrum für Zahnmedizin Basel (UZB), Kantonsanteil 100 % (beherrscht); Rechtsform sAöR.",
+     "retrievedAt": "2026-10-29T21:04:50.422695+00:00",
+     "sourceDate": "2024-12-31",
+     "confidence": "high"
+    }
+   ]
+  },
+  {
+   "id": "e-037",
+   "from": "org-kanton-bs",
+   "to": "org-uzb",
+   "relation": "links_to",
+   "evidence": [
+    {
+     "url": "https://www.bs.ch/organisation",
+     "support": "Auf der kantonalen Organisationsseite unter «Selbständige Betriebe» verlinkt.",
+     "retrievedAt": "2026-10-29T21:03:16.270827+00:00",
+     "sourceDate": null,
+     "confidence": "high"
+    }
+   ]
+  },
+  {
+   "id": "e-038",
+   "from": "org-kanton-bs",
+   "to": "org-bkb",
+   "relation": "owns_or_sponsors",
+   "evidence": [
+    {
+     "url": "https://media.bs.ch/original_file/4a2245c56aa3f5b4558440ac5a7bc87ccdbfc911/beteiligungsbericht-2024.pdf",
+     "support": "Beteiligungsspiegel 2024 (Stand 31.12.2024): Basler Kantonalbank, Kantonsanteil 85,5 % (beherrscht); Rechtsform sAöR.",
+     "retrievedAt": "2026-10-29T21:04:50.422695+00:00",
+     "sourceDate": "2024-12-31",
+     "confidence": "high"
+    }
+   ]
+  },
+  {
+   "id": "e-039",
+   "from": "org-kanton-bs",
+   "to": "org-unibas",
+   "relation": "jointly_sponsors",
+   "evidence": [
+    {
+     "url": "https://media.bs.ch/original_file/4a2245c56aa3f5b4558440ac5a7bc87ccdbfc911/beteiligungsbericht-2024.pdf",
+     "support": "Beteiligungsspiegel 2024 (Stand 31.12.2024): Universität Basel, gemeinschaftlich mit anderen Kantonen, Anteil 50 %; Rechtsform sAöR.",
+     "retrievedAt": "2026-10-29T21:04:50.422695+00:00",
+     "sourceDate": "2024-12-31",
+     "confidence": "high"
+    }
+   ]
+  },
+  {
+   "id": "e-040",
+   "from": "org-kanton-bs",
+   "to": "org-unibas",
+   "relation": "links_to",
+   "evidence": [
+    {
+     "url": "https://www.bs.ch/organisation",
+     "support": "Auf der kantonalen Organisationsseite unter «Selbständige Betriebe» verlinkt.",
+     "retrievedAt": "2026-10-29T21:03:16.270827+00:00",
+     "sourceDate": null,
+     "confidence": "high"
+    }
+   ]
+  },
+  {
+   "id": "e-041",
+   "from": "org-kanton-bs",
+   "to": "org-ukbb",
+   "relation": "jointly_sponsors",
+   "evidence": [
+    {
+     "url": "https://media.bs.ch/original_file/4a2245c56aa3f5b4558440ac5a7bc87ccdbfc911/beteiligungsbericht-2024.pdf",
+     "support": "Beteiligungsspiegel 2024 (Stand 31.12.2024): Universitäts-Kinderspital beider Basel (UKBB), gemeinschaftlich, Anteil 50 %; Rechtsform sAöR.",
+     "retrievedAt": "2026-10-29T21:04:50.422695+00:00",
+     "sourceDate": "2024-12-31",
+     "confidence": "high"
+    }
+   ]
+  },
+  {
+   "id": "e-042",
+   "from": "org-kanton-bs",
+   "to": "org-fhnw",
+   "relation": "jointly_sponsors",
+   "evidence": [
+    {
+     "url": "https://media.bs.ch/original_file/4a2245c56aa3f5b4558440ac5a7bc87ccdbfc911/beteiligungsbericht-2024.pdf",
+     "support": "Beteiligungsspiegel 2024 (Stand 31.12.2024): Fachhochschule Nordwestschweiz (FHNW), gemeinschaftlich, Anteil 19 %; Rechtsform sAöR.",
+     "retrievedAt": "2026-10-29T21:04:50.422695+00:00",
+     "sourceDate": "2024-12-31",
+     "confidence": "high"
+    }
+   ]
+  },
+  {
+   "id": "e-043",
+   "from": "org-kanton-bs",
+   "to": "org-fhnw",
+   "relation": "links_to",
+   "evidence": [
+    {
+     "url": "https://www.bs.ch/organisation",
+     "support": "Auf der kantonalen Organisationsseite unter «Selbständige Betriebe» verlinkt.",
+     "retrievedAt": "2026-10-29T21:03:16.270827+00:00",
+     "sourceDate": null,
+     "confidence": "high"
+    }
+   ]
+  },
+  {
+   "id": "e-044",
+   "from": "org-kanton-bs",
+   "to": "org-srh",
+   "relation": "jointly_sponsors",
+   "evidence": [
+    {
+     "url": "https://media.bs.ch/original_file/4a2245c56aa3f5b4558440ac5a7bc87ccdbfc911/beteiligungsbericht-2024.pdf",
+     "support": "Beteiligungsspiegel 2024 (Stand 31.12.2024): Schweizerische Rheinhäfen (SRH), gemeinschaftlich, Anteil 66 %; Rechtsform sAöR.",
+     "retrievedAt": "2026-10-29T21:04:50.422695+00:00",
+     "sourceDate": "2024-12-31",
+     "confidence": "high"
+    }
+   ]
+  },
+  {
+   "id": "e-045",
+   "from": "org-kanton-bs",
+   "to": "org-srh",
+   "relation": "links_to",
+   "evidence": [
+    {
+     "url": "https://www.bs.ch/organisation",
+     "support": "Auf der kantonalen Organisationsseite unter «Selbständige Betriebe» verlinkt.",
+     "retrievedAt": "2026-10-29T21:03:16.270827+00:00",
+     "sourceDate": null,
+     "confidence": "high"
+    }
+   ]
+  },
+  {
+   "id": "e-046",
+   "from": "org-kanton-bs",
+   "to": "org-mfp",
+   "relation": "jointly_sponsors",
+   "evidence": [
+    {
+     "url": "https://media.bs.ch/original_file/4a2245c56aa3f5b4558440ac5a7bc87ccdbfc911/beteiligungsbericht-2024.pdf",
+     "support": "Beteiligungsspiegel 2024 (Stand 31.12.2024): Motorfahrzeugprüfstation beider Basel, gemeinschaftlich, Anteil 60 %; Rechtsform sAöR.",
+     "retrievedAt": "2026-10-29T21:04:50.422695+00:00",
+     "sourceDate": "2024-12-31",
+     "confidence": "high"
+    }
+   ]
+  },
+  {
+   "id": "e-047",
+   "from": "org-kanton-bs",
+   "to": "org-swisstph",
+   "relation": "jointly_sponsors",
+   "evidence": [
+    {
+     "url": "https://media.bs.ch/original_file/4a2245c56aa3f5b4558440ac5a7bc87ccdbfc911/beteiligungsbericht-2024.pdf",
+     "support": "Beteiligungsspiegel 2024 (Stand 31.12.2024): Schweizerisches Tropen- und Public Health-Institut, gemeinschaftlich, Anteil 50 %; Rechtsform sAöR.",
+     "retrievedAt": "2026-10-29T21:04:50.422695+00:00",
+     "sourceDate": "2024-12-31",
+     "confidence": "high"
+    }
+   ]
+  },
+  {
+   "id": "e-048",
+   "from": "org-kanton-bs",
+   "to": "org-gvbs",
+   "relation": "participates_in",
+   "evidence": [
+    {
+     "url": "https://media.bs.ch/original_file/4a2245c56aa3f5b4558440ac5a7bc87ccdbfc911/beteiligungsbericht-2024.pdf",
+     "support": "Beteiligungsspiegel 2024 (Stand 31.12.2024): Gebäudeversicherung des Kantons Basel-Stadt, massgeblicher Einfluss, keine kapitalmässige Beteiligung; Rechtsform sAöR.",
+     "retrievedAt": "2026-10-29T21:04:50.422695+00:00",
+     "sourceDate": "2024-12-31",
+     "confidence": "high"
+    }
+   ]
+  },
+  {
+   "id": "e-049",
+   "from": "org-kanton-bs",
+   "to": "org-mch",
+   "relation": "participates_in",
+   "evidence": [
+    {
+     "url": "https://media.bs.ch/original_file/4a2245c56aa3f5b4558440ac5a7bc87ccdbfc911/beteiligungsbericht-2024.pdf",
+     "support": "Beteiligungsspiegel 2024 (Stand 31.12.2024): MCH Group AG, massgeblicher Einfluss, Anteil 37,5 %; Rechtsform AG.",
+     "retrievedAt": "2026-10-29T21:04:50.422695+00:00",
+     "sourceDate": "2024-12-31",
+     "confidence": "high"
+    }
+   ]
+  },
+  {
+   "id": "e-050",
+   "from": "org-kanton-bs",
+   "to": "org-ak-bs",
+   "relation": "links_to",
+   "evidence": [
+    {
+     "url": "https://www.bs.ch/organisation",
+     "support": "Auf der kantonalen Organisationsseite unter «Selbständige Betriebe» verlinkt.",
+     "retrievedAt": "2026-10-29T21:03:16.270827+00:00",
+     "sourceDate": null,
+     "confidence": "high"
+    }
+   ]
+  },
+  {
+   "id": "e-051",
+   "from": "org-kanton-bs",
+   "to": "org-ivbs",
+   "relation": "links_to",
+   "evidence": [
+    {
+     "url": "https://www.bs.ch/organisation",
+     "support": "Auf der kantonalen Organisationsseite unter «Selbständige Betriebe» verlinkt.",
+     "retrievedAt": "2026-10-29T21:03:16.270827+00:00",
+     "sourceDate": null,
+     "confidence": "high"
+    }
+   ]
+  },
+  {
+   "id": "e-052",
+   "from": "org-webredaktion",
+   "to": "wp-bs",
+   "relation": "responsible_editorially",
+   "evidence": [
+    {
+     "url": "https://www.bs.ch/impressum",
+     "support": "Impressum, Abschnitt «Anfragen zur Webseite»: Webredaktion.",
+     "retrievedAt": "2026-10-29T21:03:56.271192+00:00",
+     "sourceDate": null,
+     "confidence": "high"
+    }
+   ]
+  },
+  {
+   "id": "e-053",
+   "from": "org-itbs",
+   "to": "wp-bs",
+   "relation": "operates_technically",
+   "evidence": [
+    {
+     "url": "https://www.bs.ch/impressum",
+     "support": "«Design, Implementierung und Betrieb: IT BS (Kanton Basel-Stadt) in Zusammenarbeit mit Liip AG».",
+     "retrievedAt": "2026-10-29T21:03:56.271192+00:00",
+     "sourceDate": null,
+     "confidence": "high"
+    }
+   ]
+  },
+  {
+   "id": "e-054",
+   "from": "org-liip",
+   "to": "wp-bs",
+   "relation": "operates_technically",
+   "evidence": [
+    {
+     "url": "https://www.bs.ch/impressum",
+     "support": "«… in Zusammenarbeit mit Liip AG».",
+     "retrievedAt": "2026-10-29T21:03:56.271192+00:00",
+     "sourceDate": null,
+     "confidence": "high"
+    }
+   ]
+  },
+  {
+   "id": "e-055",
+   "from": "org-oriented",
+   "to": "wp-bs",
+   "relation": "operates_technically",
+   "evidence": [
+    {
+     "url": "https://www.bs.ch/impressum",
+     "support": "Impressum, Abschnitt «Hosting»: «oriented.net GmbH».",
+     "retrievedAt": "2026-10-29T21:03:56.271192+00:00",
+     "sourceDate": null,
+     "confidence": "high"
+    }
+   ]
+  },
+  {
+   "id": "e-056",
+   "from": "org-exoscale",
+   "to": "wp-bs",
+   "relation": "operates_technically",
+   "evidence": [
+    {
+     "url": "https://www.bs.ch/impressum",
+     "support": "Impressum, Abschnitt «Hosting Alva» (KI-Assistent auf www.bs.ch): «Exoscale».",
+     "retrievedAt": "2026-10-29T21:03:56.271192+00:00",
+     "sourceDate": null,
+     "confidence": "high"
+    }
+   ]
+  },
+  {
+   "id": "e-057",
+   "from": "org-seantis",
+   "to": "wp-staatskalender",
+   "relation": "operates_technically",
+   "evidence": [
+    {
+     "url": "https://www.bs.ch/impressum",
+     "support": "«Der Staatskalender wird durch die Firma Seantis im Auftrag des Kantons Basel-Stadt betrieben und auf OneGov Cloud gehostet.»",
+     "retrievedAt": "2026-10-29T21:03:56.271192+00:00",
+     "sourceDate": null,
+     "confidence": "high"
+    }
+   ]
+  },
+  {
+   "id": "e-058",
+   "from": "org-kanton-bs",
+   "to": "wp-staatskalender",
+   "relation": "publishes_property",
+   "evidence": [
+    {
+     "url": "https://www.bs.ch/impressum",
+     "support": "Betrieb «im Auftrag des Kantons Basel-Stadt».",
+     "retrievedAt": "2026-10-29T21:03:56.271192+00:00",
+     "sourceDate": null,
+     "confidence": "high"
+    }
+   ]
+  },
+  {
+   "id": "e-059",
+   "from": "org-itbs",
+   "to": "wp-eportal",
+   "relation": "operates_technically",
+   "evidence": [
+    {
+     "url": "https://www.bs.ch/fd/itbs",
+     "support": "IT BS stellt laut eigener Seite die E-Government-Plattform bereit und verlinkt das ePortal als Einstieg (Zuordnung Plattform→ePortal: unsere Lesart).",
+     "retrievedAt": "2026-10-29T21:07:03.716408+00:00",
+     "sourceDate": null,
+     "confidence": "medium"
+    }
+   ]
+  },
+  {
+   "id": "e-060",
+   "from": "org-itbs",
+   "to": "wp-esteuern",
+   "relation": "links_to",
+   "evidence": [
+    {
+     "url": "https://www.bs.ch/fd/itbs",
+     "support": "«… das Steuerportal eSteuern.BS, das ebenfalls E-Government-Bausteine der IT BS verwendet.» (Betreiber damit nicht belegt)",
+     "retrievedAt": "2026-10-29T21:07:03.716408+00:00",
+     "sourceDate": null,
+     "confidence": "medium"
+    }
+   ]
+  },
+  {
+   "id": "e-061",
+   "from": "org-kanton-bs",
+   "to": "wp-eportal",
+   "relation": "publishes_property",
+   "evidence": [
+    {
+     "url": "https://www.bs.ch/fd/itbs",
+     "support": "«Das ePortal ist der Einstieg zu allen digital verfügbaren kantonalen Dienstleistungen.»",
+     "retrievedAt": "2026-10-29T21:07:03.716408+00:00",
+     "sourceDate": null,
+     "confidence": "high"
+    }
+   ]
+  },
+  {
+   "id": "e-062",
+   "from": "wp-eportal",
+   "to": "wp-ekonto",
+   "relation": "transaction_boundary",
+   "evidence": [
+    {
+     "url": "https://www.bs.ch/fd/itbs/eportal-nutzungsbedingungen",
+     "support": "«Beim Erst-Login mit dem persönlichen AGOV-Konto wird im ePortal automatisch ein lokales Benutzerkonto (eKonto) erstellt.»",
+     "retrievedAt": "2026-10-29T21:07:54.004221+00:00",
+     "sourceDate": null,
+     "confidence": "high"
+    }
+   ]
+  },
+  {
+   "id": "e-063",
+   "from": "wp-eportal",
+   "to": "org-agov",
+   "relation": "transaction_boundary",
+   "evidence": [
+    {
+     "url": "https://www.bs.ch/fd/itbs/eportal-nutzungsbedingungen",
+     "support": "Login im ePortal leitet zu AGOV weiter, dem «Authentifizierungsdienst des Bundes» (nur Anmeldung; Betrieb des ePortals damit nicht belegt).",
+     "retrievedAt": "2026-10-29T21:07:54.004221+00:00",
+     "sourceDate": null,
+     "confidence": "high"
+    }
+   ]
+  },
+  {
+   "id": "e-064",
+   "from": "org-riehen",
+   "to": "wp-riehen",
+   "relation": "responsible_editorially",
+   "evidence": [
+    {
+     "url": "https://www.riehen.ch/impressum/",
+     "support": "«Verantwortlich für den Inhalt dieser Internetpräsenz: Gemeindeverwaltung Riehen, Kommunikation».",
+     "retrievedAt": "2026-10-29T21:06:00.088678+00:00",
+     "sourceDate": null,
+     "confidence": "high"
+    }
+   ]
+  },
+  {
+   "id": "e-065",
+   "from": "org-talus",
+   "to": "wp-riehen",
+   "relation": "built_by",
+   "evidence": [
+    {
+     "url": "https://www.riehen.ch/impressum/",
+     "support": "Impressum: «Realisierung Talus Informatik AG».",
+     "retrievedAt": "2026-10-29T21:06:00.088678+00:00",
+     "sourceDate": null,
+     "confidence": "high"
+    }
+   ]
+  },
+  {
+   "id": "e-066",
+   "from": "wp-riehen",
+   "to": "wp-riehen-jobs",
+   "relation": "links_to",
+   "evidence": [
+    {
+     "url": "https://www.riehen.ch/",
+     "support": "Startseite verlinkt Offene Stellen auf app.jobportal.abaservices.ch.",
+     "retrievedAt": "2026-10-29T21:05:39.337766+00:00",
+     "sourceDate": null,
+     "confidence": "high"
+    }
+   ]
+  },
+  {
+   "id": "e-067",
+   "from": "org-grosser-rat",
+   "to": "wp-grosserrat",
+   "relation": "publishes_property",
+   "evidence": [
+    {
+     "url": "https://grosserrat.bs.ch/",
+     "support": "Titel der Startseite: Grosser Rat Basel-Stadt – Willkommen.",
+     "retrievedAt": "2026-10-29T21:05:39.658451+00:00",
+     "sourceDate": null,
+     "confidence": "high"
+    }
+   ]
+  },
+  {
+   "id": "e-068",
+   "from": "org-eyeloveyou",
+   "to": "wp-grosserrat",
+   "relation": "built_by",
+   "evidence": [
+    {
+     "url": "https://grosserrat.bs.ch/impressum",
+     "support": "Impressum: «Konzept & Design eyeloveyou GmbH».",
+     "retrievedAt": "2026-10-29T21:06:10.422347+00:00",
+     "sourceDate": null,
+     "confidence": "medium"
+    }
+   ]
+  },
+  {
+   "id": "e-069",
+   "from": "org-lab5",
+   "to": "wp-grosserrat",
+   "relation": "built_by",
+   "evidence": [
+    {
+     "url": "https://grosserrat.bs.ch/impressum",
+     "support": "Impressum: «Development Lab5».",
+     "retrievedAt": "2026-10-29T21:06:10.422347+00:00",
+     "sourceDate": null,
+     "confidence": "medium"
+    }
+   ]
+  },
+  {
+   "id": "e-070",
+   "from": "wp-grosserrat",
+   "to": "wp-pixas",
+   "relation": "transaction_boundary",
+   "evidence": [
+    {
+     "url": "https://grosserrat.bs.ch/",
+     "support": "Startseite verlinkt Intern (PIXAS) auf grosserratbs.pixas.ch (Anmeldung, nicht aufgerufen).",
+     "retrievedAt": "2026-10-29T21:05:39.658451+00:00",
+     "sourceDate": null,
+     "confidence": "high"
+    }
+   ]
+  },
+  {
+   "id": "e-071",
+   "from": "org-bvb",
+   "to": "wp-bvb",
+   "relation": "publishes_property",
+   "evidence": [
+    {
+     "url": "https://www.bs.ch/organisation",
+     "support": "Kantonale Organisationsseite verlinkt diese Website für die Institution (Betreiber nicht belegt).",
+     "retrievedAt": "2026-10-29T21:03:16.270827+00:00",
+     "sourceDate": null,
+     "confidence": "medium"
+    }
+   ]
+  },
+  {
+   "id": "e-072",
+   "from": "org-iwb",
+   "to": "wp-iwb",
+   "relation": "publishes_property",
+   "evidence": [
+    {
+     "url": "https://www.bs.ch/organisation",
+     "support": "Kantonale Organisationsseite verlinkt diese Website für die Institution (Betreiber nicht belegt).",
+     "retrievedAt": "2026-10-29T21:03:16.270827+00:00",
+     "sourceDate": null,
+     "confidence": "medium"
+    }
+   ]
+  },
+  {
+   "id": "e-073",
+   "from": "org-usb",
+   "to": "wp-usb",
+   "relation": "publishes_property",
+   "evidence": [
+    {
+     "url": "https://www.bs.ch/organisation",
+     "support": "Kantonale Organisationsseite verlinkt diese Website für die Institution (Betreiber nicht belegt).",
+     "retrievedAt": "2026-10-29T21:03:16.270827+00:00",
+     "sourceDate": null,
+     "confidence": "medium"
+    }
+   ]
+  },
+  {
+   "id": "e-074",
+   "from": "org-unibas",
+   "to": "wp-unibas",
+   "relation": "publishes_property",
+   "evidence": [
+    {
+     "url": "https://www.bs.ch/organisation",
+     "support": "Kantonale Organisationsseite verlinkt diese Website für die Institution (Betreiber nicht belegt).",
+     "retrievedAt": "2026-10-29T21:03:16.270827+00:00",
+     "sourceDate": null,
+     "confidence": "medium"
+    }
+   ]
+  },
+  {
+   "id": "e-075",
+   "from": "org-ivbs",
+   "to": "wp-ivbs",
+   "relation": "publishes_property",
+   "evidence": [
+    {
+     "url": "https://www.bs.ch/organisation",
+     "support": "Kantonale Organisationsseite verlinkt diese Website für die Institution (Betreiber nicht belegt).",
+     "retrievedAt": "2026-10-29T21:03:16.270827+00:00",
+     "sourceDate": null,
+     "confidence": "medium"
+    }
+   ]
+  },
+  {
+   "id": "e-076",
+   "from": "org-fhnw",
+   "to": "wp-fhnw",
+   "relation": "publishes_property",
+   "evidence": [
+    {
+     "url": "https://www.bs.ch/organisation",
+     "support": "Kantonale Organisationsseite verlinkt diese Website für die Institution (Betreiber nicht belegt).",
+     "retrievedAt": "2026-10-29T21:03:16.270827+00:00",
+     "sourceDate": null,
+     "confidence": "medium"
+    }
+   ]
+  },
+  {
+   "id": "e-077",
+   "from": "org-upk",
+   "to": "wp-upk",
+   "relation": "publishes_property",
+   "evidence": [
+    {
+     "url": "https://www.bs.ch/organisation",
+     "support": "Kantonale Organisationsseite verlinkt diese Website für die Institution (Betreiber nicht belegt).",
+     "retrievedAt": "2026-10-29T21:03:16.270827+00:00",
+     "sourceDate": null,
+     "confidence": "medium"
+    }
+   ]
+  },
+  {
+   "id": "e-078",
+   "from": "org-felix-platter",
+   "to": "wp-felixplatter",
+   "relation": "publishes_property",
+   "evidence": [
+    {
+     "url": "https://www.bs.ch/organisation",
+     "support": "Kantonale Organisationsseite verlinkt diese Website für die Institution (Betreiber nicht belegt).",
+     "retrievedAt": "2026-10-29T21:03:16.270827+00:00",
+     "sourceDate": null,
+     "confidence": "medium"
+    }
+   ]
+  },
+  {
+   "id": "e-079",
+   "from": "org-uzb",
+   "to": "wp-uzb",
+   "relation": "publishes_property",
+   "evidence": [
+    {
+     "url": "https://www.bs.ch/organisation",
+     "support": "Kantonale Organisationsseite verlinkt diese Website für die Institution (Betreiber nicht belegt).",
+     "retrievedAt": "2026-10-29T21:03:16.270827+00:00",
+     "sourceDate": null,
+     "confidence": "medium"
+    }
+   ]
+  },
+  {
+   "id": "e-080",
+   "from": "org-srh",
+   "to": "wp-srh",
+   "relation": "publishes_property",
+   "evidence": [
+    {
+     "url": "https://www.bs.ch/organisation",
+     "support": "Kantonale Organisationsseite verlinkt diese Website für die Institution (Betreiber nicht belegt).",
+     "retrievedAt": "2026-10-29T21:03:16.270827+00:00",
+     "sourceDate": null,
+     "confidence": "medium"
+    }
+   ]
+  },
+  {
+   "id": "e-081",
+   "from": "org-ak-bs",
+   "to": "wp-ak",
+   "relation": "publishes_property",
+   "evidence": [
+    {
+     "url": "https://www.bs.ch/organisation",
+     "support": "Kantonale Organisationsseite verlinkt diese Website für die Institution (Betreiber nicht belegt).",
+     "retrievedAt": "2026-10-29T21:03:16.270827+00:00",
+     "sourceDate": null,
+     "confidence": "medium"
+    }
+   ]
+  },
+  {
+   "id": "e-082",
+   "from": "wp-unibas",
+   "to": "wp-unibas-services",
+   "relation": "transaction_boundary",
+   "evidence": [
+    {
+     "url": "https://www.unibas.ch/de",
+     "support": "Startseite verlinkt Online Services auf services.unibas.ch (nicht aufgerufen).",
+     "retrievedAt": "2026-10-29T21:06:11.050175+00:00",
+     "sourceDate": null,
+     "confidence": "high"
+    }
+   ]
+  },
+  {
+   "id": "e-083",
+   "from": "org-bettingen",
+   "to": "wp-bs",
+   "relation": "responsible_editorially",
+   "evidence": [
+    {
+     "url": "https://www.bs.ch/bettingen/gemeinde/dienstleistungen-behoerdengaenge-online-durchfuehren",
+     "support": "Nur Teilbereich www.bs.ch/bettingen: «Die Gemeindeverwaltung Bettingen bietet Ihnen viele Ihrer Dienstleistungen auch online an».",
+     "retrievedAt": "2026-10-29T21:07:23.716468+00:00",
+     "sourceDate": null,
+     "confidence": "medium"
+    }
+   ]
+  },
+  {
+   "id": "e-084",
+   "from": "org-kanton-bs",
+   "to": "wp-bs",
+   "relation": "publishes_property",
+   "evidence": [
+    {
+     "url": "https://www.bs.ch/impressum",
+     "support": "Impressum, Abschnitt «Allgemeine Adresse»: Kanton Basel-Stadt.",
+     "retrievedAt": "2026-10-29T21:03:56.271192+00:00",
+     "sourceDate": null,
+     "confidence": "high"
+    }
+   ]
+  },
+  {
+   "id": "e-085",
+   "from": "wp-bs",
+   "to": "S01",
+   "relation": "entry_point_of",
+   "evidence": [
+    {
+     "url": "https://www.bs.ch/",
+     "support": "Einstieg des Dienstes Startseite bs.ch.",
+     "retrievedAt": "2026-10-29T20:15:46.891062+00:00",
+     "sourceDate": null,
+     "confidence": "high"
+    }
+   ]
+  },
+  {
+   "id": "e-086",
+   "from": "wp-eportal",
+   "to": "S02",
+   "relation": "entry_point_of",
+   "evidence": [
+    {
+     "url": "https://eportal.egov.bs.ch/",
+     "support": "Einstieg des Dienstes ePortal (öffentliche Startseite).",
+     "retrievedAt": "2026-10-29T20:15:56.891134+00:00",
+     "sourceDate": null,
+     "confidence": "high"
+    }
+   ]
+  },
+  {
+   "id": "e-087",
+   "from": "wp-bs",
+   "to": "S03",
+   "relation": "entry_point_of",
+   "evidence": [
+    {
+     "url": "https://www.bs.ch/erklaerung-zur-barrierefreiheit",
+     "support": "Einstieg des Dienstes Erklärung zur Barrierefreiheit.",
+     "retrievedAt": "2026-10-29T20:16:06.891199+00:00",
+     "sourceDate": null,
+     "confidence": "high"
+    }
+   ]
+  },
+  {
+   "id": "e-088",
+   "from": "wp-bs",
+   "to": "S04",
+   "relation": "entry_point_of",
+   "evidence": [
+    {
+     "url": "https://www.bs.ch/themen/persoenliches-und-wohnen/umzug-und-wegzug/umzug-innerhalb-des-kantons-melden",
+     "support": "Einstieg des Dienstes Umzug innerhalb des Kantons melden.",
+     "retrievedAt": "2026-10-29T20:19:00.741599+00:00",
+     "sourceDate": null,
+     "confidence": "high"
+    }
+   ]
+  },
+  {
+   "id": "e-089",
+   "from": "S04",
+   "to": "wp-eservices",
+   "relation": "transaction_boundary",
+   "evidence": [
+    {
+     "url": "https://www.bs.ch/themen/persoenliches-und-wohnen/umzug-und-wegzug/umzug-innerhalb-des-kantons-melden",
+     "support": "Dienstseite verlinkt eservices.egov.bs.ch (#53-Entdeckung).",
+     "retrievedAt": "2026-10-29T20:19:00.741599+00:00",
+     "sourceDate": null,
+     "confidence": "high"
+    }
+   ]
+  },
+  {
+   "id": "e-090",
+   "from": "S04",
+   "to": "wp-eumzug",
+   "relation": "transaction_boundary",
+   "evidence": [
+    {
+     "url": "https://www.bs.ch/themen/persoenliches-und-wohnen/umzug-und-wegzug/umzug-innerhalb-des-kantons-melden",
+     "support": "Dienstseite verlinkt www.eumzug.swiss (#53-Entdeckung).",
+     "retrievedAt": "2026-10-29T20:19:00.741599+00:00",
+     "sourceDate": null,
+     "confidence": "high"
+    }
+   ]
+  },
+  {
+   "id": "e-091",
+   "from": "org-einwohneramt",
+   "to": "S04",
+   "relation": "responsible_editorially",
+   "evidence": [
+    {
+     "url": "https://www.bs.ch/themen/persoenliches-und-wohnen/umzug-und-wegzug/umzug-innerhalb-des-kantons-melden",
+     "support": "Seitenangabe Für dieses Thema zuständig: Einwohneramt.",
+     "retrievedAt": "2026-10-29T20:19:00.741599+00:00",
+     "sourceDate": null,
+     "confidence": "high"
+    }
+   ]
+  },
+  {
+   "id": "e-092",
+   "from": "wp-bs",
+   "to": "S05",
+   "relation": "entry_point_of",
+   "evidence": [
+    {
+     "url": "https://www.bs.ch/themen/persoenliches-und-wohnen/umzug-und-wegzug/wegzug-vom-kanton-melden",
+     "support": "Einstieg des Dienstes Wegzug vom Kanton melden.",
+     "retrievedAt": "2026-10-29T20:19:10.741673+00:00",
+     "sourceDate": null,
+     "confidence": "high"
+    }
+   ]
+  },
+  {
+   "id": "e-093",
+   "from": "S05",
+   "to": "wp-eservices",
+   "relation": "transaction_boundary",
+   "evidence": [
+    {
+     "url": "https://www.bs.ch/themen/persoenliches-und-wohnen/umzug-und-wegzug/wegzug-vom-kanton-melden",
+     "support": "Dienstseite verlinkt eservices.egov.bs.ch (#53-Entdeckung).",
+     "retrievedAt": "2026-10-29T20:19:10.741673+00:00",
+     "sourceDate": null,
+     "confidence": "high"
+    }
+   ]
+  },
+  {
+   "id": "e-094",
+   "from": "S05",
+   "to": "wp-formulare",
+   "relation": "transaction_boundary",
+   "evidence": [
+    {
+     "url": "https://www.bs.ch/themen/persoenliches-und-wohnen/umzug-und-wegzug/wegzug-vom-kanton-melden",
+     "support": "Dienstseite verlinkt formulare.bs.ch (#53-Entdeckung).",
+     "retrievedAt": "2026-10-29T20:19:10.741673+00:00",
+     "sourceDate": null,
+     "confidence": "high"
+    }
+   ]
+  },
+  {
+   "id": "e-095",
+   "from": "S05",
+   "to": "wp-eumzug",
+   "relation": "transaction_boundary",
+   "evidence": [
+    {
+     "url": "https://www.bs.ch/themen/persoenliches-und-wohnen/umzug-und-wegzug/wegzug-vom-kanton-melden",
+     "support": "Dienstseite verlinkt www.eumzug.swiss (#53-Entdeckung).",
+     "retrievedAt": "2026-10-29T20:19:10.741673+00:00",
+     "sourceDate": null,
+     "confidence": "high"
+    }
+   ]
+  },
+  {
+   "id": "e-096",
+   "from": "org-einwohneramt",
+   "to": "S05",
+   "relation": "responsible_editorially",
+   "evidence": [
+    {
+     "url": "https://www.bs.ch/themen/persoenliches-und-wohnen/umzug-und-wegzug/wegzug-vom-kanton-melden",
+     "support": "Seitenangabe Für dieses Thema zuständig: Einwohneramt.",
+     "retrievedAt": "2026-10-29T20:19:10.741673+00:00",
+     "sourceDate": null,
+     "confidence": "high"
+    }
+   ]
+  },
+  {
+   "id": "e-097",
+   "from": "wp-bs",
+   "to": "S06",
+   "relation": "entry_point_of",
+   "evidence": [
+    {
+     "url": "https://www.bs.ch/themen/persoenliches-und-wohnen/zuzug-und-aufenthalt/zuzug-den-kanton-basel-stadt",
+     "support": "Einstieg des Dienstes Zuzug in den Kanton.",
+     "retrievedAt": "2026-10-29T20:19:30.741807+00:00",
+     "sourceDate": null,
+     "confidence": "high"
+    }
+   ]
+  },
+  {
+   "id": "e-098",
+   "from": "S06",
+   "to": "wp-eservices",
+   "relation": "transaction_boundary",
+   "evidence": [
+    {
+     "url": "https://www.bs.ch/themen/persoenliches-und-wohnen/zuzug-und-aufenthalt/zuzug-den-kanton-basel-stadt",
+     "support": "Dienstseite verlinkt eservices.egov.bs.ch (#53-Entdeckung).",
+     "retrievedAt": "2026-10-29T20:19:30.741807+00:00",
+     "sourceDate": null,
+     "confidence": "high"
+    }
+   ]
+  },
+  {
+   "id": "e-099",
+   "from": "org-einwohneramt",
+   "to": "S06",
+   "relation": "responsible_editorially",
+   "evidence": [
+    {
+     "url": "https://www.bs.ch/themen/persoenliches-und-wohnen/zuzug-und-aufenthalt/zuzug-den-kanton-basel-stadt",
+     "support": "Seitenangabe Für dieses Thema zuständig: Einwohneramt.",
+     "retrievedAt": "2026-10-29T20:19:30.741807+00:00",
+     "sourceDate": null,
+     "confidence": "high"
+    }
+   ]
+  },
+  {
+   "id": "e-100",
+   "from": "wp-bs",
+   "to": "S07",
+   "relation": "entry_point_of",
+   "evidence": [
+    {
+     "url": "https://www.bs.ch/themen/persoenliches-und-wohnen/pass-identitaetskarte-und-beglaubigungen/ich-brauche-einen-neuen-pass-eine-neue-identitaetskarte",
+     "support": "Einstieg des Dienstes Pass / Identitätskarte bestellen.",
+     "retrievedAt": "2026-10-29T20:19:20.741742+00:00",
+     "sourceDate": null,
+     "confidence": "high"
+    }
+   ]
+  },
+  {
+   "id": "e-101",
+   "from": "S07",
+   "to": "wp-eservices",
+   "relation": "transaction_boundary",
+   "evidence": [
+    {
+     "url": "https://www.bs.ch/themen/persoenliches-und-wohnen/pass-identitaetskarte-und-beglaubigungen/ich-brauche-einen-neuen-pass-eine-neue-identitaetskarte",
+     "support": "Dienstseite verlinkt eservices.egov.bs.ch (#53-Entdeckung).",
+     "retrievedAt": "2026-10-29T20:19:20.741742+00:00",
+     "sourceDate": null,
+     "confidence": "high"
+    }
+   ]
+  },
+  {
+   "id": "e-102",
+   "from": "org-passamt",
+   "to": "S07",
+   "relation": "responsible_editorially",
+   "evidence": [
+    {
+     "url": "https://www.bs.ch/themen/persoenliches-und-wohnen/pass-identitaetskarte-und-beglaubigungen/ich-brauche-einen-neuen-pass-eine-neue-identitaetskarte",
+     "support": "Seitenangabe Für dieses Thema zuständig: Passamt.",
+     "retrievedAt": "2026-10-29T20:19:20.741742+00:00",
+     "sourceDate": null,
+     "confidence": "high"
+    }
+   ]
+  },
+  {
+   "id": "e-103",
+   "from": "wp-bs",
+   "to": "S08",
+   "relation": "entry_point_of",
+   "evidence": [
+    {
+     "url": "https://www.bs.ch/themen/umwelt-und-bauen/abfall-und-sauberkeit/abfallabfuhr",
+     "support": "Einstieg des Dienstes Abfallabfuhr.",
+     "retrievedAt": "2026-10-29T20:16:53.898152+00:00",
+     "sourceDate": null,
+     "confidence": "high"
+    }
+   ]
+  },
+  {
+   "id": "e-104",
+   "from": "S08",
+   "to": "wp-draeggwaegg",
+   "relation": "transaction_boundary",
+   "evidence": [
+    {
+     "url": "https://www.bs.ch/themen/umwelt-und-bauen/abfall-und-sauberkeit/abfallabfuhr",
+     "support": "Dienstseite verlinkt app.draeggwaegg.ch (#53-Entdeckung).",
+     "retrievedAt": "2026-10-29T20:16:53.898152+00:00",
+     "sourceDate": null,
+     "confidence": "high"
+    }
+   ]
+  },
+  {
+   "id": "e-105",
+   "from": "S08",
+   "to": "wp-eservices",
+   "relation": "transaction_boundary",
+   "evidence": [
+    {
+     "url": "https://www.bs.ch/themen/umwelt-und-bauen/abfall-und-sauberkeit/abfallabfuhr",
+     "support": "Dienstseite verlinkt eservices.egov.bs.ch (#53-Entdeckung).",
+     "retrievedAt": "2026-10-29T20:16:53.898152+00:00",
+     "sourceDate": null,
+     "confidence": "high"
+    }
+   ]
+  },
+  {
+   "id": "e-106",
+   "from": "org-tiefbauamt",
+   "to": "S08",
+   "relation": "responsible_editorially",
+   "evidence": [
+    {
+     "url": "https://www.bs.ch/themen/umwelt-und-bauen/abfall-und-sauberkeit/abfallabfuhr",
+     "support": "Seitenangabe Für dieses Thema zuständig: Tiefbauamt.",
+     "retrievedAt": "2026-10-29T20:16:53.898152+00:00",
+     "sourceDate": null,
+     "confidence": "high"
+    }
+   ]
+  },
+  {
+   "id": "e-107",
+   "from": "wp-bs",
+   "to": "S09",
+   "relation": "entry_point_of",
+   "evidence": [
+    {
+     "url": "https://www.bs.ch/apps/zonensuche",
+     "support": "Einstieg des Dienstes Zonensuche (App).",
+     "retrievedAt": "2026-10-29T20:20:30.742216+00:00",
+     "sourceDate": null,
+     "confidence": "high"
+    }
+   ]
+  },
+  {
+   "id": "e-108",
+   "from": "wp-bs",
+   "to": "S10",
+   "relation": "entry_point_of",
+   "evidence": [
+    {
+     "url": "https://www.bs.ch/themen/umwelt-und-bauen/abfall-und-sauberkeit/abfall-abc",
+     "support": "Einstieg des Dienstes Abfall-ABC.",
+     "retrievedAt": "2026-10-29T20:21:30.742639+00:00",
+     "sourceDate": null,
+     "confidence": "high"
+    }
+   ]
+  },
+  {
+   "id": "e-109",
+   "from": "wp-bs",
+   "to": "S11",
+   "relation": "entry_point_of",
+   "evidence": [
+    {
+     "url": "https://www.bs.ch/apps/sozialhilferechner",
+     "support": "Einstieg des Dienstes Sozialhilferechner (App).",
+     "retrievedAt": "2026-10-29T20:20:20.742147+00:00",
+     "sourceDate": null,
+     "confidence": "high"
+    }
+   ]
+  },
+  {
+   "id": "e-110",
+   "from": "wp-bs",
+   "to": "S12",
+   "relation": "entry_point_of",
+   "evidence": [
+    {
+     "url": "https://www.bs.ch/themen/finanzielle-hilfe/leistungsrechner",
+     "support": "Einstieg des Dienstes Leistungsrechner (Übersicht).",
+     "retrievedAt": "2026-10-29T20:17:23.898356+00:00",
+     "sourceDate": null,
+     "confidence": "high"
+    }
+   ]
+  },
+  {
+   "id": "e-111",
+   "from": "wp-bs",
+   "to": "S13",
+   "relation": "entry_point_of",
+   "evidence": [
+    {
+     "url": "https://www.bs.ch/themen/finanzielle-hilfe/menschen-mit-behinderung",
+     "support": "Einstieg des Dienstes Finanzielle Hilfe für Menschen mit Behinderung.",
+     "retrievedAt": "2026-10-29T20:17:33.898425+00:00",
+     "sourceDate": null,
+     "confidence": "high"
+    }
+   ]
+  },
+  {
+   "id": "e-112",
+   "from": "wp-bs",
+   "to": "S14",
+   "relation": "entry_point_of",
+   "evidence": [
+    {
+     "url": "https://www.bs.ch/themen/mobilitaet/fahren-und-parkieren/parkkarten/anwohnerparkkarte",
+     "support": "Einstieg des Dienstes Anwohnerparkkarte.",
+     "retrievedAt": "2026-10-29T20:19:40.741877+00:00",
+     "sourceDate": null,
+     "confidence": "high"
+    }
+   ]
+  },
+  {
+   "id": "e-113",
+   "from": "S14",
+   "to": "wp-eservices",
+   "relation": "transaction_boundary",
+   "evidence": [
+    {
+     "url": "https://www.bs.ch/themen/mobilitaet/fahren-und-parkieren/parkkarten/anwohnerparkkarte",
+     "support": "Dienstseite verlinkt eservices.egov.bs.ch (#53-Entdeckung).",
+     "retrievedAt": "2026-10-29T20:19:40.741877+00:00",
+     "sourceDate": null,
+     "confidence": "high"
+    }
+   ]
+  },
+  {
+   "id": "e-114",
+   "from": "S14",
+   "to": "wp-formulare",
+   "relation": "transaction_boundary",
+   "evidence": [
+    {
+     "url": "https://www.bs.ch/themen/mobilitaet/fahren-und-parkieren/parkkarten/anwohnerparkkarte",
+     "support": "Dienstseite verlinkt formulare.bs.ch (#53-Entdeckung).",
+     "retrievedAt": "2026-10-29T20:19:40.741877+00:00",
+     "sourceDate": null,
+     "confidence": "high"
+    }
+   ]
+  },
+  {
+   "id": "e-115",
+   "from": "org-kapo",
+   "to": "S14",
+   "relation": "responsible_editorially",
+   "evidence": [
+    {
+     "url": "https://www.bs.ch/themen/mobilitaet/fahren-und-parkieren/parkkarten/anwohnerparkkarte",
+     "support": "Seitenangabe Für dieses Thema zuständig: Kantonspolizei.",
+     "retrievedAt": "2026-10-29T20:19:40.741877+00:00",
+     "sourceDate": null,
+     "confidence": "high"
+    }
+   ]
+  },
+  {
+   "id": "e-116",
+   "from": "wp-bs",
+   "to": "S15",
+   "relation": "entry_point_of",
+   "evidence": [
+    {
+     "url": "https://www.bs.ch/themen/mobilitaet/fahren-und-parkieren/parkkarten/behindertenparkkarte",
+     "support": "Einstieg des Dienstes Behindertenparkkarte.",
+     "retrievedAt": "2026-10-29T20:19:50.741945+00:00",
+     "sourceDate": null,
+     "confidence": "high"
+    }
+   ]
+  },
+  {
+   "id": "e-117",
+   "from": "S15",
+   "to": "wp-formulare",
+   "relation": "transaction_boundary",
+   "evidence": [
+    {
+     "url": "https://www.bs.ch/themen/mobilitaet/fahren-und-parkieren/parkkarten/behindertenparkkarte",
+     "support": "Dienstseite verlinkt formulare.bs.ch (#53-Entdeckung).",
+     "retrievedAt": "2026-10-29T20:19:50.741945+00:00",
+     "sourceDate": null,
+     "confidence": "high"
+    }
+   ]
+  },
+  {
+   "id": "e-118",
+   "from": "org-kapo",
+   "to": "S15",
+   "relation": "responsible_editorially",
+   "evidence": [
+    {
+     "url": "https://www.bs.ch/themen/mobilitaet/fahren-und-parkieren/parkkarten/behindertenparkkarte",
+     "support": "Seitenangabe Für dieses Thema zuständig: Kantonspolizei.",
+     "retrievedAt": "2026-10-29T20:19:50.741945+00:00",
+     "sourceDate": null,
+     "confidence": "high"
+    }
+   ]
+  },
+  {
+   "id": "e-119",
+   "from": "wp-bs",
+   "to": "S16",
+   "relation": "entry_point_of",
+   "evidence": [
+    {
+     "url": "https://www.bs.ch/themen/mobilitaet/fahren-und-parkieren/busse-bezahlen",
+     "support": "Einstieg des Dienstes Busse bezahlen.",
+     "retrievedAt": "2026-10-29T20:21:20.742563+00:00",
+     "sourceDate": null,
+     "confidence": "high"
+    }
+   ]
+  },
+  {
+   "id": "e-120",
+   "from": "S16",
+   "to": "wp-bussen",
+   "relation": "transaction_boundary",
+   "evidence": [
+    {
+     "url": "https://www.bs.ch/themen/mobilitaet/fahren-und-parkieren/busse-bezahlen",
+     "support": "Dienstseite verlinkt bussen.egov.bs.ch (#53-Entdeckung).",
+     "retrievedAt": "2026-10-29T20:21:20.742563+00:00",
+     "sourceDate": null,
+     "confidence": "high"
+    }
+   ]
+  },
+  {
+   "id": "e-121",
+   "from": "org-kapo",
+   "to": "S16",
+   "relation": "responsible_editorially",
+   "evidence": [
+    {
+     "url": "https://www.bs.ch/themen/mobilitaet/fahren-und-parkieren/busse-bezahlen",
+     "support": "Seitenangabe Für dieses Thema zuständig: Kantonspolizei.",
+     "retrievedAt": "2026-10-29T20:21:20.742563+00:00",
+     "sourceDate": null,
+     "confidence": "high"
+    }
+   ]
+  },
+  {
+   "id": "e-122",
+   "from": "wp-bs",
+   "to": "S17",
+   "relation": "entry_point_of",
+   "evidence": [
+    {
+     "url": "https://www.bs.ch/themen/arbeit-und-steuern/steuererklaerung/online-formulare-steuerverwaltung",
+     "support": "Einstieg des Dienstes Online-Formulare Steuerverwaltung.",
+     "retrievedAt": "2026-10-29T20:20:00.742010+00:00",
+     "sourceDate": null,
+     "confidence": "high"
+    }
+   ]
+  },
+  {
+   "id": "e-123",
+   "from": "S17",
+   "to": "wp-eservices",
+   "relation": "transaction_boundary",
+   "evidence": [
+    {
+     "url": "https://www.bs.ch/themen/arbeit-und-steuern/steuererklaerung/online-formulare-steuerverwaltung",
+     "support": "Dienstseite verlinkt eservices.egov.bs.ch (#53-Entdeckung).",
+     "retrievedAt": "2026-10-29T20:20:00.742010+00:00",
+     "sourceDate": null,
+     "confidence": "high"
+    }
+   ]
+  },
+  {
+   "id": "e-124",
+   "from": "S17",
+   "to": "wp-esteuern",
+   "relation": "transaction_boundary",
+   "evidence": [
+    {
+     "url": "https://www.bs.ch/themen/arbeit-und-steuern/steuererklaerung/online-formulare-steuerverwaltung",
+     "support": "Dienstseite verlinkt esteuern.bs.ch (#53-Entdeckung).",
+     "retrievedAt": "2026-10-29T20:20:00.742010+00:00",
+     "sourceDate": null,
+     "confidence": "high"
+    }
+   ]
+  },
+  {
+   "id": "e-125",
+   "from": "S17",
+   "to": "wp-formulare",
+   "relation": "transaction_boundary",
+   "evidence": [
+    {
+     "url": "https://www.bs.ch/themen/arbeit-und-steuern/steuererklaerung/online-formulare-steuerverwaltung",
+     "support": "Dienstseite verlinkt formulare.bs.ch (#53-Entdeckung).",
+     "retrievedAt": "2026-10-29T20:20:00.742010+00:00",
+     "sourceDate": null,
+     "confidence": "high"
+    }
+   ]
+  },
+  {
+   "id": "e-126",
+   "from": "wp-bs",
+   "to": "S18",
+   "relation": "entry_point_of",
+   "evidence": [
+    {
+     "url": "https://www.bs.ch/themen/arbeit-und-steuern/steuererklaerung/steuerrechner",
+     "support": "Einstieg des Dienstes Steuern berechnen.",
+     "retrievedAt": "2026-10-29T20:20:10.742081+00:00",
+     "sourceDate": null,
+     "confidence": "high"
+    }
+   ]
+  },
+  {
+   "id": "e-127",
+   "from": "wp-bs",
+   "to": "S19",
+   "relation": "entry_point_of",
+   "evidence": [
+    {
+     "url": "https://www.bs.ch/themen/bildung-und-kinderbetreuung/kinderbetreuung/kita",
+     "support": "Einstieg des Dienstes Kita.",
+     "retrievedAt": "2026-10-29T20:20:40.742288+00:00",
+     "sourceDate": null,
+     "confidence": "high"
+    }
+   ]
+  },
+  {
+   "id": "e-128",
+   "from": "S19",
+   "to": "wp-edkb",
+   "relation": "transaction_boundary",
+   "evidence": [
+    {
+     "url": "https://www.bs.ch/themen/bildung-und-kinderbetreuung/kinderbetreuung/kita",
+     "support": "Dienstseite verlinkt ed-kinderbetreuung.edubs.ch (#53-Entdeckung).",
+     "retrievedAt": "2026-10-29T20:20:40.742288+00:00",
+     "sourceDate": null,
+     "confidence": "high"
+    }
+   ]
+  },
+  {
+   "id": "e-129",
+   "from": "S19",
+   "to": "wp-eservices",
+   "relation": "transaction_boundary",
+   "evidence": [
+    {
+     "url": "https://www.bs.ch/themen/bildung-und-kinderbetreuung/kinderbetreuung/kita",
+     "support": "Dienstseite verlinkt eservices.egov.bs.ch (#53-Entdeckung).",
+     "retrievedAt": "2026-10-29T20:20:40.742288+00:00",
+     "sourceDate": null,
+     "confidence": "high"
+    }
+   ]
+  },
+  {
+   "id": "e-130",
+   "from": "wp-bs",
+   "to": "S20",
+   "relation": "entry_point_of",
+   "evidence": [
+    {
+     "url": "https://www.bs.ch/themen/umwelt-und-bauen/bauen-im-kanton-basel-stadt/brauche-ich-eine-baubewilligung",
+     "support": "Einstieg des Dienstes Brauche ich eine Baubewilligung?.",
+     "retrievedAt": "2026-10-29T20:20:50.742351+00:00",
+     "sourceDate": null,
+     "confidence": "high"
+    }
+   ]
+  },
+  {
+   "id": "e-131",
+   "from": "S20",
+   "to": "wp-jaxforms",
+   "relation": "transaction_boundary",
+   "evidence": [
+    {
+     "url": "https://www.bs.ch/themen/umwelt-und-bauen/bauen-im-kanton-basel-stadt/brauche-ich-eine-baubewilligung",
+     "support": "Dienstseite verlinkt jaxforms.cloud.bs.ch (#53-Entdeckung).",
+     "retrievedAt": "2026-10-29T20:20:50.742351+00:00",
+     "sourceDate": null,
+     "confidence": "high"
+    }
+   ]
+  },
+  {
+   "id": "e-132",
+   "from": "org-bgi",
+   "to": "S20",
+   "relation": "responsible_editorially",
+   "evidence": [
+    {
+     "url": "https://www.bs.ch/themen/umwelt-und-bauen/bauen-im-kanton-basel-stadt/brauche-ich-eine-baubewilligung",
+     "support": "Seitenangabe Für dieses Thema zuständig: Bau- und Gastgewerbeinspektorat.",
+     "retrievedAt": "2026-10-29T20:20:50.742351+00:00",
+     "sourceDate": null,
+     "confidence": "high"
+    }
+   ]
+  },
+  {
+   "id": "e-133",
+   "from": "wp-bs",
+   "to": "S21",
+   "relation": "entry_point_of",
+   "evidence": [
+    {
+     "url": "https://www.bs.ch/themen/arbeit-und-steuern/unternehmen/gruendung-ansiedlung-von-firmen",
+     "support": "Einstieg des Dienstes Gründung & Ansiedlung von Firmen.",
+     "retrievedAt": "2026-10-29T20:21:00.742423+00:00",
+     "sourceDate": null,
+     "confidence": "high"
+    }
+   ]
+  },
+  {
+   "id": "e-134",
+   "from": "wp-bs",
+   "to": "S22",
+   "relation": "entry_point_of",
+   "evidence": [
+    {
+     "url": "https://www.bs.ch/themen/arbeit-und-steuern/arbeitsbewilligungen/erstmaliger-stellenantritt-der-schweiz",
+     "support": "Einstieg des Dienstes Erstmaliger Stellenantritt (Arbeitsbewilligung).",
+     "retrievedAt": "2026-10-29T20:21:10.742488+00:00",
+     "sourceDate": null,
+     "confidence": "high"
+    }
+   ]
+  },
+  {
+   "id": "e-135",
+   "from": "org-awa",
+   "to": "S22",
+   "relation": "responsible_editorially",
+   "evidence": [
+    {
+     "url": "https://www.bs.ch/themen/arbeit-und-steuern/arbeitsbewilligungen/erstmaliger-stellenantritt-der-schweiz",
+     "support": "Seitenangabe «Für dieses Thema zuständig: Arbeitsbeziehungen (ABZ) Amt für Wirtschaft und Arbeit (AWA)».",
+     "retrievedAt": "2026-10-29T20:21:10.742488+00:00",
+     "sourceDate": null,
+     "confidence": "high"
+    }
+   ]
+  },
+  {
+   "id": "e-136",
+   "from": "wp-bs",
+   "to": "S23",
+   "relation": "entry_point_of",
+   "evidence": [
+    {
+     "url": "https://www.bs.ch/gebaerdensprache",
+     "support": "Einstieg des Dienstes Inhalte in Gebärdensprache.",
+     "retrievedAt": "2026-10-29T20:18:23.898770+00:00",
+     "sourceDate": null,
+     "confidence": "high"
+    }
+   ]
+  },
+  {
+   "id": "e-137",
+   "from": "wp-bs",
+   "to": "S24",
+   "relation": "entry_point_of",
+   "evidence": [
+    {
+     "url": "https://www.bs.ch/themen/bildung-und-kinderbetreuung/kinderbetreuung",
+     "support": "Einstieg des Dienstes Kinderbetreuung (Übersicht).",
+     "retrievedAt": "2026-10-29T20:17:13.898289+00:00",
+     "sourceDate": null,
+     "confidence": "high"
+    }
+   ]
+  },
+  {
+   "id": "e-138",
+   "from": "wp-bs",
+   "to": "S25",
+   "relation": "entry_point_of",
+   "evidence": [
+    {
+     "url": "https://www.bs.ch/themen/arbeit-und-steuern/steuererklaerung",
+     "support": "Einstieg des Dienstes Steuererklärung (Übersicht).",
+     "retrievedAt": "2026-10-29T20:17:03.898219+00:00",
+     "sourceDate": null,
+     "confidence": "high"
+    }
+   ]
+  }
+ ],
+ "batchProposal": [
+  {
+   "rank": 1,
+   "url": "https://www.bs.ch/bettingen/gemeinde/dienstleistungen-behoerdengaenge-online-durchfuehren",
+   "propertyId": "wp-bs",
+   "serviceId": null,
+   "ring": "core",
+   "reason": "Gemeindedienste von Bettingen auf dem Kantonsauftritt – andere Trägerschaft, gleiche Vorlage.",
+   "authorisationNeeded": "approved by the owner (29.10.2026) and used once in ring 1; a further run needs a new approval",
+   "executedIn": "ring1-20261029",
+   "assessmentId": "r01"
+  },
+  {
+   "rank": 2,
+   "url": "https://www.bs.ch/themen/persoenliches-und-wohnen/einbuergerungen",
+   "propertyId": "wp-bs",
+   "serviceId": null,
+   "ring": "core",
+   "reason": "Einbürgerung: wichtige Bürgeraufgabe mit Bürgergemeinde-Bezug.",
+   "authorisationNeeded": "approved by the owner (29.10.2026) and used once in ring 1; a further run needs a new approval",
+   "executedIn": "ring1-20261029",
+   "assessmentId": "r02"
+  },
+  {
+   "rank": 3,
+   "url": "https://www.bs.ch/willkommen-bei-den-gerichten",
+   "propertyId": "wp-bs",
+   "serviceId": null,
+   "ring": "core",
+   "reason": "Judikative auf dem Kantonsauftritt; Zugang zu Gerichten.",
+   "authorisationNeeded": "approved by the owner (29.10.2026) and used once in ring 1; a further run needs a new approval",
+   "executedIn": "ring1-20261029",
+   "assessmentId": "r03"
+  },
+  {
+   "rank": 4,
+   "url": "https://www.bs.ch/themen/persoenliches-und-wohnen/umzug-und-wegzug/wegzug-vom-kanton-melden",
+   "propertyId": "wp-bs",
+   "serviceId": "S05",
+   "ring": "core",
+   "reason": "Bisher nicht geprüft; Bezahlschritt-Grenze (eServices).",
+   "authorisationNeeded": "approved by the owner (29.10.2026) and used once in ring 1; a further run needs a new approval",
+   "executedIn": "ring1-20261029",
+   "assessmentId": "r04-s05"
+  },
+  {
+   "rank": 5,
+   "url": "https://www.bs.ch/themen/finanzielle-hilfe/menschen-mit-behinderung",
+   "propertyId": "wp-bs",
+   "serviceId": "S13",
+   "ring": "core",
+   "reason": "Zielgruppe direkt betroffen; bisher nicht geprüft.",
+   "authorisationNeeded": "approved by the owner (29.10.2026) and used once in ring 1; a further run needs a new approval",
+   "executedIn": "ring1-20261029",
+   "assessmentId": "r05-s13"
+  },
+  {
+   "rank": 6,
+   "url": "https://www.bs.ch/gebaerdensprache",
+   "propertyId": "wp-bs",
+   "serviceId": "S23",
+   "ring": "core",
+   "reason": "Barrierefreie Kommunikation; Videos (Basel nennt Videos selbst als Einschränkung).",
+   "authorisationNeeded": "approved by the owner (29.10.2026) and used once in ring 1; a further run needs a new approval",
+   "executedIn": "ring1-20261029",
+   "assessmentId": "r06-s23"
+  },
+  {
+   "rank": 7,
+   "url": "https://www.bs.ch/apps/zonensuche",
+   "propertyId": "wp-bs",
+   "serviceId": "S09",
+   "ring": "core",
+   "reason": "Nachtest der reproduzierten #53-Beobachtung (Pflichtfeld-Hinweis).",
+   "authorisationNeeded": "approved by the owner (29.10.2026) and used once in ring 1; a further run needs a new approval",
+   "executedIn": "ring1-20261029",
+   "assessmentId": "r07-s09"
+  },
+  {
+   "rank": 8,
+   "url": "https://www.riehen.ch/",
+   "propertyId": "wp-riehen",
+   "serviceId": null,
+   "ring": "other_public",
+   "reason": "Eigene Gemeinde, Realisierung durch Talus Informatik AG (laut Impressum), eigene Barrierefreiheitserklärung (2022).",
+   "authorisationNeeded": "new explicit scope (new origin)"
+  },
+  {
+   "rank": 9,
+   "url": "https://grosserrat.bs.ch/",
+   "propertyId": "wp-grosserrat",
+   "serviceId": null,
+   "ring": "other_public",
+   "reason": "Legislative, eigene Website mit externen Dienstleistern.",
+   "authorisationNeeded": "new explicit scope (new origin)"
+  },
+  {
+   "rank": 10,
+   "url": "https://www.bvb.ch/de/",
+   "propertyId": "wp-bvb",
+   "serviceId": null,
+   "ring": "other_public",
+   "reason": "ÖV-Unternehmen des Kantons (100 %, sAöR); in der Entdeckung 502 – Erreichbarkeit vor Prüfung klären.",
+   "authorisationNeeded": "new explicit scope (new origin)"
+  },
+  {
+   "rank": 11,
+   "url": "https://www.unispital-basel.ch/",
+   "propertyId": "wp-usb",
+   "serviceId": null,
+   "ring": "other_public",
+   "reason": "Spital des Kantons (100 %, sAöR); Gesundheitsaufgabe.",
+   "authorisationNeeded": "new explicit scope (new origin)"
+  },
+  {
+   "rank": 12,
+   "url": "https://www.iwb.ch/",
+   "propertyId": "wp-iwb",
+   "serviceId": null,
+   "ring": "other_public",
+   "reason": "Versorgung (100 %, sAöR); Kundendienste.",
+   "authorisationNeeded": "new explicit scope (new origin)"
+  },
+  {
+   "rank": 13,
+   "url": "https://www.unibas.ch/de",
+   "propertyId": "wp-unibas",
+   "serviceId": null,
+   "ring": "other_public",
+   "reason": "Gemeinsam getragen (50 %); zeigt Grenze zwischen kantonaler und gemeinsamer Trägerschaft.",
+   "authorisationNeeded": "new explicit scope (new origin)"
+  },
+  {
+   "rank": 14,
+   "url": "https://eservices.egov.bs.ch/",
+   "propertyId": "wp-eservices",
+   "serviceId": "S04",
+   "ring": "external_dependency",
+   "reason": "Transaktionsplattform der IT BS: nur öffentliche Einstiegsseite bis zur ersten Eingabe, keine Eingabe.",
+   "authorisationNeeded": "new explicit scope (new origin)"
+  },
+  {
+   "rank": 15,
+   "url": "https://www.eumzug.swiss/",
+   "propertyId": "wp-eumzug",
+   "serviceId": "S04",
+   "ring": "external_dependency",
+   "reason": "Externer Umzugsdienst, den der Kanton für «Umzug melden» verlinkt.",
+   "authorisationNeeded": "new explicit scope (new origin)"
+  }
+ ],
+ "assessmentRounds": [
+  {
+   "id": "field53-20261029",
+   "pages": 12,
+   "report": "../basel-report/index.html",
+   "status": "done; approval used"
+  },
+  {
+   "id": "ring1-20261029",
+   "pages": 7,
+   "report": "../basel-ring1/index.html",
+   "status": "done; approval used"
+  }
+ ]
+}

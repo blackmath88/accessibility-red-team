@@ -1,0 +1,1697 @@
+{
+  "schema": "art/basel-discovery/v2",
+  "generatedAt": "2026-10-29",
+  "lastDiscovery": "2026-10-29",
+  "note": "TEST-FIXTURE – fiktive Datensätze, keine realen Organisationen oder URLs. Startbestand aus dem Basel-Feldlauf; keine vollständige Inventur. Neue Bereiche sind Rechercheaufträge, keine geprüften Eigentumsbehauptungen.",
+  "entries": [
+    {
+      "serviceId": "S01",
+      "title": "Startseite bs.ch",
+      "audience": "alle",
+      "civicTask": "Einstieg, Suche, Navigation zu Diensten",
+      "entryUrl": "https://www.bs.ch/",
+      "transactionUrls": [],
+      "responsibility": "unknown",
+      "responsibilityNote": "Zuordnung Stadt/Kanton/Gemeinde nicht aus einer offiziellen Quelle belegt (siehe Bericht); Riehen/Bettingen nur als Kontext.",
+      "operator": null,
+      "operatorSource": null,
+      "operatorConfidence": "unknown",
+      "boundary": {
+        "public": true,
+        "loginOrAccount": true,
+        "thirdPartyHosts": [],
+        "transactionHosts": [],
+        "embeddedOrMapHosts": [
+          "map.geo.bs.ch"
+        ],
+        "pdfLinks": 0
+      },
+      "languages": [
+        "de (nur Deutsch beobachtet)"
+      ],
+      "interface": "Informations-/Einstiegsseite",
+      "provenance": {
+        "url": "https://www.bs.ch/",
+        "retrievedAt": "2026-10-29T20:15:46.891062+00:00",
+        "sha256": "5feb8c995647b7ae0a04ddfc33b5cb40685342d33c20133a944dc9bf523c8c3c",
+        "status": 200
+      },
+      "accessibilityDisclosure": "Erklärung zur Barrierefreiheit (bs.ch): teilweise konform; PDFs, Videos, iFrames als Einschränkungen genannt",
+      "priority": "hoch",
+      "priorityReason": "Gemeinsamer Einstieg aller Aufgaben",
+      "status": {
+        "discovered": true,
+        "queuedForAssessment": true,
+        "assessmentId": "p01-start"
+      },
+      "exclusionReason": null,
+      "labels": {
+        "observed": [
+          "entryUrl",
+          "transactionUrls",
+          "operator",
+          "boundary",
+          "languages",
+          "provenance"
+        ],
+        "inferred": [
+          "audience",
+          "civicTask",
+          "priority",
+          "interface"
+        ]
+      }
+    },
+    {
+      "serviceId": "S02",
+      "title": "ePortal (öffentliche Startseite)",
+      "audience": "alle",
+      "civicTask": "Online-Dienste finden",
+      "entryUrl": "https://eportal.egov.bs.ch/",
+      "transactionUrls": [],
+      "responsibility": "unknown",
+      "responsibilityNote": "Zuordnung Stadt/Kanton/Gemeinde nicht aus einer offiziellen Quelle belegt (siehe Bericht); Riehen/Bettingen nur als Kontext.",
+      "operator": null,
+      "operatorSource": null,
+      "operatorConfidence": "unknown",
+      "boundary": {
+        "public": true,
+        "loginOrAccount": false,
+        "thirdPartyHosts": [],
+        "transactionHosts": [],
+        "embeddedOrMapHosts": [],
+        "pdfLinks": 0
+      },
+      "languages": [
+        "de (nur Deutsch beobachtet)"
+      ],
+      "interface": "JavaScript-Anwendung",
+      "provenance": {
+        "url": "https://eportal.egov.bs.ch/",
+        "retrievedAt": "2026-10-29T20:15:56.891134+00:00",
+        "sha256": "886c8b5cc07987f09574b3123b4e3516fe855be4d011f683ec9d5d904151c247",
+        "status": 200
+      },
+      "accessibilityDisclosure": null,
+      "priority": "hoch",
+      "priorityReason": "Zweites autorisiertes Origin, JavaScript-Anwendung",
+      "status": {
+        "discovered": true,
+        "queuedForAssessment": true,
+        "assessmentId": "p12-eportal"
+      },
+      "exclusionReason": null,
+      "labels": {
+        "observed": [
+          "entryUrl",
+          "transactionUrls",
+          "operator",
+          "boundary",
+          "languages",
+          "provenance"
+        ],
+        "inferred": [
+          "audience",
+          "civicTask",
+          "priority",
+          "interface"
+        ]
+      }
+    },
+    {
+      "serviceId": "S03",
+      "title": "Erklärung zur Barrierefreiheit",
+      "audience": "alle",
+      "civicTask": "Barrieren melden, Stand erfahren",
+      "entryUrl": "https://www.bs.ch/erklaerung-zur-barrierefreiheit",
+      "transactionUrls": [],
+      "responsibility": "unknown",
+      "responsibilityNote": "Zuordnung Stadt/Kanton/Gemeinde nicht aus einer offiziellen Quelle belegt (siehe Bericht); Riehen/Bettingen nur als Kontext.",
+      "operator": null,
+      "operatorSource": null,
+      "operatorConfidence": "unknown",
+      "boundary": {
+        "public": true,
+        "loginOrAccount": true,
+        "thirdPartyHosts": [],
+        "transactionHosts": [],
+        "embeddedOrMapHosts": [
+          "map.geo.bs.ch"
+        ],
+        "pdfLinks": 0
+      },
+      "languages": [
+        "de (nur Deutsch beobachtet)"
+      ],
+      "interface": "Informations-/Einstiegsseite",
+      "provenance": {
+        "url": "https://www.bs.ch/erklaerung-zur-barrierefreiheit",
+        "retrievedAt": "2026-10-29T20:16:06.891199+00:00",
+        "sha256": "3c70d563cf85fe3dcf60e415bf3dfc58d08025ff6846fc569917ea6ea2f72ff1",
+        "status": 200
+      },
+      "accessibilityDisclosure": "Erklärung zur Barrierefreiheit (bs.ch): teilweise konform; PDFs, Videos, iFrames als Einschränkungen genannt",
+      "priority": "mittel",
+      "priorityReason": "Selbstauskunft des Kantons (Kontext, keine Prüfung)",
+      "status": {
+        "discovered": true,
+        "queuedForAssessment": false,
+        "assessmentId": null
+      },
+      "exclusionReason": "nicht in die 12 Bewertungsseiten aufgenommen (Stichprobe nach Aufgabe und Seitentyp)",
+      "labels": {
+        "observed": [
+          "entryUrl",
+          "transactionUrls",
+          "operator",
+          "boundary",
+          "languages",
+          "provenance"
+        ],
+        "inferred": [
+          "audience",
+          "civicTask",
+          "priority",
+          "interface"
+        ]
+      }
+    },
+    {
+      "serviceId": "S04",
+      "title": "Umzug innerhalb des Kantons melden",
+      "audience": "Einwohnende",
+      "civicTask": "Adressänderung",
+      "entryUrl": "https://www.bs.ch/themen/persoenliches-und-wohnen/umzug-und-wegzug/umzug-innerhalb-des-kantons-melden",
+      "transactionUrls": [
+        "https://eservices.egov.bs.ch/e/20884/p/001/wohnungswechsel-innerhalb-des-kantons",
+        "https://eservices.egov.bs.ch/e/20887/p/001/kontaktformular-bevoelkerungsdienste-und-migration",
+        "https://www.eumzug.swiss/"
+      ],
+      "responsibility": "unknown",
+      "responsibilityNote": "Zuordnung Stadt/Kanton/Gemeinde nicht aus einer offiziellen Quelle belegt (siehe Bericht); Riehen/Bettingen nur als Kontext.",
+      "operator": "Einwohneramt",
+      "operatorSource": "https://www.bs.ch/themen/persoenliches-und-wohnen/umzug-und-wegzug/umzug-innerhalb-des-kantons-melden",
+      "operatorConfidence": "observed (Seitenangabe «Für dieses Thema zuständig»)",
+      "boundary": {
+        "public": true,
+        "loginOrAccount": true,
+        "thirdPartyHosts": [
+          "www.eumzug.swiss"
+        ],
+        "transactionHosts": [
+          "eservices.egov.bs.ch",
+          "www.eumzug.swiss"
+        ],
+        "embeddedOrMapHosts": [
+          "map.geo.bs.ch"
+        ],
+        "pdfLinks": 1
+      },
+      "languages": [
+        "de (nur Deutsch beobachtet)"
+      ],
+      "interface": "Informations-/Einstiegsseite",
+      "provenance": {
+        "url": "https://www.bs.ch/themen/persoenliches-und-wohnen/umzug-und-wegzug/umzug-innerhalb-des-kantons-melden",
+        "retrievedAt": "2026-10-29T20:19:00.741599+00:00",
+        "sha256": "5cb16e9acd37eba996d215586937631e510d3454a24958db8a0013800f1d6b73",
+        "status": 200
+      },
+      "accessibilityDisclosure": "Erklärung zur Barrierefreiheit (bs.ch): teilweise konform; PDFs, Videos, iFrames als Einschränkungen genannt",
+      "priority": "hoch",
+      "priorityReason": "Häufige Aufgabe, Transaktion extern (eUmzug/eServices)",
+      "status": {
+        "discovered": true,
+        "queuedForAssessment": true,
+        "assessmentId": "p02-umzug"
+      },
+      "exclusionReason": null,
+      "labels": {
+        "observed": [
+          "entryUrl",
+          "transactionUrls",
+          "operator",
+          "boundary",
+          "languages",
+          "provenance"
+        ],
+        "inferred": [
+          "audience",
+          "civicTask",
+          "priority",
+          "interface"
+        ]
+      }
+    },
+    {
+      "serviceId": "S05",
+      "title": "Wegzug vom Kanton melden",
+      "audience": "Einwohnende",
+      "civicTask": "Abmeldung",
+      "entryUrl": "https://www.bs.ch/themen/persoenliches-und-wohnen/umzug-und-wegzug/wegzug-vom-kanton-melden",
+      "transactionUrls": [
+        "https://eservices.egov.bs.ch/e/20887/p/001/kontaktformular-bevoelkerungsdienste-und-migration",
+        "https://eservices.egov.bs.ch/pay/401/p/001/wegzug-vom-kanton-basel-stadt",
+        "https://formulare.bs.ch/bdm/wegzug-vom-kanton-basel-stadt",
+        "https://www.eumzug.swiss/"
+      ],
+      "responsibility": "unknown",
+      "responsibilityNote": "Zuordnung Stadt/Kanton/Gemeinde nicht aus einer offiziellen Quelle belegt (siehe Bericht); Riehen/Bettingen nur als Kontext.",
+      "operator": "Einwohneramt",
+      "operatorSource": "https://www.bs.ch/themen/persoenliches-und-wohnen/umzug-und-wegzug/wegzug-vom-kanton-melden",
+      "operatorConfidence": "observed (Seitenangabe «Für dieses Thema zuständig»)",
+      "boundary": {
+        "public": true,
+        "loginOrAccount": true,
+        "thirdPartyHosts": [
+          "www.eumzug.swiss"
+        ],
+        "transactionHosts": [
+          "eservices.egov.bs.ch",
+          "formulare.bs.ch",
+          "www.eumzug.swiss"
+        ],
+        "embeddedOrMapHosts": [
+          "map.geo.bs.ch"
+        ],
+        "pdfLinks": 0
+      },
+      "languages": [
+        "de (nur Deutsch beobachtet)"
+      ],
+      "interface": "Informations-/Einstiegsseite",
+      "provenance": {
+        "url": "https://www.bs.ch/themen/persoenliches-und-wohnen/umzug-und-wegzug/wegzug-vom-kanton-melden",
+        "retrievedAt": "2026-10-29T20:19:10.741673+00:00",
+        "sha256": "efc538ca6c3d9124b8af36540096a37ecb02860d3bece7342f64979a6bf667e0",
+        "status": 200
+      },
+      "accessibilityDisclosure": "Erklärung zur Barrierefreiheit (bs.ch): teilweise konform; PDFs, Videos, iFrames als Einschränkungen genannt",
+      "priority": "mittel",
+      "priorityReason": "Transaktion mit Bezahlschritt extern",
+      "status": {
+        "discovered": true,
+        "queuedForAssessment": false,
+        "assessmentId": null
+      },
+      "exclusionReason": "nicht in die 12 Bewertungsseiten aufgenommen (Stichprobe nach Aufgabe und Seitentyp)",
+      "labels": {
+        "observed": [
+          "entryUrl",
+          "transactionUrls",
+          "operator",
+          "boundary",
+          "languages",
+          "provenance"
+        ],
+        "inferred": [
+          "audience",
+          "civicTask",
+          "priority",
+          "interface"
+        ]
+      }
+    },
+    {
+      "serviceId": "S06",
+      "title": "Zuzug in den Kanton",
+      "audience": "Neuzuziehende",
+      "civicTask": "Anmeldung, Begrüssungstermin",
+      "entryUrl": "https://www.bs.ch/themen/persoenliches-und-wohnen/zuzug-und-aufenthalt/zuzug-den-kanton-basel-stadt",
+      "transactionUrls": [
+        "https://eservices.egov.bs.ch/e/20887/p/001/kontaktformular-bevoelkerungsdienste-und-migration",
+        "https://eservices.egov.bs.ch/e/23102/p/001/terminbuchung-begruessungsgespraech-einwohneramt",
+        "https://eservices.egov.bs.ch/pay/22965/p/001/anmeldeformular-einwohneramt"
+      ],
+      "responsibility": "unknown",
+      "responsibilityNote": "Zuordnung Stadt/Kanton/Gemeinde nicht aus einer offiziellen Quelle belegt (siehe Bericht); Riehen/Bettingen nur als Kontext.",
+      "operator": "Einwohneramt",
+      "operatorSource": "https://www.bs.ch/themen/persoenliches-und-wohnen/zuzug-und-aufenthalt/zuzug-den-kanton-basel-stadt",
+      "operatorConfidence": "observed (Seitenangabe «Für dieses Thema zuständig»)",
+      "boundary": {
+        "public": true,
+        "loginOrAccount": true,
+        "thirdPartyHosts": [],
+        "transactionHosts": [
+          "eservices.egov.bs.ch"
+        ],
+        "embeddedOrMapHosts": [
+          "map.geo.bs.ch"
+        ],
+        "pdfLinks": 3
+      },
+      "languages": [
+        "de (nur Deutsch beobachtet)"
+      ],
+      "interface": "Informations-/Einstiegsseite",
+      "provenance": {
+        "url": "https://www.bs.ch/themen/persoenliches-und-wohnen/zuzug-und-aufenthalt/zuzug-den-kanton-basel-stadt",
+        "retrievedAt": "2026-10-29T20:19:30.741807+00:00",
+        "sha256": "21f20b03564fa5c6abc948dc83be1f24a063ab6ba02cbdc1dac602e7d7160f38",
+        "status": 200
+      },
+      "accessibilityDisclosure": "Erklärung zur Barrierefreiheit (bs.ch): teilweise konform; PDFs, Videos, iFrames als Einschränkungen genannt",
+      "priority": "hoch",
+      "priorityReason": "Erster Kontakt mit dem Kanton",
+      "status": {
+        "discovered": true,
+        "queuedForAssessment": true,
+        "assessmentId": "p04-zuzug"
+      },
+      "exclusionReason": null,
+      "labels": {
+        "observed": [
+          "entryUrl",
+          "transactionUrls",
+          "operator",
+          "boundary",
+          "languages",
+          "provenance"
+        ],
+        "inferred": [
+          "audience",
+          "civicTask",
+          "priority",
+          "interface"
+        ]
+      }
+    },
+    {
+      "serviceId": "S07",
+      "title": "Pass / Identitätskarte bestellen",
+      "audience": "Einwohnende",
+      "civicTask": "Identität, Termin",
+      "entryUrl": "https://www.bs.ch/themen/persoenliches-und-wohnen/pass-identitaetskarte-und-beglaubigungen/ich-brauche-einen-neuen-pass-eine-neue-identitaetskarte",
+      "transactionUrls": [
+        "https://eservices.egov.bs.ch/e/22310/p/001/online-polizeiposten"
+      ],
+      "responsibility": "unknown",
+      "responsibilityNote": "Zuordnung Stadt/Kanton/Gemeinde nicht aus einer offiziellen Quelle belegt (siehe Bericht); Riehen/Bettingen nur als Kontext.",
+      "operator": "Passamt",
+      "operatorSource": "https://www.bs.ch/themen/persoenliches-und-wohnen/pass-identitaetskarte-und-beglaubigungen/ich-brauche-einen-neuen-pass-eine-neue-identitaetskarte",
+      "operatorConfidence": "observed (Seitenangabe «Für dieses Thema zuständig»)",
+      "boundary": {
+        "public": true,
+        "loginOrAccount": true,
+        "thirdPartyHosts": [],
+        "transactionHosts": [
+          "eservices.egov.bs.ch"
+        ],
+        "embeddedOrMapHosts": [
+          "map.geo.bs.ch"
+        ],
+        "pdfLinks": 3
+      },
+      "languages": [
+        "de (nur Deutsch beobachtet)"
+      ],
+      "interface": "Informations-/Einstiegsseite",
+      "provenance": {
+        "url": "https://www.bs.ch/themen/persoenliches-und-wohnen/pass-identitaetskarte-und-beglaubigungen/ich-brauche-einen-neuen-pass-eine-neue-identitaetskarte",
+        "retrievedAt": "2026-10-29T20:19:20.741742+00:00",
+        "sha256": "5d63da5b7c65439625bdf0f5427358af61469a453f2c4b50741ccf0b93d2899b",
+        "status": 200
+      },
+      "accessibilityDisclosure": "Erklärung zur Barrierefreiheit (bs.ch): teilweise konform; PDFs, Videos, iFrames als Einschränkungen genannt",
+      "priority": "hoch",
+      "priorityReason": "Termin über Bundesstellen; viele Absprünge",
+      "status": {
+        "discovered": true,
+        "queuedForAssessment": true,
+        "assessmentId": "p03-pass"
+      },
+      "exclusionReason": null,
+      "labels": {
+        "observed": [
+          "entryUrl",
+          "transactionUrls",
+          "operator",
+          "boundary",
+          "languages",
+          "provenance"
+        ],
+        "inferred": [
+          "audience",
+          "civicTask",
+          "priority",
+          "interface"
+        ]
+      }
+    },
+    {
+      "serviceId": "S08",
+      "title": "Abfallabfuhr",
+      "audience": "Einwohnende",
+      "civicTask": "Abfuhrtermine und Zone",
+      "entryUrl": "https://www.bs.ch/themen/umwelt-und-bauen/abfall-und-sauberkeit/abfallabfuhr",
+      "transactionUrls": [
+        "https://app.draeggwaegg.ch/formular",
+        "https://eservices.egov.bs.ch/e/21146/p/001/container-bestellung"
+      ],
+      "responsibility": "unknown",
+      "responsibilityNote": "Zuordnung Stadt/Kanton/Gemeinde nicht aus einer offiziellen Quelle belegt (siehe Bericht); Riehen/Bettingen nur als Kontext.",
+      "operator": "Tiefbauamt",
+      "operatorSource": "https://www.bs.ch/themen/umwelt-und-bauen/abfall-und-sauberkeit/abfallabfuhr",
+      "operatorConfidence": "observed (Seitenangabe «Für dieses Thema zuständig»)",
+      "boundary": {
+        "public": true,
+        "loginOrAccount": true,
+        "thirdPartyHosts": [
+          "app.draeggwaegg.ch",
+          "trashcal.maxgfeller.com"
+        ],
+        "transactionHosts": [
+          "app.draeggwaegg.ch",
+          "eservices.egov.bs.ch"
+        ],
+        "embeddedOrMapHosts": [
+          "geo.bs.ch",
+          "map.geo.bs.ch"
+        ],
+        "pdfLinks": 11
+      },
+      "languages": [
+        "de (nur Deutsch beobachtet)"
+      ],
+      "interface": "Informations-/Einstiegsseite",
+      "provenance": {
+        "url": "https://www.bs.ch/themen/umwelt-und-bauen/abfall-und-sauberkeit/abfallabfuhr",
+        "retrievedAt": "2026-10-29T20:16:53.898152+00:00",
+        "sha256": "6f02d5c80dc26b0552aa95d8f145ddb4ca65669398b6685469eda2f4a4186a34",
+        "status": 200
+      },
+      "accessibilityDisclosure": "Erklärung zur Barrierefreiheit (bs.ch): teilweise konform; PDFs, Videos, iFrames als Einschränkungen genannt",
+      "priority": "hoch",
+      "priorityReason": "Alltagsaufgabe; Karten-iFrame und PDF-Pläne",
+      "status": {
+        "discovered": true,
+        "queuedForAssessment": true,
+        "assessmentId": "p05-abfall"
+      },
+      "exclusionReason": null,
+      "labels": {
+        "observed": [
+          "entryUrl",
+          "transactionUrls",
+          "operator",
+          "boundary",
+          "languages",
+          "provenance"
+        ],
+        "inferred": [
+          "audience",
+          "civicTask",
+          "priority",
+          "interface"
+        ]
+      }
+    },
+    {
+      "serviceId": "S09",
+      "title": "Zonensuche (App)",
+      "audience": "Einwohnende",
+      "civicTask": "Abfuhrzone zur Adresse",
+      "entryUrl": "https://www.bs.ch/apps/zonensuche",
+      "transactionUrls": [],
+      "responsibility": "unknown",
+      "responsibilityNote": "Zuordnung Stadt/Kanton/Gemeinde nicht aus einer offiziellen Quelle belegt (siehe Bericht); Riehen/Bettingen nur als Kontext.",
+      "operator": null,
+      "operatorSource": null,
+      "operatorConfidence": "unknown",
+      "boundary": {
+        "public": true,
+        "loginOrAccount": true,
+        "thirdPartyHosts": [],
+        "transactionHosts": [],
+        "embeddedOrMapHosts": [
+          "map.geo.bs.ch"
+        ],
+        "pdfLinks": 0
+      },
+      "languages": [
+        "de (nur Deutsch beobachtet)"
+      ],
+      "interface": "App/Formular",
+      "provenance": {
+        "url": "https://www.bs.ch/apps/zonensuche",
+        "retrievedAt": "2026-10-29T20:20:30.742216+00:00",
+        "sha256": "268e9fd1394c32e635c5b0f26027d71cf74683b71d39c7f7e0bd628425daf6a7",
+        "status": 200
+      },
+      "accessibilityDisclosure": "Erklärung zur Barrierefreiheit (bs.ch): teilweise konform; PDFs, Videos, iFrames als Einschränkungen genannt",
+      "priority": "mittel",
+      "priorityReason": "Interaktive App",
+      "status": {
+        "discovered": true,
+        "queuedForAssessment": true,
+        "assessmentId": "p06-zonensuche"
+      },
+      "exclusionReason": null,
+      "labels": {
+        "observed": [
+          "entryUrl",
+          "transactionUrls",
+          "operator",
+          "boundary",
+          "languages",
+          "provenance"
+        ],
+        "inferred": [
+          "audience",
+          "civicTask",
+          "priority",
+          "interface"
+        ]
+      }
+    },
+    {
+      "serviceId": "S10",
+      "title": "Abfall-ABC",
+      "audience": "Einwohnende",
+      "civicTask": "Entsorgung nachschlagen",
+      "entryUrl": "https://www.bs.ch/themen/umwelt-und-bauen/abfall-und-sauberkeit/abfall-abc",
+      "transactionUrls": [],
+      "responsibility": "unknown",
+      "responsibilityNote": "Zuordnung Stadt/Kanton/Gemeinde nicht aus einer offiziellen Quelle belegt (siehe Bericht); Riehen/Bettingen nur als Kontext.",
+      "operator": null,
+      "operatorSource": null,
+      "operatorConfidence": "unknown",
+      "boundary": {
+        "public": true,
+        "loginOrAccount": true,
+        "thirdPartyHosts": [],
+        "transactionHosts": [],
+        "embeddedOrMapHosts": [
+          "map.geo.bs.ch"
+        ],
+        "pdfLinks": 0
+      },
+      "languages": [
+        "de (nur Deutsch beobachtet)"
+      ],
+      "interface": "Informations-/Einstiegsseite",
+      "provenance": {
+        "url": "https://www.bs.ch/themen/umwelt-und-bauen/abfall-und-sauberkeit/abfall-abc",
+        "retrievedAt": "2026-10-29T20:21:30.742639+00:00",
+        "sha256": "5ba66801998deee35a76abc675ca8820d48215e1269fd61fc6ae033302e09757",
+        "status": 200
+      },
+      "accessibilityDisclosure": "Erklärung zur Barrierefreiheit (bs.ch): teilweise konform; PDFs, Videos, iFrames als Einschränkungen genannt",
+      "priority": "niedrig",
+      "priorityReason": "Nachschlage-Verzeichnis",
+      "status": {
+        "discovered": true,
+        "queuedForAssessment": false,
+        "assessmentId": null
+      },
+      "exclusionReason": "nicht in die 12 Bewertungsseiten aufgenommen (Stichprobe nach Aufgabe und Seitentyp)",
+      "labels": {
+        "observed": [
+          "entryUrl",
+          "transactionUrls",
+          "operator",
+          "boundary",
+          "languages",
+          "provenance"
+        ],
+        "inferred": [
+          "audience",
+          "civicTask",
+          "priority",
+          "interface"
+        ]
+      }
+    },
+    {
+      "serviceId": "S11",
+      "title": "Sozialhilferechner (App)",
+      "audience": "Personen mit wenig Einkommen",
+      "civicTask": "Anspruch abschätzen",
+      "entryUrl": "https://www.bs.ch/apps/sozialhilferechner",
+      "transactionUrls": [],
+      "responsibility": "unknown",
+      "responsibilityNote": "Zuordnung Stadt/Kanton/Gemeinde nicht aus einer offiziellen Quelle belegt (siehe Bericht); Riehen/Bettingen nur als Kontext.",
+      "operator": null,
+      "operatorSource": null,
+      "operatorConfidence": "unknown",
+      "boundary": {
+        "public": true,
+        "loginOrAccount": true,
+        "thirdPartyHosts": [],
+        "transactionHosts": [],
+        "embeddedOrMapHosts": [
+          "map.geo.bs.ch"
+        ],
+        "pdfLinks": 0
+      },
+      "languages": [
+        "de (nur Deutsch beobachtet)"
+      ],
+      "interface": "App/Formular",
+      "provenance": {
+        "url": "https://www.bs.ch/apps/sozialhilferechner",
+        "retrievedAt": "2026-10-29T20:20:20.742147+00:00",
+        "sha256": "60ffd3397bc4d5fec44f9875db73f1558e128b6312f7b931843297c791522384",
+        "status": 200
+      },
+      "accessibilityDisclosure": "Erklärung zur Barrierefreiheit (bs.ch): teilweise konform; PDFs, Videos, iFrames als Einschränkungen genannt",
+      "priority": "hoch",
+      "priorityReason": "Unterstützungsleistung, Formular-App",
+      "status": {
+        "discovered": true,
+        "queuedForAssessment": true,
+        "assessmentId": "p07-sozialhilferechner"
+      },
+      "exclusionReason": null,
+      "labels": {
+        "observed": [
+          "entryUrl",
+          "transactionUrls",
+          "operator",
+          "boundary",
+          "languages",
+          "provenance"
+        ],
+        "inferred": [
+          "audience",
+          "civicTask",
+          "priority",
+          "interface"
+        ]
+      }
+    },
+    {
+      "serviceId": "S12",
+      "title": "Leistungsrechner (Übersicht)",
+      "audience": "Personen mit wenig Einkommen",
+      "civicTask": "Passende Leistung finden",
+      "entryUrl": "https://www.bs.ch/themen/finanzielle-hilfe/leistungsrechner",
+      "transactionUrls": [],
+      "responsibility": "unknown",
+      "responsibilityNote": "Zuordnung Stadt/Kanton/Gemeinde nicht aus einer offiziellen Quelle belegt (siehe Bericht); Riehen/Bettingen nur als Kontext.",
+      "operator": null,
+      "operatorSource": null,
+      "operatorConfidence": "unknown",
+      "boundary": {
+        "public": true,
+        "loginOrAccount": true,
+        "thirdPartyHosts": [],
+        "transactionHosts": [],
+        "embeddedOrMapHosts": [
+          "map.geo.bs.ch"
+        ],
+        "pdfLinks": 0
+      },
+      "languages": [
+        "de (nur Deutsch beobachtet)"
+      ],
+      "interface": "Informations-/Einstiegsseite",
+      "provenance": {
+        "url": "https://www.bs.ch/themen/finanzielle-hilfe/leistungsrechner",
+        "retrievedAt": "2026-10-29T20:17:23.898356+00:00",
+        "sha256": "883728b64db3d72d6af72f84e546f39dcadd0ad4eb3bac29ed066b554f227042",
+        "status": 200
+      },
+      "accessibilityDisclosure": "Erklärung zur Barrierefreiheit (bs.ch): teilweise konform; PDFs, Videos, iFrames als Einschränkungen genannt",
+      "priority": "mittel",
+      "priorityReason": "Einstieg zu drei Rechnern",
+      "status": {
+        "discovered": true,
+        "queuedForAssessment": false,
+        "assessmentId": null
+      },
+      "exclusionReason": "nicht in die 12 Bewertungsseiten aufgenommen (Stichprobe nach Aufgabe und Seitentyp)",
+      "labels": {
+        "observed": [
+          "entryUrl",
+          "transactionUrls",
+          "operator",
+          "boundary",
+          "languages",
+          "provenance"
+        ],
+        "inferred": [
+          "audience",
+          "civicTask",
+          "priority",
+          "interface"
+        ]
+      }
+    },
+    {
+      "serviceId": "S13",
+      "title": "Finanzielle Hilfe für Menschen mit Behinderung",
+      "audience": "Menschen mit Behinderung",
+      "civicTask": "Leistungen finden",
+      "entryUrl": "https://www.bs.ch/themen/finanzielle-hilfe/menschen-mit-behinderung",
+      "transactionUrls": [],
+      "responsibility": "unknown",
+      "responsibilityNote": "Zuordnung Stadt/Kanton/Gemeinde nicht aus einer offiziellen Quelle belegt (siehe Bericht); Riehen/Bettingen nur als Kontext.",
+      "operator": null,
+      "operatorSource": null,
+      "operatorConfidence": "unknown",
+      "boundary": {
+        "public": true,
+        "loginOrAccount": true,
+        "thirdPartyHosts": [],
+        "transactionHosts": [],
+        "embeddedOrMapHosts": [
+          "map.geo.bs.ch"
+        ],
+        "pdfLinks": 0
+      },
+      "languages": [
+        "de (nur Deutsch beobachtet)"
+      ],
+      "interface": "Informations-/Einstiegsseite",
+      "provenance": {
+        "url": "https://www.bs.ch/themen/finanzielle-hilfe/menschen-mit-behinderung",
+        "retrievedAt": "2026-10-29T20:17:33.898425+00:00",
+        "sha256": "16354cff8cce5f816b84cd73059d9029640cbcb48cd49b832f9ecfc86bcd82b5",
+        "status": 200
+      },
+      "accessibilityDisclosure": "Erklärung zur Barrierefreiheit (bs.ch): teilweise konform; PDFs, Videos, iFrames als Einschränkungen genannt",
+      "priority": "hoch",
+      "priorityReason": "Zielgruppe direkt betroffen",
+      "status": {
+        "discovered": true,
+        "queuedForAssessment": false,
+        "assessmentId": null
+      },
+      "exclusionReason": "nicht in die 12 Bewertungsseiten aufgenommen (Stichprobe nach Aufgabe und Seitentyp)",
+      "labels": {
+        "observed": [
+          "entryUrl",
+          "transactionUrls",
+          "operator",
+          "boundary",
+          "languages",
+          "provenance"
+        ],
+        "inferred": [
+          "audience",
+          "civicTask",
+          "priority",
+          "interface"
+        ]
+      }
+    },
+    {
+      "serviceId": "S14",
+      "title": "Anwohnerparkkarte",
+      "audience": "Einwohnende",
+      "civicTask": "Bewilligung beantragen",
+      "entryUrl": "https://www.bs.ch/themen/mobilitaet/fahren-und-parkieren/parkkarten/anwohnerparkkarte",
+      "transactionUrls": [
+        "https://eservices.egov.bs.ch/pay/101/p/001/gesuch-anwohnerparkkarte",
+        "https://formulare.bs.ch/mfk/formular-kontakt"
+      ],
+      "responsibility": "unknown",
+      "responsibilityNote": "Zuordnung Stadt/Kanton/Gemeinde nicht aus einer offiziellen Quelle belegt (siehe Bericht); Riehen/Bettingen nur als Kontext.",
+      "operator": "Kantonspolizei",
+      "operatorSource": "https://www.bs.ch/themen/mobilitaet/fahren-und-parkieren/parkkarten/anwohnerparkkarte",
+      "operatorConfidence": "observed (Seitenangabe «Für dieses Thema zuständig»)",
+      "boundary": {
+        "public": true,
+        "loginOrAccount": true,
+        "thirdPartyHosts": [],
+        "transactionHosts": [
+          "eservices.egov.bs.ch",
+          "formulare.bs.ch"
+        ],
+        "embeddedOrMapHosts": [
+          "map.geo.bs.ch"
+        ],
+        "pdfLinks": 1
+      },
+      "languages": [
+        "de (nur Deutsch beobachtet)"
+      ],
+      "interface": "Informations-/Einstiegsseite",
+      "provenance": {
+        "url": "https://www.bs.ch/themen/mobilitaet/fahren-und-parkieren/parkkarten/anwohnerparkkarte",
+        "retrievedAt": "2026-10-29T20:19:40.741877+00:00",
+        "sha256": "2123d5221e8f28ab3e17eb234376f5f0b6f839e6a85eeb9a2b125c03ed913759",
+        "status": 200
+      },
+      "accessibilityDisclosure": "Erklärung zur Barrierefreiheit (bs.ch): teilweise konform; PDFs, Videos, iFrames als Einschränkungen genannt",
+      "priority": "mittel",
+      "priorityReason": "eService mit Bezahlschritt",
+      "status": {
+        "discovered": true,
+        "queuedForAssessment": true,
+        "assessmentId": "p08-anwohnerparkkarte"
+      },
+      "exclusionReason": null,
+      "labels": {
+        "observed": [
+          "entryUrl",
+          "transactionUrls",
+          "operator",
+          "boundary",
+          "languages",
+          "provenance"
+        ],
+        "inferred": [
+          "audience",
+          "civicTask",
+          "priority",
+          "interface"
+        ]
+      }
+    },
+    {
+      "serviceId": "S15",
+      "title": "Behindertenparkkarte",
+      "audience": "Menschen mit Gehbehinderung",
+      "civicTask": "Bewilligung beantragen",
+      "entryUrl": "https://www.bs.ch/themen/mobilitaet/fahren-und-parkieren/parkkarten/behindertenparkkarte",
+      "transactionUrls": [
+        "https://formulare.bs.ch/mfk/formular-kontakt"
+      ],
+      "responsibility": "unknown",
+      "responsibilityNote": "Zuordnung Stadt/Kanton/Gemeinde nicht aus einer offiziellen Quelle belegt (siehe Bericht); Riehen/Bettingen nur als Kontext.",
+      "operator": "Kantonspolizei",
+      "operatorSource": "https://www.bs.ch/themen/mobilitaet/fahren-und-parkieren/parkkarten/behindertenparkkarte",
+      "operatorConfidence": "observed (Seitenangabe «Für dieses Thema zuständig»)",
+      "boundary": {
+        "public": true,
+        "loginOrAccount": true,
+        "thirdPartyHosts": [],
+        "transactionHosts": [
+          "formulare.bs.ch"
+        ],
+        "embeddedOrMapHosts": [
+          "map.geo.bs.ch"
+        ],
+        "pdfLinks": 3
+      },
+      "languages": [
+        "de (nur Deutsch beobachtet)"
+      ],
+      "interface": "Informations-/Einstiegsseite",
+      "provenance": {
+        "url": "https://www.bs.ch/themen/mobilitaet/fahren-und-parkieren/parkkarten/behindertenparkkarte",
+        "retrievedAt": "2026-10-29T20:19:50.741945+00:00",
+        "sha256": "637540e36f58ffffb31ad7748a272047394866d3a682b9cba75b164efb937d54",
+        "status": 200
+      },
+      "accessibilityDisclosure": "Erklärung zur Barrierefreiheit (bs.ch): teilweise konform; PDFs, Videos, iFrames als Einschränkungen genannt",
+      "priority": "hoch",
+      "priorityReason": "Zielgruppe direkt betroffen",
+      "status": {
+        "discovered": true,
+        "queuedForAssessment": true,
+        "assessmentId": "p09-behindertenparkkarte"
+      },
+      "exclusionReason": null,
+      "labels": {
+        "observed": [
+          "entryUrl",
+          "transactionUrls",
+          "operator",
+          "boundary",
+          "languages",
+          "provenance"
+        ],
+        "inferred": [
+          "audience",
+          "civicTask",
+          "priority",
+          "interface"
+        ]
+      }
+    },
+    {
+      "serviceId": "S16",
+      "title": "Busse bezahlen",
+      "audience": "alle",
+      "civicTask": "Busse begleichen",
+      "entryUrl": "https://www.bs.ch/themen/mobilitaet/fahren-und-parkieren/busse-bezahlen",
+      "transactionUrls": [
+        "https://bussen.egov.bs.ch/search/fine-number"
+      ],
+      "responsibility": "unknown",
+      "responsibilityNote": "Zuordnung Stadt/Kanton/Gemeinde nicht aus einer offiziellen Quelle belegt (siehe Bericht); Riehen/Bettingen nur als Kontext.",
+      "operator": "Kantonspolizei",
+      "operatorSource": "https://www.bs.ch/themen/mobilitaet/fahren-und-parkieren/busse-bezahlen",
+      "operatorConfidence": "observed (Seitenangabe «Für dieses Thema zuständig»)",
+      "boundary": {
+        "public": true,
+        "loginOrAccount": true,
+        "thirdPartyHosts": [],
+        "transactionHosts": [
+          "bussen.egov.bs.ch"
+        ],
+        "embeddedOrMapHosts": [
+          "map.geo.bs.ch"
+        ],
+        "pdfLinks": 0
+      },
+      "languages": [
+        "de (nur Deutsch beobachtet)"
+      ],
+      "interface": "Informations-/Einstiegsseite",
+      "provenance": {
+        "url": "https://www.bs.ch/themen/mobilitaet/fahren-und-parkieren/busse-bezahlen",
+        "retrievedAt": "2026-10-29T20:21:20.742563+00:00",
+        "sha256": "9e7a165c0a237df214c26ed2d986c0e70d06e36fbe1c20706e37796c3e1dc3ee",
+        "status": 200
+      },
+      "accessibilityDisclosure": "Erklärung zur Barrierefreiheit (bs.ch): teilweise konform; PDFs, Videos, iFrames als Einschränkungen genannt",
+      "priority": "niedrig",
+      "priorityReason": "Zahlung extern (bussen.egov.bs.ch)",
+      "status": {
+        "discovered": true,
+        "queuedForAssessment": false,
+        "assessmentId": null
+      },
+      "exclusionReason": "nicht in die 12 Bewertungsseiten aufgenommen (Stichprobe nach Aufgabe und Seitentyp)",
+      "labels": {
+        "observed": [
+          "entryUrl",
+          "transactionUrls",
+          "operator",
+          "boundary",
+          "languages",
+          "provenance"
+        ],
+        "inferred": [
+          "audience",
+          "civicTask",
+          "priority",
+          "interface"
+        ]
+      }
+    },
+    {
+      "serviceId": "S17",
+      "title": "Online-Formulare Steuerverwaltung",
+      "audience": "Steuerpflichtige",
+      "civicTask": "Steuerformulare und Anfragen",
+      "entryUrl": "https://www.bs.ch/themen/arbeit-und-steuern/steuererklaerung/online-formulare-steuerverwaltung",
+      "transactionUrls": [
+        "https://eservices.egov.bs.ch/e/21117/p/001/anfragen-zu-den-steuern-von-nat%C3%BCrlichen-personen",
+        "https://eservices.egov.bs.ch/e/21118/p/001/anfragen-zu-den-steuern-von-juristischen-personen",
+        "https://eservices.egov.bs.ch/e/21119/p/001/anfragen-zur-quellensteuer",
+        "https://eservices.egov.bs.ch/e/21120/p/001/anfragen-zur-grundstueckgewinnsteuer-handaenderung",
+        "https://eservices.egov.bs.ch/e/21121/p/001/anfragen-zur-schenkungssteuer-erbschaftssteuer",
+        "https://eservices.egov.bs.ch/e/21122/p/001/anfragen-zur-steuerzahlung",
+        "https://eservices.egov.bs.ch/e/21123/p/001/allgemeine-steueranfragen-mitteilung",
+        "https://eservices.egov.bs.ch/e/21129/p/001/schulden-anfragen",
+        "https://eservices.egov.bs.ch/e/21135/p/001/betreibungen-anfragen",
+        "https://eservices.egov.bs.ch/e/21136/p/001/bestellung-einer-steuerbest%C3%A4tigung-f%C3%BCr-%C3%B6ffentliche-submissione",
+        "https://eservices.egov.bs.ch/pay/20371/p/001/bestellung-steuerausweise-extern",
+        "https://esteuern.bs.ch/private/fristerstreckung",
+        "https://esteuern.bs.ch/unternehmen/fristerstreckung",
+        "https://formulare.bs.ch/steuerverwaltung/adressaenderung",
+        "https://formulare.bs.ch/steuerverwaltung/duplikat-steuererklaerung-jp",
+        "https://formulare.bs.ch/steuerverwaltung/duplikat-steuererklaerung-np",
+        "https://formulare.bs.ch/steuerverwaltung/einzahlungsscheine-bestellen",
+        "https://formulare.bs.ch/steuerverwaltung/inkasso-zahlungsfrist-erstrecken",
+        "https://formulare.bs.ch/steuerverwaltung/kontoauszuege-bestellen",
+        "https://formulare.bs.ch/steuerverwaltung/zahlungsfrist-erstrecken"
+      ],
+      "responsibility": "unknown",
+      "responsibilityNote": "Zuordnung Stadt/Kanton/Gemeinde nicht aus einer offiziellen Quelle belegt (siehe Bericht); Riehen/Bettingen nur als Kontext.",
+      "operator": null,
+      "operatorSource": null,
+      "operatorConfidence": "unknown",
+      "boundary": {
+        "public": true,
+        "loginOrAccount": true,
+        "thirdPartyHosts": [],
+        "transactionHosts": [
+          "eservices.egov.bs.ch",
+          "esteuern.bs.ch",
+          "formulare.bs.ch"
+        ],
+        "embeddedOrMapHosts": [
+          "map.geo.bs.ch"
+        ],
+        "pdfLinks": 0
+      },
+      "languages": [
+        "de (nur Deutsch beobachtet)"
+      ],
+      "interface": "Informations-/Einstiegsseite",
+      "provenance": {
+        "url": "https://www.bs.ch/themen/arbeit-und-steuern/steuererklaerung/online-formulare-steuerverwaltung",
+        "retrievedAt": "2026-10-29T20:20:00.742010+00:00",
+        "sha256": "92c9158d3c4130b41e2d4afa79e92765d6714371d8b0e54458a98e14363d4ea5",
+        "status": 200
+      },
+      "accessibilityDisclosure": "Erklärung zur Barrierefreiheit (bs.ch): teilweise konform; PDFs, Videos, iFrames als Einschränkungen genannt",
+      "priority": "hoch",
+      "priorityReason": "Absprung in mehrere Transaktionssysteme",
+      "status": {
+        "discovered": true,
+        "queuedForAssessment": true,
+        "assessmentId": "p10-steuerformulare"
+      },
+      "exclusionReason": null,
+      "labels": {
+        "observed": [
+          "entryUrl",
+          "transactionUrls",
+          "operator",
+          "boundary",
+          "languages",
+          "provenance"
+        ],
+        "inferred": [
+          "audience",
+          "civicTask",
+          "priority",
+          "interface"
+        ]
+      }
+    },
+    {
+      "serviceId": "S18",
+      "title": "Steuern berechnen",
+      "audience": "Steuerpflichtige",
+      "civicTask": "Steuerbelastung abschätzen",
+      "entryUrl": "https://www.bs.ch/themen/arbeit-und-steuern/steuererklaerung/steuerrechner",
+      "transactionUrls": [],
+      "responsibility": "unknown",
+      "responsibilityNote": "Zuordnung Stadt/Kanton/Gemeinde nicht aus einer offiziellen Quelle belegt (siehe Bericht); Riehen/Bettingen nur als Kontext.",
+      "operator": null,
+      "operatorSource": null,
+      "operatorConfidence": "unknown",
+      "boundary": {
+        "public": true,
+        "loginOrAccount": true,
+        "thirdPartyHosts": [],
+        "transactionHosts": [],
+        "embeddedOrMapHosts": [
+          "map.geo.bs.ch"
+        ],
+        "pdfLinks": 0
+      },
+      "languages": [
+        "de (nur Deutsch beobachtet)"
+      ],
+      "interface": "Informations-/Einstiegsseite",
+      "provenance": {
+        "url": "https://www.bs.ch/themen/arbeit-und-steuern/steuererklaerung/steuerrechner",
+        "retrievedAt": "2026-10-29T20:20:10.742081+00:00",
+        "sha256": "cc5babffa3a721ef43a9984110e0159be99442e008830914d19418ec07f3506c",
+        "status": 200
+      },
+      "accessibilityDisclosure": "Erklärung zur Barrierefreiheit (bs.ch): teilweise konform; PDFs, Videos, iFrames als Einschränkungen genannt",
+      "priority": "niedrig",
+      "priorityReason": "Rechner teilweise extern",
+      "status": {
+        "discovered": true,
+        "queuedForAssessment": false,
+        "assessmentId": null
+      },
+      "exclusionReason": "nicht in die 12 Bewertungsseiten aufgenommen (Stichprobe nach Aufgabe und Seitentyp)",
+      "labels": {
+        "observed": [
+          "entryUrl",
+          "transactionUrls",
+          "operator",
+          "boundary",
+          "languages",
+          "provenance"
+        ],
+        "inferred": [
+          "audience",
+          "civicTask",
+          "priority",
+          "interface"
+        ]
+      }
+    },
+    {
+      "serviceId": "S19",
+      "title": "Kita",
+      "audience": "Familien",
+      "civicTask": "Kita-Platz und Beiträge",
+      "entryUrl": "https://www.bs.ch/themen/bildung-und-kinderbetreuung/kinderbetreuung/kita",
+      "transactionUrls": [
+        "https://ed-kinderbetreuung.edubs.ch/directories/kinderbetreuung",
+        "https://eservices.egov.bs.ch/e/20975/p/001/gesuch-betreuungsbeitraege"
+      ],
+      "responsibility": "unknown",
+      "responsibilityNote": "Zuordnung Stadt/Kanton/Gemeinde nicht aus einer offiziellen Quelle belegt (siehe Bericht); Riehen/Bettingen nur als Kontext.",
+      "operator": "Fachstelle Tagesbetreuung",
+      "operatorSource": "https://www.bs.ch/themen/bildung-und-kinderbetreuung/kinderbetreuung/kita",
+      "operatorConfidence": "observed (Seitenangabe «Für dieses Thema zuständig»)",
+      "boundary": {
+        "public": true,
+        "loginOrAccount": true,
+        "thirdPartyHosts": [],
+        "transactionHosts": [
+          "ed-kinderbetreuung.edubs.ch",
+          "eservices.egov.bs.ch"
+        ],
+        "embeddedOrMapHosts": [
+          "map.geo.bs.ch"
+        ],
+        "pdfLinks": 8
+      },
+      "languages": [
+        "de (nur Deutsch beobachtet)"
+      ],
+      "interface": "Informations-/Einstiegsseite",
+      "provenance": {
+        "url": "https://www.bs.ch/themen/bildung-und-kinderbetreuung/kinderbetreuung/kita",
+        "retrievedAt": "2026-10-29T20:20:40.742288+00:00",
+        "sha256": "6caac822e086c1746c2632f15bae3ae2ad161bd5a236e2719ac0f582be82e617",
+        "status": 200
+      },
+      "accessibilityDisclosure": "Erklärung zur Barrierefreiheit (bs.ch): teilweise konform; PDFs, Videos, iFrames als Einschränkungen genannt",
+      "priority": "hoch",
+      "priorityReason": "Viele PDFs, Fachportal",
+      "status": {
+        "discovered": true,
+        "queuedForAssessment": true,
+        "assessmentId": "p11-kita"
+      },
+      "exclusionReason": null,
+      "labels": {
+        "observed": [
+          "entryUrl",
+          "transactionUrls",
+          "operator",
+          "boundary",
+          "languages",
+          "provenance"
+        ],
+        "inferred": [
+          "audience",
+          "civicTask",
+          "priority",
+          "interface"
+        ]
+      }
+    },
+    {
+      "serviceId": "S20",
+      "title": "Brauche ich eine Baubewilligung?",
+      "audience": "Einwohnende, Unternehmen",
+      "civicTask": "Bewilligungspflicht klären",
+      "entryUrl": "https://www.bs.ch/themen/umwelt-und-bauen/bauen-im-kanton-basel-stadt/brauche-ich-eine-baubewilligung",
+      "transactionUrls": [
+        "https://jaxforms.cloud.bs.ch/formservice/services/rest/template/public/KTBS/de/index.html"
+      ],
+      "responsibility": "unknown",
+      "responsibilityNote": "Zuordnung Stadt/Kanton/Gemeinde nicht aus einer offiziellen Quelle belegt (siehe Bericht); Riehen/Bettingen nur als Kontext.",
+      "operator": "Bau- und Gastgewerbeinspektorat",
+      "operatorSource": "https://www.bs.ch/themen/umwelt-und-bauen/bauen-im-kanton-basel-stadt/brauche-ich-eine-baubewilligung",
+      "operatorConfidence": "observed (Seitenangabe «Für dieses Thema zuständig»)",
+      "boundary": {
+        "public": true,
+        "loginOrAccount": true,
+        "thirdPartyHosts": [],
+        "transactionHosts": [
+          "jaxforms.cloud.bs.ch"
+        ],
+        "embeddedOrMapHosts": [
+          "map.geo.bs.ch"
+        ],
+        "pdfLinks": 0
+      },
+      "languages": [
+        "de (nur Deutsch beobachtet)"
+      ],
+      "interface": "Informations-/Einstiegsseite",
+      "provenance": {
+        "url": "https://www.bs.ch/themen/umwelt-und-bauen/bauen-im-kanton-basel-stadt/brauche-ich-eine-baubewilligung",
+        "retrievedAt": "2026-10-29T20:20:50.742351+00:00",
+        "sha256": "83ec6516ce42398d0b616197f592831a9d0383128fab9b227d386fee69def438",
+        "status": 200
+      },
+      "accessibilityDisclosure": "Erklärung zur Barrierefreiheit (bs.ch): teilweise konform; PDFs, Videos, iFrames als Einschränkungen genannt",
+      "priority": "mittel",
+      "priorityReason": "Formular-Dienst extern (jaxforms)",
+      "status": {
+        "discovered": true,
+        "queuedForAssessment": false,
+        "assessmentId": null
+      },
+      "exclusionReason": "nicht in die 12 Bewertungsseiten aufgenommen (Stichprobe nach Aufgabe und Seitentyp)",
+      "labels": {
+        "observed": [
+          "entryUrl",
+          "transactionUrls",
+          "operator",
+          "boundary",
+          "languages",
+          "provenance"
+        ],
+        "inferred": [
+          "audience",
+          "civicTask",
+          "priority",
+          "interface"
+        ]
+      }
+    },
+    {
+      "serviceId": "S21",
+      "title": "Gründung & Ansiedlung von Firmen",
+      "audience": "Unternehmen",
+      "civicTask": "Firma gründen",
+      "entryUrl": "https://www.bs.ch/themen/arbeit-und-steuern/unternehmen/gruendung-ansiedlung-von-firmen",
+      "transactionUrls": [],
+      "responsibility": "unknown",
+      "responsibilityNote": "Zuordnung Stadt/Kanton/Gemeinde nicht aus einer offiziellen Quelle belegt (siehe Bericht); Riehen/Bettingen nur als Kontext.",
+      "operator": null,
+      "operatorSource": null,
+      "operatorConfidence": "unknown",
+      "boundary": {
+        "public": true,
+        "loginOrAccount": true,
+        "thirdPartyHosts": [],
+        "transactionHosts": [],
+        "embeddedOrMapHosts": [
+          "map.geo.bs.ch"
+        ],
+        "pdfLinks": 0
+      },
+      "languages": [
+        "de (nur Deutsch beobachtet)"
+      ],
+      "interface": "Informations-/Einstiegsseite",
+      "provenance": {
+        "url": "https://www.bs.ch/themen/arbeit-und-steuern/unternehmen/gruendung-ansiedlung-von-firmen",
+        "retrievedAt": "2026-10-29T20:21:00.742423+00:00",
+        "sha256": "e579126e8b5bb53ec74ca8e16f31dbfd4439e2a9f5a950b052f6c496cf66faa3",
+        "status": 200
+      },
+      "accessibilityDisclosure": "Erklärung zur Barrierefreiheit (bs.ch): teilweise konform; PDFs, Videos, iFrames als Einschränkungen genannt",
+      "priority": "mittel",
+      "priorityReason": "Unternehmensaufgabe",
+      "status": {
+        "discovered": true,
+        "queuedForAssessment": false,
+        "assessmentId": null
+      },
+      "exclusionReason": "nicht in die 12 Bewertungsseiten aufgenommen (Stichprobe nach Aufgabe und Seitentyp)",
+      "labels": {
+        "observed": [
+          "entryUrl",
+          "transactionUrls",
+          "operator",
+          "boundary",
+          "languages",
+          "provenance"
+        ],
+        "inferred": [
+          "audience",
+          "civicTask",
+          "priority",
+          "interface"
+        ]
+      }
+    },
+    {
+      "serviceId": "S22",
+      "title": "Erstmaliger Stellenantritt (Arbeitsbewilligung)",
+      "audience": "Arbeitgebende, Arbeitnehmende",
+      "civicTask": "Arbeitsbewilligung",
+      "entryUrl": "https://www.bs.ch/themen/arbeit-und-steuern/arbeitsbewilligungen/erstmaliger-stellenantritt-der-schweiz",
+      "transactionUrls": [],
+      "responsibility": "unknown",
+      "responsibilityNote": "Zuordnung Stadt/Kanton/Gemeinde nicht aus einer offiziellen Quelle belegt (siehe Bericht); Riehen/Bettingen nur als Kontext.",
+      "operator": "Arbeitsbeziehungen (ABZ) Amt für Wirtschaft und Arbeit (AWA)",
+      "operatorSource": "https://www.bs.ch/themen/arbeit-und-steuern/arbeitsbewilligungen/erstmaliger-stellenantritt-der-schweiz",
+      "operatorConfidence": "observed (Seitenangabe «Für dieses Thema zuständig»)",
+      "boundary": {
+        "public": true,
+        "loginOrAccount": true,
+        "thirdPartyHosts": [],
+        "transactionHosts": [],
+        "embeddedOrMapHosts": [
+          "map.geo.bs.ch"
+        ],
+        "pdfLinks": 0
+      },
+      "languages": [
+        "de (nur Deutsch beobachtet)"
+      ],
+      "interface": "Informations-/Einstiegsseite",
+      "provenance": {
+        "url": "https://www.bs.ch/themen/arbeit-und-steuern/arbeitsbewilligungen/erstmaliger-stellenantritt-der-schweiz",
+        "retrievedAt": "2026-10-29T20:21:10.742488+00:00",
+        "sha256": "e7d497a80b600f18d00a919b02473e540beb1a832402663f473219fed27b0e2c",
+        "status": 200
+      },
+      "accessibilityDisclosure": "Erklärung zur Barrierefreiheit (bs.ch): teilweise konform; PDFs, Videos, iFrames als Einschränkungen genannt",
+      "priority": "mittel",
+      "priorityReason": "Unternehmens- und Migrationsaufgabe",
+      "status": {
+        "discovered": true,
+        "queuedForAssessment": false,
+        "assessmentId": null
+      },
+      "exclusionReason": "nicht in die 12 Bewertungsseiten aufgenommen (Stichprobe nach Aufgabe und Seitentyp)",
+      "labels": {
+        "observed": [
+          "entryUrl",
+          "transactionUrls",
+          "operator",
+          "boundary",
+          "languages",
+          "provenance"
+        ],
+        "inferred": [
+          "audience",
+          "civicTask",
+          "priority",
+          "interface"
+        ]
+      }
+    },
+    {
+      "serviceId": "S23",
+      "title": "Inhalte in Gebärdensprache",
+      "audience": "gehörlose Menschen",
+      "civicTask": "Informationen in Gebärdensprache",
+      "entryUrl": "https://www.bs.ch/gebaerdensprache",
+      "transactionUrls": [],
+      "responsibility": "unknown",
+      "responsibilityNote": "Zuordnung Stadt/Kanton/Gemeinde nicht aus einer offiziellen Quelle belegt (siehe Bericht); Riehen/Bettingen nur als Kontext.",
+      "operator": null,
+      "operatorSource": null,
+      "operatorConfidence": "unknown",
+      "boundary": {
+        "public": true,
+        "loginOrAccount": true,
+        "thirdPartyHosts": [],
+        "transactionHosts": [],
+        "embeddedOrMapHosts": [
+          "map.geo.bs.ch"
+        ],
+        "pdfLinks": 0
+      },
+      "languages": [
+        "de (nur Deutsch beobachtet)"
+      ],
+      "interface": "Informations-/Einstiegsseite",
+      "provenance": {
+        "url": "https://www.bs.ch/gebaerdensprache",
+        "retrievedAt": "2026-10-29T20:18:23.898770+00:00",
+        "sha256": "92730568b6aafdf18311f603e504fd4c862fe89bc2885317f80dbba25e37ef9b",
+        "status": 200
+      },
+      "accessibilityDisclosure": "Erklärung zur Barrierefreiheit (bs.ch): teilweise konform; PDFs, Videos, iFrames als Einschränkungen genannt",
+      "priority": "mittel",
+      "priorityReason": "Barrierefreie Kommunikation, Videos",
+      "status": {
+        "discovered": true,
+        "queuedForAssessment": false,
+        "assessmentId": null
+      },
+      "exclusionReason": "nicht in die 12 Bewertungsseiten aufgenommen (Stichprobe nach Aufgabe und Seitentyp)",
+      "labels": {
+        "observed": [
+          "entryUrl",
+          "transactionUrls",
+          "operator",
+          "boundary",
+          "languages",
+          "provenance"
+        ],
+        "inferred": [
+          "audience",
+          "civicTask",
+          "priority",
+          "interface"
+        ]
+      }
+    },
+    {
+      "serviceId": "S24",
+      "title": "Kinderbetreuung (Übersicht)",
+      "audience": "Familien",
+      "civicTask": "Betreuung finden",
+      "entryUrl": "https://www.bs.ch/themen/bildung-und-kinderbetreuung/kinderbetreuung",
+      "transactionUrls": [],
+      "responsibility": "unknown",
+      "responsibilityNote": "Zuordnung Stadt/Kanton/Gemeinde nicht aus einer offiziellen Quelle belegt (siehe Bericht); Riehen/Bettingen nur als Kontext.",
+      "operator": null,
+      "operatorSource": null,
+      "operatorConfidence": "unknown",
+      "boundary": {
+        "public": true,
+        "loginOrAccount": true,
+        "thirdPartyHosts": [],
+        "transactionHosts": [],
+        "embeddedOrMapHosts": [
+          "map.geo.bs.ch"
+        ],
+        "pdfLinks": 0
+      },
+      "languages": [
+        "de (nur Deutsch beobachtet)"
+      ],
+      "interface": "Informations-/Einstiegsseite",
+      "provenance": {
+        "url": "https://www.bs.ch/themen/bildung-und-kinderbetreuung/kinderbetreuung",
+        "retrievedAt": "2026-10-29T20:17:13.898289+00:00",
+        "sha256": "1fb9e36881798afe56fe2fd8db2fad677b7ac7b811ad04da4625749bcd6b1960",
+        "status": 200
+      },
+      "accessibilityDisclosure": "Erklärung zur Barrierefreiheit (bs.ch): teilweise konform; PDFs, Videos, iFrames als Einschränkungen genannt",
+      "priority": "niedrig",
+      "priorityReason": "Themenseite",
+      "status": {
+        "discovered": true,
+        "queuedForAssessment": false,
+        "assessmentId": null
+      },
+      "exclusionReason": "nicht in die 12 Bewertungsseiten aufgenommen (Stichprobe nach Aufgabe und Seitentyp)",
+      "labels": {
+        "observed": [
+          "entryUrl",
+          "transactionUrls",
+          "operator",
+          "boundary",
+          "languages",
+          "provenance"
+        ],
+        "inferred": [
+          "audience",
+          "civicTask",
+          "priority",
+          "interface"
+        ]
+      }
+    },
+    {
+      "serviceId": "S25",
+      "title": "Steuererklärung (Übersicht)",
+      "audience": "Steuerpflichtige",
+      "civicTask": "Steuererklärung einreichen",
+      "entryUrl": "https://www.bs.ch/themen/arbeit-und-steuern/steuererklaerung",
+      "transactionUrls": [],
+      "responsibility": "unknown",
+      "responsibilityNote": "Zuordnung Stadt/Kanton/Gemeinde nicht aus einer offiziellen Quelle belegt (siehe Bericht); Riehen/Bettingen nur als Kontext.",
+      "operator": null,
+      "operatorSource": null,
+      "operatorConfidence": "unknown",
+      "boundary": {
+        "public": true,
+        "loginOrAccount": true,
+        "thirdPartyHosts": [],
+        "transactionHosts": [],
+        "embeddedOrMapHosts": [
+          "map.geo.bs.ch"
+        ],
+        "pdfLinks": 0
+      },
+      "languages": [
+        "de (nur Deutsch beobachtet)"
+      ],
+      "interface": "Informations-/Einstiegsseite",
+      "provenance": {
+        "url": "https://www.bs.ch/themen/arbeit-und-steuern/steuererklaerung",
+        "retrievedAt": "2026-10-29T20:17:03.898219+00:00",
+        "sha256": "412f3aa697543b21a999bc96d2b7bc7d475183abdf56ecffa38968f108cc125a",
+        "status": 200
+      },
+      "accessibilityDisclosure": "Erklärung zur Barrierefreiheit (bs.ch): teilweise konform; PDFs, Videos, iFrames als Einschränkungen genannt",
+      "priority": "mittel",
+      "priorityReason": "Themenseite, BalTax",
+      "status": {
+        "discovered": true,
+        "queuedForAssessment": false,
+        "assessmentId": null
+      },
+      "exclusionReason": "nicht in die 12 Bewertungsseiten aufgenommen (Stichprobe nach Aufgabe und Seitentyp)",
+      "labels": {
+        "observed": [
+          "entryUrl",
+          "transactionUrls",
+          "operator",
+          "boundary",
+          "languages",
+          "provenance"
+        ],
+        "inferred": [
+          "audience",
+          "civicTask",
+          "priority",
+          "interface"
+        ]
+      }
+    }
+  ],
+  "hosts": [
+    {
+      "host": "app.draeggwaegg.ch",
+      "status": "nicht getestet: anderes Origin, nicht autorisiert"
+    },
+    {
+      "host": "bussen.egov.bs.ch",
+      "status": "nicht getestet: anderes Origin, nicht autorisiert"
+    },
+    {
+      "host": "ed-kinderbetreuung.edubs.ch",
+      "status": "nicht getestet: anderes Origin, nicht autorisiert"
+    },
+    {
+      "host": "eservices.egov.bs.ch",
+      "status": "nicht getestet: anderes Origin, nicht autorisiert"
+    },
+    {
+      "host": "esteuern.bs.ch",
+      "status": "nicht getestet: anderes Origin, nicht autorisiert"
+    },
+    {
+      "host": "formulare.bs.ch",
+      "status": "nicht getestet: anderes Origin, nicht autorisiert"
+    },
+    {
+      "host": "geo.bs.ch",
+      "status": "nicht getestet: anderes Origin, nicht autorisiert"
+    },
+    {
+      "host": "jaxforms.cloud.bs.ch",
+      "status": "nicht getestet: anderes Origin, nicht autorisiert"
+    },
+    {
+      "host": "map.geo.bs.ch",
+      "status": "nicht getestet: anderes Origin, nicht autorisiert"
+    },
+    {
+      "host": "trashcal.maxgfeller.com",
+      "status": "nicht getestet: anderes Origin, nicht autorisiert"
+    },
+    {
+      "host": "www.eumzug.swiss",
+      "status": "nicht getestet: anderes Origin, nicht autorisiert"
+    }
+  ],
+  "areas": [
+    {
+      "id": "verwaltung",
+      "name": "Kanton & Stadtverwaltung",
+      "status": "Recherche vertiefen",
+      "description": "Departemente, Dienststellen und Aufgaben der Einwohnergemeinde Basel. 25 Einträge aus dem bisherigen Feldlauf.",
+      "source": "https://www.bs.ch/regierungsrat/aufgaben-und-kompetenzen-des-regierungsrates",
+      "scope": "Im bisherigen Feldlauf: nur www.bs.ch und eportal.egov.bs.ch."
+    },
+    {
+      "id": "gemeinden",
+      "name": "Riehen & Bettingen",
+      "status": "Nur Kontext / neu zu inventarisieren",
+      "description": "Eigene Einwohnergemeinden; nicht pauschal mit Stadt- oder Kantonsverwaltung gleichsetzen.",
+      "source": "https://www.bs.ch/it/node/28398",
+      "scope": "Öffentliche Einstiegs-, Organisations- und Impressumsseiten entdecken; noch keine Accessibility-Prüfung."
+    },
+    {
+      "id": "politik",
+      "name": "Politik, Justiz & Bürgergemeinden",
+      "status": "Rechercheauftrag",
+      "description": "Parlament, Gerichte, Bürgergemeinden: Trägerschaft und Webangebote getrennt belegen.",
+      "source": "https://www.buergergemeinde-riehen.ch/buergergemeinde.html",
+      "scope": "Keine Liste behaupteter Staatsdomains; zuerst offizielle Belege sammeln."
+    },
+    {
+      "id": "institutionen",
+      "name": "Öffentliche Institutionen & Beteiligungen",
+      "status": "Rechercheauftrag",
+      "description": "Verkehr, Versorgung und öffentliche Spitäler sind eigene Organisationen. Eigentum, Rechtsform und Website-Betreiber müssen einzeln belegt werden.",
+      "source": "https://www.bs.ch/medienmitteilungen/2026-pensionskassengesetz-punktuelle-anpassungen-bewaehrtem-gesetz",
+      "scope": "Öffentliche Institution ≠ Website im Eigentum des Kantons ≠ bereits erlaubter Test."
+    },
+    {
+      "id": "bildung",
+      "name": "Bildung, Kultur & Wissenschaft",
+      "status": "Rechercheauftrag",
+      "description": "Schulen, Museen, Bibliotheken und gemeinsam getragene Einrichtungen: über offizielle Verzeichnisse erschliessen, Zuständigkeit offen lassen bis belegt.",
+      "source": "https://www.bs.ch/",
+      "scope": "Kandidatengruppe; noch keine vollständige Organisations- oder Domainliste."
+    },
+    {
+      "id": "plattformen",
+      "name": "Transaktionen & externe Plattformen",
+      "status": "11 Hosts verlinkt / nicht getestet",
+      "description": "Fachportale, Formulare, Karten und überkantonale oder private Anbieter. Öffentliche Aufgabe und technischer Betreiber getrennt erfassen.",
+      "source": "https://eportal.egov.bs.ch/",
+      "scope": "Verlinkung ist beobachtet; Betreiber/Eigentum und Login-Grenze sind noch zu prüfen."
+    }
+  ],
+  "organisations": [
+    {
+      "id": "org-test-fiktiv",
+      "name": "TEST – fiktive Organisation",
+      "area": "institutionen",
+      "type": "unknown",
+      "legalForm": null,
+      "sponsorship": "unknown",
+      "sponsorshipNote": null,
+      "parentId": null,
+      "status": {
+        "discovered": true,
+        "ownershipEvidenced": false
+      }
+    }
+  ],
+  "webProperties": [
+    {
+      "id": "wp-test-fiktiv",
+      "origin": "https://example.invalid",
+      "canonicalUrl": "https://example.invalid/",
+      "alternates": [
+        "https://www.example.invalid/"
+      ],
+      "name": "TEST – fiktives Webangebot",
+      "kind": "website",
+      "status": {
+        "discovered": true,
+        "ownershipEvidenced": false,
+        "selected": false,
+        "assessed": false,
+        "outOfScope": false,
+        "loginBoundary": false
+      },
+      "assessmentAuthorized": false,
+      "historicalAssessmentIds": []
+    }
+  ],
+  "edges": [
+    {
+      "id": "e-test-fiktiv",
+      "from": "org-test-fiktiv",
+      "to": "wp-test-fiktiv",
+      "relation": "publishes_property",
+      "evidence": [
+        {
+          "url": "https://example.invalid/impressum",
+          "support": "TEST – fiktiver Beleg, kein Zitat einer realen Quelle",
+          "retrievedAt": "2026-10-29T00:00:00Z",
+          "sourceDate": null,
+          "confidence": "low"
+        }
+      ]
+    }
+  ],
+  "batchProposal": []
+}
