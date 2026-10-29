@@ -2,7 +2,7 @@
 // Public-safe: only already-assessed pages on the two authorised origins, one fresh context per case, GET navigation
 // only, keyboard Tab and DOM/attribute reads only (no typing, no Enter, no clicks, no form interaction), at least 10 s
 // between navigations, same user agent and viewport as the production scanner. Writes repro.json + screenshots.
-//   npx tsx scripts/basel_reproduce.ts <out_dir>
+//   npx tsx scripts/basel_reproduce.ts <out_dir> [case-id ...]
 import { mkdir, writeFile } from "node:fs/promises";
 import { join } from "node:path";
 import { chromium, type Page } from "playwright";
@@ -79,6 +79,29 @@ const CASES: Case[] = [
       return { element: info, requiredRatio: 4.5 };
     },
   },
+  {
+    // Second look at the same hint after 5 s: rules out a fade-in still running at 1 s, and records the opacity chain.
+    id: "required-hint-opacity", url: "https://www.bs.ch/apps/zonensuche",
+    async run(page, dir) {
+      await page.waitForTimeout(4000);
+      const chain = await page.evaluate(() => {
+        const el = Array.from(document.querySelectorAll(".text-xs")).find((n) => /muss ausgefüllt/.test(n.textContent || "")) as HTMLElement | undefined;
+        if (!el) return null;
+        const out: Array<{ tag: string; cls: string; opacity: string; transition: string }> = [];
+        let effective = 1;
+        for (let n: HTMLElement | null = el; n && n !== document.body; n = n.parentElement) {
+          const s = getComputedStyle(n);
+          effective *= Number(s.opacity);
+          if (s.opacity !== "1" || s.transitionProperty.includes("opacity")) out.push({ tag: n.tagName.toLowerCase(), cls: String(n.className).slice(0, 80), opacity: s.opacity, transition: s.transitionProperty.slice(0, 40) });
+        }
+        el.scrollIntoView({ block: "center" });
+        return { effectiveOpacity: Math.round(effective * 1000) / 1000, nonOpaqueAncestors: out };
+      });
+      await page.waitForTimeout(150);
+      await page.screenshot({ path: join(dir, "contrast-hint-5s.png") });
+      return { waitedMs: 5150, chain };
+    },
+  },
 ];
 
 async function main() {
@@ -88,7 +111,8 @@ async function main() {
   const results = [];
   let last = 0;
   try {
-    for (const item of CASES) {
+    const only = process.argv.slice(3);
+    for (const item of CASES.filter((c) => only.length === 0 || only.includes(c.id))) {
       if (!ALLOWED.some((origin) => item.url.startsWith(origin))) throw new Error(`not an authorised origin: ${item.url}`);
       const wait = last + GAP_MS - Date.now();
       if (wait > 0) await new Promise((resolve) => setTimeout(resolve, wait));
