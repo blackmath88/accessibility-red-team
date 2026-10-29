@@ -9,7 +9,7 @@
       "Modell-Beurteilung ≠ menschliche Freigabe",
       "Mistral gesamt: 0,073 von 5 USD"
     ],
-    "summaryHtml": "<b>Kurz:</b> Der algorithmische Arm A fand in allen drei Segmenten alle gesetzten Barrieren (4/4, 4/4, 12/12), je Sitzung in etwa einer Sekunde und ohne Modellkosten. Das lokale Modell (qwen3:1.7b, nur CPU) fand allein (B) und mit Mistral-Beratung (C) <b>keine</b>: Es verliess nie die Startseite. Eine Reparatur (Wiederholungs-Sperre) griff technisch, änderte das Ergebnis aber nicht. <b>Mistral direkt als Erkundungs-Policy (M, Segment s3, 9 Sitzungen)</b> erkundete vollständig und fand die beiden Barrieren auf dev-k2 in allen drei Wiederholungen (6/12), verfehlte aber dev-k1 (richtige Aussage, falsche Belegstelle) und dev-k3 (Escape nie ausgelöst; stattdessen eine <b>falsche Behauptung</b> über den korrekt funktionierenden ersten Dialog, in allen 3 Läufen, mit 14 Duplikaten). Die blinde Beurteilung stufte <b>20 von 31 M-Behauptungen als durch M's eigene Evidenz widerlegt</b> ein (A: 0 von 12). M brauchte 129 s und 0,069 USD für das, was A in 7 s ohne Kosten vollständig fand.",
+    "summaryHtml": "<b>Kurz:</b> Der algorithmische Arm A fand in allen drei Segmenten alle gesetzten Barrieren (4/4, 4/4, 12/12), je Sitzung in etwa einer Sekunde und ohne Modellkosten. Das lokale Modell (qwen3:1.7b, nur CPU) fand allein (B) und mit Mistral-Beratung (C) <b>keine</b>: Es verliess nie die Startseite. Eine Reparatur (Wiederholungs-Sperre) griff technisch, änderte das Ergebnis aber nicht. <b>Mistral direkt als Erkundungs-Policy (M, Segment s3, 9 Sitzungen)</b> erkundete vollständig und fand die beiden Barrieren auf dev-k2 in allen drei Wiederholungen (6/12), verfehlte aber dev-k1 (richtige Aussage, falsche Belegstelle) und dev-k3 (Escape nie ausgelöst; stattdessen eine <b>falsche Behauptung</b> über den korrekt funktionierenden ersten Dialog, in allen 3 Läufen, mit 14 Duplikaten). Die blinde Beurteilung stufte <b>20 von 31 M-Behauptungen als durch M's eigene Evidenz widerlegt</b> ein (ohne Duplikate 7; inhaltlich 4 verschiedene falsche Aussagen); A: 0 von 12. M brauchte 129 s (davon rund 111 s durch unsere eigene Ratenbegrenzung von 1,1 s je Aufruf) und 0,069 USD; A fand dasselbe und mehr in 7 s ohne Kosten.",
     "footer": "Erzeugt mit scripts/abc_report.py aus versiegelten Läufen. Code: Runner f003529 (s1), ae1ecc9 (s2), 2f27deb (s3); Bericht/Review-Fixes siehe PR. Rohdaten archiviert ausserhalb von git (abc-runs-archive.tar.gz, SHA-256 in ARCHIVE.sha256). Alle Seiten sind synthetisch; keine Aussage über reale Websites, Screenreader-Erfahrung oder WCAG-Konformität."
   },
   "segments": [
@@ -162,11 +162,11 @@
         ],
         [
           "Blinde Beurteilung",
-          "M: 7 belegt (alle dev-k2, eines davon Duplikat), 20 widerlegt, 4 unzureichend. A im selben Segment: 12 belegt, 0 widerlegt. Die Urteile stimmen mit der Fixture-Wahrheit und dem Nachspielen im frischen Browser überein."
+          "M: 7 belegt (alle dev-k2, eines davon Duplikat), 20 widerlegt (7 ohne Duplikate; 4 verschiedene falsche Aussagen: Fokus bei #c2, Fokus bei #c3, dev-k1-Belegstelle, «div#kopf als Hauptbereich»), 4 unzureichend. A im selben Segment: 12 belegt, 0 widerlegt. Die Urteile stimmen mit der Fixture-Wahrheit und dem Nachspielen im frischen Browser überein."
         ],
         [
           "Zeit und Kosten",
-          "129 s und 0,069 USD (101 Aufrufe, 425 274 / 9 159 Tokens) gegenüber 7 s und 0 USD für A bei 12/12."
+          "129 s (davon rund 111 s eigene Ratenbegrenzung, 1,1 s je Aufruf) und 0,069 USD (101 Aufrufe, 425 274 / 9 159 Tokens) gegenüber 7 s und 0 USD für A bei 12/12."
         ]
       ],
       "bodyHtml": "<b>Lehre:</b> Ein stärkeres Modell löst das Erkundungsproblem des kleinen lokalen Modells, nicht aber das Interpretationsproblem: Es erkundet breit, bedient die entscheidende Interaktion (Escape) nicht und meldet trotzdem selbstsicher – teilweise falsch. Ohne Evidenzbindung und Gegenprobe wären diese Behauptungen nicht von echten zu unterscheiden. <b>Noch offen:</b> nur ein Modell, drei synthetische Fixtures.",
@@ -196,12 +196,13 @@
     ]
   ],
   "limits": [
-    "Drei offengelegte Entwicklungs-Fixtures mit je 1–2 gesetzten Barrieren und je einer Wiederholung pro Segment: keine Aussage über Zuverlässigkeit, Neuheit oder reale Gemeindeseiten.",
-    "M ist ein einzelnes Modell (mistral-small-2603) mit derselben Anleitung (skill v4) wie B und C; ein anderes Modell oder eine andere Anleitung könnte anders abschneiden. M hatte dieselben Werkzeuge wie A, inklusive escape, nutzte sie aber nicht für den Dialog-Defekt.",
+    "Drei offengelegte Entwicklungs-Fixtures mit je 1–2 gesetzten Barrieren, einer Wiederholung in s1/s2 und drei in s3: keine Aussage über Zuverlässigkeit, Neuheit oder reale Gemeindeseiten.",
+    "M ist ein einzelnes Modell (mistral-small-2603) mit derselben Anleitung (skill v4) wie B und C; ein anderes Modell oder eine andere Anleitung könnte anders abschneiden. M hatte dieselbe Aktionsmenge wie A (inklusive escape), nutzte escape aber nie; A lief unter der Scheduler-Bedingung, M unter derselben Harness-Bedingung wie B und C.",
     "Lokale Inferenz nur auf CPU (die installierte Ollama-Version hat kein Backend für die Arc-B60-GPU); ein schnelleres oder grösseres lokales Modell könnte anders abschneiden. qwen3:4b wurde vorab geprüft und verworfen (gab die Beobachtung zurück statt einer Aktion).",
     "Blind-Beurteilung durch frische Claude-Kontexte ist modellgestützte Forschungsbewertung, keine menschliche Entscheidung. In s1 war Arm A an seinen festen Textbausteinen erkennbar; für s2 wurden URLs und feste Sätze entfernt, die Formulierung von A-Befunden bleibt erkennbar.",
     "In C bekam der lokale Aufruf in Beratungsrunden nur die Restzeit der 30 s (Beratung 1,1–2,2 s); es trat dadurch kein Abbruch auf, offengelegt laut Code-Review.",
-    "«Verifiziert» heisst: deterministisch mit der Fixture-Wahrheit abgeglichen und vom blinden Beurteiler als belegt eingestuft. Kein Befund wurde freigegeben oder veröffentlicht."
+    "«Verifiziert» heisst: deterministisch mit der Fixture-Wahrheit abgeglichen und vom blinden Beurteiler als belegt eingestuft. Kein Befund wurde freigegeben oder veröffentlicht.",
+    "Das M-Budget pro Lauf deckt genau 3 Wiederholungen (≤110 Aufrufe, 1 M Eingabe-Tokens); mit mehr Wiederholungen würde das Budget spätere M-Sitzungen ablehnen. Das trat hier nicht auf (0 Ablehnungen)."
   ],
-  "nextStepHtml": "<b>Empfehlung: A als einziger bewerteter Detektor in einem begrenzten Partner-Pilot (eine konkrete Bürger-Aufgabe), Sprachmodelle nur ausserhalb der Wertung.</b> Auf diesen Fixtures fand A alles (20/20 über drei Segmente), schnell und ohne Kosten; kein Modell-Arm fand etwas, das A übersah, und M erzeugte falsche Behauptungen. <br><b>Was den Schritt rechtfertigt bzw. ändert:</b> Ein Modell kommt erst wieder in die Wertung, wenn es auf denselben eingefrorenen Fixtures mindestens A's Trefferquote erreicht <i>und</i> 0 von der blinden Beurteilung widerlegte Behauptungen hat. Der Partner-Pilot selbst ist gerechtfertigt, wenn A auf der Partner-Aufgabe belegte Befunde liefert, die eine Fachperson mit Hilfsmittel (AT) bestätigt."
+  "nextStepHtml": "<b>Empfehlung: A als einziger bewerteter Detektor in einem begrenzten Partner-Pilot (eine konkrete Bürger-Aufgabe), Sprachmodelle nur ausserhalb der Wertung.</b> Auf diesen offengelegten Entwicklungs-Fixtures (nicht zurückgehalten) fand A die 4 gesetzten Barrieren in jeder seiner 15 Sitzungen (20/20 Fundstellen), schnell und ohne Kosten; kein Modell-Arm fand etwas, das A übersah, und M erzeugte falsche Behauptungen. <br><b>Was den Schritt rechtfertigt bzw. ändert:</b> Ein Modell kommt erst wieder in die Wertung, wenn es auf denselben eingefrorenen Fixtures mindestens A's Trefferquote erreicht <i>und</i> 0 von der blinden Beurteilung widerlegte Behauptungen hat. Der Partner-Pilot selbst ist gerechtfertigt, wenn A auf der Partner-Aufgabe belegte Befunde liefert, die eine Fachperson mit Hilfsmittel (AT) bestätigt."
 }

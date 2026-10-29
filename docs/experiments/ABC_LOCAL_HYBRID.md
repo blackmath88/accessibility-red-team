@@ -99,8 +99,8 @@ rerun in the same segment; 3 repeats each, 18 sessions. The B/C results above ar
 | Credited seeded instances | 12/12 | 6/12 (dev-k2 both, all 3 repeats; dev-k1 0/3; dev-k3 0/3) |
 | Premature "complete" proposals | 0 | 3 (all dev-k3) |
 | Duplicates / unlisted claims | 0 / 0 | 14 / 6 |
-| Blind judge: supported / contradicted / insufficient | 12 / 0 / 0 | 7 / 20 / 4 |
-| Time (9 sessions) | 7 s | 129 s |
+| Blind judge: supported / contradicted / insufficient | 12 / 0 / 0 | 7 / 20 / 4 (contradicted: 7 without duplicates, 4 distinct false statements) |
+| Time (9 sessions) | 7 s | 129 s (about 111 s of it is our own 1.1 s rate limit between calls) |
 | Cost | 0 | USD 0.069 (101 calls, 425 274 / 9 159 tokens) |
 
 - M visited every page in every session (exploration solved), but on dev-k3 it closed both dialogs by clicking "Schliessen",
@@ -109,3 +109,6 @@ rerun in the same segment; 3 repeats each, 18 sessions. The B/C results above ar
 - On dev-k1, 2 of 3 runs stated the right defect ("#inhalt-x does not exist") but cited a start-page snapshot (whose skip link works)
   instead of the defective sub-page: judged contradicted by its own evidence, not credited.
 - Total Mistral spend over the whole experiment: USD 0.073 of the USD 5 cap.
+- M's trial budget (110 calls, 1M input tokens) covers exactly 3 repeats; more repeats would be refused by the budget
+  (a cap B/C do not have). It did not bind here (0 refusals). A ran under the scheduler condition; M shares B's harness
+  condition and only the action set with A. All fixtures are exposed development fixtures, never held out.
