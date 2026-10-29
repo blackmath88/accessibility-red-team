@@ -32,7 +32,7 @@ export const MANIFEST = {
   conditionOrder: ["A", "B", "C"] as const,
   limits: { maxSteps: 24, maxModelCalls: 12, maxInputTokens: 120_000, maxOutputTokens: 4000, maxWallMs: 180_000, maxResponseBytes: 8_000_000, maxSurfaces: 8 } satisfies Limits,
   harnessCondition: CONDITIONS.B,
-  local: { endpoint: "http://127.0.0.1:11434", model: "qwen3-1.7b-ctx8k", base: "qwen3:1.7b Q4_K_M, num_ctx 8192, CPU", extraBody: { reasoning_effort: "none" } },
+  local: { endpointEnv: "ADAPTIVE_LOCAL_ENDPOINT", model: "qwen3-1.7b-ctx8k", base: "qwen3:1.7b Q4_K_M, num_ctx 8192, CPU", extraBody: { reasoning_effort: "none" } },
   consultant: {
     endpoint: "https://api.mistral.ai", model: "mistral-small-2603", apiKeyEnv: "ADAPTIVE_MISTRAL_API_KEY",
     pricing: { currency: "USD", inputPerMillion: 0.15, outputPerMillion: 0.6 } satisfies Pricing,
@@ -68,8 +68,15 @@ function args() {
 
 export const confirmHashOf = (plan: unknown, sha: string) => sha256(JSON.stringify(plan) + sha).slice(0, 16);
 
+// The local endpoint comes from the environment (the adapter accepts http only on loopback); the value is recorded in the run manifest.
+const localEndpoint = () => {
+  const value = process.env[MANIFEST.local.endpointEnv];
+  if (!value) throw new Error(`${MANIFEST.local.endpointEnv} is not set (the loopback URL of the local model server)`);
+  return value;
+};
+
 function localProvider(): ModelProvider {
-  return new MistralProvider({ apiKeyEnv: LOCAL_KEY_ENV, model: MANIFEST.local.model, baseUrl: MANIFEST.local.endpoint, extraBody: MANIFEST.local.extraBody, env: { [LOCAL_KEY_ENV]: "local-no-auth" } });
+  return new MistralProvider({ apiKeyEnv: LOCAL_KEY_ENV, model: MANIFEST.local.model, baseUrl: localEndpoint(), extraBody: MANIFEST.local.extraBody, env: { [LOCAL_KEY_ENV]: "local-no-auth" } });
 }
 
 async function main() {
@@ -92,7 +99,7 @@ async function main() {
 
   const dir = resolve(a.outRoot, `${a.segment}-${new Date().toISOString().replace(/[:.]/g, "-")}`);
   await mkdir(dir, { recursive: true });
-  await writeFile(join(dir, "manifest.json"), JSON.stringify({ ...plan, codeSha: sha, confirmHash: hash, host: execFileSync("hostname", { encoding: "utf8" }).trim(), startedAt: new Date().toISOString() }, null, 2));
+  await writeFile(join(dir, "manifest.json"), JSON.stringify({ ...plan, codeSha: sha, confirmHash: hash, localEndpoint: localEndpoint(), host: execFileSync("hostname", { encoding: "utf8" }).trim(), startedAt: new Date().toISOString() }, null, 2));
 
   // Preflight the local model: returned identity must match.
   const pre = await localProvider().complete({ messages: [{ role: "user", content: 'Reply with the JSON object {"ok": true}.' }], maxOutputTokens: 16, temperature: 0, responseFormat: "json_object", timeoutMs: 60_000 });

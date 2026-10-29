@@ -10,7 +10,7 @@ checksum in the report folder).
 
 ## Setup (verified, not remembered)
 
-- Host `nzxt` (Nebu). Ollama 0.33.3, user process on loopback. The installed build ships **CPU backends only**: the Intel
+- Host: Nebu, the local machine. Ollama 0.33.3, user process on loopback (endpoint from `ADAPTIVE_LOCAL_ENDPOINT`). The installed build ships **CPU backends only**: the Intel
   Arc Pro B60 is not used (no Vulkan/SYCL library installed; installing one was out of scope). Inference is CPU-bound
   (Ryzen 7 3700X): about 10-24 s per decision with 3.7-5k prompt tokens.
 - Local model: `qwen3:1.7b` (Q4_K_M) as `qwen3-1.7b-ctx8k` (a local Modelfile setting `num_ctx 8192`; the default 4096
@@ -68,3 +68,19 @@ It is a tool/accounting change, so any s1→s2 difference is attributed to the h
 - Judging is model-assisted research evaluation (fresh Claude contexts, anonymized arm ids, no truth, no costs, scheduler
   labels stripped), reconciled afterwards with fixture truth and a fresh-browser replay. It is not human adjudication,
   approval or authority to publish or promote anything.
+
+## Results (completed runs; see `abc-report/`)
+
+| Segment | A credited | B credited | C credited | Judge: supported / contradicted (A, B, C) | Mistral USD |
+|---|---|---|---|---|---|
+| s1 (no repair) | 4/4 | 0/4 | 0/4 | A 4/0, B 0/0, C 0/1 | 0.0008 |
+| s2 (repeat-guard) | 4/4 | 0/4 | 0/4 | A 4/0, B 0/0, C 0/0 | 0.0017 |
+
+Smoke added USD 0.0009; total USD 0.0034 of the USD 5 cap. 83 local calls: median 18.1 s, p90 22.4 s. No consultation
+caused a timeout (each 1.1-2.2 s). The repeat-guard fired 21 times in s2 without changing any outcome: a negative result.
+Blind verdicts agreed with fixture truth for every claim. Fresh-browser replay confirmed the dev-k3 focus defect, the dev-k1
+missing skip target and the dev-k2 unnamed button; a one-line repaired copy of dev-k3 returned focus correctly.
+
+Review (independent, static, Opus via Orca, `cb3fa92`): no safety blocker; findings on packet blinding, C's per-request time
+split, consultant-authored finish suggestions, ledger persistence, the owner cap and repair verification were fixed after the
+runs (they do not change the code that ran s1/s2) or are disclosed above and in the report.
