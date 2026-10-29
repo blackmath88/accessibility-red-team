@@ -9,3 +9,4 @@ playwright-report/
 .dev.vars
 .wrangler/
 *.tsbuildinfo
+__pycache__/

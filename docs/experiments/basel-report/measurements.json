@@ -1,0 +1,20 @@
+{
+ "after1s": {
+  "screenshot": "repro-03507ff/required-hint-contrast/contrast-hint.png",
+  "region": "160x20+950+382",
+  "darkestGrey": 242,
+  "contrastOnWhite": 1.12
+ },
+ "after5s": {
+  "screenshot": "repro-cbcd355/required-hint-opacity/contrast-hint-5s.png",
+  "region": "160x20+950+382",
+  "darkestGrey": 242,
+  "contrastOnWhite": 1.12
+ },
+ "overlayHypothesis": {
+  "element": "h3.sticky.bg-white/90 «Abfuhrzonensuche» (saved DOM, p06 scan)",
+  "predictedGrey": 241,
+  "predictedContrast": 1.13,
+  "status": "Hypothese, nicht durch Layoutmessung bestätigt"
+ }
+}

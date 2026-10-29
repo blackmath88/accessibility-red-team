@@ -1,0 +1,217 @@
+<!doctype html><html lang='de'><head><meta charset='utf-8'><meta name='viewport' content='width=device-width,initial-scale=1'><title>Basel Feldbericht</title><style>
+:root{--bg:#fbfbf9;--fg:#1c1d1f;--muted:#5d6168;--line:#d9dad6;--card:#fff;--ok:#1d6b3a;--bad:#a1261e;--warn:#8a5a00;--accent:#2b4fa3}
+@media (prefers-color-scheme:dark){:root:not([data-theme=light]){--bg:#141517;--fg:#e8e8e6;--muted:#a3a7ad;--line:#33363b;--card:#1c1e21;--ok:#6fcf8e;--bad:#f08a80;--warn:#e3b45a;--accent:#8fb0ff}}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--fg);font:15px/1.5 system-ui,-apple-system,"Segoe UI",sans-serif}
+main{max-width:1080px;margin:0 auto;padding:24px 16px 64px}h1{font-size:1.6rem;margin:0 0 4px}h2{font-size:1.2rem;margin:36px 0 8px;border-top:1px solid var(--line);padding-top:20px}h3{font-size:1rem;margin:18px 0 6px}
+.lead,.small{color:var(--muted)}.small{font-size:.82rem}.tag{display:inline-block;border:1px solid var(--line);border-radius:4px;padding:0 6px;font-size:.8rem;color:var(--muted);margin:0 4px 4px 0}
+.tw{overflow-x:auto;border:1px solid var(--line);border-radius:6px;background:var(--card)}table{border-collapse:collapse;width:100%;font-size:.85rem}th,td{padding:6px 8px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}th{background:color-mix(in srgb,var(--line) 35%,transparent)}
+.num{text-align:right;font-variant-numeric:tabular-nums}.ok{color:var(--ok)}.bad{color:var(--bad);font-weight:600}.warn{color:var(--warn)}
+.case{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:14px 16px;margin:16px 0}figure{margin:10px 0}figure img{max-width:100%;border:1px solid var(--line);border-radius:4px}figcaption{font-size:.8rem;color:var(--muted)}
+pre{background:color-mix(in srgb,var(--line) 30%,transparent);padding:8px;border-radius:4px;overflow-x:auto;font-size:.8rem}ul{padding-left:20px}.next{border-left:4px solid var(--accent);padding:8px 14px;background:var(--card)}
+a{color:var(--accent)}a:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+</style></head><body><main>
+<h1>Basel-Stadt: öffentliche Dienste – Feldbericht und Partner-Pilot</h1>
+<p class='lead'>Privater Arbeitsbericht zur Durchsicht durch den Eigentümer, Stand 29.10.2026. Keine Veröffentlichung, keine Freigabe, keine Konformitätsaussage. Feldlauf: Code <code>4fdb589d</code>, 12 Seiten, 233.8 s.</p>
+<p><span class='tag'>nur öffentliche Seiten</span><span class='tag'>www.bs.ch und eportal.egov.bs.ch</span><span class='tag'>kein Login, keine Formulare</span><span class='tag'>deterministische Werkzeuge</span><span class='tag'>keine Modellaufrufe im Feld</span><span class='tag'>Mistral gesamt unverändert 0,073 von 5 USD</span></p>
+<p><b>Kurz:</b> 25 öffentliche Dienste aus der offiziellen Navigation inventarisiert (Tiefe ≤2, 32 von 40 erlaubten Dokumenten), 12 davon nach Aufgabe und Seitentyp ausgewählt und mit dem bestehenden Produktions-Scanner sowie sicheren Tastatur-Journeys geprüft (24 von 24 Läufen abgeschlossen). Zwei Beobachtungen wurden in einem frischen Browser reproduziert: ein <b>Hinweistext im Formular der Abfallzonen-Suche, der praktisch unsichtbar dargestellt wird</b> (gerenderter Kontrast etwa 1,1:1), und eine <b>unpassende ARIA-Auszeichnung des seitenweiten Suchfelds</b> (auf 9 von 12 Seiten). Ein dritter Kandidat – fehlende Fokusmarkierung – erwies sich beim Nachspielen als <b>Fehlalarm unseres eigenen Werkzeugs</b>. Die eigentlichen Transaktionen (eServices, Formulare, eUmzug, Steuern) liegen auf anderen Hosts und wurden bewusst nicht geprüft.</p>
+<section id="fortschritt" class="progress" lang="de">
+<h2>Fortschritt: was gebaut, getestet und nur vorgeschlagen ist</h2>
+<p class="lead">Stand 29.10.2026. Privater Arbeits- und Forschungsbericht zur Durchsicht durch den Eigentümer; keine menschliche Freigabe, keine Veröffentlichung, keine WCAG-Konformitätsaussage.</p>
+
+<h3>Code-Stände</h3>
+<div class="tw"><table>
+<thead><tr><th>Stand</th><th>Commit</th><th>Inhalt</th></tr></thead>
+<tbody>
+<tr><td>main</td><td><code>c8a70f8</code> (Commit vom 26.10.2026, zuletzt geprüft am 29.10.2026)</td><td>Produktiver Scanner (scan, Journeys, audit, Berichte) und opt-in lokaler Publikations-Export mit signierter Freigabe</td></tr>
+<tr><td>Draft-PR #52</td><td><code>87d6e17</code> (29.10.2026)</td><td>A/B/C/M-Experiment im experimentellen Track (<code>src/experimental/adaptive/</code>), nicht gemergt</td></tr>
+<tr><td>Draft-PR #53</td><td>auf #52 gestapelt (Plan-Commit <code>1c72291</code> auf #52-Stand <code>87d6e17</code>, 29.10.2026)</td><td>Dieser Basel-Feldbericht: Quellen-Inventar, begrenzter Discovery-Fetcher, Feld-Batch</td></tr>
+</tbody></table></div>
+
+<h3>Status nach Nachweisart</h3>
+<div class="tw"><table>
+<thead><tr><th>Bestandteil</th><th>Implementiert</th><th>Getestet</th><th>Live beobachtet</th><th>Menschlich geprüft</th></tr></thead>
+<tbody>
+<tr><td>Deterministischer Scanner: axe, sichere Tastatur-Journeys, Coverage, Screenshots</td><td>ja (main)</td><td>ja (volle Testsuite am finalen Stand dieses Berichts)</td><td>ja: 12 öffentliche Basel-Seiten am 29.10.2026 (Feldlauf dieses Berichts)</td><td>nein</td></tr>
+<tr><td>Publikations-Export mit Richtlinie und SSH-signierter Freigabe (opt-in, lokal)</td><td>ja (main)</td><td>ja, nur mit simulierter Autorität</td><td>nein</td><td>nein (keine echte Freigabe erteilt)</td></tr>
+<tr><td>Experimenteller Frontier-Scheduler A, lokales LLM B, Hybrid C, Mistral M</td><td>ja (PR #52, nur Fixture-Modus)</td><td>ja</td><td>ja, nur auf Entwicklungs-Fixtures (Loopback)</td><td>nein (Beurteilung modellgestützt)</td></tr>
+<tr><td>Partner-Pilot, AT-Nutzer-Validierung, Anbindung weiterer Berichtspfade</td><td>nein (vorgeschlagen)</td><td>–</td><td>–</td><td>–</td></tr>
+</tbody></table></div>
+
+<h3>Architektur</h3>
+<figure>
+<svg viewBox="0 0 720 250" role="img" aria-labelledby="arch-t arch-d" style="width:100%;max-width:720px;height:auto;color:var(--fg,currentColor);font:13px system-ui,sans-serif">
+<title id="arch-t">Architektur: deterministische Ausführung, optionale Modellrollen, Prüfung und Export</title>
+<desc id="arch-d">Links der produktive deterministische Pfad mit Scan, Journeys, Coverage und Screenshots. Er führt zu Prüfung und Export rechts. Der opt-in Publikations-Export mit signierter Freigabe ist implementiert; bestehende Berichts- und Auslieferungspfade sind nicht angebunden. In der Mitte gestrichelt die optionalen Modellrollen, nur experimentell und nicht im Produktionspfad.</desc>
+<defs><marker id="arch-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" fill="var(--muted,currentColor)"/></marker></defs>
+<rect x="10" y="20" width="220" height="150" rx="8" fill="none" stroke="var(--accent,currentColor)" stroke-width="2"/>
+<text x="24" y="44" font-weight="600" fill="currentColor">1 · Deterministisch (main)</text>
+<text x="24" y="70" fill="currentColor">scan: axe-Ergebnisse getrennt</text>
+<text x="24" y="90" fill="currentColor">sichere Tastatur-Journeys</text>
+<text x="24" y="110" fill="currentColor">Coverage, Screenshots</text>
+<text x="24" y="130" fill="currentColor">audit, Berichte</text>
+<text x="24" y="156" fill="var(--muted,currentColor)" font-size="11">produktiv, ohne LLM</text>
+<rect x="250" y="190" width="220" height="50" rx="8" fill="none" stroke="var(--muted,currentColor)" stroke-dasharray="5 4"/>
+<text x="262" y="210" font-weight="600" fill="currentColor">2 · Optionale Modellrollen</text>
+<text x="262" y="228" fill="var(--muted,currentColor)" font-size="11">nur experimentell: lokales LLM, Mistral</text>
+<rect x="490" y="20" width="220" height="150" rx="8" fill="none" stroke="var(--line,currentColor)" stroke-width="2"/>
+<text x="504" y="44" font-weight="600" fill="currentColor">3 · Prüfung / Export</text>
+<text x="504" y="70" fill="currentColor">Publikations-Export, opt-in,</text>
+<text x="504" y="88" fill="currentColor">signierte Freigabe:</text>
+<text x="504" y="106" fill="var(--accent,currentColor)" font-weight="600">implementiert</text>
+<text x="504" y="130" fill="currentColor">bestehende Berichte/Serving:</text>
+<text x="504" y="148" fill="var(--muted,currentColor)" font-weight="600">nicht angebunden</text>
+<line x1="230" y1="95" x2="486" y2="95" stroke="var(--muted,currentColor)" stroke-width="2" marker-end="url(#arch-arrow)"/>
+<text x="300" y="86" fill="var(--muted,currentColor)" font-size="11">Evidenz + Coverage</text>
+<line x1="360" y1="186" x2="360" y2="100" stroke="var(--muted,currentColor)" stroke-dasharray="4 4" marker-end="url(#arch-arrow)"/>
+<text x="368" y="150" fill="var(--muted,currentColor)" font-size="11">nicht im</text>
+<text x="368" y="164" fill="var(--muted,currentColor)" font-size="11">Produktionspfad</text>
+</svg>
+<figcaption class="small">Nicht an die Richtlinie angebunden (laut <code>PUBLICATION_EXPORT_INTEGRATION.md</code>, im Code geprüft): <code>buildReport</code>, <code>buildSiteReport</code>, <code>auditSite</code>, Watch-Vergleich, Kohorten, Control-Center-Upload/Serving, Populationsanalyse, Outreach. Die Basel-Feldartefakte laufen nicht über den Export: Dies ist ein privater Arbeitsbericht ohne Veröffentlichung.</figcaption>
+</figure>
+
+<h3>Ergebnisse A/B/C/M (nur offengelegte Entwicklungs-Fixtures)</h3>
+<p class="small">A = experimenteller Frontier-Scheduler mit Regeltabelle (kein Modell); B = lokales qwen3:1.7b; C = B + Mistral-Beratung; M = mistral-small-2603 direkt als Erkundungs-Policy. A ist nicht der produktive Scanner und nicht für öffentliche Ursprünge freigegeben.</p>
+<div class="tw"><table>
+<thead><tr><th>Segment</th><th>A</th><th>B</th><th>C</th><th>M</th></tr></thead>
+<tbody>
+<tr><td>s1 (ohne Reparatur), gesetzte Barrieren</td><td class="num">4/4</td><td class="num">0/4</td><td class="num">0/4</td><td>–</td></tr>
+<tr><td>s2 (Wiederholungs-Sperre), gesetzte Barrieren</td><td class="num">4/4</td><td class="num">0/4</td><td class="num">0/4</td><td>–</td></tr>
+<tr><td>s3 (3 Wiederholungen), gesetzte Instanzen</td><td class="num">12/12</td><td>–</td><td>–</td><td class="num">6/12</td></tr>
+<tr><td>s3 blinde Beurteilung: belegt / widerlegt / unzureichend</td><td class="num">12 / 0 / 0</td><td>–</td><td>–</td><td class="num">7 / 20 / 4</td></tr>
+<tr><td>s3 Duplikate / nicht gelistete Behauptungen</td><td class="num">0 / 0</td><td>–</td><td>–</td><td class="num">14 / 6</td></tr>
+<tr><td>s3 Zeit (9 Sitzungen)</td><td class="num">7 s</td><td>–</td><td>–</td><td class="num">129 s</td></tr>
+</tbody></table></div>
+<ul>
+<li><strong>Zählweise:</strong> 4 verschiedene gesetzte Barrieren je Durchgang; in s3 × 3 Wiederholungen = 12 Instanzen. Von M's 20 widerlegten Behauptungen bleiben ohne Duplikate 7, inhaltlich 4 verschiedene falsche Aussagen.</li>
+<li><strong>M</strong> besuchte alle Seiten, hängte aber falsche Evidenz an (dev-k1: richtiger Defekt, Startseite statt Unterseite belegt) und löste die nötige Escape-Interaktion im Dialog nie aus (dev-k3); stattdessen behauptete es in allen 3 Läufen einen Fehler am korrekt funktionierenden Dialog, im frischen Browser widerlegt.</li>
+<li><strong>Zeit:</strong> Von M's 129 s entfallen rund 111 s auf unsere eigene Ratenbegrenzung (1,1 s je Aufruf); das ist keine reine Modell-Latenz.</li>
+<li><strong>Lokal:</strong> qwen3:1.7b lief nur auf CPU (Ollama ohne GPU-Backend). Keine Aussage über andere lokale Modelle oder GPU-Inferenz.</li>
+<li><strong>Kosten:</strong> Mistral gesamt 0,073 USD (laut Ledger; maßgeblich ist die Rechnung), davon s3 0,069 USD.</li>
+<li><strong>Grenze:</strong> Alles auf offengelegten Entwicklungs-Fixtures dev-k1..k3. Das ist weder Feld-Recall noch -Präzision noch eine Validierung mit Nutzenden assistiver Technologien. Die Beurteilung erfolgte modellgestützt (frische Claude-Kontexte), nicht durch Menschen.</li>
+</ul>
+
+<h3>Verbesserungs-Schwellen je Rolle</h3>
+<div class="tw"><table>
+<thead><tr><th>Rolle</th><th>Schwelle bevor sie zählt</th><th>Stand</th></tr></thead>
+<tbody>
+<tr><td>KI als Detektor</td><td>verifizierte Ausführung und Evidenz; akzeptables Verhalten bei falschen Behauptungen</td><td>nicht erreicht (M: 20 von 31 widerlegt; B/C: 0 Funde)</td></tr>
+<tr><td>KI als Zusammenfassung / Triage-Hilfe</td><td>getreue, evidenzgestützte Formulierung mit Quellen und Enthaltung; Detektor-Recall nicht nötig</td><td>nicht gemessen</td></tr>
+<tr><td>Deterministischer Partner-Pilot</td><td>muss nicht warten, bis KI den Fixture-Scheduler schlägt</td><td>vorgeschlagen</td></tr>
+</tbody></table></div>
+<p class="small">Quellen: <code>docs/experiments/BASEL_FIELD_HANDOFF.md</code>, <code>ABC_LOCAL_HYBRID.md</code>, <code>abc-report/README.md</code>, <code>abc-report/index.html</code>, <code>ADAPTIVE_MISTRAL.md</code>, <code>PUBLICATION_EXPORT_INTEGRATION.md</code>, <code>LOCAL_REVIEW_APPROVAL.md</code>, ADR-0013.</p>
+</section>
+
+<h2>Basel: Dienstlandschaft (Stichprobe, nicht vollständig)</h2>
+<p class='small'>Quelle: offizielle Navigation von www.bs.ch und ePortal, abgerufen am 29.10.2026 (robots.txt beachtet: Crawl-delay 10 s). «Beobachtet» = auf der Seite gefunden; Aufgabe, Zielgruppe und Priorität sind unsere Einordnung. Die Zuordnung Stadt/Kanton/Gemeinde ist nicht aus einer offiziellen Quelle belegt und bleibt «unbekannt»; Riehen und Bettingen sind nur Kontext. Die Erklärung zur Barrierefreiheit ist eine Selbstauskunft des Kantons (teilweise konform; PDFs, Videos, iFrames, Leichte Sprache genannt), keine Prüfung durch uns.</p>
+<div class='tw'><table><thead><tr><th>ID</th><th>Dienst</th><th>Aufgabe / Zielgruppe</th><th>Zuständig (Seitenangabe)</th><th>Transaktion auf anderem Host</th><th class='num'>PDF-Links</th><th>Priorität</th><th>Geprüft</th></tr></thead><tbody>
+<tr><td>S01</td><td><a href='https://www.bs.ch/'>Startseite bs.ch</a></td><td>Einstieg, Suche, Navigation zu Diensten · alle</td><td>unbekannt</td><td class='small'>–</td><td class='num'>0</td><td>hoch</td><td>p01-start</td></tr>
+<tr><td>S02</td><td><a href='https://eportal.egov.bs.ch/'>ePortal (öffentliche Startseite)</a></td><td>Online-Dienste finden · alle</td><td>unbekannt</td><td class='small'>–</td><td class='num'>0</td><td>hoch</td><td>p12-eportal</td></tr>
+<tr><td>S03</td><td><a href='https://www.bs.ch/erklaerung-zur-barrierefreiheit'>Erklärung zur Barrierefreiheit</a></td><td>Barrieren melden, Stand erfahren · alle</td><td>unbekannt</td><td class='small'>–</td><td class='num'>0</td><td>mittel</td><td>nein</td></tr>
+<tr><td>S04</td><td><a href='https://www.bs.ch/themen/persoenliches-und-wohnen/umzug-und-wegzug/umzug-innerhalb-des-kantons-melden'>Umzug innerhalb des Kantons melden</a></td><td>Adressänderung · Einwohnende</td><td>Einwohneramt</td><td class='small'>eservices.egov.bs.ch, www.eumzug.swiss</td><td class='num'>1</td><td>hoch</td><td>p02-umzug</td></tr>
+<tr><td>S05</td><td><a href='https://www.bs.ch/themen/persoenliches-und-wohnen/umzug-und-wegzug/wegzug-vom-kanton-melden'>Wegzug vom Kanton melden</a></td><td>Abmeldung · Einwohnende</td><td>Einwohneramt</td><td class='small'>eservices.egov.bs.ch, formulare.bs.ch, www.eumzug.swiss</td><td class='num'>0</td><td>mittel</td><td>nein</td></tr>
+<tr><td>S06</td><td><a href='https://www.bs.ch/themen/persoenliches-und-wohnen/zuzug-und-aufenthalt/zuzug-den-kanton-basel-stadt'>Zuzug in den Kanton</a></td><td>Anmeldung, Begrüssungstermin · Neuzuziehende</td><td>Einwohneramt</td><td class='small'>eservices.egov.bs.ch</td><td class='num'>3</td><td>hoch</td><td>p04-zuzug</td></tr>
+<tr><td>S07</td><td><a href='https://www.bs.ch/themen/persoenliches-und-wohnen/pass-identitaetskarte-und-beglaubigungen/ich-brauche-einen-neuen-pass-eine-neue-identitaetskarte'>Pass / Identitätskarte bestellen</a></td><td>Identität, Termin · Einwohnende</td><td>Passamt</td><td class='small'>eservices.egov.bs.ch</td><td class='num'>3</td><td>hoch</td><td>p03-pass</td></tr>
+<tr><td>S08</td><td><a href='https://www.bs.ch/themen/umwelt-und-bauen/abfall-und-sauberkeit/abfallabfuhr'>Abfallabfuhr</a></td><td>Abfuhrtermine und Zone · Einwohnende</td><td>Tiefbauamt</td><td class='small'>app.draeggwaegg.ch, eservices.egov.bs.ch, trashcal.maxgfeller.com</td><td class='num'>11</td><td>hoch</td><td>p05-abfall</td></tr>
+<tr><td>S09</td><td><a href='https://www.bs.ch/apps/zonensuche'>Zonensuche (App)</a></td><td>Abfuhrzone zur Adresse · Einwohnende</td><td>unbekannt</td><td class='small'>–</td><td class='num'>0</td><td>mittel</td><td>p06-zonensuche</td></tr>
+<tr><td>S10</td><td><a href='https://www.bs.ch/themen/umwelt-und-bauen/abfall-und-sauberkeit/abfall-abc'>Abfall-ABC</a></td><td>Entsorgung nachschlagen · Einwohnende</td><td>unbekannt</td><td class='small'>–</td><td class='num'>0</td><td>niedrig</td><td>nein</td></tr>
+<tr><td>S11</td><td><a href='https://www.bs.ch/apps/sozialhilferechner'>Sozialhilferechner (App)</a></td><td>Anspruch abschätzen · Personen mit wenig Einkommen</td><td>unbekannt</td><td class='small'>–</td><td class='num'>0</td><td>hoch</td><td>p07-sozialhilferechner</td></tr>
+<tr><td>S12</td><td><a href='https://www.bs.ch/themen/finanzielle-hilfe/leistungsrechner'>Leistungsrechner (Übersicht)</a></td><td>Passende Leistung finden · Personen mit wenig Einkommen</td><td>unbekannt</td><td class='small'>–</td><td class='num'>0</td><td>mittel</td><td>nein</td></tr>
+<tr><td>S13</td><td><a href='https://www.bs.ch/themen/finanzielle-hilfe/menschen-mit-behinderung'>Finanzielle Hilfe für Menschen mit Behinderung</a></td><td>Leistungen finden · Menschen mit Behinderung</td><td>unbekannt</td><td class='small'>–</td><td class='num'>0</td><td>hoch</td><td>nein</td></tr>
+<tr><td>S14</td><td><a href='https://www.bs.ch/themen/mobilitaet/fahren-und-parkieren/parkkarten/anwohnerparkkarte'>Anwohnerparkkarte</a></td><td>Bewilligung beantragen · Einwohnende</td><td>Kantonspolizei</td><td class='small'>eservices.egov.bs.ch, formulare.bs.ch</td><td class='num'>1</td><td>mittel</td><td>p08-anwohnerparkkarte</td></tr>
+<tr><td>S15</td><td><a href='https://www.bs.ch/themen/mobilitaet/fahren-und-parkieren/parkkarten/behindertenparkkarte'>Behindertenparkkarte</a></td><td>Bewilligung beantragen · Menschen mit Gehbehinderung</td><td>Kantonspolizei</td><td class='small'>formulare.bs.ch</td><td class='num'>3</td><td>hoch</td><td>p09-behindertenparkkarte</td></tr>
+<tr><td>S16</td><td><a href='https://www.bs.ch/themen/mobilitaet/fahren-und-parkieren/busse-bezahlen'>Busse bezahlen</a></td><td>Busse begleichen · alle</td><td>Kantonspolizei</td><td class='small'>bussen.egov.bs.ch</td><td class='num'>0</td><td>niedrig</td><td>nein</td></tr>
+<tr><td>S17</td><td><a href='https://www.bs.ch/themen/arbeit-und-steuern/steuererklaerung/online-formulare-steuerverwaltung'>Online-Formulare Steuerverwaltung</a></td><td>Steuerformulare und Anfragen · Steuerpflichtige</td><td>unbekannt</td><td class='small'>eservices.egov.bs.ch, esteuern.bs.ch, formulare.bs.ch</td><td class='num'>0</td><td>hoch</td><td>p10-steuerformulare</td></tr>
+<tr><td>S18</td><td><a href='https://www.bs.ch/themen/arbeit-und-steuern/steuererklaerung/steuerrechner'>Steuern berechnen</a></td><td>Steuerbelastung abschätzen · Steuerpflichtige</td><td>unbekannt</td><td class='small'>–</td><td class='num'>0</td><td>niedrig</td><td>nein</td></tr>
+<tr><td>S19</td><td><a href='https://www.bs.ch/themen/bildung-und-kinderbetreuung/kinderbetreuung/kita'>Kita</a></td><td>Kita-Platz und Beiträge · Familien</td><td>Fachstelle Tagesbetreuung</td><td class='small'>ed-kinderbetreuung.edubs.ch, eservices.egov.bs.ch</td><td class='num'>8</td><td>hoch</td><td>p11-kita</td></tr>
+<tr><td>S20</td><td><a href='https://www.bs.ch/themen/umwelt-und-bauen/bauen-im-kanton-basel-stadt/brauche-ich-eine-baubewilligung'>Brauche ich eine Baubewilligung?</a></td><td>Bewilligungspflicht klären · Einwohnende, Unternehmen</td><td>Bau- und Gastgewerbeinspektorat</td><td class='small'>jaxforms.cloud.bs.ch</td><td class='num'>0</td><td>mittel</td><td>nein</td></tr>
+<tr><td>S21</td><td><a href='https://www.bs.ch/themen/arbeit-und-steuern/unternehmen/gruendung-ansiedlung-von-firmen'>Gründung &amp; Ansiedlung von Firmen</a></td><td>Firma gründen · Unternehmen</td><td>unbekannt</td><td class='small'>–</td><td class='num'>0</td><td>mittel</td><td>nein</td></tr>
+<tr><td>S22</td><td><a href='https://www.bs.ch/themen/arbeit-und-steuern/arbeitsbewilligungen/erstmaliger-stellenantritt-der-schweiz'>Erstmaliger Stellenantritt (Arbeitsbewilligung)</a></td><td>Arbeitsbewilligung · Arbeitgebende, Arbeitnehmende</td><td>Arbeitsbeziehungen (ABZ) Amt für Wirtschaft und Arbeit (AWA)</td><td class='small'>–</td><td class='num'>0</td><td>mittel</td><td>nein</td></tr>
+<tr><td>S23</td><td><a href='https://www.bs.ch/gebaerdensprache'>Inhalte in Gebärdensprache</a></td><td>Informationen in Gebärdensprache · gehörlose Menschen</td><td>unbekannt</td><td class='small'>–</td><td class='num'>0</td><td>mittel</td><td>nein</td></tr>
+<tr><td>S24</td><td><a href='https://www.bs.ch/themen/bildung-und-kinderbetreuung/kinderbetreuung'>Kinderbetreuung (Übersicht)</a></td><td>Betreuung finden · Familien</td><td>unbekannt</td><td class='small'>–</td><td class='num'>0</td><td>niedrig</td><td>nein</td></tr>
+<tr><td>S25</td><td><a href='https://www.bs.ch/themen/arbeit-und-steuern/steuererklaerung'>Steuererklärung (Übersicht)</a></td><td>Steuererklärung einreichen · Steuerpflichtige</td><td>unbekannt</td><td class='small'>–</td><td class='num'>0</td><td>mittel</td><td>nein</td></tr>
+</tbody></table></div>
+<p class='small'>Nicht geprüfte Hosts (künftige Warteschlange, eigene Freigabe nötig): app.draeggwaegg.ch, bussen.egov.bs.ch, ed-kinderbetreuung.edubs.ch, eservices.egov.bs.ch, esteuern.bs.ch, formulare.bs.ch, geo.bs.ch, jaxforms.cloud.bs.ch, map.geo.bs.ch, trashcal.maxgfeller.com, www.eumzug.swiss. Der ePortal-Link der Startseite führt auf ekonto.egov.bs.ch (Anmeldung) und wurde nicht aufgerufen.</p>
+<h2>Geprüfte Stichprobe (12 Seiten, 29.10.2026)</h2>
+<p class='small'>Werkzeuge: Produktions-Scanner (axe-core 4.13, ganzseitiger Screenshot, Coverage) und sichere Tastatur-Journeys (Fokusverlauf, aufklappbare Elemente, Dialog öffnen und Escape, Sprunglink; keine Formulare, keine Absende-Elemente). Chromium, Ansicht 1440×900, ein Seitenaufruf je Werkzeug, mindestens 10 s Abstand, keine Wiederholung. Unterressourcen wurden wie in einem normalen Browser geladen; andere Hosts wurden nicht geprüft. axe «verletzt» ist ein automatisches Signal im Forschungsprofil, kein WCAG-Urteil; «unvollständig» braucht menschliche Prüfung.</p>
+<div class='tw'><table><thead><tr><th>Seite</th><th>Aufgabe</th><th>Läufe</th><th class='num'>axe verletzt / unvollständig / bestanden / nicht anwendbar</th><th>Journeys bestanden / zu prüfen / nicht anwendbar</th></tr></thead><tbody>
+<tr><td><a href='https://www.bs.ch/'>p01-start</a><div class='small'>Startseite mit Hauptmenü, Suche, Kacheln</div></td><td>Einstieg und Navigation zu allen Diensten</td><td class='small'>scan: ok · journey: ok</td><td class='num'>1 / 1 / 44 / 44</td><td>1 / 3 / 0</td></tr>
+<tr><td><a href='https://www.bs.ch/themen/persoenliches-und-wohnen/umzug-und-wegzug/umzug-innerhalb-des-kantons-melden'>p02-umzug</a><div class='small'>Dienst-Einstiegsseite mit Absprung zu eUmzug/eServices</div></td><td>Umzug innerhalb des Kantons melden</td><td class='small'>scan: ok · journey: ok</td><td class='num'>3 / 1 / 44 / 44</td><td>1 / 3 / 0</td></tr>
+<tr><td><a href='https://www.bs.ch/themen/persoenliches-und-wohnen/pass-identitaetskarte-und-beglaubigungen/ich-brauche-einen-neuen-pass-eine-neue-identitaetskarte'>p03-pass</a><div class='small'>Dienst-Einstiegsseite, Terminbezug, viele Fremdlinks</div></td><td>Pass / Identitätskarte bestellen</td><td class='small'>scan: ok · journey: ok</td><td class='num'>4 / 1 / 47 / 41</td><td>1 / 3 / 0</td></tr>
+<tr><td><a href='https://www.bs.ch/themen/persoenliches-und-wohnen/zuzug-und-aufenthalt/zuzug-den-kanton-basel-stadt'>p04-zuzug</a><div class='small'>Dienst-Einstiegsseite mit eServices und PDFs</div></td><td>Zuzug anmelden</td><td class='small'>scan: ok · journey: ok</td><td class='num'>4 / 1 / 46 / 42</td><td>1 / 3 / 0</td></tr>
+<tr><td><a href='https://www.bs.ch/themen/umwelt-und-bauen/abfall-und-sauberkeit/abfallabfuhr'>p05-abfall</a><div class='small'>Informationsseite mit Karten-iFrame, PDF-Zonenplänen, App-Links</div></td><td>Abfuhrtermine und -zone finden</td><td class='small'>scan: ok · journey: ok</td><td class='num'>3 / 1 / 47 / 41</td><td>1 / 3 / 0</td></tr>
+<tr><td><a href='https://www.bs.ch/apps/zonensuche'>p06-zonensuche</a><div class='small'>Interaktive Such-App (Formular, nur Laden und Tastaturfokus)</div></td><td>Abfuhrzone zur Adresse suchen</td><td class='small'>scan: ok · journey: ok</td><td class='num'>4 / 1 / 43 / 45</td><td>2 / 2 / 0</td></tr>
+<tr><td><a href='https://www.bs.ch/apps/sozialhilferechner'>p07-sozialhilferechner</a><div class='small'>Rechner-App (Formular, nur Laden und Tastaturfokus)</div></td><td>Anspruch auf Sozialhilfe abschätzen</td><td class='small'>scan: ok · journey: ok</td><td class='num'>3 / 2 / 44 / 44</td><td>1 / 3 / 0</td></tr>
+<tr><td><a href='https://www.bs.ch/themen/mobilitaet/fahren-und-parkieren/parkkarten/anwohnerparkkarte'>p08-anwohnerparkkarte</a><div class='small'>Dienst-Einstiegsseite mit eServices/Formularen</div></td><td>Anwohnerparkkarte beantragen</td><td class='small'>scan: ok · journey: ok</td><td class='num'>3 / 1 / 51 / 37</td><td>1 / 3 / 0</td></tr>
+<tr><td><a href='https://www.bs.ch/themen/mobilitaet/fahren-und-parkieren/parkkarten/behindertenparkkarte'>p09-behindertenparkkarte</a><div class='small'>Dienst-Einstiegsseite mit Formular-Absprung</div></td><td>Behindertenparkkarte beantragen</td><td class='small'>scan: ok · journey: ok</td><td class='num'>3 / 1 / 46 / 42</td><td>1 / 3 / 0</td></tr>
+<tr><td><a href='https://www.bs.ch/themen/arbeit-und-steuern/steuererklaerung/online-formulare-steuerverwaltung'>p10-steuerformulare</a><div class='small'>Linksammlung zu eSteuern/eServices</div></td><td>Steuerformulare online finden</td><td class='small'>scan: ok · journey: ok</td><td class='num'>3 / 1 / 44 / 44</td><td>1 / 3 / 0</td></tr>
+<tr><td><a href='https://www.bs.ch/themen/bildung-und-kinderbetreuung/kinderbetreuung/kita'>p11-kita</a><div class='small'>Informationsseite mit vielen PDFs und Fachportal</div></td><td>Kita-Platz und Beiträge finden</td><td class='small'>scan: ok · journey: ok</td><td class='num'>3 / 1 / 47 / 41</td><td>1 / 3 / 0</td></tr>
+<tr><td><a href='https://eportal.egov.bs.ch/'>p12-eportal</a><div class='small'>JavaScript-Anwendung (ePortal-Startseite, öffentlich) · gelandet auf /dashboard (gleiches Origin; ob Weiterleitung oder Anwendungsroute, wurde nicht festgehalten)</div></td><td>Öffentliche ePortal-Angebote finden</td><td class='small'>scan: ok · journey: ok</td><td class='num'>1 / 2 / 43 / 46</td><td>1 / 0 / 3</td></tr>
+</tbody></table></div>
+<p class='small'>Wiederkehrende Komponenten (gleiches Element auf mehreren Seiten, einmal gezählt, alle Fundstellen behalten): axe.landmark-main-is-top-level an <code>main</code> auf 10 Seiten; axe.aria-allowed-attr an <code>#searchinput</code> auf 9 Seiten; axe.region an <code>.bk-main-canvas &gt; div &gt; h1</code> auf 9 Seiten; axe.region an <code>.h-\[250px\] &gt; h3</code> auf 8 Seiten; axe.region an <code>#search-privacy-hint</code> auf 8 Seiten; axe.region an <code>.h-\[250px\] &gt; .mb-30</code> auf 5 Seiten; axe.region an <code>.mb-30</code> auf 3 Seiten. Keine Gesamtnote, keine Rangliste, keine Hochrechnung auf den ganzen Webauftritt.</p>
+<h2>Reproduzierte Beobachtungen</h2><p class='small'>Jede Beobachtung wurde nach dem Feldlauf in einem frischen Browser-Kontext nachgespielt (nur Laden, Tab-Taste, Attribute lesen; keine Eingabe). Die Behebungsvorschläge sind Hypothesen; nichts wurde an den Seiten verändert.</p>
+<section class='case'><h3>Fall 1 · Hinweis «* muss ausgefüllt werden» in der Abfallzonen-Suche ist praktisch unsichtbar</h3>
+<p><b>Aufgabe:</b> Abfuhrzone zur eigenen Adresse finden (Formular-App <a href='https://www.bs.ch/apps/zonensuche'>/apps/zonensuche</a>). <b>Zuständig:</b> unbekannt (keine Seitenangabe; Abfallabfuhr: Tiefbauamt).</p>
+<figure><img src='img/c2-hint-card.png' alt='Kopf des Formulars «Abfuhrzonensuche»; rechts oben steht sehr blass «* muss ausgefüllt werden».'><figcaption>Echter Bildschirmausschnitt nach 5 s (frischer Browser, 29.10.2026). Der Hinweis rechts oben ist kaum zu sehen.</figcaption></figure>
+<figure><img src='img/c2-hint-zoom.png' alt='Vierfach vergrösserter Ausschnitt des blassen Hinweistexts.'><figcaption>Derselbe Hinweis, 4× vergrössert.</figcaption></figure>
+<pre>Berechnete CSS-Farbe: rgb(119, 119, 119) auf rgb(255, 255, 255), 12px, Gewicht 400 → 4.48:1 (axe: 4,47:1; verlangt 4,5:1)
+Dargestellte Pixel (gemessen mit scripts/basel_pixel_measure.py, Ausschnitt 160x20+950+382):
+  nach 1 s: dunkelster Grauwert 242 auf 255 → 1.12:1
+  nach 5 s: dunkelster Grauwert 242 auf 255 → 1.12:1
+Deckkraft aller Elternelemente nach 5 s: 1 (kein Übergang)
+Mögliche Ursache (Hypothese): h3.sticky.bg-white/90 «Abfuhrzonensuche» (saved DOM, p06 scan) mit 90 % weissem Hintergrund liegt über dem Hinweis;
+  0,1·119 + 0,9·255 ≈ 241 (gemessen 242). Hypothese, nicht durch Layoutmessung bestätigt.</pre>
+<ul><li><b>Beobachtete Folge:</b> Der Hinweis, dass ein Feld Pflicht ist, ist für sehende Personen mit eingeschränktem Kontrastsehen praktisch nicht lesbar.</li>
+<li><b>Nachspielen:</b> Seite laden, 5 s warten, Bereich «Abfuhrzonensuche» ansehen; in den Entwicklerwerkzeugen die tatsächlich gerenderte Farbe prüfen.</li>
+<li><b>Behebungshypothese:</b> prüfen, ob die klebende Überschrift den Hinweis überdeckt (Ebene/Position anpassen), und den Hinweis mindestens im Kontrast 4,5:1 darstellen.</li>
+<li><b>Selbstauskunft Basel:</b> «Die Kontrastverhältnisse entsprechen den Vorgaben.» Diese Einzelbeobachtung steht dazu im Widerspruch; sie ist keine Aussage über den ganzen Webauftritt.</li>
+<li><b>Noch offen:</b> Bestätigung der Ursache durch Layoutmessung; ob der Pflichtfeld-Hinweis anders vermittelt wird (z. B. am Feld selbst «Adresse: *»).</li></ul></section>
+<section class='case'><h3>Fall 2 · Seitenweites Suchfeld: ARIA-Auszeichnung passt nicht zur Rolle</h3>
+<p><b>Aufgabe:</b> über die Suche einen Dienst finden (Kopfbereich; dieses axe-Signal auf 9 von 12 geprüften Seiten). <b>Zuständig:</b> unbekannt (gemeinsame Vorlage des Webauftritts).</p>
+<figure><img src='img/c1-header-search.png' alt='Kopfzeile von bs.ch mit Logo, Themen, Organisation, Sprachwahl DE, ePortal und Lupen-Schaltfläche für die Suche.'><figcaption>Kopfzeile mit der Such-Schaltfläche (Lupe rechts). Ein Bild kann ARIA nicht zeigen; der Beleg ist der DOM-Auszug unten.</figcaption></figure>
+<pre>&lt;input id="searchinput" type="search"
+  aria-label="Ihre Frage eingeben" aria-autocomplete="list"
+  aria-expanded="false" aria-controls="searchterm-suggestions"&gt;
+Vom Browser ausgegebene Rolle: - searchbox &quot;Ihre Frage eingeben&quot;
+Element mit id «searchterm-suggestions» beim Laden vorhanden: nein
+axe: aria-allowed-attr («aria-expanded» ist für ein Suchfeld nicht erlaubt), auf 9 Seiten</pre>
+<ul><li><b>Beobachtete Folge (technisch):</b> Das Feld wird als «searchbox» ausgegeben, trägt aber Attribute eines Kombinationsfelds (Vorschlagsliste); die referenzierte Vorschlagsliste existiert beim Laden nicht.</li>
+<li><b>Mögliche Folge für Nutzende (Hypothese):</b> Screenreader kündigen Vorschläge eventuell nicht oder uneinheitlich an. Das muss mit Hilfsmitteln (Screenreader) geprüft werden.</li>
+<li><b>Behebungshypothese:</b> entweder das Muster «combobox» vollständig umsetzen (role, aria-expanded, Liste im DOM) oder die Kombinationsfeld-Attribute entfernen.</li>
+<li><b>Selbstauskunft Basel:</b> Diese Fehlerklasse wird nicht genannt (genannt sind PDFs, Videos, iFrames).</li></ul></section>
+<section class='case'><h3>Negativbefund · «Fokus nicht sichtbar» war ein Fehlalarm unseres Werkzeugs</h3>
+<p>Der Fokus-Journey meldete auf mehreren Seiten «0/3 bzw. 2/5 Fokusziele mit deutlich erkennbarer Markierung». Nachgespielt wurde nur die Seite «Umzug melden» (0/3); für die übrigen Seiten ist der Fehlalarm wahrscheinlich, aber nicht einzeln geprüft:</p>
+<figure><img src='img/n1-tab1-banner.png' alt='Cookie-Hinweis unten auf der Seite; der Link «Datenschutzerklärung» ist mit hellem Hintergrund markiert.'><figcaption>Erster Tab: Fokus im Cookie-Hinweis auf «Datenschutzerklärung», sichtbar durch Hintergrundmarkierung (ohne Umrandung).</figcaption></figure>
+<figure><img src='img/n1-tab2-banner.png' alt='Cookie-Hinweis; die Schaltfläche «Weiter mit allen Cookies» ist violett mit dicker Umrandung hervorgehoben.'><figcaption>Zweiter Tab: «Weiter mit allen Cookies» mit deutlicher Umrandung.</figcaption></figure>
+<pre>Tab 1: a «Datenschutzerklärung» · im Bild: ja · Umrandung: none 1px rgb(14, 128, 160) · im Cookie-Hinweis: Cookie-Einstellungen
+Tab 2: button «Weiter mit allen Cookies» · im Bild: ja · Umrandung: solid 3px rgb(30, 69, 87) · im Cookie-Hinweis: Cookie-Einstellungen
+Tab 3: button «Weiter mit erforderlichen Cookies» · im Bild: ja · Umrandung: solid 3px rgb(30, 69, 87) · im Cookie-Hinweis: Cookie-Einstellungen
+Tab 4: body «» · im Bild: – · Umrandung: – · im Cookie-Hinweis: –</pre>
+<p><b>Lehre:</b> Unsere Heuristik erkennt nur Umrandung oder Schatten und mass den Cookie-Hinweis im Feldlauf ausserhalb des Bildausschnitts. Die Markierung ist vorhanden. Das ist eine Verbesserung für unser Werkzeug, kein Befund zu Basel. Beobachtet, aber nicht bewertet: Die ersten Tab-Schritte führen in den Cookie-Hinweis; der vierte verlässt die Seite. Ob der Hinweis den übrigen Inhalt bewusst sperrt, wäre mit Tastatur- und Screenreader-Nutzenden zu klären.</p></section>
+<h2>Alle Anfragen an die öffentlichen Seiten</h2><p class='small'>Vollständige Zählung der Seitenaufrufe auf www.bs.ch und eportal.egov.bs.ch (Unterressourcen der Seiten nicht mitgezählt). Kein anderer Host wurde aufgerufen; keiner Weiterleitung auf einen anderen Host gefolgt, keine Wiederholung, kein Formular.</p>
+<div class='tw'><table><thead><tr><th>Schritt</th><th class='num'>Aufrufe</th><th>Beleg</th></tr></thead><tbody>
+<tr><td>robots.txt beider Origins (vor der Entdeckung, von Hand mit curl)</td><td class='num'>2</td><td class='small'>discovery/robots-*.txt (ePortal-Datei leer)</td></tr>
+<tr><td>Entdeckung (HTML, Tiefe ≤2, je 10 s Abstand)</td><td class='num'>32</td><td class='small'>discovery/ledger.json</td></tr>
+<tr><td>Feldlauf: Scanner + Journeys auf 12 Seiten</td><td class='num'>24</td><td class='small'>batch/run-manifest.json</td></tr>
+<tr><td>Nachspielen im frischen Browser (aufgezeichnet)</td><td class='num'>4</td><td class='small'>repro-03507ff/repro.json (3), repro-cbcd355/repro.json (1)</td></tr>
+<tr><td>Nachspielen, zwei fehlgeschlagene Versuche (Skriptfehler nach dem Laden der Seite «Umzug melden»; damals nicht aufgezeichnet, Skript seither korrigiert)</td><td class='num'>2</td><td class='small'>dieser Bericht</td></tr>
+<tr><td><b>Summe</b></td><td class='num'><b>64</b></td><td></td></tr></tbody></table></div>
+<p class='small'>Alle Werkzeugläufe endeten ohne Abbruch (24/24 «ok»).</p>
+<h2>Grenzen dieser Stichprobe</h2><ul>
+<li>12 Einstiegs- und Informationsseiten, keine Transaktion: eServices, Formulare, eUmzug, eSteuern, Karten und PDFs liegen auf anderen Hosts oder hinter Anmeldung und wurden nicht geprüft.</li>
+<li>Automatische Prüfungen finden nur einen Teil der Barrieren; «unvollständig» (Kontrast auf 12 Seiten, Dialog-Fokus auf 11 Seiten) braucht menschliche Prüfung.</li>
+<li>Keine Erfahrung mit Screenreader oder anderen Hilfsmitteln; keine Beteiligung von Menschen mit Behinderungen.</li>
+<li>Die Stichprobe ist nach Aufgabe gewählt, nicht zufällig; Ähnlichkeit der Vorlage beweist kein gleiches Verhalten auf anderen Seiten.</li></ul>
+<h2>Ausblick</h2><ul>
+<li><b>Prozess und Evidenz:</b> Fokus-Heuristik um Hintergrund- und Farbmarkierung erweitern und vor der Messung in den Bildausschnitt scrollen (heute Fehlalarm); gerenderten Kontrast aus Pixeln zusätzlich zur CSS-Berechnung messen (Fall 1 zeigt den Unterschied).</li>
+<li><b>Nützliche Modellrollen:</b> Modelle nicht als Detektor (siehe A/B/C/M); höchstens als Formulierungs- oder Triagehilfe mit Belegzitaten, getrennt von verifizierten Beobachtungen. In diesem Feldlauf wurden keine Modelle verwendet.</li>
+<li><b>Partner und Hilfsmittel:</b> Die beiden reproduzierten Beobachtungen und alle «unvollständig»-Signale gemeinsam mit einer Fachperson und Hilfsmittel-Nutzenden prüfen, bevor daraus Aussagen werden.</li></ul>
+<h2>Nächster Schritt und Vorschlag für einen kleinen Partner-Pilot</h2><div class='next'>
+<p><b>Nächster Schritt:</b> Die zwei reproduzierten Beobachtungen der Webredaktion Basel-Stadt (Kontakt laut Erklärung zur Barrierefreiheit) als private Arbeitsnotiz vorlegen – nur nach Freigabe durch den Eigentümer, ohne Veröffentlichung.</p>
+<p><b>Pilot-Vorschlag (Entwurf, nichts vereinbart):</b></p><ul>
+<li><b>Aufgabe:</b> «Umzug innerhalb des Kantons melden» von der Informationsseite bis zum Ende des öffentlichen Teils, plus die Abfallzonen-Suche als kleine Formular-App.</li>
+<li><b>Verantwortlich:</b> Einwohneramt (laut Seitenangabe) für den Umzug, Webredaktion für Vorlage und Suche; Zuständigkeit für eServices/eUmzug zu klären.</li>
+<li><b>Fachliche Prüfung:</b> eine Fachperson Barrierefreiheit und mindestens zwei Hilfsmittel-Nutzende (Screenreader, Tastatur) bestätigen oder verwerfen jede Beobachtung.</li>
+<li><b>Wiederholbarer Nachtest:</b> derselbe eingefrorene Lauf (gleiche Seiten, Werkzeuge, Abstände) vor und nach einer allfälligen Änderung; nur ein vergleichbarer Nachtest gilt als «behoben».</li>
+<li><b>Nützliches Ergebnis:</b> eine kurze, belegte Liste je Aufgabe (Bildschirmfoto, DOM/Fokus-Beleg, Schritte, Hypothese), die die Webredaktion in ihren bestehenden Review-Prozess übernehmen kann – ergänzend zum Aktionsplan 2025–2028, nicht als Bewertung.</li></ul>
+<p class='small'>Keine Zusage, kein Auftrag, keine Unterstützung durch Basel-Stadt impliziert. Die Transaktions-Hosts bräuchten eine eigene, ausdrückliche Freigabe.</p></div>
+<p class='small'>Erzeugt mit scripts/basel_report.py. Rohdaten (HTML, Scans, Journeys, Bildschirmfotos) ausserhalb von git; Prüfsummen in ARCHIVE.sha256. Bildschirmfotos zeigen öffentliche Seiten ohne Personendaten.</p></main></body></html>
