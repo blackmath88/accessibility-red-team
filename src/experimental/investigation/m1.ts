@@ -97,11 +97,15 @@ async function designer(run: string, attempt: string, mode: "design" | "revise",
     // Previous designed attempt (replays are not designs); its fresh-replay results are added when present.
     const prev = from ?? (await readdir(join(dir, "attempts"))).filter((a) => a !== attempt && !a.endsWith("-replay")).sort().at(-1)!;
     const prevProposal = await readFile(join(dir, "attempts", prev, "proposal.json"), "utf8");
-    const results = await readFile(join(dir, "attempts", prev, "results.json"), "utf8");
-    const replay = await readFile(join(dir, "attempts", `${prev}-replay`, "results.json"), "utf8").catch(() => "");
+    // An unexecuted attempt (e.g. one stopped at critique) is revised against the latest executed attempt's measurements.
+    const executed = (await readdir(join(dir, "attempts"))).filter((a) => !a.endsWith("-replay") && /^a\d+$/.test(a) && a <= prev).sort().reverse();
+    let measuredIn = prev, results = "";
+    for (const a of executed) { results = await readFile(join(dir, "attempts", a, "results.json"), "utf8").catch(() => ""); if (results) { measuredIn = a; break; } }
+    if (!results) throw new Error("no executed attempt to revise against");
+    const replay = await readFile(join(dir, "attempts", `${measuredIn}-replay`, "results.json"), "utf8").catch(() => "");
     const critic = await readFile(join(dir, "attempts", prev, "critic.json"), "utf8").catch(() => "{}");
-    context += `\n\nPREVIOUS ATTEMPT ${prev} (proposal):\n${prevProposal}\n\nRESULTS of executing it (fixtures and live):\n${perTarget(results, 3_000)}`;
-    if (replay) context += `\n\nFRESH REPLAY of ${prev} (new process and browser, same code; includes the 390x844 viewport):\n${perTarget(replay, 6_000)}`;
+    context += `\n\nPREVIOUS ATTEMPT ${prev} (proposal):\n${prevProposal}\n\nRESULTS (fixtures and live) of ${measuredIn}${measuredIn === prev ? "" : ` (${prev} itself was not executed)`}:\n${perTarget(results, 3_000)}`;
+    if (replay) context += `\n\nFRESH REPLAY of ${measuredIn} (new process and browser, same code; includes the 390x844 viewport):\n${perTarget(replay, 6_000)}`;
     context += `\n\nCRITIC REVIEW of the previous attempt:\n${critic.slice(0, 3000)}`;
     // The critic's single most important change is passed as a required item (the designer ignored it when it was only context, see a3/a4).
     const required = (JSON.parse(critic) as { mostImportantChange?: string; probeDefects?: string[] });
