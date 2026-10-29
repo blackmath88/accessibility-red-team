@@ -1,5 +1,21 @@
 # Build Plan
 
+## Next milestone — Basel Adaptive Investigation Loop
+
+Updated 2026-10-29: the next research milestone is
+[Basel: dynamic evidence-guided investigation](experiments/BASEL_ADAPTIVE_INVESTIGATION_MILESTONE.md),
+with [proposed ADR-0015](adr/0015-bounded-adaptive-investigations.md).
+Read that milestone first for new experimental work; the implemented slices below remain the production baseline.
+
+The next proof is one AI-designed executable measurement, challenged with counterexamples, revised from actual
+results and reproduced on the bounded Basel case. Generated research probes can execute inside a fixed
+capability envelope; trusted catalogue deployment and publication remain separate.
+This is a planned experiment, not a completed capability or permission to enable the old public-mode flag.
+
+The A/B/C/M fixture results and initial Basel field evidence remain unchanged.
+The two supplied landscape/standards reports are preserved as research input under docs/research/basel;
+material ownership, standards and stakeholder claims need primary-source validation.
+
 Status: active  
 Principle: **minimum AI / evidence first / deterministic control flow**
 
