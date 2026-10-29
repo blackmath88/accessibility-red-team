@@ -14,6 +14,8 @@ queue = json.load(open(f"{here}/batch-queue.json"))
 manifest = json.load(open(f"{batch}/run-manifest.json"))
 repro = [r for p in repro_paths for r in json.load(open(p))["results"]]
 progress = open(f"{here}/progress/progress.html").read()
+meas = json.load(open(f"{here}/measurements.json"))
+yn = lambda v: "ja" if v is True else "nein" if v is False else "–" if v is None else str(v)
 
 pages, occurrences = [], collections.defaultdict(set)
 for q in queue:
@@ -64,19 +66,19 @@ p.append("<h2>Basel: Dienstlandschaft (Stichprobe, nicht vollständig)</h2>")
 p.append("<p class='small'>Quelle: offizielle Navigation von www.bs.ch und ePortal, abgerufen am 29.10.2026 (robots.txt beachtet: Crawl-delay 10 s). «Beobachtet» = auf der Seite gefunden; Aufgabe, Zielgruppe und Priorität sind unsere Einordnung. Die Zuordnung Stadt/Kanton/Gemeinde ist nicht aus einer offiziellen Quelle belegt und bleibt «unbekannt»; Riehen und Bettingen sind nur Kontext. Die Erklärung zur Barrierefreiheit ist eine Selbstauskunft des Kantons (teilweise konform; PDFs, Videos, iFrames, Leichte Sprache genannt), keine Prüfung durch uns.</p>")
 p.append("<div class='tw'><table><thead><tr><th>ID</th><th>Dienst</th><th>Aufgabe / Zielgruppe</th><th>Zuständig (Seitenangabe)</th><th>Transaktion auf anderem Host</th><th class='num'>PDF-Links</th><th>Priorität</th><th>Geprüft</th></tr></thead><tbody>")
 for e in inv["entries"]:
-    tx = ", ".join(e["boundary"]["transactionHosts"] + e["boundary"]["thirdPartyHosts"]) or "–"
+    tx = ", ".join(sorted(set(e["boundary"]["transactionHosts"] + e["boundary"]["thirdPartyHosts"]))) or "–"
     p.append(f"<tr><td>{e['serviceId']}</td><td><a href='{E(e['entryUrl'])}'>{E(e['title'])}</a></td><td>{E(e['civicTask'])} · {E(e['audience'])}</td><td>{E(e['operator'] or 'unbekannt')}</td><td class='small'>{E(tx)}</td><td class='num'>{e['boundary']['pdfLinks']}</td><td>{E(e['priority'])}</td><td>{E(e['status']['assessmentId'] or 'nein')}</td></tr>")
 p.append("</tbody></table></div>")
 p.append("<p class='small'>Nicht geprüfte Hosts (künftige Warteschlange, eigene Freigabe nötig): " + ", ".join(E(h["host"]) for h in inv["futureQueueHosts"]) + ". Der ePortal-Link der Startseite führt auf ekonto.egov.bs.ch (Anmeldung) und wurde nicht aufgerufen.</p>")
 
 p.append("<h2>Geprüfte Stichprobe (12 Seiten, 29.10.2026)</h2>")
 p.append("<p class='small'>Werkzeuge: Produktions-Scanner (axe-core 4.13, ganzseitiger Screenshot, Coverage) und sichere Tastatur-Journeys (Fokusverlauf, aufklappbare Elemente, Dialog öffnen und Escape, Sprunglink; keine Formulare, keine Absende-Elemente). Chromium, Ansicht 1440×900, ein Seitenaufruf je Werkzeug, mindestens 10 s Abstand, keine Wiederholung. Unterressourcen wurden wie in einem normalen Browser geladen; andere Hosts wurden nicht geprüft. axe «verletzt» ist ein automatisches Signal im Forschungsprofil, kein WCAG-Urteil; «unvollständig» braucht menschliche Prüfung.</p>")
-p.append("<div class='tw'><table><thead><tr><th>Seite</th><th>Aufgabe</th><th>Läufe</th><th class='num'>axe verletzt / unvollständig / bestanden / nicht anwendbar</th><th>Journeys (bestanden / zu prüfen)</th></tr></thead><tbody>")
+p.append("<div class='tw'><table><thead><tr><th>Seite</th><th>Aufgabe</th><th>Läufe</th><th class='num'>axe verletzt / unvollständig / bestanden / nicht anwendbar</th><th>Journeys bestanden / zu prüfen / nicht anwendbar</th></tr></thead><tbody>")
 for pg in pages:
     c = pg["counts"]; js = pg["journeys"]
-    jp = sum(1 for v in js.values() if v == "pass"); ji = sum(1 for v in js.values() if v != "pass")
+    jp = sum(1 for v in js.values() if v == "pass"); jn = sum(1 for v in js.values() if v == "inapplicable"); ji = len(js) - jp - jn
     runs = " · ".join(f"{k}: {v}" for k, v in pg["runs"].items())
-    p.append(f"<tr><td><a href='{E(pg['url'])}'>{E(pg['id'])}</a><div class='small'>{E(pg['interface'])}</div></td><td>{E(pg['task'])}</td><td class='small'>{E(runs)}</td><td class='num'>{c['violations']} / {c['incomplete']} / {c['passes']} / {c['inapplicable']}</td><td>{jp} / {ji}</td></tr>")
+    p.append(f"<tr><td><a href='{E(pg['url'])}'>{E(pg['id'])}</a><div class='small'>{E(pg['interface'])}{(" · gelandet auf " + E(pg['finalUrl'].split(".ch",1)[1]) + " (Route der Anwendung, gleiches Origin)") if pg['finalUrl'].rstrip('/') != pg['url'].rstrip('/') else ""}</div></td><td>{E(pg['task'])}</td><td class='small'>{E(runs)}</td><td class='num'>{c['violations']} / {c['incomplete']} / {c['passes']} / {c['inapplicable']}</td><td>{jp} / {ji} / {jn}</td></tr>")
 p.append("</tbody></table></div>")
 p.append("<p class='small'>Wiederkehrende Komponenten (gleiches Element auf mehreren Seiten, einmal gezählt, alle Fundstellen behalten): " + "; ".join(f"{E(c['rule'])} an <code>{E(c['target'][:40])}</code> auf {len(c['pages'])} Seiten" for c in components if len(c["pages"]) > 1) + ". Keine Gesamtnote, keine Rangliste, keine Hochrechnung auf den ganzen Webauftritt.</p>")
 
@@ -87,16 +89,20 @@ p.append(f"""<section class='case'><h3>Fall 1 · Hinweis «* muss ausgefüllt we
 <figure><img src='img/c2-hint-card.png' alt='Kopf des Formulars «Abfuhrzonensuche»; rechts oben steht sehr blass «* muss ausgefüllt werden».'><figcaption>Echter Bildschirmausschnitt nach 5 s (frischer Browser, 29.10.2026). Der Hinweis rechts oben ist kaum zu sehen.</figcaption></figure>
 <figure><img src='img/c2-hint-zoom.png' alt='Vierfach vergrösserter Ausschnitt des blassen Hinweistexts.'><figcaption>Derselbe Hinweis, 4× vergrössert.</figcaption></figure>
 <pre>Berechnete CSS-Farbe: {E(h['color'])} auf {E(h['background'])}, {E(h['fontSize'])}, Gewicht {E(h['fontWeight'])} → {h['contrast']}:1 (axe: 4,47:1; verlangt 4,5:1)
-Dargestellte Pixel (nach 1 s und nach 5 s): dunkelster Grauwert 242 auf 255 → etwa 1,12:1
-Deckkraft aller Elternelemente nach 5 s: {ch['effectiveOpacity']} (kein Übergang gefunden) → Ursache der blassen Darstellung unbekannt</pre>
+Dargestellte Pixel (gemessen mit scripts/basel_pixel_measure.py, Ausschnitt {E(meas['after1s']['region'])}):
+  nach 1 s: dunkelster Grauwert {meas['after1s']['darkestGrey']} auf 255 → {meas['after1s']['contrastOnWhite']}:1
+  nach 5 s: dunkelster Grauwert {meas['after5s']['darkestGrey']} auf 255 → {meas['after5s']['contrastOnWhite']}:1
+Deckkraft aller Elternelemente nach 5 s: {ch['effectiveOpacity']} (kein Übergang)
+Mögliche Ursache (Hypothese): {E(meas['overlayHypothesis']['element'])} mit 90 % weissem Hintergrund liegt über dem Hinweis;
+  0,1·119 + 0,9·255 ≈ {meas['overlayHypothesis']['predictedGrey']} (gemessen {meas['after5s']['darkestGrey']}). {E(meas['overlayHypothesis']['status'])}.</pre>
 <ul><li><b>Beobachtete Folge:</b> Der Hinweis, dass ein Feld Pflicht ist, ist für sehende Personen mit eingeschränktem Kontrastsehen praktisch nicht lesbar.</li>
 <li><b>Nachspielen:</b> Seite laden, 5 s warten, Bereich «Abfuhrzonensuche» ansehen; in den Entwicklerwerkzeugen die tatsächlich gerenderte Farbe prüfen.</li>
-<li><b>Behebungshypothese:</b> klären, warum die Darstellung heller ist als die berechnete Farbe (z. B. weitere Ebene oder Filter), und den Hinweis mindestens im Kontrast 4,5:1 darstellen.</li>
+<li><b>Behebungshypothese:</b> prüfen, ob die klebende Überschrift den Hinweis überdeckt (Ebene/Position anpassen), und den Hinweis mindestens im Kontrast 4,5:1 darstellen.</li>
 <li><b>Selbstauskunft Basel:</b> «Die Kontrastverhältnisse entsprechen den Vorgaben.» Diese Einzelbeobachtung steht dazu im Widerspruch; sie ist keine Aussage über den ganzen Webauftritt.</li>
-<li><b>Noch offen:</b> Ursache; ob der Pflichtfeld-Hinweis anders vermittelt wird (z. B. am Feld selbst «Adresse: *»).</li></ul></section>""")
+<li><b>Noch offen:</b> Bestätigung der Ursache durch Layoutmessung; ob der Pflichtfeld-Hinweis anders vermittelt wird (z. B. am Feld selbst «Adresse: *»).</li></ul></section>""")
 a = search["observed"]["attributes"]
 p.append(f"""<section class='case'><h3>Fall 2 · Seitenweites Suchfeld: ARIA-Auszeichnung passt nicht zur Rolle</h3>
-<p><b>Aufgabe:</b> über die Suche einen Dienst finden (Kopfbereich, auf {len(search_pages)} von 12 geprüften Seiten vorhanden). <b>Zuständig:</b> unbekannt (gemeinsame Vorlage des Webauftritts).</p>
+<p><b>Aufgabe:</b> über die Suche einen Dienst finden (Kopfbereich; dieses axe-Signal auf {len(search_pages)} von 12 geprüften Seiten). <b>Zuständig:</b> unbekannt (gemeinsame Vorlage des Webauftritts).</p>
 <figure><img src='img/c1-header-search.png' alt='Kopfzeile von bs.ch mit Logo, Themen, Organisation, Sprachwahl DE, ePortal und Lupen-Schaltfläche für die Suche.'><figcaption>Kopfzeile mit der Such-Schaltfläche (Lupe rechts). Ein Bild kann ARIA nicht zeigen; der Beleg ist der DOM-Auszug unten.</figcaption></figure>
 <pre>&lt;input id="searchinput" type="{E(a['attributes'].get('type',''))}"
   aria-label="{E(a['attributes'].get('aria-label',''))}" aria-autocomplete="{E(a['attributes'].get('aria-autocomplete',''))}"
@@ -110,12 +116,21 @@ axe: aria-allowed-attr («aria-expanded» ist für ein Suchfeld nicht erlaubt), 
 <li><b>Selbstauskunft Basel:</b> Diese Fehlerklasse wird nicht genannt (genannt sind PDFs, Videos, iFrames).</li></ul></section>""")
 steps = kb["observed"]["steps"]
 p.append(f"""<section class='case'><h3>Negativbefund · «Fokus nicht sichtbar» war ein Fehlalarm unseres Werkzeugs</h3>
-<p>Der Fokus-Journey meldete auf mehreren Seiten «0/3 bzw. 2/5 Fokusziele mit deutlich erkennbarer Markierung». Beim Nachspielen auf der Seite «Umzug melden»:</p>
+<p>Der Fokus-Journey meldete auf mehreren Seiten «0/3 bzw. 2/5 Fokusziele mit deutlich erkennbarer Markierung». Nachgespielt wurde nur die Seite «Umzug melden» (0/3); für die übrigen Seiten ist der Fehlalarm wahrscheinlich, aber nicht einzeln geprüft:</p>
 <figure><img src='img/n1-tab1-banner.png' alt='Cookie-Hinweis unten auf der Seite; der Link «Datenschutzerklärung» ist mit hellem Hintergrund markiert.'><figcaption>Erster Tab: Fokus im Cookie-Hinweis auf «Datenschutzerklärung», sichtbar durch Hintergrundmarkierung (ohne Umrandung).</figcaption></figure>
 <figure><img src='img/n1-tab2-banner.png' alt='Cookie-Hinweis; die Schaltfläche «Weiter mit allen Cookies» ist violett mit dicker Umrandung hervorgehoben.'><figcaption>Zweiter Tab: «Weiter mit allen Cookies» mit deutlicher Umrandung.</figcaption></figure>
-<pre>{E(chr(10).join(f"{s['press']}: {s['focus'].get('tag')} «{s['focus'].get('text','')}» im Bild: {s['focus'].get('inViewport')} · Umrandung: {s['focus'].get('outline','–')} · im Cookie-Hinweis: {s['focus'].get('insideConsentBanner')}" for s in steps))}</pre>
+<pre>{E(chr(10).join(f"{s['press']}: {s['focus'].get('tag')} «{s['focus'].get('text','')}» · im Bild: {yn(s['focus'].get('inViewport'))} · Umrandung: {s['focus'].get('outline','–')} · im Cookie-Hinweis: {yn(s['focus'].get('insideConsentBanner'))}" for s in steps))}</pre>
 <p><b>Lehre:</b> Unsere Heuristik erkennt nur Umrandung oder Schatten und mass den Cookie-Hinweis im Feldlauf ausserhalb des Bildausschnitts. Die Markierung ist vorhanden. Das ist eine Verbesserung für unser Werkzeug, kein Befund zu Basel. Beobachtet, aber nicht bewertet: Die ersten Tab-Schritte führen in den Cookie-Hinweis; der vierte verlässt die Seite. Ob der Hinweis den übrigen Inhalt bewusst sperrt, wäre mit Tastatur- und Screenreader-Nutzenden zu klären.</p></section>""")
 
+p.append("""<h2>Alle Anfragen an die öffentlichen Seiten</h2><p class='small'>Vollständige Zählung der Seitenaufrufe auf www.bs.ch und eportal.egov.bs.ch (Unterressourcen der Seiten nicht mitgezählt). Kein anderer Host wurde aufgerufen; keine Weiterleitung, keine Wiederholung, kein Formular.</p>
+<div class='tw'><table><thead><tr><th>Schritt</th><th class='num'>Aufrufe</th><th>Beleg</th></tr></thead><tbody>
+<tr><td>robots.txt beider Origins (vor der Entdeckung, von Hand mit curl)</td><td class='num'>2</td><td class='small'>discovery/robots-*.txt (ePortal-Datei leer)</td></tr>
+<tr><td>Entdeckung (HTML, Tiefe ≤2, je 10 s Abstand)</td><td class='num'>32</td><td class='small'>discovery/ledger.json</td></tr>
+<tr><td>Feldlauf: Scanner + Journeys auf 12 Seiten</td><td class='num'>24</td><td class='small'>batch/run-manifest.json</td></tr>
+<tr><td>Nachspielen im frischen Browser (aufgezeichnet)</td><td class='num'>4</td><td class='small'>repro-03507ff/repro.json (3), repro-cbcd355/repro.json (1)</td></tr>
+<tr><td>Nachspielen, zwei fehlgeschlagene Versuche (Skriptfehler nach dem Laden der Seite «Umzug melden»; damals nicht aufgezeichnet, Skript seither korrigiert)</td><td class='num'>2</td><td class='small'>dieser Bericht</td></tr>
+<tr><td><b>Summe</b></td><td class='num'><b>64</b></td><td></td></tr></tbody></table></div>
+<p class='small'>Alle Werkzeugläufe endeten ohne Abbruch (24/24 «ok»).</p>""")
 p.append("""<h2>Grenzen dieser Stichprobe</h2><ul>
 <li>12 Einstiegs- und Informationsseiten, keine Transaktion: eServices, Formulare, eUmzug, eSteuern, Karten und PDFs liegen auf anderen Hosts oder hinter Anmeldung und wurden nicht geprüft.</li>
 <li>Automatische Prüfungen finden nur einen Teil der Barrieren; «unvollständig» (Kontrast auf 12 Seiten, Dialog-Fokus auf 11 Seiten) braucht menschliche Prüfung.</li>

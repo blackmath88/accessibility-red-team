@@ -1,8 +1,9 @@
-51baaf2abbe4b15c8fa9472a64dde334186edf2738d724acc7d60679f5ac3176  ./basel_discovery_fetch.py
-83a5dcf64537949d06d36c2cf890d782dc218039f370e82a8bfc8538c481b31f  ./basel_field_batch.py
+2ff685522bc6d778d9035c1525542fe08383404088d73376036cf237bbb64551  ./basel_discovery_fetch.py
+06bfe2b0c367f30307782a4b3258d869bd49715bca36e1da0599c23d96898da3  ./basel_field_batch.py
 f70cf344ec0d006ce5c1ff66fb31b9631a389efe5b1b45d749266e0ac5dca5a4  ./basel_inventory.py
-a6446a19b000007265863200e5816c161579d9654a626ee33d163a977dea2a90  ./basel_report.py
-00853fe87bfd2ec00bae1182c2eec4d83d2f66ad84b24e27102bc31901cd2cb0  ./basel_reproduce.ts
+3deb46d89f5eefb4e45def3e1f86bc3dc8b97cc1e92e9bd045e3797616326961  ./basel_pixel_measure.py
+5f95e85f25e6a6492a4c53cbc7023928bdad38b40ae7956e10f480b276b80409  ./basel_report.py
+0285c91595d60663897c91c0f03fd3203feac04c2b27b62c75bea82fbd359c8f  ./basel_reproduce.ts
 e572e2ff23255d10c74e22ee032e694351338d87b84c95799d9dcdc11875b987  ./batch/p01-start/journey/journey-results.json
 becd3acf08b6edf0dc9eb386e0d7886005ce05697ccf29865db8edf1372e4ca3  ./batch/p01-start/scan/coverage.json
 d374d08e9bdcc3a436a8035f96b0ff4e1663293616bd66d051d447549fa66fd8  ./batch/p01-start/scan/manifest.json
@@ -123,6 +124,7 @@ e7d497a80b600f18d00a919b02473e540beb1a832402663f473219fed27b0e2c  ./discovery/ht
 622cf681abb8c4522ffb5b0736af9bbeb6de7fb8127a12b6ddf38d4aa22082e0  ./discovery/ledger.json
 e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855  ./discovery/robots-eportal.egov.bs.ch.txt
 7d3c633658cfe88259c31b4cbf6c66b49a07bca0e883102e42cbde5980fce7cc  ./discovery/robots-www.bs.ch.txt
+76b82e9822424c9cb3e51fab0aa7a9f9d61eee3becac6ba40b53b17a9b58d4fa  ./measurements.json
 3534f699016040110f153c63f9096779818ece894a3c92aa24fc69831fba9855  ./repro-03507ff/keyboard-first-tabs/keyboard-0-loaded.png
 71f5717d06f171c3a9360ab6cba82bcee261052e1bac3e15b6c4ffb101812923  ./repro-03507ff/keyboard-first-tabs/keyboard-1.png
 3af47fc0906819ef80c0ce3d86d7db565f68cf82514719cf1fc0aa924a33b7a7  ./repro-03507ff/keyboard-first-tabs/keyboard-2.png

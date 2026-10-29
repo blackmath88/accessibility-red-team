@@ -44,15 +44,21 @@ def run(tool, url, target):
     return {"tool": tool, "status": status, "seconds": round(time.time() - t0, 1), "at": datetime.fromtimestamp(t0, timezone.utc).isoformat(), "errorTail": tail if status != "ok" else None}
 
 for i, item in enumerate(queue[:MAX_PAGES]):
+    if manifest.get("stoppedEarly"):
+        manifest["pages"].append({**item, "runs": [], "status": f"not run: batch stopped after a non-ok run ({manifest['stoppedEarly']})"}); continue
     entry = {**item, "runs": []}
     if not item["url"].startswith(ALLOWED):
         entry["status"] = "refused: origin not authorised"; manifest["pages"].append(entry); continue
     for tool in ("scan", "journey"):
+        if manifest.get("stoppedEarly"):
+            entry["runs"].append({"tool": tool, "status": "not run: batch stopped"}); continue
         if time.time() - started > WALL_S:
             entry["runs"].append({"tool": tool, "status": "not run: wall cap reached"}); continue
         target = os.path.join(out, item["id"], tool)
         entry["runs"].append(run(tool, item["url"], target))
         print(f"{item['id']} {tool}: {entry['runs'][-1]['status']} ({entry['runs'][-1].get('seconds')} s)", flush=True)
+        if entry["runs"][-1]["status"] != "ok":
+            manifest["stoppedEarly"] = f"{item['id']} {tool}: {entry['runs'][-1]['status']}"
     entry["artifacts"] = sha_tree(os.path.join(out, item["id"]))
     manifest["pages"].append(entry)
     json.dump(manifest, open(os.path.join(out, "run-manifest.json"), "w"), indent=1, ensure_ascii=False)

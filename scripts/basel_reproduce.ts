@@ -3,7 +3,7 @@
 // only, keyboard Tab and DOM/attribute reads only (no typing, no Enter, no clicks, no form interaction), at least 10 s
 // between navigations, same user agent and viewport as the production scanner. Writes repro.json + screenshots.
 //   npx tsx scripts/basel_reproduce.ts <out_dir> [case-id ...]
-import { mkdir, writeFile } from "node:fs/promises";
+import { mkdir, readFile, writeFile } from "node:fs/promises";
 import { join } from "node:path";
 import { chromium, type Page } from "playwright";
 
@@ -108,8 +108,11 @@ async function main() {
   const out = process.argv[2]!;
   await mkdir(out, { recursive: true });
   const browser = await chromium.launch();
-  const results = [];
-  let last = 0;
+  const results: Array<Record<string, unknown>> = [];
+  // The gap is enforced across invocations too (failed attempts also navigate): last navigation time in a shared file.
+  const stamp = join(out, "..", ".basel-last-navigation");
+  let last = Number(await readFile(stamp, "utf8").catch(() => "0"));
+  const save = () => writeFile(join(out, "repro.json"), JSON.stringify({ schema: "art/basel-repro/v1", results }, null, 2));
   try {
     const only = process.argv.slice(3);
     for (const item of CASES.filter((c) => only.length === 0 || only.includes(c.id))) {
@@ -117,6 +120,7 @@ async function main() {
       const wait = last + GAP_MS - Date.now();
       if (wait > 0) await new Promise((resolve) => setTimeout(resolve, wait));
       last = Date.now();
+      await writeFile(stamp, String(last));
       const dir = join(out, item.id);
       await mkdir(dir, { recursive: true });
       const context = await browser.newContext({ viewport: VIEWPORT, userAgent: UA });
@@ -124,16 +128,20 @@ async function main() {
       await context.addInitScript("window.__name = (f) => f;");
       const page = await context.newPage();
       const at = new Date().toISOString();
-      const response = await page.goto(item.url, { waitUntil: "domcontentloaded", timeout: 30_000 });
+      const response = await page.goto(item.url, { waitUntil: "domcontentloaded", timeout: 30_000 }).catch((error: Error) => { results.push({ case: item.id, url: item.url, at, error: error.message.slice(0, 200) }); return null; });
+      if (!response || response.status() >= 400 || !ALLOWED.some((origin) => page.url().startsWith(origin))) {
+        results.push({ case: item.id, url: item.url, finalUrl: page.url(), status: response?.status() ?? null, at, stopped: "non-2xx status or final URL outside the authorised origins" });
+        await context.close(); await save(); throw new Error(`stopped at ${item.id}`);
+      }
       await page.waitForTimeout(1000);
-      const observed = await item.run(page, dir);
+      const observed = await item.run(page, dir).catch(async (error: Error) => { results.push({ case: item.id, url: item.url, at, error: error.message.slice(0, 200) }); await context.close(); await save(); throw error; });
       results.push({ case: item.id, url: item.url, finalUrl: page.url(), status: response?.status() ?? null, at, browser: `chromium ${browser.version()}`, viewport: VIEWPORT, observed });
       await context.close();
     }
   } finally {
     await browser.close();
   }
-  await writeFile(join(out, "repro.json"), JSON.stringify({ schema: "art/basel-repro/v1", results }, null, 2));
+  await save();
   console.log(out);
 }
 

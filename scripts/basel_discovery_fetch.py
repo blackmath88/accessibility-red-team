@@ -57,6 +57,7 @@ for url in urls:
     wait = ledger["lastRequestAt"] + DELAY_S - time.time()
     if wait > 0: time.sleep(wait)
     ledger["lastRequestAt"] = time.time()
+    json.dump(ledger, open(ledger_path, "w"), indent=1, ensure_ascii=False)  # persist before the request (crash-safe delay)
     at = datetime.now(timezone.utc).isoformat()
     entry = {"url": url, "at": at, "counted": True}
     try:
