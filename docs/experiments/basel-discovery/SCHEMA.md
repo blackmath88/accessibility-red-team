@@ -42,3 +42,7 @@
 
 Rules: host != organisation != application != service; several applications can share a host; redirects are alternates,
 not new organisations; an edge without evidence is not allowed; `unknown` is a valid value and must be shown.
+
+Build and validation: edit only `discovery-data.json`, then run `python3 -I scripts/basel_discovery_build.py`
+(validates and re-embeds into `index.html`; `--check` verifies without writing). Fixture runs need
+`--data <file> --out <page>`; fake test records live only in `test/fixtures/basel-discovery-sample.json`.
