@@ -1,0 +1,86 @@
+<section id="fortschritt" class="progress" lang="de">
+<h2>Fortschritt: was gebaut, getestet und nur vorgeschlagen ist</h2>
+<p class="lead">Stand 29.10.2026. Privater Arbeits- und Forschungsbericht zur Durchsicht durch den Eigentümer; keine menschliche Freigabe, keine Veröffentlichung, keine WCAG-Konformitätsaussage.</p>
+
+<h3>Code-Stände</h3>
+<div class="tw"><table>
+<thead><tr><th>Stand</th><th>Commit</th><th>Inhalt</th></tr></thead>
+<tbody>
+<tr><td>main</td><td><code>c8a70f8</code> (Commit vom 26.10.2026, zuletzt geprüft am 29.10.2026)</td><td>Produktiver Scanner (scan, Journeys, audit, Berichte) und opt-in lokaler Publikations-Export mit signierter Freigabe</td></tr>
+<tr><td>Draft-PR #52</td><td><code>87d6e17</code> (29.10.2026)</td><td>A/B/C/M-Experiment im experimentellen Track (<code>src/experimental/adaptive/</code>), nicht gemergt</td></tr>
+<tr><td>Draft-PR #53</td><td>auf #52 gestapelt</td><td>Dieser Basel-Feldbericht: Quellen-Inventar, begrenzter Discovery-Fetcher, Feld-Batch</td></tr>
+</tbody></table></div>
+
+<h3>Status nach Nachweisart</h3>
+<div class="tw"><table>
+<thead><tr><th>Bestandteil</th><th>Implementiert</th><th>Getestet</th><th>Live beobachtet</th><th>Menschlich geprüft</th></tr></thead>
+<tbody>
+<tr><td>Deterministischer Scanner: axe, sichere Tastatur-Journeys, Coverage, Screenshots</td><td>ja (main)</td><td>ja (automatisierte Tests)</td><td>frühere Feldläufe; Basel: siehe Feldteil dieses Berichts</td><td>nein</td></tr>
+<tr><td>Publikations-Export mit Richtlinie und SSH-signierter Freigabe (opt-in, lokal)</td><td>ja (main)</td><td>ja, nur mit simulierter Autorität</td><td>nein</td><td>nein (keine echte Freigabe erteilt)</td></tr>
+<tr><td>Experimenteller Frontier-Scheduler A, lokales LLM B, Hybrid C, Mistral M</td><td>ja (PR #52, nur Fixture-Modus)</td><td>ja</td><td>ja, nur auf Entwicklungs-Fixtures (Loopback)</td><td>nein (Beurteilung modellgestützt)</td></tr>
+<tr><td>Partner-Pilot, AT-Nutzer-Validierung, Anbindung weiterer Berichtspfade</td><td>nein (vorgeschlagen)</td><td>–</td><td>–</td><td>–</td></tr>
+</tbody></table></div>
+
+<h3>Architektur</h3>
+<figure>
+<svg viewBox="0 0 720 250" role="img" aria-labelledby="arch-t arch-d" style="width:100%;max-width:720px;height:auto;color:var(--fg,currentColor);font:13px system-ui,sans-serif">
+<title id="arch-t">Architektur: deterministische Ausführung, optionale Modellrollen, Prüfung und Export</title>
+<desc id="arch-d">Links der produktive deterministische Pfad mit Scan, Journeys, Coverage und Screenshots. Er führt zu Prüfung und Export rechts. Der opt-in Publikations-Export mit signierter Freigabe ist implementiert; bestehende Berichts- und Auslieferungspfade sind nicht angebunden. In der Mitte gestrichelt die optionalen Modellrollen, nur experimentell und nicht im Produktionspfad.</desc>
+<defs><marker id="arch-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" fill="var(--muted,currentColor)"/></marker></defs>
+<rect x="10" y="20" width="220" height="150" rx="8" fill="none" stroke="var(--accent,currentColor)" stroke-width="2"/>
+<text x="24" y="44" font-weight="600" fill="currentColor">1 · Deterministisch (main)</text>
+<text x="24" y="70" fill="currentColor">scan: axe-Ergebnisse getrennt</text>
+<text x="24" y="90" fill="currentColor">sichere Tastatur-Journeys</text>
+<text x="24" y="110" fill="currentColor">Coverage, Screenshots</text>
+<text x="24" y="130" fill="currentColor">audit, Berichte</text>
+<text x="24" y="156" fill="var(--muted,currentColor)" font-size="11">produktiv, ohne LLM</text>
+<rect x="250" y="190" width="220" height="50" rx="8" fill="none" stroke="var(--muted,currentColor)" stroke-dasharray="5 4"/>
+<text x="262" y="210" font-weight="600" fill="currentColor">2 · Optionale Modellrollen</text>
+<text x="262" y="228" fill="var(--muted,currentColor)" font-size="11">nur experimentell: lokales LLM, Mistral</text>
+<rect x="490" y="20" width="220" height="150" rx="8" fill="none" stroke="var(--line,currentColor)" stroke-width="2"/>
+<text x="504" y="44" font-weight="600" fill="currentColor">3 · Prüfung / Export</text>
+<text x="504" y="70" fill="currentColor">Publikations-Export, opt-in,</text>
+<text x="504" y="88" fill="currentColor">signierte Freigabe:</text>
+<text x="504" y="106" fill="var(--accent,currentColor)" font-weight="600">implementiert</text>
+<text x="504" y="130" fill="currentColor">bestehende Berichte/Serving:</text>
+<text x="504" y="148" fill="var(--muted,currentColor)" font-weight="600">nicht angebunden</text>
+<line x1="230" y1="95" x2="486" y2="95" stroke="var(--muted,currentColor)" stroke-width="2" marker-end="url(#arch-arrow)"/>
+<text x="300" y="86" fill="var(--muted,currentColor)" font-size="11">Evidenz + Coverage</text>
+<line x1="360" y1="186" x2="360" y2="100" stroke="var(--muted,currentColor)" stroke-dasharray="4 4" marker-end="url(#arch-arrow)"/>
+<text x="368" y="150" fill="var(--muted,currentColor)" font-size="11">nicht im</text>
+<text x="368" y="164" fill="var(--muted,currentColor)" font-size="11">Produktionspfad</text>
+</svg>
+<figcaption class="small">Nicht an die Richtlinie angebunden (laut <code>PUBLICATION_EXPORT_INTEGRATION.md</code>, im Code geprüft): <code>buildReport</code>, <code>buildSiteReport</code>, <code>auditSite</code>, Watch-Vergleich, Kohorten, Control-Center-Upload/Serving, Populationsanalyse, Outreach. Ob die Basel-Feldartefakte über den Export laufen werden: unklar (nicht Teil dieses Abschnitts).</figcaption>
+</figure>
+
+<h3>Ergebnisse A/B/C/M (nur offengelegte Entwicklungs-Fixtures)</h3>
+<p class="small">A = experimenteller Frontier-Scheduler mit Regeltabelle (kein Modell); B = lokales qwen3:1.7b; C = B + Mistral-Beratung; M = mistral-small-2603 direkt als Erkundungs-Policy. A ist nicht der produktive Scanner und nicht für öffentliche Ursprünge freigegeben.</p>
+<div class="tw"><table>
+<thead><tr><th>Segment</th><th>A</th><th>B</th><th>C</th><th>M</th></tr></thead>
+<tbody>
+<tr><td>s1 (ohne Reparatur), gesetzte Barrieren</td><td class="num">4/4</td><td class="num">0/4</td><td class="num">0/4</td><td>–</td></tr>
+<tr><td>s2 (Wiederholungs-Sperre), gesetzte Barrieren</td><td class="num">4/4</td><td class="num">0/4</td><td class="num">0/4</td><td>–</td></tr>
+<tr><td>s3 (3 Wiederholungen), gesetzte Instanzen</td><td class="num">12/12</td><td>–</td><td>–</td><td class="num">6/12</td></tr>
+<tr><td>s3 blinde Beurteilung: belegt / widerlegt / unzureichend</td><td class="num">12 / 0 / 0</td><td>–</td><td>–</td><td class="num">7 / 20 / 4</td></tr>
+<tr><td>s3 Duplikate / nicht gelistete Behauptungen</td><td class="num">0 / 0</td><td>–</td><td>–</td><td class="num">14 / 6</td></tr>
+<tr><td>s3 Zeit (9 Sitzungen)</td><td class="num">7 s</td><td>–</td><td>–</td><td class="num">129 s</td></tr>
+</tbody></table></div>
+<ul>
+<li><strong>Zählweise:</strong> 4 verschiedene gesetzte Barrieren je Durchgang; in s3 × 3 Wiederholungen = 12 Instanzen. Von M's 20 widerlegten Behauptungen bleiben ohne Duplikate 7, inhaltlich 4 verschiedene falsche Aussagen.</li>
+<li><strong>M</strong> besuchte alle Seiten, hängte aber falsche Evidenz an (dev-k1: richtiger Defekt, Startseite statt Unterseite belegt) und löste die nötige Escape-Interaktion im Dialog nie aus (dev-k3); stattdessen behauptete es in allen 3 Läufen einen Fehler am korrekt funktionierenden Dialog, im frischen Browser widerlegt.</li>
+<li><strong>Zeit:</strong> Von M's 129 s entfallen rund 111 s auf unsere eigene Ratenbegrenzung (1,1 s je Aufruf); das ist keine reine Modell-Latenz.</li>
+<li><strong>Lokal:</strong> qwen3:1.7b lief nur auf CPU (Ollama ohne GPU-Backend). Keine Aussage über andere lokale Modelle oder GPU-Inferenz.</li>
+<li><strong>Kosten:</strong> Mistral gesamt 0,073 USD (laut Ledger; maßgeblich ist die Rechnung), davon s3 0,069 USD.</li>
+<li><strong>Grenze:</strong> Alles auf offengelegten Entwicklungs-Fixtures dev-k1..k3. Das ist weder Feld-Recall noch -Präzision noch eine Validierung mit Nutzenden assistiver Technologien. Die Beurteilung erfolgte modellgestützt (frische Claude-Kontexte), nicht durch Menschen.</li>
+</ul>
+
+<h3>Verbesserungs-Schwellen je Rolle</h3>
+<div class="tw"><table>
+<thead><tr><th>Rolle</th><th>Schwelle bevor sie zählt</th><th>Stand</th></tr></thead>
+<tbody>
+<tr><td>KI als Detektor</td><td>verifizierte Ausführung und Evidenz; akzeptables Verhalten bei falschen Behauptungen</td><td>nicht erreicht (M: 20 von 31 widerlegt; B/C: 0 Funde)</td></tr>
+<tr><td>KI als Zusammenfassung / Triage-Hilfe</td><td>getreue, evidenzgestützte Formulierung mit Quellen und Enthaltung; Detektor-Recall nicht nötig</td><td>nicht gemessen</td></tr>
+<tr><td>Deterministischer Partner-Pilot</td><td>muss nicht warten, bis KI den Fixture-Scheduler schlägt</td><td>vorgeschlagen</td></tr>
+</tbody></table></div>
+<p class="small">Quellen: <code>docs/experiments/BASEL_FIELD_HANDOFF.md</code>, <code>ABC_LOCAL_HYBRID.md</code>, <code>abc-report/README.md</code>, <code>abc-report/index.html</code>, <code>ADAPTIVE_MISTRAL.md</code>, <code>PUBLICATION_EXPORT_INTEGRATION.md</code>, <code>LOCAL_REVIEW_APPROVAL.md</code>, ADR-0013.</p>
+</section>
