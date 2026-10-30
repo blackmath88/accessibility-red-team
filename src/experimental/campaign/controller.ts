@@ -51,7 +51,7 @@ export async function runController(id: string) {
   for (const t of state.tasks) if (t.status === "running") { t.status = "queued"; await store.event("op", "task_interrupted_requeued", { taskId: t.id, step: t.step ?? null }); }
   for (const t of state.tasks) if (t.status === "paused") { t.status = "queued"; t.error = undefined; await store.event("op", "task_unpaused", { taskId: t.id, step: t.step ?? null }); }
   // Calls in flight when a session died were reserved but never settled: count them as consumed, never as returned.
-  if (state.usage.claudeInFlight) { await store.event("op", "inflight_counted_consumed", { calls: state.usage.claudeInFlight }); state.usage.claudeInvocations += state.usage.claudeInFlight; state.usage.claudeInFlight = 0; }
+  if (state.usage.claudeInFlight) { await store.event("op", "inflight_counted_consumed", { calls: state.usage.claudeInFlight }); state.usage.claudeInvocations += state.usage.claudeInFlight; state.usage.tokenCallsWithoutUsage += state.usage.claudeInFlight; state.usage.claudeInFlight = 0; }
   await store.event("op", state.sessions > 1 ? "controller_resumed" : "controller_started", { pid: process.pid, session: state.sessions, limits: config.limits });
   await store.save();
 
@@ -247,7 +247,7 @@ async function triage(ctx: Ctx, t: Task) {
   const failedUnits = ctx.state.tasks.filter((x) => x.kind === "baseline" && x.status === "failed").map((x) => x.id);
   const prompt = `You triage algorithmic baseline evidence in a bounded local accessibility campaign. For each unit with a signal, decide whether to open a bounded investigation (at most ${MAX_INVESTIGATIONS} in total; each needs a control page from the same task) or to reject/defer it with a concrete reason. Cached evidence from earlier investigations may justify not reinvestigating. Never invent units. Reply with ONE JSON object: {"decisions":[{"unit":"<unit id>","action":"investigate"|"reject","control":"<page name of the other page in the same task, e.g. ${ctx.config.scope.tasks[0]!.pages.at(-1)}>","question","alternatives":["..."],"reason"}],"summary"}\n\nUSER TASKS: ${JSON.stringify(ctx.config.scope.tasks.map((x) => ({ task: x.id, userReport: x.userReport, pages: x.pages })))}\nCACHED EVIDENCE: ${JSON.stringify(ctx.config.scope.cachedEvidence.map((c) => ({ id: c.id, summary: c.summary })))}\nBASELINE UNITS: ${JSON.stringify(units)}\nFAILED UNITS (no evidence): ${JSON.stringify(failedUnits)}`;
   const r = await claude(ctx, t, "open", prompt, "triage") as { summary?: string; decisions?: Array<{ unit: string; action: string; control?: string; question?: string; alternatives?: string[]; reason?: string }> };
-  let opened = 0;
+  let opened = ctx.state.tasks.filter((x) => x.kind === "investigate").length; // a re-run triage never reuses an id
   for (const d of r.decisions ?? []) {
     const u = done.find((x) => x.id === d.unit); if (!u) continue;
     const inp = u.input as { task: string; page: string; viewport: string };
@@ -278,11 +278,12 @@ async function triage(ctx: Ctx, t: Task) {
 // ---- investigation through the transfer gate ----
 
 async function transferCli(env: Record<string, string>, args: string[]) {
-  const p = run("npx", ["tsx", "src/experimental/investigation/transfer.ts", ...args], { cwd: REPO_ROOT, env: { ...process.env, ...env }, maxBuffer: 20 * 1024 * 1024, timeout: 600_000 }).catch((e: { stdout?: string; stderr?: string; message: string }) => { throw new Error(`transfer ${args[1]} failed: ${(e.stderr || e.message).slice(0, 300)}`); });
-  // Settled with the Claude children on stop or wall-time exhaustion.
-  const child = (p as unknown as { child?: import("node:child_process").ChildProcess }).child;
+  const exec = run("npx", ["tsx", "src/experimental/investigation/transfer.ts", ...args], { cwd: REPO_ROOT, env: { ...process.env, ...env }, maxBuffer: 20 * 1024 * 1024, timeout: 600_000 });
+  // Settled with the Claude children on stop or wall-time exhaustion. Only the execFile promise itself carries .child.
+  const child = (exec as unknown as { child?: import("node:child_process").ChildProcess }).child;
   if (child) { active.add(child); child.on("close", () => active.delete(child)); }
-  return (await p).stdout;
+  const r = await exec.catch((e: { stdout?: string; stderr?: string; message: string }) => { throw new Error(`transfer ${args[1]} failed: ${(e.stderr || e.message).slice(0, 300)}`); });
+  return r.stdout;
 }
 
 async function investigate(ctx: Ctx, t: Task) {
@@ -327,7 +328,9 @@ async function investigate(ctx: Ctx, t: Task) {
     t.output = { attempt }; await step("validated");
   }
   if (t.step === "validated") {
-    if (!(await exists(join(runDir, "attempts", attempt, "results.json")))) await transferCli(env, [runName, "execute", attempt]);
+    // results.json is written even by an aborted run, so only this marker (written after a clean exit) proves completion.
+    const done = join(ctx.dir, `executed-${t.id}-${attempt}.ok`);
+    if (!(await exists(done))) { await transferCli(env, [runName, "execute", attempt]); await writeFile(done, now()); }
     t.output = { attempt }; await step("executed");
   }
   if (t.step === "executed") {
@@ -339,8 +342,9 @@ async function investigate(ctx: Ctx, t: Task) {
     if (!(await exists(join(runDir, "conclusion.json")))) {
       try { await transferCli(env, [runName, "import-conclusion", attempt, saved("conclusion")]); }
       catch (e) {
-        // Bounded recovery: one corrective call with the schema rejection; the rejected reply stays in claude/.
+        // Bounded recovery: one corrective call, only for a schema rejection; the rejected reply stays in claude/.
         const err = String((e as Error).message).slice(0, 600);
+        if (!/too_big|too_small|invalid_type|invalid_value|Too big|Too small/.test(err)) throw e;
         await ctx.store.event("op", "conclusion_rejected_by_schema", { taskId: t.id, error: err.slice(0, 300) });
         c = await once("conclusion-fix", "finish", async () => `Your conclusion was rejected by the storage schema: ${err}\nShorten it to fit (explanation at most 1,500 characters, at most 10 items per list) without changing its content or verdict. Reply with ONE JSON object only.\nYOUR CONCLUSION:\n${JSON.stringify(conclusion)}`);
         await transferCli(env, [runName, "import-conclusion", attempt, saved("conclusion-fix")]);

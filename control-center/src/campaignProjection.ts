@@ -24,7 +24,7 @@ export function milestones(s: Pick<State, "tasks" | "status" | "planRevision">):
 }
 
 // Error strings can carry tool output; local absolute paths are replaced before they leave the machine's state folder.
-const scrub = (s: string | null | undefined) => (s ?? "").replace(/(?:\/(?:home|tmp|Users|root|var)\/|[A-Za-z]:\\)[^\s"'`,;)]*/g, "<path>");
+const scrub = (s: string | null | undefined) => (s ?? "").replace(/(?:~\/|\/(?:home|tmp|Users|root|var|opt|mnt|srv|etc|usr|private|Volumes)\/|[A-Za-z]:\\)[^\s"'`,;)]*/g, "<path>");
 
 // What the control center may see: no filesystem paths beyond artifact ids, no prompts, no model controls.
 export function publicView(s: State, limits: unknown, heartbeatStaleMs = 10_000) {
@@ -34,7 +34,7 @@ export function publicView(s: State, limits: unknown, heartbeatStaleMs = 10_000)
     planRevision: s.planRevision, updatedAt: s.updatedAt, heartbeatAt: s.heartbeatAt, controllerAlive: alive, sessions: s.sessions, limits, usage: s.usage,
     milestones: milestones(s),
     tasks: s.tasks.map((t) => ({ id: t.id, kind: t.kind, milestone: t.milestone, label: t.label, status: t.status, attempts: t.attempts, step: t.step ?? null, error: t.error ? scrub(t.error) : null, startedAt: t.startedAt ?? null, settledAt: t.settledAt ?? null })),
-    decisions: s.decisions.slice(-12).map((d) => ({ ...d, reason: scrub(d.reason) })), failures: s.failures.slice(-12).map((f) => ({ ...f, error: scrub(f.error) })), cases: s.cases, evidenceCount: s.evidence.length, nextAction: s.nextAction, report: s.report ? { partial: s.report.partial, at: s.report.at } : null,
+    decisions: s.decisions.slice(-12).map((d) => ({ ...d, summary: scrub(d.summary), reason: scrub(d.reason) })), failures: s.failures.slice(-12).map((f) => ({ ...f, error: scrub(f.error) })), cases: s.cases.map((c) => ({ ...c, summary: scrub(c.summary) })), evidenceCount: s.evidence.length, nextAction: s.nextAction, report: s.report ? { partial: s.report.partial, at: s.report.at } : null,
   };
 }
 export type CampaignView = ReturnType<typeof publicView>;

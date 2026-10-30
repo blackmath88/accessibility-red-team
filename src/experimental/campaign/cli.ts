@@ -7,7 +7,7 @@
 import { spawn } from "node:child_process";
 import { appendFile, mkdir, open, readFile, writeFile } from "node:fs/promises";
 import { join } from "node:path";
-import { ConfigSchema, Store, amendLimits, countEvents, createCampaign, dirOf, loadConfig, loadState, now, writeAtomic } from "./campaign.js";
+import { ConfigSchema, Store, amendLimits, repairLog, createCampaign, dirOf, loadConfig, loadState, now, writeAtomic } from "./campaign.js";
 import { pidAlive, runController } from "./controller.js";
 import { milestones } from "../../../control-center/src/campaignProjection.js";
 import { REPO_ROOT } from "../investigation/spend.js";
@@ -47,6 +47,7 @@ async function stop(id: string) {
   const pid = await liveController(id);
   if (pid) { await writeFile(join(dirOf(id), "stop.request"), now()); console.log(`stop requested; controller ${pid} settles workers and checkpoints`); return; }
   const s = await loadState(id), store = new Store(id, s);
+  s.lastEventSeq = (await repairLog(id)).lastSeq; // the log is authoritative; never append at a stale sequence
   if (["completed", "partial", "stopped"].includes(s.status)) { console.log(`${id} is ${s.status}; nothing to stop`); return; }
   s.status = "stopped"; s.statusReason = "stopped by operator while no controller was running";
   await store.event("op", "stopped_offline", {}); await store.save(); console.log("marked stopped");
@@ -59,8 +60,8 @@ async function extend(id: string) {
   const inv = flag("--invocations"), wall = flag("--wall-minutes");
   if (!inv && !wall) throw new Error("give --invocations and/or --wall-minutes");
   const c = await loadConfig(id), s = await loadState(id);
-  const ev = await countEvents(id);
-  if (ev.lastSeq !== s.lastEventSeq) throw new Error("checkpoint does not match the event log; refusing to amend");
+  const ev = await repairLog(id);
+  if (ev.lastSeq !== s.lastEventSeq) throw new Error("checkpoint does not match the event log; resume once (it reconciles), then amend");
   const limits = amendLimits(c.limits, { ...(inv ? { claudeInvocations: Number(inv) } : {}), ...(wall ? { wallMinutes: Number(wall) } : {}) }, s.usage);
   // Only resource ceilings change. Scope, scope version, model, token target and paid authority are copied unchanged.
   const next = ConfigSchema.parse({ ...c, configVersion: c.configVersion + 1, limits });
