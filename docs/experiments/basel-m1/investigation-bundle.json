@@ -1481,7 +1481,82 @@
   }
  ],
  "transfer": {
-  "status": "pending",
-  "note": "filled by the coordinator after the blind local transfer experiment"
+  "status": "completed",
+  "note": "Separate blind local case t1 (two neutral fixture pages, one defective, one clean control; independent fixture author; key sealed until the conclusion was frozen). One case demonstrates transfer only; it is not a benchmark or proof of general reliability. Not M1 evidence; no public site was contacted.",
+  "summary": "Partially correct. The frozen final conclusion names the defective page (transfer-a) and separates it from the control with measurements, but misattributes the mechanism. The cheap designer alone produced only a coarse boolean split: its one revision failed the gate, a blind Claude escalation wrote the decisive probe, and a coordinator fix to truncated conclusion input was needed.",
+  "sourceRevision": "71205105b55483035ba749b3985240950868da96",
+  "facts": [
+   {
+    "label": "Correct",
+    "value": "transfer-a identified as defective; text-rect pixels uniform 239 (equal to the background reference) at 1440x900 and 390x844, versus ink down to 85 (p05 147 / 111) on the control; an element is stacked above the text only on transfer-a."
+   },
+   {
+    "label": "Unsupported",
+    "value": "Conclusion says #delivery's white box covers the note; its recorded rect starts below the text (y 345 vs 304-324) and the covering paint is 239, not 255. The pseudo-element possibility was listed as untested, which is accurate."
+   },
+   {
+    "label": "Probe failures and revisions",
+    "value": "d1 (Mistral) passed the gate, measured no pixels. d2 (Mistral revision) crashed on the contract mock and failed all 5 required checks although its revisionNote claimed every change. d3 (Claude escalation, blind) passed on the first validation."
+   },
+   {
+    "label": "Coordinator interventions",
+    "value": "Ran the blind critic and one Claude escalation; relaxed the conclusion schema; fixed conclusion input that had been cut at 20,000 characters (first frozen conclusion: undetermined, transfer-b missing). No handwritten measurement code."
+   },
+   {
+    "label": "Cost and time",
+    "value": "Mistral: 5 calls, USD 0.00944 (aggregate USD 0.1009 of the USD 5 cap). Claude critic, escalation and judge ran as subscription subagents. Design to frozen conclusion: about 8 minutes wall-clock."
+   },
+   {
+    "label": "Judge",
+    "value": "Fresh Claude context after the reveal; verified the frozen-conclusion and key hashes; found no fixture-specific code in d1-d3."
+   }
+  ],
+  "provenance": [
+   {
+    "label": "Transfer README",
+    "path": "docs/experiments/ail-transfer/README.md",
+    "sha256": "0ee4ee082b675315c0472648b29faec913ca4a7c6bfeb264e6ab017a09dde5ca"
+   },
+   {
+    "label": "Answer key (path-sanitised copy)",
+    "path": "docs/experiments/ail-transfer/evidence/answer-key.json",
+    "sha256": "ed4751c73f4bc8c67e06e810ef40fb7c6ce147f87073cef3dc1d32b2404b9d99"
+   },
+   {
+    "label": "Final conclusion",
+    "path": "docs/experiments/ail-transfer/evidence/conclusion-2-full-input.json",
+    "sha256": "6284afd8642587f4e8c7c50a4e034f36f8cebe58f09c4f2a316370ae9ccdf244"
+   },
+   {
+    "label": "First conclusion (truncated input)",
+    "path": "docs/experiments/ail-transfer/evidence/conclusion-1-truncated-input.json",
+    "sha256": "cc7f6d5e8a4085b6a26600878a3f7b1d50aad7a197d6a1ad30ae0463e0f5ddf1"
+   },
+   {
+    "label": "Judgment",
+    "path": "docs/experiments/ail-transfer/evidence/judgment.json",
+    "sha256": "de8148c6d67d71907058b8df20a4ef7422ec0c258f86de5d84dd8bd589c01cfb"
+   },
+   {
+    "label": "d1 critique and checks",
+    "path": "docs/experiments/ail-transfer/evidence/d1-critic.json",
+    "sha256": "b890b9019d195864cb6e94dae7321ed54e707524295e4e2757316fb9172f9efb"
+   },
+   {
+    "label": "d2 gate result",
+    "path": "docs/experiments/ail-transfer/evidence/d2-validation.json",
+    "sha256": "08c8bdd088f7ba420c01fb406674f5b7e6eb07dea7aae49c4326953a0b7314af"
+   },
+   {
+    "label": "d3 escalation proposal",
+    "path": "docs/experiments/ail-transfer/evidence/d3-proposal.json",
+    "sha256": "210f9f566aa616461331c46b290d7a5eec0d6c600b39576c728e9febb0e48e2e"
+   },
+   {
+    "label": "Measurements",
+    "path": "docs/experiments/ail-transfer/evidence/measurements.json",
+    "sha256": "207ee2df41ba0fa7509f481862c502afda37054f1c3b7c4bc3dc445f46a87875"
+   }
+  ]
  }
 }
