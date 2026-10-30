@@ -1,0 +1,122 @@
+{
+  "schema": "art/basel-pilot-proposal/v0",
+  "status": "proposed",
+  "executionEnabled": false,
+  "createdOn": "2026-10-30",
+  "geography": {
+    "canton": "Basel-Stadt",
+    "municipalities": [
+      "Basel",
+      "Riehen",
+      "Bettingen"
+    ],
+    "excluded": [
+      "Basel-Landschaft",
+      "cross-border services unless separately admitted"
+    ]
+  },
+  "scope": {
+    "exactOrigins": [],
+    "pathRestrictions": [],
+    "admissionStatus": "pending official seed verification and explicit executable-manifest confirmation",
+    "researchSeeds": [
+      {
+        "url": "https://www.bs.ch/",
+        "status": "historically sampled; not a newly authorized batch"
+      },
+      {
+        "url": "https://eportal.egov.bs.ch/",
+        "status": "historically public-landing sample; optional origin allocation"
+      },
+      {
+        "organization": "Riehen",
+        "url": null,
+        "status": "resolve from official source"
+      },
+      {
+        "organization": "Bettingen",
+        "url": null,
+        "status": "resolve official entry path; shared host possible"
+      }
+    ]
+  },
+  "limits": {
+    "minutes": 180,
+    "reportReserveMinutes": 30,
+    "maxAdmittedOrigins": 3,
+    "maxTopLevelDocumentAttempts": 180,
+    "phaseReservations": {
+      "policyAndSitemapEntries": 6,
+      "discovery": 90,
+      "baselineJourneysAndReplays": 60,
+      "targetedInvestigations": 24
+    },
+    "maxConcurrentPages": 2,
+    "maxConcurrentPerHost": 1,
+    "minDocumentGapSecondsPerHost": 10,
+    "maxAgentWorkers": 2,
+    "maxInvestigations": 3,
+    "maxConcurrentGeneratedProbes": 1,
+    "maxRevisionsPerInvestigation": 1,
+    "proposedPerDocument": {
+      "seconds": 45,
+      "maxSubresourceRequests": 250,
+      "maxTransferredMiB": 20,
+      "enforcement": "must be verified before execution"
+    }
+  },
+  "actions": {
+    "allowedNow": [
+      "offline preparation",
+      "cached evidence analysis",
+      "local fixture evaluation planning"
+    ],
+    "liveActions": [],
+    "excluded": [
+      "security probing",
+      "login",
+      "typing or submitting forms",
+      "uploads",
+      "payments",
+      "CAPTCHA bypass",
+      "downloads",
+      "live DOM writes",
+      "new-origin assessment without amendment"
+    ]
+  },
+  "models": {
+    "coordinator": "eligible Claude Code subscription; runtime/model identity to verify",
+    "apertus": {
+      "role": "planned shadow evidence-task evaluation",
+      "provider": null,
+      "model": null,
+      "endpointVerified": false,
+      "newSpendAuthorized": false,
+      "trainingAuthorized": false
+    },
+    "mistral": {
+      "originalAggregateCapUSD": 5,
+      "lastReportedSpendUSD": 0.1042252,
+      "ledgerVerificationRequired": true
+    }
+  },
+  "gates": [
+    "verify canonical governed state if applicable",
+    "review final implementation head",
+    "enforce viewport and artifact attribution",
+    "verify all global request/resource reservations",
+    "close or disable iframe document fan-out for live dynamic work",
+    "confirm exact origin/path/action manifest",
+    "verify provider data and cost approval"
+  ],
+  "publication": {
+    "draftOnly": true,
+    "humanApprovalRequired": true,
+    "outreachAuthorized": false
+  },
+  "lineage": {
+    "implementationReference": "df2abc7b1e0accb51428311a40fac51ef16fa549",
+    "plan": "BASEL_SCOPE_TO_EVIDENCE_PILOT.md",
+    "apertus": "APERTUS_ACCESSIBILITY_ROADMAP.md"
+  }
+}
