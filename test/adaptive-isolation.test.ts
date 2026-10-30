@@ -34,7 +34,8 @@ describe("production isolation of the experimental adaptive track", () => {
   it("only package.json scripts (not dependencies or bins) reference the experimental CLI", () => {
     const pkg = JSON.parse(readFileSync(join(ROOT, "package.json"), "utf8")) as { scripts: Record<string, string>; bin?: unknown; main?: unknown };
     const users = Object.entries(pkg.scripts).filter(([, command]) => /experimental/.test(command)).map(([name]) => name);
-    assert.ok(users.every((name) => name.startsWith("adaptive:")), `unexpected scripts: ${users.join(", ")}`);
+    // campaign:cli is the operator path of the experimental campaign (docs/experiments/campaign); same rule, named script only.
+    assert.ok(users.every((name) => name.startsWith("adaptive:") || name === "campaign:cli"), `unexpected scripts: ${users.join(", ")}`);
     assert.equal(pkg.bin, undefined);
   });
 });

@@ -37,7 +37,9 @@
     "adaptive:frontier-local": "tsx src/experimental/adaptive/frontier-compare.ts",
     "adaptive:frontier-benchmark": "tsx src/experimental/adaptive/frontier-benchmark.ts",
     "adaptive:abc": "tsx src/experimental/adaptive/abc-trial.ts",
-    "adaptive:abc-reproduce": "tsx src/experimental/adaptive/abc-reproduce.ts"
+    "adaptive:abc-reproduce": "tsx src/experimental/adaptive/abc-reproduce.ts",
+    "campaign:ui": "npm --prefix control-center run dev -- --port 5180 --strictPort",
+    "campaign:cli": "tsx src/experimental/campaign/cli.ts"
   },
   "dependencies": {
     "@axe-core/playwright": "4.13.0",
