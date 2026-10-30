@@ -1,6 +1,32 @@
 # Build Plan
 
-## Next milestone — Basel Adaptive Investigation Loop
+Latest operating agreement: [Autonomous campaign build handoff](experiments/AUTONOMOUS_CAMPAIGN_BUILD_HANDOFF.md).
+One launch, autonomous in-scope adaptation, live milestones/logs and checkpointed resource extension;
+no approval at every stage. Build a working local rehearsal first.
+
+## Next milestone — Basel scope-to-evidence pilot, with Apertus evaluation
+
+Updated 2026-10-30. Read [the pilot plan](experiments/BASEL_SCOPE_TO_EVIDENCE_PILOT.md),
+[the Apertus roadmap](experiments/APERTUS_ACCESSIBILITY_ROADMAP.md) and
+[the proposed, non-executable allocation manifest](experiments/basel-pilot.proposed.json).
+
+The working direction is owner scope → sourced pre-discovery → bounded representative discovery →
+deterministic baseline → evidence-triggered adaptive investigations → countertests/replay → visual case dossier.
+Initial geographic interpretation is Basel-Stadt plus Basel, Riehen and Bettingen; Basel-Landschaft is excluded.
+
+PR #58 at df2abc7 contains experimental M1/t1/t2 work and the investigation workspace, not a merged production
+capability. It demonstrates useful guided investigation and one strongly hinted blind attribution; autonomous
+canton-scale discovery, unrestricted dynamic execution and Apertus integration remain unproven.
+
+Next preparation slice: complete local repair/retest, enforce viewport/provenance, prepare the bounded batch dry run
+and the Apertus evidence-task evaluation packet. Keep useful role-based routing: Claude senior investigator,
+deterministic runner for measurements, Apertus as an evaluated candidate rather than an assumed replacement.
+Configuration/retrieval precedes a separately authorized specialist weights experiment.
+
+This is planning only: no new public batch, model call, training job, partnership, merge or dispatch is started.
+Preserve production model separation and all existing publication/human acceptance boundaries.
+
+## Historical M1 plan — Basel Adaptive Investigation Loop (2026-10-29)
 
 Updated 2026-10-29: the next research milestone is
 [Basel: dynamic evidence-guided investigation](experiments/BASEL_ADAPTIVE_INVESTIGATION_MILESTONE.md),
