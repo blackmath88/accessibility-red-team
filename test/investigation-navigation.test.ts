@@ -15,15 +15,18 @@ const PAGES: Record<string, string> = {
   away: `<p>away</p><script>setTimeout(() => { location.href = "/away-target"; }, 50)</script>`,
   popup: `<p>popup</p><script>window.open("/popup-target"); window.open("OTHER/popup-other")</script>`,
   mixed: `<p>mixed</p><img src="/same.png"><img src="OTHER/cross.png">`,
+  socket: `<p>socket</p><script>try { new WebSocket("OTHER".replace("http", "ws") + "/ws"); } catch {}</script>`,
 };
 
 describe("broker navigation and popup containment (local servers)", () => {
   let dir: string, server: Server, other: Server, base = "", otherBase = "";
   const hits: string[] = [], otherHits: string[] = [];
+  let upgrades = 0;
   const listen = (s: Server) => new Promise<string>((r) => s.listen(0, "127.0.0.1", () => r(`http://127.0.0.1:${(s.address() as AddressInfo).port}`)));
   before(async () => {
     dir = await mkdtemp(join(tmpdir(), "ail-nav-"));
     other = createServer((req, res) => { otherHits.push(req.url ?? ""); res.end("x"); });
+    other.on("upgrade", (_req, socket) => { upgrades++; socket.destroy(); });
     otherBase = await listen(other);
     server = createServer((req, res) => {
       hits.push(req.url ?? "");
@@ -74,6 +77,13 @@ describe("broker navigation and popup containment (local servers)", () => {
     assert.equal(count("/popup-target"), 0);
     assert.equal(otherHits.filter((h) => h === "/popup-other").length, 0);
     assert.ok(r.blocked.some((x) => x.kind === "popup" || x.kind === "unattributed")); // the popup's first request precedes its Page
+  });
+
+  it("WebSockets are refused in the browser and never reach any server", async () => {
+    const r = await openLive("socket", "cross-origin-get");
+    assert.equal(r.reply.ok, true);
+    assert.equal(upgrades, 0);
+    assert.ok(r.blocked.some((x) => x.kind === "websocket"));
   });
 
   it("the sub-resource policy is explicit: same-origin blocks cross-origin GETs, cross-origin-get allows them", async () => {

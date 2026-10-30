@@ -11,6 +11,10 @@ describe("published broker contract and contract mock", () => {
     assert.match(checkArgs("elementsFromPoint", { points: [{ x: 1, y: 2.5 }] })!, /integer/);
     assert.match(checkArgs("scrollTo", { y: Number.NaN })!, /integer/);
     assert.match(checkArgs("evaluate", {})!, /unknown operation/);
+    // open: the same target and viewport rules as the broker, so a dry run cannot pass what the broker denies
+    assert.equal(checkArgs("open", { target: "transfer-a", viewport: "390x844" }), null);
+    assert.match(checkArgs("open", { target: "transfer-a", viewport: "1024x768" })!, /viewport in/);
+    assert.match(checkArgs("open", { target: "Transfer_A" })!, /target/);
     assert.ok(Array.isArray(BROKER_CONTRACT.ops.elementsFromPoint.example), "elementsFromPoint returns a plain array");
   });
 

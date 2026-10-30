@@ -23,7 +23,9 @@ const RENDER_WAIT_MS = 3000;
 
 // Sub-resource policy for live pages, recorded with every open. "same-origin": only same-origin GETs leave the browser.
 // "cross-origin-get": cross-origin GET sub-resources (fonts, CSS, scripts) are also fetched; this is how the historical
-// M1 live runs were made. Neither policy is full network containment: a page may still leak data in allowed GET URLs.
+// M1 live runs were made. Neither policy is full network containment: a page may still leak data in allowed GET URLs,
+// and a same-origin iframe may load the approved URL again without being counted (only top-level loads are counted).
+// WebSockets, non-GET requests, popups and further top-level navigations are refused in both policies.
 export type ResourcePolicy = "same-origin" | "cross-origin-get";
 export type BrokerOptions = {
   runDir: string; ledgerPath: string; fixtureDir: string; liveAllowed: boolean; maxLiveLoads: number; minGapMs: number;
@@ -49,7 +51,7 @@ export class MeasurementBroker {
   private lock: Promise<unknown> = Promise.resolve();
   // Requests stopped inside the browser: page-initiated top-level navigations (reloads, refreshes, location changes)
   // and anything a popup or other non-main page tries to fetch.
-  readonly blocked: Array<{ at: string; attempt: string; kind: "navigation" | "popup" | "method" | "origin" | "unattributed"; url: string }> = [];
+  readonly blocked: Array<{ at: string; attempt: string; kind: "navigation" | "popup" | "method" | "origin" | "unattributed" | "websocket"; url: string }> = [];
 
   private readonly liveUrl: string;
   private readonly liveOrigin: string;
@@ -187,6 +189,11 @@ export class MeasurementBroker {
       if (target !== "live") return req.url().startsWith("file://") ? route.continue() : block(route, "origin");
       if (this.o.resourcePolicy === "same-origin" && new URL(req.url()).origin !== this.liveOrigin) return block(route, "origin");
       return route.continue();
+    });
+    // WebSockets bypass context.route: refuse them all, never connected to the real server.
+    await this.context.routeWebSocket(() => true, (ws) => {
+      this.blocked.push({ at: new Date().toISOString(), attempt: this.attempt, kind: "websocket", url: ws.url().slice(0, 200) });
+      void ws.close({ code: 1008, reason: "refused by measurement broker" }).catch(() => undefined);
     });
     this.page = main;
     this.context.on("page", (p) => { if (p !== main) void p.close(); }); // popups: their requests are aborted above; the page is then closed

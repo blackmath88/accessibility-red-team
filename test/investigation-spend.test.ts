@@ -33,6 +33,9 @@ describe("investigation owner-cap accounting fails closed", () => {
     await assert.rejects(ownerSpend({ AIL_PRIOR_LEDGERS: prior }, [runs]), /AIL_MIN_PRIOR_USD/);
     await assert.rejects(ownerSpend(env({ AIL_MIN_PRIOR_USD: "0.09" }), [runs]), /ledgers are missing/);
     await assert.rejects(ownerSpend(env({ AIL_EXTRA_RUN_ROOTS: join(dir, "nope") }), [runs]), /not a directory/);
+    await assert.rejects(ownerSpend(env({ AIL_MIN_PRIOR_USD: " " }), [runs]), /AIL_MIN_PRIOR_USD/);
+    await assert.rejects(ownerSpend(env({ AIL_PRIOR_LEDGERS: "relative/prior" }), [runs]), /absolute/);
+    await assert.rejects(ownerSpend(env({ AIL_EXTRA_RUN_ROOTS: "relative/runs" }), [runs]), /absolute/);
   });
 
   it("rejects malformed, negative, non-finite and unreadable ledgers instead of skipping them", async () => {

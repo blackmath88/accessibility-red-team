@@ -53,7 +53,7 @@ describe("investigation sandbox (bwrap) and measurement broker boundaries", { sk
     const r = out.result as Record<string, string>;
     assert.match(r["unknown"]!, /broker denied: unknown operation/);
     assert.match(r["live"]!, /broker denied: live target not enabled/);
-    assert.match(r["traversal"]!, /broker denied: unknown fixture/);
+    assert.match(r["traversal"]!, /broker denied: (unknown fixture|open needs target)/);
     assert.match(r["badViewport"]!, /broker denied: open needs target/);
     assert.match(r["noPage"]!, /broker denied: no page open/);
     assert.equal(r["fixture"], "allowed");

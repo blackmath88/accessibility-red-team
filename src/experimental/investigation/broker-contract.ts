@@ -4,6 +4,7 @@
 // probes before any real page is opened.
 const int = (v: unknown, lo: number, hi: number) => typeof v === "number" && Number.isInteger(v) && v >= lo && v <= hi;
 const str = (v: unknown, max: number) => typeof v === "string" && v.length > 0 && v.length <= max;
+export const VIEWPORT_NAMES = ["1440x900", "1280x800", "390x844"] as const;
 const obj = (v: unknown) => (v && typeof v === "object" ? v : {}) as Record<string, unknown>;
 
 const rect = { x: 951, y: 383, width: 149, height: 18 };
@@ -16,7 +17,7 @@ export const BROKER_CONTRACT = {
   calling: "const result = await broker.call(op, args); a denied call throws Error('broker denied: <reason>'). Calls run one at a time. Only these ops exist.",
   coordinates: "All x/y/width/height are integer CSS pixels relative to the current viewport (not the document). Use Math.round.",
   ops: {
-    open: { args: "{ target: packet.target, viewport: packet.viewport }", result: "{ target, url, viewport, status, resourcePolicy }", example: { target: "fixture-name", url: "fixture:fixture-name", viewport: "1440x900", status: null, resourcePolicy: "file-only" } },
+    open: { args: "{ target: packet.target, viewport: packet.viewport } (viewport one of 1440x900, 1280x800, 390x844)", result: "{ target, url, viewport, status, resourcePolicy }", example: { target: "fixture-name", url: "fixture:fixture-name", viewport: "1440x900", status: null, resourcePolicy: "file-only" } },
     viewport: { args: "{}", result: "{ innerWidth, innerHeight, devicePixelRatio, scrollX, scrollY, docHeight }", example: { innerWidth: 1440, innerHeight: 900, devicePixelRatio: 1, scrollX: 0, scrollY: 0, docHeight: 1174 } },
     findText: { args: "{ text: string 1..80 chars, max?: integer 1..5 }", result: "{ count, returned, elements: Element[] } — elements whose own text node contains text", example: { count: 1, returned: 1, elements: [element] } },
     query: { args: "{ selector: CSS string 1..200 chars, max?: integer 1..10 }", result: "same as findText", example: { count: 1, returned: 1, elements: [element] } },
@@ -38,7 +39,11 @@ export const BROKER_OPS = Object.keys(BROKER_CONTRACT.ops) as BrokerOp[];
 export function checkArgs(op: string, args: unknown): string | null {
   const a = obj(args);
   switch (op) {
-    case "open": return str(a["target"], 40) ? null : "open needs target";
+    case "open": {
+      const target = a["target"], vp = a["viewport"] ?? "1440x900";
+      const okTarget = typeof target === "string" && (target === "live" || /^[a-z-]{1,30}$/.test(target));
+      return okTarget && typeof vp === "string" && (VIEWPORT_NAMES as readonly string[]).includes(vp) ? null : `open needs target ("live" or a fixture name) and viewport in ${VIEWPORT_NAMES.join(", ")}`;
+    }
     case "viewport": case "screenshot": return null;
     case "findText": return str(a["text"], 80) && (a["max"] === undefined || int(a["max"], 1, 5)) ? null : "findText needs text (1-80 chars) and max 1-5";
     case "query": return str(a["selector"], 200) && (a["max"] === undefined || int(a["max"], 1, 10)) ? null : "query needs selector (1-200 chars) and max 1-10";
