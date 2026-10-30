@@ -1484,7 +1484,7 @@
   "status": "completed",
   "note": "Separate blind local cases (neutral fixture pages, one defective and one clean control each; independent fixture author; key sealed until the conclusion was frozen) plus one post-reveal reasoning replay. Two cases demonstrate transfer only; they are not a benchmark or proof of general reliability. Not M1 evidence; no public site was contacted.",
   "summary": "t1 (Mistral design, blind): partially correct, mechanism misattributed. Reasoning replay of t1 with complete measurements: correct with Claude, wrong with Mistral on the identical prompt. t2 (Claude investigator, blind, different mechanism): correct, no revision needed.",
-  "sourceRevision": "af8e6fb3a69685f34e55a184231803f213a12caf",
+  "sourceRevision": "5d8e7a5e4fb48c8635fb1f022f7644de3c9d2e8a",
   "facts": [
    {
     "label": "Correct",
