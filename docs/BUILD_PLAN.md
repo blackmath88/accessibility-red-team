@@ -1,5 +1,9 @@
 # Build Plan
 
+Latest operating agreement: [Autonomous campaign build handoff](experiments/AUTONOMOUS_CAMPAIGN_BUILD_HANDOFF.md).
+One launch, autonomous in-scope adaptation, live milestones/logs and checkpointed resource extension;
+no approval at every stage. Build a working local rehearsal first.
+
 ## Next milestone — Basel scope-to-evidence pilot, with Apertus evaluation
 
 Updated 2026-10-30. Read [the pilot plan](experiments/BASEL_SCOPE_TO_EVIDENCE_PILOT.md),
