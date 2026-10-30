@@ -18,6 +18,7 @@ import { BROKER_CONTRACT, BROKER_OPS, contractMock, type MockScenario } from "./
 import { BROKER_VERSION, MeasurementBroker } from "./broker.js";
 import { ProposalSchema } from "./proposal.js";
 import { runInSandbox, sandboxAvailable } from "./sandbox.js";
+import { CONCLUSION_FILE, NAME, SUFFIX, concludeLedgerName, conclusionFileName, normalise } from "./transfer-rules.js";
 import { OWNER_CAP_USD, REPO_ROOT, ownerSpend } from "./spend.js";
 
 const MODEL = "mistral-small-2603";
@@ -27,9 +28,7 @@ const RUNS = join(REPO_ROOT, "runs/ail-transfer");
 const TARGETS = ["transfer-a", "transfer-b"];
 const sha = (s: string) => createHash("sha256").update(s).digest("hex");
 const exists = (p: string) => access(p).then(() => true, () => false);
-const frozen = async (dir: string) => (await exists(join(dir, "revealed.json"))) || (await readdir(dir).catch(() => [] as string[])).some((f) => /^conclusion(-[a-z0-9]+)?\.json$/.test(f));
-// Comments and whitespace removed, so a cosmetic edit does not count as a new probe.
-const normalise = (code: string) => code.replace(/\/\*[\s\S]*?\*\//g, "").replace(/\/\/[^\n]*/g, "").replace(/\s+/g, "");
+const frozen = async (dir: string) => (await exists(join(dir, "revealed.json"))) || (await readdir(dir).catch(() => [] as string[])).some((f) => CONCLUSION_FILE.test(f));
 
 const CheckSchema = z.object({
   id: z.string().min(1).max(60), description: z.string().max(400),
@@ -81,6 +80,7 @@ Reply with ONE JSON object: {"hypotheses":[{"id","statement","prediction","falsi
 async function design(run: string, attempt: string, from?: string) {
   const dir = join(RUNS, run), adir = join(dir, "attempts", attempt);
   if (await exists(join(adir, "proposal.json"))) throw new Error(`${attempt} exists`);
+  if (await frozen(dir)) throw new Error("this run already has a conclusion or a reveal: no further designs");
   await mkdir(adir, { recursive: true });
   const s = await symptom();
   let user = `SYMPTOM (as reported): ${JSON.stringify(s)}\nPAGES: ${TARGETS.join(", ")} at viewports ${s.viewports.join(", ")}.`;
@@ -187,12 +187,12 @@ async function conclude(run: string, attempt: string) {
   // One conclusion file per call, never overwritten; none at all once the answer key has been revealed for this run.
   if (await exists(join(dir, "revealed.json"))) throw new Error("the answer key was revealed: no further conclusions");
   const suffix = process.env["AIL_CONCLUDE_SUFFIX"] ?? "";
-  const conclusionFile = join(dir, suffix ? `conclusion-${suffix}.json` : "conclusion.json");
+  const conclusionFile = join(dir, conclusionFileName(suffix));
   const s = await symptom();
   const system = `You concluded an accessibility investigation. From the symptom, your hypotheses and the RECORDED measurements only, state which page version shows the reported problem and why. Say "undetermined" if the measurements do not establish it. Separate what the measurements support from what is untested. Reply with ONE JSON object: {"defectivePage":"transfer-a"|"transfer-b"|"undetermined","explanation","supportingMeasurements":[...],"unsupportedOrUntested":[...],"confidence":"low"|"medium"|"high"}`;
   const user = `SYMPTOM: ${JSON.stringify(s)}\n\nPROPOSAL:\n${await readFile(join(adir, "proposal.json"), "utf8")}\n\nMEASUREMENTS (per page and viewport, each capped):\n${measurementsForConclusion(await readFile(join(adir, "results.json"), "utf8"))}`;
   if (await exists(conclusionFile)) throw new Error(`${conclusionFile} already exists`);
-  const name = `${attempt}-conclude${suffix}`;
+  const name = concludeLedgerName(attempt, suffix);
   const out = await callDesigner(dir, name, system, user);
   await writeFile(join(adir, `${name}-raw.json`), JSON.stringify({ model: MODEL, ...out }, null, 1)); // kept even if parsing fails
   const parsed = ConclusionSchema.parse(JSON.parse(out.text));
@@ -205,19 +205,22 @@ async function conclude(run: string, attempt: string) {
 // validate, execute and conclude refuse for this run.
 async function reveal(run: string, keyPath: string) {
   const dir = join(RUNS, run);
-  const conclusions = (await readdir(dir)).filter((f) => /^conclusion(-[a-z0-9]+)?\.json$/.test(f));
+  const conclusions = (await readdir(dir)).filter((f) => CONCLUSION_FILE.test(f));
   if (!conclusions.length) throw new Error("nothing frozen: refusing to reveal");
   const frozenBeforeReveal = Object.fromEntries(await Promise.all(conclusions.map(async (f) => [f, sha(await readFile(join(dir, f), "utf8"))])));
-  const body = JSON.stringify({ revealedAt: new Date().toISOString(), frozenBeforeReveal, keySha256: sha(await readFile(keyPath, "utf8")) }, null, 1);
+  // Every recorded attempt file is hashed too, so later edits to proposals, results or gate reports are detectable.
+  const recorded: Record<string, string> = {};
+  for (const a of await readdir(join(dir, "attempts")).catch(() => [] as string[]))
+    for (const f of await readdir(join(dir, "attempts", a))) recorded[`attempts/${a}/${f}`] = sha(await readFile(join(dir, "attempts", a, f), "utf8"));
+  const body = JSON.stringify({ revealedAt: new Date().toISOString(), frozenBeforeReveal, recordedAttemptFiles: recorded, keySha256: sha(await readFile(keyPath, "utf8")) }, null, 1);
   await writeFile(join(dir, "revealed.json"), body, { flag: "wx" });
   console.log(body);
 }
 
-const NAME = /^[a-z0-9][a-z0-9-]{0,39}$/;
 const [run, stage, attempt, from] = process.argv.slice(2);
 if (!run || !stage || !attempt) { console.error("usage: transfer.ts <run> design|revise|validate|execute|conclude <attempt> [from] | reveal <key-path>"); process.exit(2); }
-const suffixOk = !process.env["AIL_CONCLUDE_SUFFIX"] || NAME.test(process.env["AIL_CONCLUDE_SUFFIX"]);
-if (!NAME.test(run) || (stage !== "reveal" && !NAME.test(attempt)) || (from !== undefined && !NAME.test(from)) || !suffixOk) { console.error("run, attempt, from and AIL_CONCLUDE_SUFFIX must match [a-z0-9-]"); process.exit(2); }
+const suffixOk = !process.env["AIL_CONCLUDE_SUFFIX"] || SUFFIX.test(process.env["AIL_CONCLUDE_SUFFIX"]);
+if (!NAME.test(run) || (stage !== "reveal" && !NAME.test(attempt)) || (from !== undefined && !NAME.test(from)) || !suffixOk) { console.error("run, attempt and from must match [a-z0-9-]; AIL_CONCLUDE_SUFFIX must match [a-z0-9]"); process.exit(2); }
 if (stage === "revise" && !from) { console.error("revise needs <from>"); process.exit(2); }
 const go = stage === "reveal" ? reveal(run, attempt) : stage === "design" ? design(run, attempt) : stage === "revise" ? design(run, attempt, from) : stage === "validate" ? validate(run, attempt)
   : stage === "execute" ? execute(run, attempt) : stage === "conclude" ? conclude(run, attempt) : Promise.reject(new Error(`unknown stage ${stage}`));
