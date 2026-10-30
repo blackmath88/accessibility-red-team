@@ -40,9 +40,19 @@ An independent review of `3e19c86` found 3 blockers and 3 majors:
 - resume lost in-flight calls;
 - transfer child processes were not settled.
 
-All were fixed in `140d95c`. rehearsal-4 then exercised the crash, stop and resume paths. Remaining limits:
+All were fixed in `140d95c`. rehearsal-4 then exercised the crash, stop and resume paths. A fresh re-review of `140d95c` confirmed the fixes for B1, B2, M1 and M2, and found two remaining majors:
+- **M3 was a no-op:** the child process was read from the `.catch()` promise, so `transfer` children were never settled.
+- **Unsound completion check:** an existing `results.json` was taken to mean execution had finished, but the transfer stage writes it even after an aborted run.
+
+Both are fixed in `6638569`. Execution is now skipped only when a completion marker exists, and that marker is written after a clean exit. Its minors are fixed too: case summaries are scrubbed and the path patterns are wider, a corrective conclusion call is made only for a schema rejection, triage never reuses an investigation ID, and the offline `stop` and `extend` commands use the repaired log.
+
+rehearsal-5 (`6638569`, 8 invocations, no exhaustion): `stop` was issued the moment the investigation reached `validated`. Execution finished within the 2 s stop poll, so the task paused at the conclusion gate instead. The resume completed the run (case supported; 4 invocations, all with measured usage). This run did **not** exercise a stop during `transfer execute`. The child-settlement fix rests on the reviewer's check that the `execFile` promise itself carries `.child`.
+
+Remaining limits:
 - Sandbox measurements already running are not killed by a stop; they are bounded by the sandbox timeouts.
 - Two simultaneous `resume` commands for one campaign are narrowed by a lock re-check but not made impossible.
+- Strategy and triage replies are not cached. A crash during either repeats that call; the cost is counted.
+- `repairLog` truncates the log at the first unparseable line, not only at a trailing one.
 
 ## Readiness for a live Basel launch — not ready yet
 
