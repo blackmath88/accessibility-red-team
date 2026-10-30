@@ -18,7 +18,7 @@ import { BROKER_CONTRACT, BROKER_OPS, contractMock, type MockScenario } from "./
 import { BROKER_VERSION, MeasurementBroker } from "./broker.js";
 import { ProposalSchema } from "./proposal.js";
 import { runInSandbox, sandboxAvailable } from "./sandbox.js";
-import { CONCLUSION_FILE, NAME, SUFFIX, concludeLedgerName, conclusionFileName, normalise } from "./transfer-rules.js";
+import { CONCLUSION_FILE, NAME, SUFFIX, concludeLedgerName, conclusionFileName, normalise, withRunLock } from "./transfer-rules.js";
 import { OWNER_CAP_USD, REPO_ROOT, ownerSpend } from "./spend.js";
 
 const MODEL = "mistral-small-2603";
@@ -183,7 +183,12 @@ function measurementsForConclusion(json: string, cap = 9_000): string {
 }
 
 async function conclude(run: string, attempt: string) {
-  const dir = join(RUNS, run), adir = join(dir, "attempts", attempt);
+  const dir = join(RUNS, run);
+  await withRunLock(dir, "conclude", () => concludeLocked(dir, attempt));
+}
+
+async function concludeLocked(dir: string, attempt: string) {
+  const adir = join(dir, "attempts", attempt);
   // One conclusion file per call, never overwritten; none at all once the answer key has been revealed for this run.
   if (await exists(join(dir, "revealed.json"))) throw new Error("the answer key was revealed: no further conclusions");
   const suffix = process.env["AIL_CONCLUDE_SUFFIX"] ?? "";
@@ -205,6 +210,10 @@ async function conclude(run: string, attempt: string) {
 // validate, execute and conclude refuse for this run.
 async function reveal(run: string, keyPath: string) {
   const dir = join(RUNS, run);
+  await withRunLock(dir, "reveal", () => revealLocked(dir, keyPath));
+}
+
+async function revealLocked(dir: string, keyPath: string) {
   const conclusions = (await readdir(dir)).filter((f) => CONCLUSION_FILE.test(f));
   if (!conclusions.length) throw new Error("nothing frozen: refusing to reveal");
   const frozenBeforeReveal = Object.fromEntries(await Promise.all(conclusions.map(async (f) => [f, sha(await readFile(join(dir, f), "utf8"))])));
