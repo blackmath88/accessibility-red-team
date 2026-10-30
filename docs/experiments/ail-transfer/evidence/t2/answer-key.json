@@ -1,0 +1,23 @@
+{
+  "defectivePage": "case2-a",
+  "mechanism": "Clipping by fixed height plus overflow:hidden. The container #shipping-info (.notice) has `height:40px; overflow:hidden` (content-box, padding 10px => 60px box). At 1440x900 the sentence (14px/20px) wraps to 2 lines (40px) and fits. At 390x844 the narrow column (~280px content width) wraps it to 4 lines (80px), so lines 3-4 are clipped; line 3 is cut mid-glyph at the bottom edge. Control case2-b uses `min-height:40px` instead, so the box grows to 100px.",
+  "observableSignals": [
+    "At 390x844 in case2-a: #shipping-info clientHeight 60 vs scrollHeight 100 (overflow); the <p> bounding rect height 80px extends below the container's visible bottom edge",
+    "Computed style of #shipping-info: height 40px, overflow hidden (case2-a) vs min-height 40px / height auto (case2-b)",
+    "Text nodes of the sentence after 'anfallen, ...' lie outside the container clip rect; elementFromPoint at those text positions returns the button/card, not the <p>",
+    "Screenshot: sentence ends abruptly after 'Zollgebühren' with a half-cut line; box looks shorter than its text",
+    "At 1440x900 both pages: clientHeight == scrollHeight == 60, no clipping",
+    "No overlaying element, opacity is 1, colors identical in both pages; text present in DOM/accessibility tree in full"
+  ],
+  "unsupportedReadings": [
+    "An element (button, sticky bar) painted over the text",
+    "Low opacity / transparent text or color equal to background",
+    "Low colour contrast of the notice text",
+    "Text missing from the DOM or hidden via display:none/visibility:hidden/aria-hidden",
+    "text-overflow:ellipsis or -webkit-line-clamp truncation",
+    "Text positioned offscreen or horizontal overflow of the viewport",
+    "Font size too small",
+    "Defect in case2-b or at 1440x900"
+  ],
+  "viewportsAffected": ["390x844"]
+}

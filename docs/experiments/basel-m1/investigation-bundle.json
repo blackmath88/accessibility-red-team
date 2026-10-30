@@ -1482,8 +1482,8 @@
  ],
  "transfer": {
   "status": "completed",
-  "note": "Separate blind local case t1 (two neutral fixture pages, one defective, one clean control; independent fixture author; key sealed until the conclusion was frozen). One case demonstrates transfer only; it is not a benchmark or proof of general reliability. Not M1 evidence; no public site was contacted.",
-  "summary": "Partially correct. The frozen final conclusion names the defective page (transfer-a) and separates it from the control with measurements, but misattributes the mechanism. The cheap designer alone produced only a coarse boolean split: its one revision failed the gate, a blind Claude escalation wrote the decisive probe, and a coordinator fix to truncated conclusion input was needed.",
+  "note": "Separate blind local cases (neutral fixture pages, one defective and one clean control each; independent fixture author; key sealed until the conclusion was frozen) plus one post-reveal reasoning replay. Two cases demonstrate transfer only; they are not a benchmark or proof of general reliability. Not M1 evidence; no public site was contacted.",
+  "summary": "t1 (Mistral design, blind): partially correct, mechanism misattributed. Reasoning replay of t1 with complete measurements: correct with Claude, wrong with Mistral on the identical prompt. t2 (Claude investigator, blind, different mechanism): correct, no revision needed.",
   "sourceRevision": "d78715fd19430eab889cd16e9d637ff8bc883aae",
   "facts": [
    {
@@ -1519,7 +1519,7 @@
    {
     "label": "Transfer README",
     "path": "docs/experiments/ail-transfer/README.md",
-    "sha256": "771b745b2855ee54a5db2f2d88c460211105409394bf958550e6691dbc6f3b38"
+    "sha256": "a4bc7d141e8e444da4c427d4afe4e0a6bed1db2bd677668fe02440a04172b5dc"
    },
    {
     "label": "Answer key (path-sanitised copy)",
@@ -1560,6 +1560,192 @@
     "label": "Measurements",
     "path": "docs/experiments/ail-transfer/evidence/measurements.json",
     "sha256": "207ee2df41ba0fa7509f481862c502afda37054f1c3b7c4bc3dc445f46a87875"
+   }
+  ],
+  "cases": [
+   {
+    "id": "t1-replay",
+    "kind": "post-reveal replay",
+    "title": "t1 again: same recorded measurements, fresh context, citation rule",
+    "verdict": "Claude replay: correct on all four criteria. Mistral replay with the identical prompt: wrong page (the control), high confidence. The original frozen t1 conclusion is unchanged.",
+    "measured": [
+     "Nothing new: the replay reads d3's recorded results for both pages and viewports, complete and untruncated (about 26 KB), plus the probe source so field meanings are clear."
+    ],
+    "inferredCorrectly": [
+     "transfer-a is defective: text-rect pixels min = max = 239 at both viewports vs min 85 on transfer-b.",
+     "Geometry/paint mismatch: #delivery is topmost at y 304-344 although its rect starts at 345, and the covering paint is 239 while its background is 255.",
+     "Rejects '#delivery's own white box covers the text' explicitly.",
+     "Names a pseudo-element only as an inference the broker cannot observe."
+    ],
+    "inferredIncorrectly": [
+     "Paint order is asserted from position:relative and DOM order, which the broker does not observe (correct per the key, but unmeasured)."
+    ],
+    "uncertainty": [
+     "Model and prompt both changed relative to the original; the Mistral replay holds the prompt fixed and fails, so the difference is the model.",
+     "The prompt was written after the reveal by a coordinator who knew the key; it does not name the contradiction.",
+     "Coordinator-scored rubric (four yes/no criteria), not an independent judge."
+    ],
+    "nextAction": "Use the stronger model for the conclusion step (the cheap model for design is optional) and keep the citation/contradiction format for every conclusion.",
+    "facts": [
+     {
+      "label": "Original t1 conclusion (blind, frozen)",
+      "value": "mistral-small-2603, 9,000-character cap per page: transfer-a correct, but blames #delivery's white box (unsupported). Unchanged in conclusion-2-full-input.json."
+     },
+     {
+      "label": "Replay: claude-opus-5-5",
+      "value": "Page correct; finds the rect/paint mismatch; rejects the white-box reading; pseudo-element marked as unobserved. Tool-less claude -p in an empty directory; subscription route."
+     },
+     {
+      "label": "Replay: mistral-small-2603, same prompt",
+      "value": "Names transfer-b (the control), high confidence; reads the control's visible ink (85) as the anomaly. USD 0.0033066."
+     },
+     {
+      "label": "Withheld",
+      "value": "Answer key, judgment, previous conclusions and the coordinator's diagnosis."
+     }
+    ],
+    "provenance": [
+     {
+      "label": "Replay prompt (identical for both models)",
+      "path": "docs/experiments/ail-transfer/evidence/replay/prompt.txt",
+      "sha256": "fac4b1f6e8ec1e6730e966c9f7c76fc07ec73e95c65e7c6ce91c5b3d667e77e9"
+     },
+     {
+      "label": "Claude replay response (frozen)",
+      "path": "docs/experiments/ail-transfer/evidence/replay/claude-response.json",
+      "sha256": "6c9b1df899460107ff2dfceb7998c78d6954d85c26437f4bf05016ad025d2409"
+     },
+     {
+      "label": "Claude freeze record",
+      "path": "docs/experiments/ail-transfer/evidence/replay/claude-frozen.json",
+      "sha256": "e0fe66c939e1d84b38dd205028b9115bafb0779379a0a3db302bd13a6143e5c1"
+     },
+     {
+      "label": "Mistral replay response",
+      "path": "docs/experiments/ail-transfer/evidence/replay/mistral-response.json",
+      "sha256": "28f3495fcfb9e85e4fed9e23909ae7cf4dadb4135c2db9a5bd9cc859b105bf06"
+     },
+     {
+      "label": "Replay evaluation",
+      "path": "docs/experiments/ail-transfer/evidence/replay/evaluation.json",
+      "sha256": "3dbc767803f886da89a85612e4633c9503806cc641b24168cf5dd738cb241ebd"
+     }
+    ]
+   },
+   {
+    "id": "t2",
+    "kind": "blind",
+    "title": "t2: delivery-cost note cut off on a phone (different mechanism)",
+    "verdict": "Correct (fresh judge). Defective page and mechanism right; no blindness breach; no revision used; no coordinator-written measurement code.",
+    "measured": [
+     "At 390x844 on second-a the yellow notice box is 60 px tall and ends at y=602, while its paragraph is 80 px tall and runs to y=632.",
+     "elementsFromPoint below y=602 inside the paragraph's rect does not contain the paragraph at all; the next button starts at y=610.",
+     "On second-b the notice grows to 100 px and the paragraph is topmost at every sample point, with ink in every row.",
+     "At 1440x900 both pages fit the text in two lines; no difference."
+    ],
+    "inferredCorrectly": [
+     "second-a is defective, at the phone viewport only.",
+     "A fixed-height container clipping its overflow (the key: height:40px + overflow:hidden, 60 px with padding).",
+     "Occlusion and horizontal overflow rejected with measurements."
+    ],
+    "inferredIncorrectly": [
+     "Says second-b has 'auto height'; it is min-height:40px (minor).",
+     "Matches the button colour to greyscale 81 loosely (minor)."
+    ],
+    "uncertainty": [
+     "overflow, height and max-height are not exposed by the broker, so the CSS is inferred from geometry and hit-testing; the investigator said so.",
+     "The probe ignored packet.viewport and opened both viewports itself, so each record holds duplicate runs and artifact names carry the wrong viewport label; the investigator noticed this.",
+     "It did not look at the screenshots; the screenshot field in its results is empty."
+    ],
+    "nextAction": "Add overflow/height/scrollHeight to the broker's style fields in a reviewed change, then run a third blind case whose mechanism needs them before claiming more.",
+    "facts": [
+     {
+      "label": "Investigator",
+      "value": "claude-opus-5-5 via tool-less claude -p (subscription), two calls: design, then conclude-or-revise. It chose to conclude; no revision."
+     },
+     {
+      "label": "Gate",
+      "value": "Passed first time: dry run completed, 32 calls, none denied; no duplicate."
+     },
+     {
+      "label": "Coordinator interventions",
+      "value": "Renamed fixtures case2-a/b to second-a/b (broker names allow letters and hyphens only); added import, brief and replay plumbing to transfer.ts; shuttled files. No measurement code."
+     },
+     {
+      "label": "Fixture author",
+      "value": "Independent Claude subagent; one-line CSS difference; key sealed outside git, sha256 a835f3d6..., verified at reveal."
+     },
+     {
+      "label": "Judge",
+      "value": "Fresh Claude subagent after the reveal: verdict correct, hashes match, no blindness breach."
+     }
+    ],
+    "screenshots": [
+     {
+      "label": "second-a at 390x844 (defective)",
+      "path": "docs/experiments/ail-transfer/evidence/t2/second-a-390x844.png",
+      "sha256": "7f8fce48342f30f28d9de5aa9d3707d7ecc84acb2ef8f93ccedd673084b7ad1f",
+      "alt": "Checkout page on a phone: the yellow delivery-cost note stops partway through its third line, directly above the green 'Weiter zur Zahlung' button."
+     },
+     {
+      "label": "second-b at 390x844 (clean control)",
+      "path": "docs/experiments/ail-transfer/evidence/t2/second-b-390x844.png",
+      "sha256": "0b25c006592eba0672864ccd0ba91b147b5990a80f6c67a9004d839aa8609a97",
+      "alt": "Same checkout page on a phone: the yellow note shows the full four-line sentence, and the button sits below it."
+     }
+    ],
+    "provenance": [
+     {
+      "label": "Symptom",
+      "path": "docs/experiments/ail-transfer/evidence/t2/symptom.json",
+      "sha256": "476cbe7740f3cf3baeaaa81e41fc2a80b1eb42c2a53cb06046eb875b637e9f35"
+     },
+     {
+      "label": "Investigator brief",
+      "path": "docs/experiments/ail-transfer/evidence/t2/investigator-d1-brief.txt",
+      "sha256": "758c0db363c047a182e0aa907c21f89fb72d1c73197919d987d3bdc7e4df851f"
+     },
+     {
+      "label": "Proposal (hypotheses and probe)",
+      "path": "docs/experiments/ail-transfer/evidence/t2/proposal.json",
+      "sha256": "c1317c095a898c6ca8196317ffa5820916587efe2f106b15138f9c2da1b5eb53"
+     },
+     {
+      "label": "Probe code",
+      "path": "docs/experiments/ail-transfer/evidence/t2/probe.mjs",
+      "sha256": "d74bd1284064e3339e577517bfedea5bfc534f1728849af7d7734b5ff22880b9"
+     },
+     {
+      "label": "Gate result",
+      "path": "docs/experiments/ail-transfer/evidence/t2/validation.json",
+      "sha256": "dba4c024d0ed518dd8ed51dd52a6b212eebdd2ed6932d10279b6d8a02c0dcb66"
+     },
+     {
+      "label": "Recorded measurements",
+      "path": "docs/experiments/ail-transfer/evidence/t2/results.json",
+      "sha256": "90aaa1631253e8c292007c9649369c8fac5465654ea54a7138857d48038f503d"
+     },
+     {
+      "label": "Frozen conclusion",
+      "path": "docs/experiments/ail-transfer/evidence/t2/conclusion.json",
+      "sha256": "0e4f7a8598e2ba4f0d03f101ef1b1871e4f03a11d540db935b633cfc815d9d4f"
+     },
+     {
+      "label": "Reveal marker",
+      "path": "docs/experiments/ail-transfer/evidence/t2/revealed.json",
+      "sha256": "1f81f7915f09e5d66db9b1affc3a97ac9978f6a5d9be7e454ee6324fa35d5010"
+     },
+     {
+      "label": "Answer key (pages named case2-a/b)",
+      "path": "docs/experiments/ail-transfer/evidence/t2/answer-key.json",
+      "sha256": "a835f3d6279dacd54b3db3fb5256f94b621082b1698897be747319752cf84971"
+     },
+     {
+      "label": "Judgment",
+      "path": "docs/experiments/ail-transfer/evidence/t2/judgment.json",
+      "sha256": "683b4c62edeea6bb8b5a3016e7421a9b075bf4ae364e59d2b35b385e92f7dcb4"
+     }
+    ]
    }
   ]
  }

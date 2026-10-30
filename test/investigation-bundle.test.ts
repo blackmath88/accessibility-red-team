@@ -43,6 +43,16 @@ describe("Basel M1 investigation bundle", () => {
     assert.ok(validateBundle(filled).ok);
   });
 
+  it("keeps blind transfer cases apart from replays and pins their evidence", () => {
+    const t = raw.transfer as any;
+    assert.deepEqual(t.cases.map((c: any) => c.kind), ["post-reveal replay", "blind"]);
+    for (const c of t.cases) for (const l of [...(c.provenance ?? []), ...(c.screenshots ?? [])]) assert.equal(sha256(l.path), l.sha256, l.path);
+    const badKind = clone(); badKind.transfer.cases[1].kind = "benchmark";
+    assert.ok(errorsOf(badKind).some(e => e.includes("cases[1].kind")));
+    const notPng = clone(); notPng.transfer.cases[1].screenshots[0].path = "docs/experiments/ail-transfer/README.md";
+    assert.ok(errorsOf(notPng).some(e => e.includes("screenshots[0].path")));
+  });
+
   it("points every provenance path at a committed file whose sha256 matches", () => {
     const paths = [
       ...raw.provenance.map(p => p.path), ...raw.probes.flatMap(p => [p.codePath, p.outcomeSource, ...(p.proposalPath ? [p.proposalPath] : [])]),

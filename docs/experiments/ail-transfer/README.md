@@ -1,4 +1,4 @@
-# AIL blind transfer case t1 (local fixtures only)
+# AIL blind transfer cases t1 and t2 (local fixtures only)
 
 One unfamiliar local case, used to see whether the checked investigation loop transfers beyond the Basel hint. **One case is a demonstration, not a benchmark or proof of general reliability.** No public site was contacted.
 
@@ -60,6 +60,29 @@ The committed `answer-key.json` has one local path replaced, so its hash differs
   - conclude and design ledger names could collide;
   - reveal hashed only the conclusions.
 
-  These were fixed with tests in the commit that adds `transfer-rules.ts`. Remaining by design: a conclude call that starts before a reveal and writes after it is not listed in `frozenBeforeReveal`. Reveal is a manual coordinator step and is run only when no conclude is in flight.
+  These were fixed with tests in the commit that adds `transfer-rules.ts`. The remaining conclude/reveal race is now closed: both stages take one exclusive per-run lock (`run.lock`, O_EXCL), and a second holder is refused rather than queued. A lock left by a killed process must be removed by hand after checking that nothing is in flight. A focused read-only review of `b3e2119` found no blocker or major issues. Its minor findings: design, validate and execute are not under the lock, but reveal hashes would show any later change; reveal did not hash screenshots (it now hashes them as bytes); and the lock test exercises the helper, not the CLI wiring.
 - **t1 reveal marker.** t1's `revealed.json` was written by a coordinator script before the `reveal` stage existed. Its hashes were verified by the judge.
 - **Not counted as loads.** A same-origin iframe can load the approved URL again without it being counted as a top-level load. Neither sub-resource policy is complete network containment.
+
+## t1 reasoning replay (post-reveal, not a blind result)
+
+The same recorded d3 measurements for both pages (complete, about 26 KB, nothing truncated) and the probe source went to fresh contexts. Each prompt required a citation for every causal claim and asked for contradictory evidence, kept separate from observation, explanation and uncertainty. The answer key, judgment, earlier conclusions and the coordinator's diagnosis were withheld, and the prompt did not name any contradiction. Each response was frozen (wx, hashed) before it was compared with the key. The original t1 conclusion is unchanged.
+
+| Context | Page | Geometry/paint mismatch | Avoids the white-box claim | Unobservable mechanism marked |
+|---|---|---|---|---|
+| Original t1 conclusion (blind; mistral-small-2603, 9,000-character cap) | correct | no | no | partly |
+| Replay: claude-opus-5-5 (tool-less `claude -p`, subscription) | correct | yes | yes | yes |
+| Replay: mistral-small-2603, identical prompt (USD 0.0033) | **wrong** (the control) | no | vacuous | partly |
+
+With prompt and measurements held fixed, the model is the difference. Caveats: the prompt was written after the reveal, and the four criteria were scored by the coordinator. Evidence is in `evidence/replay/`.
+
+## t2: second blind case, Claude as lead investigator
+
+- **Fixture.** An independent Claude subagent wrote a new pair whose defect uses a different mechanism; the two pages differ by one CSS line. The key and its screenshots were sealed outside git. The author named the pages case2-a/b; the coordinator renamed them second-a/b, because broker fixture names allow only letters and hyphens. The key keeps the old names.
+- **Investigator.** claude-opus-5-5 through tool-less `claude -p` from an empty directory. It saw only the existing designer brief (symptom, broker contract, page names) and, in a second call, its own proposal and the complete recorded results. It could revise once or conclude, and it concluded. The coordinator only shuttled files, through new `brief`, `import` and `import-conclusion` stages. Those stages use the same schema, gate, freeze rules and lock as before; the broker and its measurement capabilities are unchanged.
+- **Gate and execution.** d1 passed the gate first time (dry run 32 calls, none denied) and ran on both local pages at both viewports. Nothing was blocked.
+- **Result.** The conclusion was frozen under the lock and then revealed. A fresh Claude judge found it **correct**: second-a is defective at 390x844, because a fixed-height notice (60 px, ending at y 602) clips its 80 px paragraph, which the hit tests no longer find below y 602. The investigator inferred `overflow:hidden` and flagged it as not observable through the broker. Minor issues: it called the control's height "auto" when it is min-height, and its button-colour match is loose. The judge found no blindness breach.
+- **Failures kept.**
+  - The probe ignored `packet.viewport` and opened both viewports itself, so each record holds duplicate runs and the artifact names carry the wrong viewport label. The investigator noticed this.
+  - Its screenshot field is empty, and it never looked at the PNGs.
+- **Spend.** No Mistral calls for t2. Claude calls went through the subscription; the CLI reports a nominal USD 0.22 + 0.37 for the investigator and 0.29 for the replay, none of it billed to an API key.

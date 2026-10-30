@@ -1,0 +1,12 @@
+{
+ "symptom": "On my phone the yellow note about delivery costs in the shipping section is cut off in the middle of a line, I can only read the beginning and the rest of the sentence is missing. On the laptop it seems fine.",
+ "affectedText": "Bei Lieferungen nach Liechtenstein oder ins Ausland können zusätzliche Zollgebühren anfallen, die beim Empfang direkt dem Zusteller zu bezahlen sind.",
+ "pages": [
+  "second-a",
+  "second-b"
+ ],
+ "viewports": [
+  "1440x900",
+  "390x844"
+ ]
+}

@@ -1,0 +1,17 @@
+{
+ "label": "post-reveal reasoning replay (fresh context, no tools); not a blind discovery result",
+ "model": [
+  "claude-opus-5-5"
+ ],
+ "route": "claude -p --tools '' (subscription Claude Code, empty working directory)",
+ "promptSha256": "fac4b1f6e8ec1e6730e966c9f7c76fc07ec73e95c65e7c6ce91c5b3d667e77e9",
+ "responseSha256": "6c9b1df899460107ff2dfceb7998c78d6954d85c26437f4bf05016ad025d2409",
+ "frozenAt": "2026-10-30T10:30:08.371909+01:00",
+ "costReportedByCli": 0.290941,
+ "withheld": [
+  "answer key",
+  "judgment",
+  "coordinator diagnosis",
+  "previous conclusions"
+ ]
+}

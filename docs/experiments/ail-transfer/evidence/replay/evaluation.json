@@ -1,0 +1,14 @@
+{
+ "label": "post-reveal reasoning replays of t1 with one identical prompt (sha fac4b1f6...); scored by the coordinator against the sealed key after each response was frozen",
+ "claude-opus-5-5": {
+  "route": "claude -p --tools '' from an empty directory (subscription)",
+  "responseSha256": "6c9b1df899460107ff2dfceb7998c78d6954d85c26437f4bf05016ad025d2409",
+  "identifiesDefectivePage": true, "noticesGeometryPaintMismatch": true, "avoidsOwnWhiteBoxClaim": true, "expressesUncertaintyOnUnobservableMechanism": true
+ },
+ "mistral-small-2603": {
+  "route": "Mistral API via transfer.ts replay stage, USD 0.0033066 (ledger designer-ledger-r1.replay.json)",
+  "identifiesDefectivePage": false, "noticesGeometryPaintMismatch": false, "avoidsOwnWhiteBoxClaim": true, "expressesUncertaintyOnUnobservableMechanism": "partly",
+  "notes": "Names transfer-b (the control) with high confidence, treating its visible dark ink (min 85, equal to the declared colour) as an anomaly; never mentions #delivery or the 239 band. It does say the broker cannot see paint order or compositing, but uses that to protect a wrong explanation. Avoiding the white-box claim is vacuous here."
+ },
+ "reading": "With prompt and measurements held fixed, the model is the difference: the citation/contradiction prompt did not rescue the small model. The original wrong t1 conclusion (conclusion-3.json, unchanged) is therefore better explained by model capacity than by the truncation fix or prompt wording alone."
+}

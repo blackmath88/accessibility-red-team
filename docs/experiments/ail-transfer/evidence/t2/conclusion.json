@@ -1,0 +1,95 @@
+{
+ "defectivePage": "second-a",
+ "explanation": "OBSERVATION: At 390x844 both pages lay the note's <p> out the same way: 4 lines, 280x80 at y=552–632. On second-a the containing div#shipping-info.notice (the yellow box, background rgb(255,248,225)) is 60px tall at both viewports. At 1440x900 the text needs only 2 lines (40px), so 60px is enough. At 390x844 the box ends at y=602, while the text runs to y=632. In hit-testing below y=602 the <p> is missing from the stack entirely (selfDepth = -1); it is not merely covered by something. The next element in flow, the 'Weiter zur Zahlung' button, starts at y=610, inside the region where the text's 4th line would be. On second-b the notice grows to 100px at 390x844, the <p> is topmost at every in-rect sample point, and every row has text ink. EXPLANATION (inferred, not read directly): second-a gives the notice a fixed height of about 60px and clips its overflow, probably with overflow:hidden. When the sentence wraps to 4 lines on a phone, it is cut at y=602. That boundary falls inside the 3rd line box (592–612), so the reader sees the sentence end partway through a line, which matches the report. second-b lets the box grow with its content (auto height). H1 (vertical clipping) is supported for second-a and rejected for second-b. H2 (horizontal overflow) is rejected on both. H3 (occlusion) is rejected as the primary cause: the button only appears in the area the clipped text would have used, and the <p> is not in the stack beneath it.",
+ "supportingMeasurements": [
+  "second-a@390x844: runs[1].ancestors[0] (div#shipping-info.notice).rect = {x:41,y:542,width:308,height:60}, clipsBottom = true, endsAboveRect = true",
+  "second-a@390x844: runs[1].el.rect = {x:57,y:552,width:280,height:80}; geom.rectLines = 4",
+  "second-a@1440x900: runs[0].ancestors[0].rect.height = 60 with runs[0].el.rect.height = 40, clipsBottom = false (same 60px box is enough for 2 lines)",
+  "second-b@390x844: runs[1].ancestors[0].rect = {x:41,y:542,width:308,height:100}, clipsBottom = false",
+  "second-a@390x844: runs[1].points[r2c0.1/r2c0.5/r2c0.9].selfDepth = -1, top = section#shipping.card (y=602 = notice bottom 542+60)",
+  "second-a@390x844: runs[1].points[r3c0.1/r3c0.5].selfDepth = -1, top = button.btn rect {x:41,y:610,width:184,height:44}; r3c0.9 top = section#shipping.card",
+  "second-b@390x844: runs[1].points[r0..r3 all columns].selfDepth = 0",
+  "second-a@390x844: runs[1].cells[row3,col0].p50 = 81, ink = 0.875; cells[row3,col1].p50 = 81, ink = 0.729 (button fill, not text); cells[row3,col2].min = 255 (white card, no ink)",
+  "second-b@390x844: runs[1].cells[row3,col0].ink = 0.149, p50 = 248; cells[row3,col1].ink = 0.122 (normal text ink on the yellow background)",
+  "second-a@390x844: runs[1].ancestors[1] (section#shipping.card).rect.height = 310 at both viewports vs second-b@390x844: 350 (second-b's card grows by the extra 40px)",
+  "both pages, both viewports: fragCounts all = 1 (the full sentence is in the DOM; this is not content truncation)"
+ ],
+ "unsupportedOrUntested": [
+  "The exact CSS (height:60px / max-height plus overflow:hidden) is inferred from geometry and hit-testing. The broker does not expose overflow, height or max-height.",
+  "Clipping by overflow is inferred because the <p> is missing from elementsFromPoint stacks inside its own rect. A 'pointer-events:none' on the clipped part or a clip-path would show the same hit-test result, but those would not move the button upward.",
+  "I did not view the screenshot artifacts. Reading the pixel cells as 'button fill' rests on p50=81 matching the button background rgb(47,93,58) in greyscale and on the hit-test result."
+ ],
+ "confidence": "high",
+ "decision": "conclude",
+ "observations": [
+  {
+   "statement": "The sentence is fully in the DOM, opaque and visible, and identical on both pages at both viewports.",
+   "citations": [
+    "second-a@390x844: runs[1].fragCounts = all 1",
+    "second-b@390x844: runs[1].fragCounts = all 1",
+    "second-a@390x844: runs[1].el.effOp = 1, visibility = visible",
+    "second-b@390x844: runs[1].el.effOp = 1"
+   ]
+  },
+  {
+   "statement": "No horizontal overflow on either page; the text wraps normally to 4 lines at 390px.",
+   "citations": [
+    "second-a@390x844: runs[1].geom.rightOverflow = -53, ancestors[*].clipsRight = false",
+    "second-b@390x844: runs[1].geom.rightOverflow = -53, rectLines = 4"
+   ]
+  },
+  {
+   "statement": "On desktop both pages look the same and nothing is clipped, which matches 'on the laptop it seems fine'.",
+   "citations": [
+    "second-a@1440x900: runs[0].points[r0..r1].selfDepth = 0, ancestors[0].clipsBottom = false",
+    "second-b@1440x900: runs[0].points[r0..r1].selfDepth = 0, ancestors[0].clipsBottom = false"
+   ]
+  },
+  {
+   "statement": "On second-a at 390px, the 3rd line is partly visible: there is ink in row 2 (y 592–612), but the hit-test at y=602 already falls outside the box. This means the cut runs through the middle of a line box, matching 'cut off in the middle of a line'.",
+   "citations": [
+    "second-a@390x844: runs[1].cells[row2,col0].ink = 0.167, cells[row2,col1].ink = 0.147",
+    "second-a@390x844: runs[1].points[r2c0.5].selfDepth = -1"
+   ]
+  }
+ ],
+ "contradictions": [
+  {
+   "description": "Second-a row 2 (y 592–612) has p05 = 81 in cols 0–1, whereas second-b has 72/59. This probably mixes the clipped upper half of line 3 with the top of the button (from y=610) or the notice's bottom edge. It fits clipping but was not resolved per pixel row.",
+   "citations": [
+    "second-a@390x844: runs[1].cells[row2,col0].p05 = 81",
+    "second-b@390x844: runs[1].cells[row2,col0].p05 = 72"
+   ]
+  },
+  {
+   "description": "Measurement harness mismatch: the probe ignored packet.viewport and opened both viewports itself, so each page@viewport record holds identical duplicate runs. Artifact ids in the '@1440x900' records are also labelled 1440x900 for the 390px run. This does not change the data, but each viewport effectively has one independent sample.",
+   "citations": [
+    "second-a@1440x900: runs[1].cells[0].art = d1-second-a-1440x900-09-clip.png (390x844 run)",
+    "second-a@390x844: runs[1] identical to second-a@1440x900: runs[1]"
+   ]
+  },
+  {
+   "description": "The low ink in row 1 col 2 at 1440 and row 2 col 2 at 390 appears on both pages. It is probably the ragged end of a line, not part of the defect.",
+   "citations": [
+    "second-a@1440x900: runs[0].cells[row1,col2].ink = 0.025",
+    "second-b@390x844: runs[1].cells[row2,col2].ink = 0.088"
+   ]
+  }
+ ],
+ "uncertainties": [
+  {
+   "question": "Is the clipping caused by height:60px + overflow:hidden on .notice, by max-height, or by line-clamp-like styling?",
+   "whyNotResolvable": "The broker returns only a fixed subset of computed styles, without height, max-height or overflow.",
+   "nextMeasurement": "Inspect the computed style of div#shipping-info.notice in devtools, or check that the fixed height scales with the viewport by testing an intermediate width."
+  },
+  {
+   "question": "Exactly which pixel row the visible text stops at.",
+   "whyNotResolvable": "Cells are 20px tall and straddle the y=602 boundary.",
+   "nextMeasurement": "pixels on 1px-tall strips from y=596 to 612 across x 57–337 on second-a@390x844."
+  }
+ ],
+ "fromAttempt": "d1",
+ "model": "claude-opus-5-5",
+ "inputSha256": "d1074dc1bd23513851efea321b50444e6df2b631073a88d967f5b959a59f630e",
+ "frozenAt": "2026-10-30T09:33:42.211Z"
+}

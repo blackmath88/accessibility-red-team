@@ -2,7 +2,7 @@ import React,{useState} from "react";
 import discovery from "../../docs/experiments/basel-discovery/discovery-data.json";
 import field from "../../docs/experiments/basel-report/field-results.json";
 import bundleJson from "../../docs/experiments/basel-m1/investigation-bundle.json";
-import {validateBundle,type InvestigationBundle,type Measurement} from "./investigationBundle";
+import {validateBundle,type InvestigationBundle,type Measurement,type TransferCase} from "./investigationBundle";
 import "./investigation.css";
 
 const sourceRef="7f1b02fb353e47c9b6e4e1e8ae8a2b0495d4ff11";
@@ -12,6 +12,8 @@ const evidenceRef="bcf000694b013ef786583281c719d57d9ea07ef7";
 const evidenceSource=(path:string)=>repo+"/blob/"+evidenceRef+"/"+path;
 const bundlePath="docs/experiments/basel-m1/investigation-bundle.json";
 const m1=validateBundle(bundleJson);
+// Transfer screenshots are bundled at build time, keyed by repository path; a path without a file shows a notice instead.
+const shots=Object.fromEntries(Object.entries(import.meta.glob("../../docs/experiments/ail-transfer/evidence/**/*.png",{eager:true,query:"?url",import:"default"}) as Record<string,string>).map(([k,v])=>[k.replace("../../",""),v]));
 const plan=repo+"/blob/32e67f2d4c56198fa5902426cfab4e373a7d0585/docs/experiments/BASEL_ADAPTIVE_INVESTIGATION_MILESTONE.md";
 const sections=["Overview","Scope","Investigations","Evidence"] as const;
 type Section=typeof sections[number];
@@ -95,5 +97,13 @@ function M1Case(){
  </article>;
 }
 function TransferSlot(){
- return <section className="panel investigation-section" aria-labelledby="transfer-title"><div className="eyebrow">Separate experiment · not M1 evidence</div><h2 id="transfer-title">Local transfer experiment</h2>{m1.ok?<><p><b>Status: {m1.bundle.transfer.status}</b></p><p>{m1.bundle.transfer.note}</p>{"summary" in m1.bundle.transfer&&m1.bundle.transfer.summary&&<p>{m1.bundle.transfer.summary}</p>}{"facts" in m1.bundle.transfer&&m1.bundle.transfer.facts&&<dl className="investigation-case-facts">{m1.bundle.transfer.facts.map(f=><React.Fragment key={f.label}><dt>{f.label}</dt><dd>{f.value}</dd></React.Fragment>)}</dl>}{"provenance" in m1.bundle.transfer&&m1.bundle.transfer.provenance&&<ul className="investigation-links">{m1.bundle.transfer.provenance.map(l=><li key={l.path}><a href={repo+"/blob/"+(("sourceRevision" in m1.bundle.transfer&&m1.bundle.transfer.sourceRevision)||evidenceRef)+"/"+l.path} target="_blank" rel="noreferrer">{l.label} ↗</a></li>)}</ul>}</>:<p>Bundle invalid; transfer status unavailable.</p>}</section>;
+ return <section className="panel investigation-section" aria-labelledby="transfer-title"><div className="eyebrow">Separate experiment · not M1 evidence</div><h2 id="transfer-title">Local transfer experiment</h2>{m1.ok?<><p><b>Status: {m1.bundle.transfer.status}</b></p><p>{m1.bundle.transfer.note}</p>{"summary" in m1.bundle.transfer&&m1.bundle.transfer.summary&&<p>{m1.bundle.transfer.summary}</p>}{"facts" in m1.bundle.transfer&&m1.bundle.transfer.facts&&<dl className="investigation-case-facts">{m1.bundle.transfer.facts.map(f=><React.Fragment key={f.label}><dt>{f.label}</dt><dd>{f.value}</dd></React.Fragment>)}</dl>}{"provenance" in m1.bundle.transfer&&m1.bundle.transfer.provenance&&<ul className="investigation-links">{m1.bundle.transfer.provenance.map(l=><li key={l.path}><a href={repo+"/blob/"+(("sourceRevision" in m1.bundle.transfer&&m1.bundle.transfer.sourceRevision)||evidenceRef)+"/"+l.path} target="_blank" rel="noreferrer">{l.label} ↗</a></li>)}</ul>}{"cases" in m1.bundle.transfer&&m1.bundle.transfer.cases?.map(c=><TransferCaseView key={c.id} c={c} at={("sourceRevision" in m1.bundle.transfer&&m1.bundle.transfer.sourceRevision)||evidenceRef}/>)}</>:<p>Bundle invalid; transfer status unavailable.</p>}</section>;
+}
+function TransferCaseView({c,at}:{c:TransferCase;at:string}){
+ const list=(items:string[])=>items.length?<ul>{items.map(i=><li key={i}>{i}</li>)}</ul>:<p className="investigation-muted">None recorded.</p>;
+ return <article className="investigation-transfer-case" aria-labelledby={"transfer-"+c.id}><div className="eyebrow">{c.kind==="blind"?"Blind case":"Post-reveal reasoning replay · not a blind result"}</div><h3 id={"transfer-"+c.id}>{c.title}</h3><p><b>{c.verdict}</b></p>
+  {c.screenshots&&<div className="investigation-shots">{c.screenshots.map(s=><figure key={s.path}>{shots[s.path]?<img src={shots[s.path]} alt={s.alt} loading="lazy"/>:<p className="investigation-muted">Screenshot not bundled.</p>}<figcaption>{s.label} <code>{s.sha256.slice(0,8)}</code></figcaption></figure>)}</div>}
+  <dl className="investigation-case-facts"><dt>What the algorithm measured</dt><dd>{list(c.measured)}</dd><dt>Inferred correctly</dt><dd>{list(c.inferredCorrectly)}</dd><dt>Inferred incorrectly or unsupported</dt><dd>{list(c.inferredIncorrectly)}</dd><dt>Uncertainty</dt><dd>{list(c.uncertainty)}</dd><dt>Next useful action</dt><dd>{c.nextAction}</dd>{c.facts?.map(f=><React.Fragment key={f.label}><dt>{f.label}</dt><dd>{f.value}</dd></React.Fragment>)}</dl>
+  {c.provenance&&<ul className="investigation-links">{c.provenance.map(l=><li key={l.path}><a href={repo+"/blob/"+at+"/"+l.path} target="_blank" rel="noreferrer">{l.label} ↗</a> <code>{l.sha256.slice(0,8)}</code></li>)}</ul>}
+ </article>;
 }

@@ -1,0 +1,50 @@
+<!doctype html>
+<!-- Lokale Testseite – keine echte Website -->
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Kasse – Velowerkstatt an der Aare</title>
+<style>
+html,body{margin:0;background:#f2f1ed;font:16px/1.5 Arial,Helvetica,sans-serif;color:#1d1f22}
+.site-header{background:#2f5d3a;color:#fff;padding:14px 24px;font-weight:700;font-size:18px}
+.checkout{max-width:640px;margin:32px auto;padding:0 16px}
+.checkout h1{font-size:24px;line-height:32px;margin:0 0 16px}
+.card{background:#fff;border-radius:8px;padding:20px 24px;border:1px solid #d6d6cf;margin-bottom:16px}
+.card h2{font-size:18px;line-height:24px;margin:0 0 12px}
+.items{list-style:none;margin:0;padding:0}
+.items li{display:flex;justify-content:space-between;gap:12px;padding:6px 0;border-bottom:1px solid #ecebe6}
+.total{display:flex;justify-content:space-between;font-weight:700;padding:10px 0 4px}
+.notice{background:#fff8e1;border-left:4px solid #b7791f;border-radius:4px;padding:10px 12px;margin:12px 0 0;min-height:40px;overflow:hidden}
+.notice p{font-size:14px;line-height:20px;margin:0;color:#3d3420}
+.options label{display:flex;gap:8px;align-items:center;padding:6px 0}
+.btn{background:#2f5d3a;color:#fff;border:0;border-radius:4px;padding:10px 20px;font:inherit;font-weight:700;margin-top:8px}
+</style>
+</head>
+<body>
+<header class="site-header">Velowerkstatt an der Aare</header>
+<main class="checkout">
+  <h1>Kasse</h1>
+  <section class="card" id="cart">
+    <h2>Ihr Warenkorb</h2>
+    <ul class="items">
+      <li><span>Fahrradschloss Faltbügel 90 cm</span><span>CHF 64.90</span></li>
+      <li><span>Schlauch 28" Sclaverand</span><span>CHF 9.50</span></li>
+    </ul>
+    <div class="total"><span>Total</span><span>CHF 74.40</span></div>
+  </section>
+  <section class="card" id="shipping">
+    <h2>Versandart</h2>
+    <div class="options">
+      <label><input type="radio" name="ship" checked> Post Economy, CHF 7.00</label>
+      <label><input type="radio" name="ship"> Post Priority, CHF 9.00</label>
+      <label><input type="radio" name="ship"> Abholung in der Werkstatt, gratis</label>
+    </div>
+    <div class="notice" id="shipping-info">
+      <p>Bei Lieferungen nach Liechtenstein oder ins Ausland können zusätzliche Zollgebühren anfallen, die beim Empfang direkt dem Zusteller zu bezahlen sind.</p>
+    </div>
+    <button class="btn" type="button">Weiter zur Zahlung</button>
+  </section>
+</main>
+</body>
+</html>

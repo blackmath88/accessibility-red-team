@@ -1,0 +1,5242 @@
+{
+ "second-a@1440x900": {
+  "sandbox": "ail-sandbox/v1",
+  "codeSha256": "d74bd1284064e3339e577517bfedea5bfc534f1728849af7d7734b5ff22880b9",
+  "state": "completed",
+  "result": {
+   "target": "second-a",
+   "runs": [
+    {
+     "viewport": "1440x900",
+     "errors": [],
+     "fragCounts": {
+      "Bei Lieferungen nach Lie": 1,
+      "nach Liechtenstein": 1,
+      "Zollgebühren": 1,
+      "dem Zusteller": 1,
+      "steller zu bezahlen sind": 1
+     },
+     "found": true,
+     "anchorFrag": "Bei Lieferungen nach Lie",
+     "el": {
+      "tag": "p",
+      "cls": "",
+      "text": 80,
+      "display": "block",
+      "position": "static",
+      "color": "rgb(61, 52, 32)",
+      "bg": "rgba(0, 0, 0, 0)",
+      "fontSize": "14px",
+      "visibility": "visible",
+      "effOp": 1,
+      "nda": [],
+      "rect": {
+       "x": 441,
+       "y": 528,
+       "width": 562,
+       "height": 40
+      }
+     },
+     "geom": {
+      "vp": {
+       "W": 1440,
+       "H": 900,
+       "dpr": 1,
+       "scrollY": 0,
+       "docHeight": 900
+      },
+      "rightOverflow": -437,
+      "leftOverflow": -441,
+      "lh": 20,
+      "rectLines": 2,
+      "estLines": 2,
+      "heightRatio": 1
+     },
+     "points": [
+      {
+       "at": "r0c0.1",
+       "x": 497,
+       "y": 538,
+       "selfDepth": 0,
+       "top": {
+        "tag": "p",
+        "id": "",
+        "cls": "",
+        "text": "Bei Lieferungen nach Liechtens",
+        "pos": "static",
+        "z": "auto",
+        "bg": "rgba(0, 0, 0, 0)",
+        "op": "1",
+        "rect": {
+         "x": 441,
+         "y": 528,
+         "width": 562,
+         "height": 40
+        }
+       }
+      },
+      {
+       "at": "r0c0.5",
+       "x": 722,
+       "y": 538,
+       "selfDepth": 0,
+       "top": {
+        "tag": "p",
+        "id": "",
+        "cls": "",
+        "text": "Bei Lieferungen nach Liechtens",
+        "pos": "static",
+        "z": "auto",
+        "bg": "rgba(0, 0, 0, 0)",
+        "op": "1",
+        "rect": {
+         "x": 441,
+         "y": 528,
+         "width": 562,
+         "height": 40
+        }
+       }
+      },
+      {
+       "at": "r0c0.9",
+       "x": 947,
+       "y": 538,
+       "selfDepth": 0,
+       "top": {
+        "tag": "p",
+        "id": "",
+        "cls": "",
+        "text": "Bei Lieferungen nach Liechtens",
+        "pos": "static",
+        "z": "auto",
+        "bg": "rgba(0, 0, 0, 0)",
+        "op": "1",
+        "rect": {
+         "x": 441,
+         "y": 528,
+         "width": 562,
+         "height": 40
+        }
+       }
+      },
+      {
+       "at": "r1c0.1",
+       "x": 497,
+       "y": 558,
+       "selfDepth": 0,
+       "top": {
+        "tag": "p",
+        "id": "",
+        "cls": "",
+        "text": "Bei Lieferungen nach Liechtens",
+        "pos": "static",
+        "z": "auto",
+        "bg": "rgba(0, 0, 0, 0)",
+        "op": "1",
+        "rect": {
+         "x": 441,
+         "y": 528,
+         "width": 562,
+         "height": 40
+        }
+       }
+      },
+      {
+       "at": "r1c0.5",
+       "x": 722,
+       "y": 558,
+       "selfDepth": 0,
+       "top": {
+        "tag": "p",
+        "id": "",
+        "cls": "",
+        "text": "Bei Lieferungen nach Liechtens",
+        "pos": "static",
+        "z": "auto",
+        "bg": "rgba(0, 0, 0, 0)",
+        "op": "1",
+        "rect": {
+         "x": 441,
+         "y": 528,
+         "width": 562,
+         "height": 40
+        }
+       }
+      },
+      {
+       "at": "r1c0.9",
+       "x": 947,
+       "y": 558,
+       "selfDepth": 0,
+       "top": {
+        "tag": "p",
+        "id": "",
+        "cls": "",
+        "text": "Bei Lieferungen nach Liechtens",
+        "pos": "static",
+        "z": "auto",
+        "bg": "rgba(0, 0, 0, 0)",
+        "op": "1",
+        "rect": {
+         "x": 441,
+         "y": 528,
+         "width": 562,
+         "height": 40
+        }
+       }
+      },
+      {
+       "at": "below0.25",
+       "x": 582,
+       "y": 580,
+       "selfDepth": -1,
+       "top": {
+        "tag": "section",
+        "id": "shipping",
+        "cls": "card",
+        "text": "Versandart\n    \n       Post Ec",
+        "pos": "static",
+        "z": "auto",
+        "bg": "rgb(255, 255, 255)",
+        "op": "1",
+        "rect": {
+         "x": 400,
+         "y": 341,
+         "width": 640,
+         "height": 310
+        }
+       }
+      },
+      {
+       "at": "below0.75",
+       "x": 863,
+       "y": 580,
+       "selfDepth": -1,
+       "top": {
+        "tag": "section",
+        "id": "shipping",
+        "cls": "card",
+        "text": "Versandart\n    \n       Post Ec",
+        "pos": "static",
+        "z": "auto",
+        "bg": "rgb(255, 255, 255)",
+        "op": "1",
+        "rect": {
+         "x": 400,
+         "y": 341,
+         "width": 640,
+         "height": 310
+        }
+       }
+      }
+     ],
+     "ancestors": [
+      {
+       "tag": "div",
+       "id": "shipping-info",
+       "cls": "notice",
+       "text": "Bei Lieferungen nach Liechtens",
+       "pos": "static",
+       "z": "auto",
+       "bg": "rgb(255, 248, 225)",
+       "op": "1",
+       "rect": {
+        "x": 425,
+        "y": 518,
+        "width": 590,
+        "height": 60
+       },
+       "clipsBottom": false,
+       "endsAboveRect": false,
+       "clipsRight": false
+      },
+      {
+       "tag": "section",
+       "id": "shipping",
+       "cls": "card",
+       "text": "Versandart\n    \n       Post Ec",
+       "pos": "static",
+       "z": "auto",
+       "bg": "rgb(255, 255, 255)",
+       "op": "1",
+       "rect": {
+        "x": 400,
+        "y": 341,
+        "width": 640,
+        "height": 310
+       },
+       "clipsBottom": false,
+       "endsAboveRect": false,
+       "clipsRight": false
+      },
+      {
+       "tag": "main",
+       "id": "",
+       "cls": "checkout",
+       "text": "Kasse\n  \n    Ihr Warenkorb\n   ",
+       "pos": "static",
+       "z": "auto",
+       "bg": "rgba(0, 0, 0, 0)",
+       "op": "1",
+       "rect": {
+        "x": 384,
+        "y": 87,
+        "width": 672,
+        "height": 564
+       },
+       "clipsBottom": false,
+       "endsAboveRect": false,
+       "clipsRight": false
+      },
+      {
+       "tag": "body",
+       "id": "",
+       "cls": "",
+       "text": "Velowerkstatt an der Aare\n\n  K",
+       "pos": "static",
+       "z": "auto",
+       "bg": "rgb(242, 241, 237)",
+       "op": "1",
+       "rect": {
+        "x": 0,
+        "y": 0,
+        "width": 1440,
+        "height": 651
+       },
+       "clipsBottom": false,
+       "endsAboveRect": false,
+       "clipsRight": false
+      },
+      {
+       "tag": "html",
+       "id": "",
+       "cls": "",
+       "text": "Kasse – Velowerkstatt an der A",
+       "pos": "static",
+       "z": "auto",
+       "bg": "rgb(242, 241, 237)",
+       "op": "1",
+       "rect": {
+        "x": 0,
+        "y": 0,
+        "width": 1440,
+        "height": 683
+       },
+       "clipsBottom": false,
+       "endsAboveRect": false,
+       "clipsRight": false
+      }
+     ],
+     "cells": [
+      {
+       "row": 0,
+       "col": 0,
+       "clip": {
+        "x": 441,
+        "y": 528,
+        "width": 187,
+        "height": 20
+       },
+       "n": 3740,
+       "dark150": 538,
+       "ink": 0.144,
+       "min": 52,
+       "p05": 61,
+       "p50": 248,
+       "art": "d1-second-a-1440x900-01-clip.png"
+      },
+      {
+       "row": 0,
+       "col": 1,
+       "clip": {
+        "x": 628,
+        "y": 528,
+        "width": 187,
+        "height": 20
+       },
+       "n": 3740,
+       "dark150": 559,
+       "ink": 0.149,
+       "min": 52,
+       "p05": 67,
+       "p50": 248,
+       "art": "d1-second-a-1440x900-02-clip.png"
+      },
+      {
+       "row": 0,
+       "col": 2,
+       "clip": {
+        "x": 816,
+        "y": 528,
+        "width": 187,
+        "height": 20
+       },
+       "n": 3740,
+       "dark150": 512,
+       "ink": 0.137,
+       "min": 52,
+       "p05": 73,
+       "p50": 248,
+       "art": "d1-second-a-1440x900-03-clip.png"
+      },
+      {
+       "row": 1,
+       "col": 0,
+       "clip": {
+        "x": 441,
+        "y": 548,
+        "width": 187,
+        "height": 20
+       },
+       "n": 3740,
+       "dark150": 580,
+       "ink": 0.155,
+       "min": 52,
+       "p05": 64,
+       "p50": 248,
+       "art": "d1-second-a-1440x900-04-clip.png"
+      },
+      {
+       "row": 1,
+       "col": 1,
+       "clip": {
+        "x": 628,
+        "y": 548,
+        "width": 187,
+        "height": 20
+       },
+       "n": 3740,
+       "dark150": 554,
+       "ink": 0.148,
+       "min": 52,
+       "p05": 60,
+       "p50": 248,
+       "art": "d1-second-a-1440x900-05-clip.png"
+      },
+      {
+       "row": 1,
+       "col": 2,
+       "clip": {
+        "x": 816,
+        "y": 548,
+        "width": 187,
+        "height": 20
+       },
+       "n": 3740,
+       "dark150": 95,
+       "ink": 0.025,
+       "min": 52,
+       "p05": 248,
+       "p50": 248,
+       "art": "d1-second-a-1440x900-06-clip.png"
+      }
+     ],
+     "belowStrip": {
+      "clip": {
+       "x": 441,
+       "y": 569,
+       "width": 562,
+       "height": 40
+      },
+      "n": 22480,
+      "dark150": 3412,
+      "ink": 0.152,
+      "min": 81,
+      "p05": 81,
+      "p50": 255,
+      "art": "d1-second-a-1440x900-07-clip.png"
+     }
+    },
+    {
+     "viewport": "390x844",
+     "errors": [],
+     "fragCounts": {
+      "Bei Lieferungen nach Lie": 1,
+      "nach Liechtenstein": 1,
+      "Zollgebühren": 1,
+      "dem Zusteller": 1,
+      "steller zu bezahlen sind": 1
+     },
+     "found": true,
+     "anchorFrag": "Bei Lieferungen nach Lie",
+     "el": {
+      "tag": "p",
+      "cls": "",
+      "text": 80,
+      "display": "block",
+      "position": "static",
+      "color": "rgb(61, 52, 32)",
+      "bg": "rgba(0, 0, 0, 0)",
+      "fontSize": "14px",
+      "visibility": "visible",
+      "effOp": 1,
+      "nda": [],
+      "rect": {
+       "x": 57,
+       "y": 552,
+       "width": 280,
+       "height": 80
+      }
+     },
+     "geom": {
+      "vp": {
+       "W": 390,
+       "H": 844,
+       "dpr": 1,
+       "scrollY": 0,
+       "docHeight": 844
+      },
+      "rightOverflow": -53,
+      "leftOverflow": -57,
+      "lh": 20,
+      "rectLines": 4,
+      "estLines": 4,
+      "heightRatio": 1
+     },
+     "points": [
+      {
+       "at": "r0c0.1",
+       "x": 85,
+       "y": 562,
+       "selfDepth": 0,
+       "top": {
+        "tag": "p",
+        "id": "",
+        "cls": "",
+        "text": "Bei Lieferungen nach Liechtens",
+        "pos": "static",
+        "z": "auto",
+        "bg": "rgba(0, 0, 0, 0)",
+        "op": "1",
+        "rect": {
+         "x": 57,
+         "y": 552,
+         "width": 280,
+         "height": 80
+        }
+       }
+      },
+      {
+       "at": "r0c0.5",
+       "x": 197,
+       "y": 562,
+       "selfDepth": 0,
+       "top": {
+        "tag": "p",
+        "id": "",
+        "cls": "",
+        "text": "Bei Lieferungen nach Liechtens",
+        "pos": "static",
+        "z": "auto",
+        "bg": "rgba(0, 0, 0, 0)",
+        "op": "1",
+        "rect": {
+         "x": 57,
+         "y": 552,
+         "width": 280,
+         "height": 80
+        }
+       }
+      },
+      {
+       "at": "r0c0.9",
+       "x": 309,
+       "y": 562,
+       "selfDepth": 0,
+       "top": {
+        "tag": "p",
+        "id": "",
+        "cls": "",
+        "text": "Bei Lieferungen nach Liechtens",
+        "pos": "static",
+        "z": "auto",
+        "bg": "rgba(0, 0, 0, 0)",
+        "op": "1",
+        "rect": {
+         "x": 57,
+         "y": 552,
+         "width": 280,
+         "height": 80
+        }
+       }
+      },
+      {
+       "at": "r1c0.1",
+       "x": 85,
+       "y": 582,
+       "selfDepth": 0,
+       "top": {
+        "tag": "p",
+        "id": "",
+        "cls": "",
+        "text": "Bei Lieferungen nach Liechtens",
+        "pos": "static",
+        "z": "auto",
+        "bg": "rgba(0, 0, 0, 0)",
+        "op": "1",
+        "rect": {
+         "x": 57,
+         "y": 552,
+         "width": 280,
+         "height": 80
+        }
+       }
+      },
+      {
+       "at": "r1c0.5",
+       "x": 197,
+       "y": 582,
+       "selfDepth": 0,
+       "top": {
+        "tag": "p",
+        "id": "",
+        "cls": "",
+        "text": "Bei Lieferungen nach Liechtens",
+        "pos": "static",
+        "z": "auto",
+        "bg": "rgba(0, 0, 0, 0)",
+        "op": "1",
+        "rect": {
+         "x": 57,
+         "y": 552,
+         "width": 280,
+         "height": 80
+        }
+       }
+      },
+      {
+       "at": "r1c0.9",
+       "x": 309,
+       "y": 582,
+       "selfDepth": 0,
+       "top": {
+        "tag": "p",
+        "id": "",
+        "cls": "",
+        "text": "Bei Lieferungen nach Liechtens",
+        "pos": "static",
+        "z": "auto",
+        "bg": "rgba(0, 0, 0, 0)",
+        "op": "1",
+        "rect": {
+         "x": 57,
+         "y": 552,
+         "width": 280,
+         "height": 80
+        }
+       }
+      },
+      {
+       "at": "r2c0.1",
+       "x": 85,
+       "y": 602,
+       "selfDepth": -1,
+       "top": {
+        "tag": "section",
+        "id": "shipping",
+        "cls": "card",
+        "text": "Versandart\n    \n       Post Ec",
+        "pos": "static",
+        "z": "auto",
+        "bg": "rgb(255, 255, 255)",
+        "op": "1",
+        "rect": {
+         "x": 16,
+         "y": 365,
+         "width": 358,
+         "height": 310
+        }
+       }
+      },
+      {
+       "at": "r2c0.5",
+       "x": 197,
+       "y": 602,
+       "selfDepth": -1,
+       "top": {
+        "tag": "section",
+        "id": "shipping",
+        "cls": "card",
+        "text": "Versandart\n    \n       Post Ec",
+        "pos": "static",
+        "z": "auto",
+        "bg": "rgb(255, 255, 255)",
+        "op": "1",
+        "rect": {
+         "x": 16,
+         "y": 365,
+         "width": 358,
+         "height": 310
+        }
+       }
+      },
+      {
+       "at": "r2c0.9",
+       "x": 309,
+       "y": 602,
+       "selfDepth": -1,
+       "top": {
+        "tag": "section",
+        "id": "shipping",
+        "cls": "card",
+        "text": "Versandart\n    \n       Post Ec",
+        "pos": "static",
+        "z": "auto",
+        "bg": "rgb(255, 255, 255)",
+        "op": "1",
+        "rect": {
+         "x": 16,
+         "y": 365,
+         "width": 358,
+         "height": 310
+        }
+       }
+      },
+      {
+       "at": "r3c0.1",
+       "x": 85,
+       "y": 622,
+       "selfDepth": -1,
+       "top": {
+        "tag": "button",
+        "id": "",
+        "cls": "btn",
+        "text": "Weiter zur Zahlung",
+        "pos": "static",
+        "z": "auto",
+        "bg": "rgb(47, 93, 58)",
+        "op": "1",
+        "rect": {
+         "x": 41,
+         "y": 610,
+         "width": 184,
+         "height": 44
+        }
+       }
+      },
+      {
+       "at": "r3c0.5",
+       "x": 197,
+       "y": 622,
+       "selfDepth": -1,
+       "top": {
+        "tag": "button",
+        "id": "",
+        "cls": "btn",
+        "text": "Weiter zur Zahlung",
+        "pos": "static",
+        "z": "auto",
+        "bg": "rgb(47, 93, 58)",
+        "op": "1",
+        "rect": {
+         "x": 41,
+         "y": 610,
+         "width": 184,
+         "height": 44
+        }
+       }
+      },
+      {
+       "at": "r3c0.9",
+       "x": 309,
+       "y": 622,
+       "selfDepth": -1,
+       "top": {
+        "tag": "section",
+        "id": "shipping",
+        "cls": "card",
+        "text": "Versandart\n    \n       Post Ec",
+        "pos": "static",
+        "z": "auto",
+        "bg": "rgb(255, 255, 255)",
+        "op": "1",
+        "rect": {
+         "x": 16,
+         "y": 365,
+         "width": 358,
+         "height": 310
+        }
+       }
+      },
+      {
+       "at": "below0.25",
+       "x": 127,
+       "y": 644,
+       "selfDepth": -1,
+       "top": {
+        "tag": "button",
+        "id": "",
+        "cls": "btn",
+        "text": "Weiter zur Zahlung",
+        "pos": "static",
+        "z": "auto",
+        "bg": "rgb(47, 93, 58)",
+        "op": "1",
+        "rect": {
+         "x": 41,
+         "y": 610,
+         "width": 184,
+         "height": 44
+        }
+       }
+      },
+      {
+       "at": "below0.75",
+       "x": 267,
+       "y": 644,
+       "selfDepth": -1,
+       "top": {
+        "tag": "section",
+        "id": "shipping",
+        "cls": "card",
+        "text": "Versandart\n    \n       Post Ec",
+        "pos": "static",
+        "z": "auto",
+        "bg": "rgb(255, 255, 255)",
+        "op": "1",
+        "rect": {
+         "x": 16,
+         "y": 365,
+         "width": 358,
+         "height": 310
+        }
+       }
+      }
+     ],
+     "ancestors": [
+      {
+       "tag": "div",
+       "id": "shipping-info",
+       "cls": "notice",
+       "text": "Bei Lieferungen nach Liechtens",
+       "pos": "static",
+       "z": "auto",
+       "bg": "rgb(255, 248, 225)",
+       "op": "1",
+       "rect": {
+        "x": 41,
+        "y": 542,
+        "width": 308,
+        "height": 60
+       },
+       "clipsBottom": true,
+       "endsAboveRect": true,
+       "clipsRight": false
+      },
+      {
+       "tag": "section",
+       "id": "shipping",
+       "cls": "card",
+       "text": "Versandart\n    \n       Post Ec",
+       "pos": "static",
+       "z": "auto",
+       "bg": "rgb(255, 255, 255)",
+       "op": "1",
+       "rect": {
+        "x": 16,
+        "y": 365,
+        "width": 358,
+        "height": 310
+       },
+       "clipsBottom": false,
+       "endsAboveRect": false,
+       "clipsRight": false
+      },
+      {
+       "tag": "main",
+       "id": "",
+       "cls": "checkout",
+       "text": "Kasse\n  \n    Ihr Warenkorb\n   ",
+       "pos": "static",
+       "z": "auto",
+       "bg": "rgba(0, 0, 0, 0)",
+       "op": "1",
+       "rect": {
+        "x": 0,
+        "y": 87,
+        "width": 390,
+        "height": 588
+       },
+       "clipsBottom": false,
+       "endsAboveRect": false,
+       "clipsRight": false
+      },
+      {
+       "tag": "body",
+       "id": "",
+       "cls": "",
+       "text": "Velowerkstatt an der Aare\n\n  K",
+       "pos": "static",
+       "z": "auto",
+       "bg": "rgb(242, 241, 237)",
+       "op": "1",
+       "rect": {
+        "x": 0,
+        "y": 0,
+        "width": 390,
+        "height": 675
+       },
+       "clipsBottom": false,
+       "endsAboveRect": false,
+       "clipsRight": false
+      },
+      {
+       "tag": "html",
+       "id": "",
+       "cls": "",
+       "text": "Kasse – Velowerkstatt an der A",
+       "pos": "static",
+       "z": "auto",
+       "bg": "rgb(242, 241, 237)",
+       "op": "1",
+       "rect": {
+        "x": 0,
+        "y": 0,
+        "width": 390,
+        "height": 707
+       },
+       "clipsBottom": false,
+       "endsAboveRect": false,
+       "clipsRight": false
+      }
+     ],
+     "cells": [
+      {
+       "row": 0,
+       "col": 0,
+       "clip": {
+        "x": 57,
+        "y": 552,
+        "width": 93,
+        "height": 20
+       },
+       "n": 1860,
+       "dark150": 285,
+       "ink": 0.153,
+       "min": 52,
+       "p05": 57,
+       "p50": 248,
+       "art": "d1-second-a-1440x900-09-clip.png"
+      },
+      {
+       "row": 0,
+       "col": 1,
+       "clip": {
+        "x": 150,
+        "y": 552,
+        "width": 93,
+        "height": 20
+       },
+       "n": 1860,
+       "dark150": 252,
+       "ink": 0.135,
+       "min": 52,
+       "p05": 66,
+       "p50": 248,
+       "art": "d1-second-a-1440x900-10-clip.png"
+      },
+      {
+       "row": 0,
+       "col": 2,
+       "clip": {
+        "x": 244,
+        "y": 552,
+        "width": 93,
+        "height": 20
+       },
+       "n": 1860,
+       "dark150": 254,
+       "ink": 0.137,
+       "min": 52,
+       "p05": 68,
+       "p50": 248,
+       "art": "d1-second-a-1440x900-11-clip.png"
+      },
+      {
+       "row": 1,
+       "col": 0,
+       "clip": {
+        "x": 57,
+        "y": 572,
+        "width": 93,
+        "height": 20
+       },
+       "n": 1860,
+       "dark150": 286,
+       "ink": 0.154,
+       "min": 52,
+       "p05": 64,
+       "p50": 248,
+       "art": "d1-second-a-1440x900-12-clip.png"
+      },
+      {
+       "row": 1,
+       "col": 1,
+       "clip": {
+        "x": 150,
+        "y": 572,
+        "width": 93,
+        "height": 20
+       },
+       "n": 1860,
+       "dark150": 254,
+       "ink": 0.137,
+       "min": 52,
+       "p05": 60,
+       "p50": 248,
+       "art": "d1-second-a-1440x900-13-clip.png"
+      },
+      {
+       "row": 1,
+       "col": 2,
+       "clip": {
+        "x": 244,
+        "y": 572,
+        "width": 93,
+        "height": 20
+       },
+       "n": 1860,
+       "dark150": 246,
+       "ink": 0.132,
+       "min": 52,
+       "p05": 71,
+       "p50": 248,
+       "art": "d1-second-a-1440x900-14-clip.png"
+      },
+      {
+       "row": 2,
+       "col": 0,
+       "clip": {
+        "x": 57,
+        "y": 592,
+        "width": 93,
+        "height": 20
+       },
+       "n": 1860,
+       "dark150": 310,
+       "ink": 0.167,
+       "min": 52,
+       "p05": 81,
+       "p50": 248,
+       "art": "d1-second-a-1440x900-15-clip.png"
+      },
+      {
+       "row": 2,
+       "col": 1,
+       "clip": {
+        "x": 150,
+        "y": 592,
+        "width": 93,
+        "height": 20
+       },
+       "n": 1860,
+       "dark150": 274,
+       "ink": 0.147,
+       "min": 52,
+       "p05": 81,
+       "p50": 248,
+       "art": "d1-second-a-1440x900-16-clip.png"
+      },
+      {
+       "row": 2,
+       "col": 2,
+       "clip": {
+        "x": 244,
+        "y": 592,
+        "width": 93,
+        "height": 20
+       },
+       "n": 1860,
+       "dark150": 73,
+       "ink": 0.039,
+       "min": 52,
+       "p05": 203,
+       "p50": 255,
+       "art": "d1-second-a-1440x900-17-clip.png"
+      },
+      {
+       "row": 3,
+       "col": 0,
+       "clip": {
+        "x": 57,
+        "y": 612,
+        "width": 93,
+        "height": 20
+       },
+       "n": 1860,
+       "dark150": 1627,
+       "ink": 0.875,
+       "min": 81,
+       "p05": 81,
+       "p50": 81,
+       "art": "d1-second-a-1440x900-18-clip.png"
+      },
+      {
+       "row": 3,
+       "col": 1,
+       "clip": {
+        "x": 150,
+        "y": 612,
+        "width": 93,
+        "height": 20
+       },
+       "n": 1860,
+       "dark150": 1356,
+       "ink": 0.729,
+       "min": 81,
+       "p05": 81,
+       "p50": 81,
+       "art": "d1-second-a-1440x900-19-clip.png"
+      },
+      {
+       "row": 3,
+       "col": 2,
+       "clip": {
+        "x": 244,
+        "y": 612,
+        "width": 93,
+        "height": 20
+       },
+       "n": 1860,
+       "dark150": 0,
+       "ink": 0,
+       "min": 255,
+       "p05": 255,
+       "p50": 255,
+       "art": "d1-second-a-1440x900-20-clip.png"
+      }
+     ],
+     "belowStrip": {
+      "clip": {
+       "x": 57,
+       "y": 633,
+       "width": 280,
+       "height": 40
+      },
+      "n": 11200,
+      "dark150": 3211,
+      "ink": 0.287,
+      "min": 81,
+      "p05": 81,
+      "p50": 255,
+      "art": "d1-second-a-1440x900-21-clip.png"
+     }
+    }
+   ]
+  },
+  "error": null,
+  "calls": [
+   {
+    "op": "open",
+    "ok": true
+   },
+   {
+    "op": "findText",
+    "ok": true
+   },
+   {
+    "op": "findText",
+    "ok": true
+   },
+   {
+    "op": "findText",
+    "ok": true
+   },
+   {
+    "op": "findText",
+    "ok": true
+   },
+   {
+    "op": "findText",
+    "ok": true
+   },
+   {
+    "op": "viewport",
+    "ok": true
+   },
+   {
+    "op": "scrollTo",
+    "ok": true
+   },
+   {
+    "op": "findText",
+    "ok": true
+   },
+   {
+    "op": "viewport",
+    "ok": true
+   },
+   {
+    "op": "elementsFromPoint",
+    "ok": true
+   },
+   {
+    "op": "pixels",
+    "ok": true
+   },
+   {
+    "op": "pixels",
+    "ok": true
+   },
+   {
+    "op": "pixels",
+    "ok": true
+   },
+   {
+    "op": "pixels",
+    "ok": true
+   },
+   {
+    "op": "pixels",
+    "ok": true
+   },
+   {
+    "op": "pixels",
+    "ok": true
+   },
+   {
+    "op": "pixels",
+    "ok": true
+   },
+   {
+    "op": "screenshot",
+    "ok": true
+   },
+   {
+    "op": "open",
+    "ok": true
+   },
+   {
+    "op": "findText",
+    "ok": true
+   },
+   {
+    "op": "findText",
+    "ok": true
+   },
+   {
+    "op": "findText",
+    "ok": true
+   },
+   {
+    "op": "findText",
+    "ok": true
+   },
+   {
+    "op": "findText",
+    "ok": true
+   },
+   {
+    "op": "viewport",
+    "ok": true
+   },
+   {
+    "op": "scrollTo",
+    "ok": true
+   },
+   {
+    "op": "findText",
+    "ok": true
+   },
+   {
+    "op": "viewport",
+    "ok": true
+   },
+   {
+    "op": "elementsFromPoint",
+    "ok": true
+   },
+   {
+    "op": "pixels",
+    "ok": true
+   },
+   {
+    "op": "pixels",
+    "ok": true
+   },
+   {
+    "op": "pixels",
+    "ok": true
+   },
+   {
+    "op": "pixels",
+    "ok": true
+   },
+   {
+    "op": "pixels",
+    "ok": true
+   },
+   {
+    "op": "pixels",
+    "ok": true
+   },
+   {
+    "op": "pixels",
+    "ok": true
+   },
+   {
+    "op": "pixels",
+    "ok": true
+   },
+   {
+    "op": "pixels",
+    "ok": true
+   },
+   {
+    "op": "pixels",
+    "ok": true
+   },
+   {
+    "op": "pixels",
+    "ok": true
+   },
+   {
+    "op": "pixels",
+    "ok": true
+   },
+   {
+    "op": "pixels",
+    "ok": true
+   },
+   {
+    "op": "screenshot",
+    "ok": true
+   }
+  ],
+  "violations": [],
+  "durationMs": 2118,
+  "target": "second-a",
+  "viewport": "1440x900",
+  "broker": "ail-broker/v1"
+ },
+ "second-a@390x844": {
+  "sandbox": "ail-sandbox/v1",
+  "codeSha256": "d74bd1284064e3339e577517bfedea5bfc534f1728849af7d7734b5ff22880b9",
+  "state": "completed",
+  "result": {
+   "target": "second-a",
+   "runs": [
+    {
+     "viewport": "1440x900",
+     "errors": [],
+     "fragCounts": {
+      "Bei Lieferungen nach Lie": 1,
+      "nach Liechtenstein": 1,
+      "Zollgebühren": 1,
+      "dem Zusteller": 1,
+      "steller zu bezahlen sind": 1
+     },
+     "found": true,
+     "anchorFrag": "Bei Lieferungen nach Lie",
+     "el": {
+      "tag": "p",
+      "cls": "",
+      "text": 80,
+      "display": "block",
+      "position": "static",
+      "color": "rgb(61, 52, 32)",
+      "bg": "rgba(0, 0, 0, 0)",
+      "fontSize": "14px",
+      "visibility": "visible",
+      "effOp": 1,
+      "nda": [],
+      "rect": {
+       "x": 441,
+       "y": 528,
+       "width": 562,
+       "height": 40
+      }
+     },
+     "geom": {
+      "vp": {
+       "W": 1440,
+       "H": 900,
+       "dpr": 1,
+       "scrollY": 0,
+       "docHeight": 900
+      },
+      "rightOverflow": -437,
+      "leftOverflow": -441,
+      "lh": 20,
+      "rectLines": 2,
+      "estLines": 2,
+      "heightRatio": 1
+     },
+     "points": [
+      {
+       "at": "r0c0.1",
+       "x": 497,
+       "y": 538,
+       "selfDepth": 0,
+       "top": {
+        "tag": "p",
+        "id": "",
+        "cls": "",
+        "text": "Bei Lieferungen nach Liechtens",
+        "pos": "static",
+        "z": "auto",
+        "bg": "rgba(0, 0, 0, 0)",
+        "op": "1",
+        "rect": {
+         "x": 441,
+         "y": 528,
+         "width": 562,
+         "height": 40
+        }
+       }
+      },
+      {
+       "at": "r0c0.5",
+       "x": 722,
+       "y": 538,
+       "selfDepth": 0,
+       "top": {
+        "tag": "p",
+        "id": "",
+        "cls": "",
+        "text": "Bei Lieferungen nach Liechtens",
+        "pos": "static",
+        "z": "auto",
+        "bg": "rgba(0, 0, 0, 0)",
+        "op": "1",
+        "rect": {
+         "x": 441,
+         "y": 528,
+         "width": 562,
+         "height": 40
+        }
+       }
+      },
+      {
+       "at": "r0c0.9",
+       "x": 947,
+       "y": 538,
+       "selfDepth": 0,
+       "top": {
+        "tag": "p",
+        "id": "",
+        "cls": "",
+        "text": "Bei Lieferungen nach Liechtens",
+        "pos": "static",
+        "z": "auto",
+        "bg": "rgba(0, 0, 0, 0)",
+        "op": "1",
+        "rect": {
+         "x": 441,
+         "y": 528,
+         "width": 562,
+         "height": 40
+        }
+       }
+      },
+      {
+       "at": "r1c0.1",
+       "x": 497,
+       "y": 558,
+       "selfDepth": 0,
+       "top": {
+        "tag": "p",
+        "id": "",
+        "cls": "",
+        "text": "Bei Lieferungen nach Liechtens",
+        "pos": "static",
+        "z": "auto",
+        "bg": "rgba(0, 0, 0, 0)",
+        "op": "1",
+        "rect": {
+         "x": 441,
+         "y": 528,
+         "width": 562,
+         "height": 40
+        }
+       }
+      },
+      {
+       "at": "r1c0.5",
+       "x": 722,
+       "y": 558,
+       "selfDepth": 0,
+       "top": {
+        "tag": "p",
+        "id": "",
+        "cls": "",
+        "text": "Bei Lieferungen nach Liechtens",
+        "pos": "static",
+        "z": "auto",
+        "bg": "rgba(0, 0, 0, 0)",
+        "op": "1",
+        "rect": {
+         "x": 441,
+         "y": 528,
+         "width": 562,
+         "height": 40
+        }
+       }
+      },
+      {
+       "at": "r1c0.9",
+       "x": 947,
+       "y": 558,
+       "selfDepth": 0,
+       "top": {
+        "tag": "p",
+        "id": "",
+        "cls": "",
+        "text": "Bei Lieferungen nach Liechtens",
+        "pos": "static",
+        "z": "auto",
+        "bg": "rgba(0, 0, 0, 0)",
+        "op": "1",
+        "rect": {
+         "x": 441,
+         "y": 528,
+         "width": 562,
+         "height": 40
+        }
+       }
+      },
+      {
+       "at": "below0.25",
+       "x": 582,
+       "y": 580,
+       "selfDepth": -1,
+       "top": {
+        "tag": "section",
+        "id": "shipping",
+        "cls": "card",
+        "text": "Versandart\n    \n       Post Ec",
+        "pos": "static",
+        "z": "auto",
+        "bg": "rgb(255, 255, 255)",
+        "op": "1",
+        "rect": {
+         "x": 400,
+         "y": 341,
+         "width": 640,
+         "height": 310
+        }
+       }
+      },
+      {
+       "at": "below0.75",
+       "x": 863,
+       "y": 580,
+       "selfDepth": -1,
+       "top": {
+        "tag": "section",
+        "id": "shipping",
+        "cls": "card",
+        "text": "Versandart\n    \n       Post Ec",
+        "pos": "static",
+        "z": "auto",
+        "bg": "rgb(255, 255, 255)",
+        "op": "1",
+        "rect": {
+         "x": 400,
+         "y": 341,
+         "width": 640,
+         "height": 310
+        }
+       }
+      }
+     ],
+     "ancestors": [
+      {
+       "tag": "div",
+       "id": "shipping-info",
+       "cls": "notice",
+       "text": "Bei Lieferungen nach Liechtens",
+       "pos": "static",
+       "z": "auto",
+       "bg": "rgb(255, 248, 225)",
+       "op": "1",
+       "rect": {
+        "x": 425,
+        "y": 518,
+        "width": 590,
+        "height": 60
+       },
+       "clipsBottom": false,
+       "endsAboveRect": false,
+       "clipsRight": false
+      },
+      {
+       "tag": "section",
+       "id": "shipping",
+       "cls": "card",
+       "text": "Versandart\n    \n       Post Ec",
+       "pos": "static",
+       "z": "auto",
+       "bg": "rgb(255, 255, 255)",
+       "op": "1",
+       "rect": {
+        "x": 400,
+        "y": 341,
+        "width": 640,
+        "height": 310
+       },
+       "clipsBottom": false,
+       "endsAboveRect": false,
+       "clipsRight": false
+      },
+      {
+       "tag": "main",
+       "id": "",
+       "cls": "checkout",
+       "text": "Kasse\n  \n    Ihr Warenkorb\n   ",
+       "pos": "static",
+       "z": "auto",
+       "bg": "rgba(0, 0, 0, 0)",
+       "op": "1",
+       "rect": {
+        "x": 384,
+        "y": 87,
+        "width": 672,
+        "height": 564
+       },
+       "clipsBottom": false,
+       "endsAboveRect": false,
+       "clipsRight": false
+      },
+      {
+       "tag": "body",
+       "id": "",
+       "cls": "",
+       "text": "Velowerkstatt an der Aare\n\n  K",
+       "pos": "static",
+       "z": "auto",
+       "bg": "rgb(242, 241, 237)",
+       "op": "1",
+       "rect": {
+        "x": 0,
+        "y": 0,
+        "width": 1440,
+        "height": 651
+       },
+       "clipsBottom": false,
+       "endsAboveRect": false,
+       "clipsRight": false
+      },
+      {
+       "tag": "html",
+       "id": "",
+       "cls": "",
+       "text": "Kasse – Velowerkstatt an der A",
+       "pos": "static",
+       "z": "auto",
+       "bg": "rgb(242, 241, 237)",
+       "op": "1",
+       "rect": {
+        "x": 0,
+        "y": 0,
+        "width": 1440,
+        "height": 683
+       },
+       "clipsBottom": false,
+       "endsAboveRect": false,
+       "clipsRight": false
+      }
+     ],
+     "cells": [
+      {
+       "row": 0,
+       "col": 0,
+       "clip": {
+        "x": 441,
+        "y": 528,
+        "width": 187,
+        "height": 20
+       },
+       "n": 3740,
+       "dark150": 538,
+       "ink": 0.144,
+       "min": 52,
+       "p05": 61,
+       "p50": 248,
+       "art": "d1-second-a-390x844-23-clip.png"
+      },
+      {
+       "row": 0,
+       "col": 1,
+       "clip": {
+        "x": 628,
+        "y": 528,
+        "width": 187,
+        "height": 20
+       },
+       "n": 3740,
+       "dark150": 559,
+       "ink": 0.149,
+       "min": 52,
+       "p05": 67,
+       "p50": 248,
+       "art": "d1-second-a-390x844-24-clip.png"
+      },
+      {
+       "row": 0,
+       "col": 2,
+       "clip": {
+        "x": 816,
+        "y": 528,
+        "width": 187,
+        "height": 20
+       },
+       "n": 3740,
+       "dark150": 512,
+       "ink": 0.137,
+       "min": 52,
+       "p05": 73,
+       "p50": 248,
+       "art": "d1-second-a-390x844-25-clip.png"
+      },
+      {
+       "row": 1,
+       "col": 0,
+       "clip": {
+        "x": 441,
+        "y": 548,
+        "width": 187,
+        "height": 20
+       },
+       "n": 3740,
+       "dark150": 580,
+       "ink": 0.155,
+       "min": 52,
+       "p05": 64,
+       "p50": 248,
+       "art": "d1-second-a-390x844-26-clip.png"
+      },
+      {
+       "row": 1,
+       "col": 1,
+       "clip": {
+        "x": 628,
+        "y": 548,
+        "width": 187,
+        "height": 20
+       },
+       "n": 3740,
+       "dark150": 554,
+       "ink": 0.148,
+       "min": 52,
+       "p05": 60,
+       "p50": 248,
+       "art": "d1-second-a-390x844-27-clip.png"
+      },
+      {
+       "row": 1,
+       "col": 2,
+       "clip": {
+        "x": 816,
+        "y": 548,
+        "width": 187,
+        "height": 20
+       },
+       "n": 3740,
+       "dark150": 95,
+       "ink": 0.025,
+       "min": 52,
+       "p05": 248,
+       "p50": 248,
+       "art": "d1-second-a-390x844-28-clip.png"
+      }
+     ],
+     "belowStrip": {
+      "clip": {
+       "x": 441,
+       "y": 569,
+       "width": 562,
+       "height": 40
+      },
+      "n": 22480,
+      "dark150": 3412,
+      "ink": 0.152,
+      "min": 81,
+      "p05": 81,
+      "p50": 255,
+      "art": "d1-second-a-390x844-29-clip.png"
+     }
+    },
+    {
+     "viewport": "390x844",
+     "errors": [],
+     "fragCounts": {
+      "Bei Lieferungen nach Lie": 1,
+      "nach Liechtenstein": 1,
+      "Zollgebühren": 1,
+      "dem Zusteller": 1,
+      "steller zu bezahlen sind": 1
+     },
+     "found": true,
+     "anchorFrag": "Bei Lieferungen nach Lie",
+     "el": {
+      "tag": "p",
+      "cls": "",
+      "text": 80,
+      "display": "block",
+      "position": "static",
+      "color": "rgb(61, 52, 32)",
+      "bg": "rgba(0, 0, 0, 0)",
+      "fontSize": "14px",
+      "visibility": "visible",
+      "effOp": 1,
+      "nda": [],
+      "rect": {
+       "x": 57,
+       "y": 552,
+       "width": 280,
+       "height": 80
+      }
+     },
+     "geom": {
+      "vp": {
+       "W": 390,
+       "H": 844,
+       "dpr": 1,
+       "scrollY": 0,
+       "docHeight": 844
+      },
+      "rightOverflow": -53,
+      "leftOverflow": -57,
+      "lh": 20,
+      "rectLines": 4,
+      "estLines": 4,
+      "heightRatio": 1
+     },
+     "points": [
+      {
+       "at": "r0c0.1",
+       "x": 85,
+       "y": 562,
+       "selfDepth": 0,
+       "top": {
+        "tag": "p",
+        "id": "",
+        "cls": "",
+        "text": "Bei Lieferungen nach Liechtens",
+        "pos": "static",
+        "z": "auto",
+        "bg": "rgba(0, 0, 0, 0)",
+        "op": "1",
+        "rect": {
+         "x": 57,
+         "y": 552,
+         "width": 280,
+         "height": 80
+        }
+       }
+      },
+      {
+       "at": "r0c0.5",
+       "x": 197,
+       "y": 562,
+       "selfDepth": 0,
+       "top": {
+        "tag": "p",
+        "id": "",
+        "cls": "",
+        "text": "Bei Lieferungen nach Liechtens",
+        "pos": "static",
+        "z": "auto",
+        "bg": "rgba(0, 0, 0, 0)",
+        "op": "1",
+        "rect": {
+         "x": 57,
+         "y": 552,
+         "width": 280,
+         "height": 80
+        }
+       }
+      },
+      {
+       "at": "r0c0.9",
+       "x": 309,
+       "y": 562,
+       "selfDepth": 0,
+       "top": {
+        "tag": "p",
+        "id": "",
+        "cls": "",
+        "text": "Bei Lieferungen nach Liechtens",
+        "pos": "static",
+        "z": "auto",
+        "bg": "rgba(0, 0, 0, 0)",
+        "op": "1",
+        "rect": {
+         "x": 57,
+         "y": 552,
+         "width": 280,
+         "height": 80
+        }
+       }
+      },
+      {
+       "at": "r1c0.1",
+       "x": 85,
+       "y": 582,
+       "selfDepth": 0,
+       "top": {
+        "tag": "p",
+        "id": "",
+        "cls": "",
+        "text": "Bei Lieferungen nach Liechtens",
+        "pos": "static",
+        "z": "auto",
+        "bg": "rgba(0, 0, 0, 0)",
+        "op": "1",
+        "rect": {
+         "x": 57,
+         "y": 552,
+         "width": 280,
+         "height": 80
+        }
+       }
+      },
+      {
+       "at": "r1c0.5",
+       "x": 197,
+       "y": 582,
+       "selfDepth": 0,
+       "top": {
+        "tag": "p",
+        "id": "",
+        "cls": "",
+        "text": "Bei Lieferungen nach Liechtens",
+        "pos": "static",
+        "z": "auto",
+        "bg": "rgba(0, 0, 0, 0)",
+        "op": "1",
+        "rect": {
+         "x": 57,
+         "y": 552,
+         "width": 280,
+         "height": 80
+        }
+       }
+      },
+      {
+       "at": "r1c0.9",
+       "x": 309,
+       "y": 582,
+       "selfDepth": 0,
+       "top": {
+        "tag": "p",
+        "id": "",
+        "cls": "",
+        "text": "Bei Lieferungen nach Liechtens",
+        "pos": "static",
+        "z": "auto",
+        "bg": "rgba(0, 0, 0, 0)",
+        "op": "1",
+        "rect": {
+         "x": 57,
+         "y": 552,
+         "width": 280,
+         "height": 80
+        }
+       }
+      },
+      {
+       "at": "r2c0.1",
+       "x": 85,
+       "y": 602,
+       "selfDepth": -1,
+       "top": {
+        "tag": "section",
+        "id": "shipping",
+        "cls": "card",
+        "text": "Versandart\n    \n       Post Ec",
+        "pos": "static",
+        "z": "auto",
+        "bg": "rgb(255, 255, 255)",
+        "op": "1",
+        "rect": {
+         "x": 16,
+         "y": 365,
+         "width": 358,
+         "height": 310
+        }
+       }
+      },
+      {
+       "at": "r2c0.5",
+       "x": 197,
+       "y": 602,
+       "selfDepth": -1,
+       "top": {
+        "tag": "section",
+        "id": "shipping",
+        "cls": "card",
+        "text": "Versandart\n    \n       Post Ec",
+        "pos": "static",
+        "z": "auto",
+        "bg": "rgb(255, 255, 255)",
+        "op": "1",
+        "rect": {
+         "x": 16,
+         "y": 365,
+         "width": 358,
+         "height": 310
+        }
+       }
+      },
+      {
+       "at": "r2c0.9",
+       "x": 309,
+       "y": 602,
+       "selfDepth": -1,
+       "top": {
+        "tag": "section",
+        "id": "shipping",
+        "cls": "card",
+        "text": "Versandart\n    \n       Post Ec",
+        "pos": "static",
+        "z": "auto",
+        "bg": "rgb(255, 255, 255)",
+        "op": "1",
+        "rect": {
+         "x": 16,
+         "y": 365,
+         "width": 358,
+         "height": 310
+        }
+       }
+      },
+      {
+       "at": "r3c0.1",
+       "x": 85,
+       "y": 622,
+       "selfDepth": -1,
+       "top": {
+        "tag": "button",
+        "id": "",
+        "cls": "btn",
+        "text": "Weiter zur Zahlung",
+        "pos": "static",
+        "z": "auto",
+        "bg": "rgb(47, 93, 58)",
+        "op": "1",
+        "rect": {
+         "x": 41,
+         "y": 610,
+         "width": 184,
+         "height": 44
+        }
+       }
+      },
+      {
+       "at": "r3c0.5",
+       "x": 197,
+       "y": 622,
+       "selfDepth": -1,
+       "top": {
+        "tag": "button",
+        "id": "",
+        "cls": "btn",
+        "text": "Weiter zur Zahlung",
+        "pos": "static",
+        "z": "auto",
+        "bg": "rgb(47, 93, 58)",
+        "op": "1",
+        "rect": {
+         "x": 41,
+         "y": 610,
+         "width": 184,
+         "height": 44
+        }
+       }
+      },
+      {
+       "at": "r3c0.9",
+       "x": 309,
+       "y": 622,
+       "selfDepth": -1,
+       "top": {
+        "tag": "section",
+        "id": "shipping",
+        "cls": "card",
+        "text": "Versandart\n    \n       Post Ec",
+        "pos": "static",
+        "z": "auto",
+        "bg": "rgb(255, 255, 255)",
+        "op": "1",
+        "rect": {
+         "x": 16,
+         "y": 365,
+         "width": 358,
+         "height": 310
+        }
+       }
+      },
+      {
+       "at": "below0.25",
+       "x": 127,
+       "y": 644,
+       "selfDepth": -1,
+       "top": {
+        "tag": "button",
+        "id": "",
+        "cls": "btn",
+        "text": "Weiter zur Zahlung",
+        "pos": "static",
+        "z": "auto",
+        "bg": "rgb(47, 93, 58)",
+        "op": "1",
+        "rect": {
+         "x": 41,
+         "y": 610,
+         "width": 184,
+         "height": 44
+        }
+       }
+      },
+      {
+       "at": "below0.75",
+       "x": 267,
+       "y": 644,
+       "selfDepth": -1,
+       "top": {
+        "tag": "section",
+        "id": "shipping",
+        "cls": "card",
+        "text": "Versandart\n    \n       Post Ec",
+        "pos": "static",
+        "z": "auto",
+        "bg": "rgb(255, 255, 255)",
+        "op": "1",
+        "rect": {
+         "x": 16,
+         "y": 365,
+         "width": 358,
+         "height": 310
+        }
+       }
+      }
+     ],
+     "ancestors": [
+      {
+       "tag": "div",
+       "id": "shipping-info",
+       "cls": "notice",
+       "text": "Bei Lieferungen nach Liechtens",
+       "pos": "static",
+       "z": "auto",
+       "bg": "rgb(255, 248, 225)",
+       "op": "1",
+       "rect": {
+        "x": 41,
+        "y": 542,
+        "width": 308,
+        "height": 60
+       },
+       "clipsBottom": true,
+       "endsAboveRect": true,
+       "clipsRight": false
+      },
+      {
+       "tag": "section",
+       "id": "shipping",
+       "cls": "card",
+       "text": "Versandart\n    \n       Post Ec",
+       "pos": "static",
+       "z": "auto",
+       "bg": "rgb(255, 255, 255)",
+       "op": "1",
+       "rect": {
+        "x": 16,
+        "y": 365,
+        "width": 358,
+        "height": 310
+       },
+       "clipsBottom": false,
+       "endsAboveRect": false,
+       "clipsRight": false
+      },
+      {
+       "tag": "main",
+       "id": "",
+       "cls": "checkout",
+       "text": "Kasse\n  \n    Ihr Warenkorb\n   ",
+       "pos": "static",
+       "z": "auto",
+       "bg": "rgba(0, 0, 0, 0)",
+       "op": "1",
+       "rect": {
+        "x": 0,
+        "y": 87,
+        "width": 390,
+        "height": 588
+       },
+       "clipsBottom": false,
+       "endsAboveRect": false,
+       "clipsRight": false
+      },
+      {
+       "tag": "body",
+       "id": "",
+       "cls": "",
+       "text": "Velowerkstatt an der Aare\n\n  K",
+       "pos": "static",
+       "z": "auto",
+       "bg": "rgb(242, 241, 237)",
+       "op": "1",
+       "rect": {
+        "x": 0,
+        "y": 0,
+        "width": 390,
+        "height": 675
+       },
+       "clipsBottom": false,
+       "endsAboveRect": false,
+       "clipsRight": false
+      },
+      {
+       "tag": "html",
+       "id": "",
+       "cls": "",
+       "text": "Kasse – Velowerkstatt an der A",
+       "pos": "static",
+       "z": "auto",
+       "bg": "rgb(242, 241, 237)",
+       "op": "1",
+       "rect": {
+        "x": 0,
+        "y": 0,
+        "width": 390,
+        "height": 707
+       },
+       "clipsBottom": false,
+       "endsAboveRect": false,
+       "clipsRight": false
+      }
+     ],
+     "cells": [
+      {
+       "row": 0,
+       "col": 0,
+       "clip": {
+        "x": 57,
+        "y": 552,
+        "width": 93,
+        "height": 20
+       },
+       "n": 1860,
+       "dark150": 285,
+       "ink": 0.153,
+       "min": 52,
+       "p05": 57,
+       "p50": 248,
+       "art": "d1-second-a-390x844-31-clip.png"
+      },
+      {
+       "row": 0,
+       "col": 1,
+       "clip": {
+        "x": 150,
+        "y": 552,
+        "width": 93,
+        "height": 20
+       },
+       "n": 1860,
+       "dark150": 252,
+       "ink": 0.135,
+       "min": 52,
+       "p05": 66,
+       "p50": 248,
+       "art": "d1-second-a-390x844-32-clip.png"
+      },
+      {
+       "row": 0,
+       "col": 2,
+       "clip": {
+        "x": 244,
+        "y": 552,
+        "width": 93,
+        "height": 20
+       },
+       "n": 1860,
+       "dark150": 254,
+       "ink": 0.137,
+       "min": 52,
+       "p05": 68,
+       "p50": 248,
+       "art": "d1-second-a-390x844-33-clip.png"
+      },
+      {
+       "row": 1,
+       "col": 0,
+       "clip": {
+        "x": 57,
+        "y": 572,
+        "width": 93,
+        "height": 20
+       },
+       "n": 1860,
+       "dark150": 286,
+       "ink": 0.154,
+       "min": 52,
+       "p05": 64,
+       "p50": 248,
+       "art": "d1-second-a-390x844-34-clip.png"
+      },
+      {
+       "row": 1,
+       "col": 1,
+       "clip": {
+        "x": 150,
+        "y": 572,
+        "width": 93,
+        "height": 20
+       },
+       "n": 1860,
+       "dark150": 254,
+       "ink": 0.137,
+       "min": 52,
+       "p05": 60,
+       "p50": 248,
+       "art": "d1-second-a-390x844-35-clip.png"
+      },
+      {
+       "row": 1,
+       "col": 2,
+       "clip": {
+        "x": 244,
+        "y": 572,
+        "width": 93,
+        "height": 20
+       },
+       "n": 1860,
+       "dark150": 246,
+       "ink": 0.132,
+       "min": 52,
+       "p05": 71,
+       "p50": 248,
+       "art": "d1-second-a-390x844-36-clip.png"
+      },
+      {
+       "row": 2,
+       "col": 0,
+       "clip": {
+        "x": 57,
+        "y": 592,
+        "width": 93,
+        "height": 20
+       },
+       "n": 1860,
+       "dark150": 310,
+       "ink": 0.167,
+       "min": 52,
+       "p05": 81,
+       "p50": 248,
+       "art": "d1-second-a-390x844-37-clip.png"
+      },
+      {
+       "row": 2,
+       "col": 1,
+       "clip": {
+        "x": 150,
+        "y": 592,
+        "width": 93,
+        "height": 20
+       },
+       "n": 1860,
+       "dark150": 274,
+       "ink": 0.147,
+       "min": 52,
+       "p05": 81,
+       "p50": 248,
+       "art": "d1-second-a-390x844-38-clip.png"
+      },
+      {
+       "row": 2,
+       "col": 2,
+       "clip": {
+        "x": 244,
+        "y": 592,
+        "width": 93,
+        "height": 20
+       },
+       "n": 1860,
+       "dark150": 73,
+       "ink": 0.039,
+       "min": 52,
+       "p05": 203,
+       "p50": 255,
+       "art": "d1-second-a-390x844-39-clip.png"
+      },
+      {
+       "row": 3,
+       "col": 0,
+       "clip": {
+        "x": 57,
+        "y": 612,
+        "width": 93,
+        "height": 20
+       },
+       "n": 1860,
+       "dark150": 1627,
+       "ink": 0.875,
+       "min": 81,
+       "p05": 81,
+       "p50": 81,
+       "art": "d1-second-a-390x844-40-clip.png"
+      },
+      {
+       "row": 3,
+       "col": 1,
+       "clip": {
+        "x": 150,
+        "y": 612,
+        "width": 93,
+        "height": 20
+       },
+       "n": 1860,
+       "dark150": 1356,
+       "ink": 0.729,
+       "min": 81,
+       "p05": 81,
+       "p50": 81,
+       "art": "d1-second-a-390x844-41-clip.png"
+      },
+      {
+       "row": 3,
+       "col": 2,
+       "clip": {
+        "x": 244,
+        "y": 612,
+        "width": 93,
+        "height": 20
+       },
+       "n": 1860,
+       "dark150": 0,
+       "ink": 0,
+       "min": 255,
+       "p05": 255,
+       "p50": 255,
+       "art": "d1-second-a-390x844-42-clip.png"
+      }
+     ],
+     "belowStrip": {
+      "clip": {
+       "x": 57,
+       "y": 633,
+       "width": 280,
+       "height": 40
+      },
+      "n": 11200,
+      "dark150": 3211,
+      "ink": 0.287,
+      "min": 81,
+      "p05": 81,
+      "p50": 255,
+      "art": "d1-second-a-390x844-43-clip.png"
+     }
+    }
+   ]
+  },
+  "error": null,
+  "calls": [
+   {
+    "op": "open",
+    "ok": true
+   },
+   {
+    "op": "findText",
+    "ok": true
+   },
+   {
+    "op": "findText",
+    "ok": true
+   },
+   {
+    "op": "findText",
+    "ok": true
+   },
+   {
+    "op": "findText",
+    "ok": true
+   },
+   {
+    "op": "findText",
+    "ok": true
+   },
+   {
+    "op": "viewport",
+    "ok": true
+   },
+   {
+    "op": "scrollTo",
+    "ok": true
+   },
+   {
+    "op": "findText",
+    "ok": true
+   },
+   {
+    "op": "viewport",
+    "ok": true
+   },
+   {
+    "op": "elementsFromPoint",
+    "ok": true
+   },
+   {
+    "op": "pixels",
+    "ok": true
+   },
+   {
+    "op": "pixels",
+    "ok": true
+   },
+   {
+    "op": "pixels",
+    "ok": true
+   },
+   {
+    "op": "pixels",
+    "ok": true
+   },
+   {
+    "op": "pixels",
+    "ok": true
+   },
+   {
+    "op": "pixels",
+    "ok": true
+   },
+   {
+    "op": "pixels",
+    "ok": true
+   },
+   {
+    "op": "screenshot",
+    "ok": true
+   },
+   {
+    "op": "open",
+    "ok": true
+   },
+   {
+    "op": "findText",
+    "ok": true
+   },
+   {
+    "op": "findText",
+    "ok": true
+   },
+   {
+    "op": "findText",
+    "ok": true
+   },
+   {
+    "op": "findText",
+    "ok": true
+   },
+   {
+    "op": "findText",
+    "ok": true
+   },
+   {
+    "op": "viewport",
+    "ok": true
+   },
+   {
+    "op": "scrollTo",
+    "ok": true
+   },
+   {
+    "op": "findText",
+    "ok": true
+   },
+   {
+    "op": "viewport",
+    "ok": true
+   },
+   {
+    "op": "elementsFromPoint",
+    "ok": true
+   },
+   {
+    "op": "pixels",
+    "ok": true
+   },
+   {
+    "op": "pixels",
+    "ok": true
+   },
+   {
+    "op": "pixels",
+    "ok": true
+   },
+   {
+    "op": "pixels",
+    "ok": true
+   },
+   {
+    "op": "pixels",
+    "ok": true
+   },
+   {
+    "op": "pixels",
+    "ok": true
+   },
+   {
+    "op": "pixels",
+    "ok": true
+   },
+   {
+    "op": "pixels",
+    "ok": true
+   },
+   {
+    "op": "pixels",
+    "ok": true
+   },
+   {
+    "op": "pixels",
+    "ok": true
+   },
+   {
+    "op": "pixels",
+    "ok": true
+   },
+   {
+    "op": "pixels",
+    "ok": true
+   },
+   {
+    "op": "pixels",
+    "ok": true
+   },
+   {
+    "op": "screenshot",
+    "ok": true
+   }
+  ],
+  "violations": [],
+  "durationMs": 2017,
+  "target": "second-a",
+  "viewport": "390x844",
+  "broker": "ail-broker/v1"
+ },
+ "second-b@1440x900": {
+  "sandbox": "ail-sandbox/v1",
+  "codeSha256": "d74bd1284064e3339e577517bfedea5bfc534f1728849af7d7734b5ff22880b9",
+  "state": "completed",
+  "result": {
+   "target": "second-b",
+   "runs": [
+    {
+     "viewport": "1440x900",
+     "errors": [],
+     "fragCounts": {
+      "Bei Lieferungen nach Lie": 1,
+      "nach Liechtenstein": 1,
+      "Zollgebühren": 1,
+      "dem Zusteller": 1,
+      "steller zu bezahlen sind": 1
+     },
+     "found": true,
+     "anchorFrag": "Bei Lieferungen nach Lie",
+     "el": {
+      "tag": "p",
+      "cls": "",
+      "text": 80,
+      "display": "block",
+      "position": "static",
+      "color": "rgb(61, 52, 32)",
+      "bg": "rgba(0, 0, 0, 0)",
+      "fontSize": "14px",
+      "visibility": "visible",
+      "effOp": 1,
+      "nda": [],
+      "rect": {
+       "x": 441,
+       "y": 528,
+       "width": 562,
+       "height": 40
+      }
+     },
+     "geom": {
+      "vp": {
+       "W": 1440,
+       "H": 900,
+       "dpr": 1,
+       "scrollY": 0,
+       "docHeight": 900
+      },
+      "rightOverflow": -437,
+      "leftOverflow": -441,
+      "lh": 20,
+      "rectLines": 2,
+      "estLines": 2,
+      "heightRatio": 1
+     },
+     "points": [
+      {
+       "at": "r0c0.1",
+       "x": 497,
+       "y": 538,
+       "selfDepth": 0,
+       "top": {
+        "tag": "p",
+        "id": "",
+        "cls": "",
+        "text": "Bei Lieferungen nach Liechtens",
+        "pos": "static",
+        "z": "auto",
+        "bg": "rgba(0, 0, 0, 0)",
+        "op": "1",
+        "rect": {
+         "x": 441,
+         "y": 528,
+         "width": 562,
+         "height": 40
+        }
+       }
+      },
+      {
+       "at": "r0c0.5",
+       "x": 722,
+       "y": 538,
+       "selfDepth": 0,
+       "top": {
+        "tag": "p",
+        "id": "",
+        "cls": "",
+        "text": "Bei Lieferungen nach Liechtens",
+        "pos": "static",
+        "z": "auto",
+        "bg": "rgba(0, 0, 0, 0)",
+        "op": "1",
+        "rect": {
+         "x": 441,
+         "y": 528,
+         "width": 562,
+         "height": 40
+        }
+       }
+      },
+      {
+       "at": "r0c0.9",
+       "x": 947,
+       "y": 538,
+       "selfDepth": 0,
+       "top": {
+        "tag": "p",
+        "id": "",
+        "cls": "",
+        "text": "Bei Lieferungen nach Liechtens",
+        "pos": "static",
+        "z": "auto",
+        "bg": "rgba(0, 0, 0, 0)",
+        "op": "1",
+        "rect": {
+         "x": 441,
+         "y": 528,
+         "width": 562,
+         "height": 40
+        }
+       }
+      },
+      {
+       "at": "r1c0.1",
+       "x": 497,
+       "y": 558,
+       "selfDepth": 0,
+       "top": {
+        "tag": "p",
+        "id": "",
+        "cls": "",
+        "text": "Bei Lieferungen nach Liechtens",
+        "pos": "static",
+        "z": "auto",
+        "bg": "rgba(0, 0, 0, 0)",
+        "op": "1",
+        "rect": {
+         "x": 441,
+         "y": 528,
+         "width": 562,
+         "height": 40
+        }
+       }
+      },
+      {
+       "at": "r1c0.5",
+       "x": 722,
+       "y": 558,
+       "selfDepth": 0,
+       "top": {
+        "tag": "p",
+        "id": "",
+        "cls": "",
+        "text": "Bei Lieferungen nach Liechtens",
+        "pos": "static",
+        "z": "auto",
+        "bg": "rgba(0, 0, 0, 0)",
+        "op": "1",
+        "rect": {
+         "x": 441,
+         "y": 528,
+         "width": 562,
+         "height": 40
+        }
+       }
+      },
+      {
+       "at": "r1c0.9",
+       "x": 947,
+       "y": 558,
+       "selfDepth": 0,
+       "top": {
+        "tag": "p",
+        "id": "",
+        "cls": "",
+        "text": "Bei Lieferungen nach Liechtens",
+        "pos": "static",
+        "z": "auto",
+        "bg": "rgba(0, 0, 0, 0)",
+        "op": "1",
+        "rect": {
+         "x": 441,
+         "y": 528,
+         "width": 562,
+         "height": 40
+        }
+       }
+      },
+      {
+       "at": "below0.25",
+       "x": 582,
+       "y": 580,
+       "selfDepth": -1,
+       "top": {
+        "tag": "section",
+        "id": "shipping",
+        "cls": "card",
+        "text": "Versandart\n    \n       Post Ec",
+        "pos": "static",
+        "z": "auto",
+        "bg": "rgb(255, 255, 255)",
+        "op": "1",
+        "rect": {
+         "x": 400,
+         "y": 341,
+         "width": 640,
+         "height": 310
+        }
+       }
+      },
+      {
+       "at": "below0.75",
+       "x": 863,
+       "y": 580,
+       "selfDepth": -1,
+       "top": {
+        "tag": "section",
+        "id": "shipping",
+        "cls": "card",
+        "text": "Versandart\n    \n       Post Ec",
+        "pos": "static",
+        "z": "auto",
+        "bg": "rgb(255, 255, 255)",
+        "op": "1",
+        "rect": {
+         "x": 400,
+         "y": 341,
+         "width": 640,
+         "height": 310
+        }
+       }
+      }
+     ],
+     "ancestors": [
+      {
+       "tag": "div",
+       "id": "shipping-info",
+       "cls": "notice",
+       "text": "Bei Lieferungen nach Liechtens",
+       "pos": "static",
+       "z": "auto",
+       "bg": "rgb(255, 248, 225)",
+       "op": "1",
+       "rect": {
+        "x": 425,
+        "y": 518,
+        "width": 590,
+        "height": 60
+       },
+       "clipsBottom": false,
+       "endsAboveRect": false,
+       "clipsRight": false
+      },
+      {
+       "tag": "section",
+       "id": "shipping",
+       "cls": "card",
+       "text": "Versandart\n    \n       Post Ec",
+       "pos": "static",
+       "z": "auto",
+       "bg": "rgb(255, 255, 255)",
+       "op": "1",
+       "rect": {
+        "x": 400,
+        "y": 341,
+        "width": 640,
+        "height": 310
+       },
+       "clipsBottom": false,
+       "endsAboveRect": false,
+       "clipsRight": false
+      },
+      {
+       "tag": "main",
+       "id": "",
+       "cls": "checkout",
+       "text": "Kasse\n  \n    Ihr Warenkorb\n   ",
+       "pos": "static",
+       "z": "auto",
+       "bg": "rgba(0, 0, 0, 0)",
+       "op": "1",
+       "rect": {
+        "x": 384,
+        "y": 87,
+        "width": 672,
+        "height": 564
+       },
+       "clipsBottom": false,
+       "endsAboveRect": false,
+       "clipsRight": false
+      },
+      {
+       "tag": "body",
+       "id": "",
+       "cls": "",
+       "text": "Velowerkstatt an der Aare\n\n  K",
+       "pos": "static",
+       "z": "auto",
+       "bg": "rgb(242, 241, 237)",
+       "op": "1",
+       "rect": {
+        "x": 0,
+        "y": 0,
+        "width": 1440,
+        "height": 651
+       },
+       "clipsBottom": false,
+       "endsAboveRect": false,
+       "clipsRight": false
+      },
+      {
+       "tag": "html",
+       "id": "",
+       "cls": "",
+       "text": "Kasse – Velowerkstatt an der A",
+       "pos": "static",
+       "z": "auto",
+       "bg": "rgb(242, 241, 237)",
+       "op": "1",
+       "rect": {
+        "x": 0,
+        "y": 0,
+        "width": 1440,
+        "height": 683
+       },
+       "clipsBottom": false,
+       "endsAboveRect": false,
+       "clipsRight": false
+      }
+     ],
+     "cells": [
+      {
+       "row": 0,
+       "col": 0,
+       "clip": {
+        "x": 441,
+        "y": 528,
+        "width": 187,
+        "height": 20
+       },
+       "n": 3740,
+       "dark150": 538,
+       "ink": 0.144,
+       "min": 52,
+       "p05": 61,
+       "p50": 248,
+       "art": "d1-second-b-1440x900-45-clip.png"
+      },
+      {
+       "row": 0,
+       "col": 1,
+       "clip": {
+        "x": 628,
+        "y": 528,
+        "width": 187,
+        "height": 20
+       },
+       "n": 3740,
+       "dark150": 559,
+       "ink": 0.149,
+       "min": 52,
+       "p05": 67,
+       "p50": 248,
+       "art": "d1-second-b-1440x900-46-clip.png"
+      },
+      {
+       "row": 0,
+       "col": 2,
+       "clip": {
+        "x": 816,
+        "y": 528,
+        "width": 187,
+        "height": 20
+       },
+       "n": 3740,
+       "dark150": 512,
+       "ink": 0.137,
+       "min": 52,
+       "p05": 73,
+       "p50": 248,
+       "art": "d1-second-b-1440x900-47-clip.png"
+      },
+      {
+       "row": 1,
+       "col": 0,
+       "clip": {
+        "x": 441,
+        "y": 548,
+        "width": 187,
+        "height": 20
+       },
+       "n": 3740,
+       "dark150": 580,
+       "ink": 0.155,
+       "min": 52,
+       "p05": 64,
+       "p50": 248,
+       "art": "d1-second-b-1440x900-48-clip.png"
+      },
+      {
+       "row": 1,
+       "col": 1,
+       "clip": {
+        "x": 628,
+        "y": 548,
+        "width": 187,
+        "height": 20
+       },
+       "n": 3740,
+       "dark150": 554,
+       "ink": 0.148,
+       "min": 52,
+       "p05": 60,
+       "p50": 248,
+       "art": "d1-second-b-1440x900-49-clip.png"
+      },
+      {
+       "row": 1,
+       "col": 2,
+       "clip": {
+        "x": 816,
+        "y": 548,
+        "width": 187,
+        "height": 20
+       },
+       "n": 3740,
+       "dark150": 95,
+       "ink": 0.025,
+       "min": 52,
+       "p05": 248,
+       "p50": 248,
+       "art": "d1-second-b-1440x900-50-clip.png"
+      }
+     ],
+     "belowStrip": {
+      "clip": {
+       "x": 441,
+       "y": 569,
+       "width": 562,
+       "height": 40
+      },
+      "n": 22480,
+      "dark150": 3412,
+      "ink": 0.152,
+      "min": 81,
+      "p05": 81,
+      "p50": 255,
+      "art": "d1-second-b-1440x900-51-clip.png"
+     }
+    },
+    {
+     "viewport": "390x844",
+     "errors": [],
+     "fragCounts": {
+      "Bei Lieferungen nach Lie": 1,
+      "nach Liechtenstein": 1,
+      "Zollgebühren": 1,
+      "dem Zusteller": 1,
+      "steller zu bezahlen sind": 1
+     },
+     "found": true,
+     "anchorFrag": "Bei Lieferungen nach Lie",
+     "el": {
+      "tag": "p",
+      "cls": "",
+      "text": 80,
+      "display": "block",
+      "position": "static",
+      "color": "rgb(61, 52, 32)",
+      "bg": "rgba(0, 0, 0, 0)",
+      "fontSize": "14px",
+      "visibility": "visible",
+      "effOp": 1,
+      "nda": [],
+      "rect": {
+       "x": 57,
+       "y": 552,
+       "width": 280,
+       "height": 80
+      }
+     },
+     "geom": {
+      "vp": {
+       "W": 390,
+       "H": 844,
+       "dpr": 1,
+       "scrollY": 0,
+       "docHeight": 844
+      },
+      "rightOverflow": -53,
+      "leftOverflow": -57,
+      "lh": 20,
+      "rectLines": 4,
+      "estLines": 4,
+      "heightRatio": 1
+     },
+     "points": [
+      {
+       "at": "r0c0.1",
+       "x": 85,
+       "y": 562,
+       "selfDepth": 0,
+       "top": {
+        "tag": "p",
+        "id": "",
+        "cls": "",
+        "text": "Bei Lieferungen nach Liechtens",
+        "pos": "static",
+        "z": "auto",
+        "bg": "rgba(0, 0, 0, 0)",
+        "op": "1",
+        "rect": {
+         "x": 57,
+         "y": 552,
+         "width": 280,
+         "height": 80
+        }
+       }
+      },
+      {
+       "at": "r0c0.5",
+       "x": 197,
+       "y": 562,
+       "selfDepth": 0,
+       "top": {
+        "tag": "p",
+        "id": "",
+        "cls": "",
+        "text": "Bei Lieferungen nach Liechtens",
+        "pos": "static",
+        "z": "auto",
+        "bg": "rgba(0, 0, 0, 0)",
+        "op": "1",
+        "rect": {
+         "x": 57,
+         "y": 552,
+         "width": 280,
+         "height": 80
+        }
+       }
+      },
+      {
+       "at": "r0c0.9",
+       "x": 309,
+       "y": 562,
+       "selfDepth": 0,
+       "top": {
+        "tag": "p",
+        "id": "",
+        "cls": "",
+        "text": "Bei Lieferungen nach Liechtens",
+        "pos": "static",
+        "z": "auto",
+        "bg": "rgba(0, 0, 0, 0)",
+        "op": "1",
+        "rect": {
+         "x": 57,
+         "y": 552,
+         "width": 280,
+         "height": 80
+        }
+       }
+      },
+      {
+       "at": "r1c0.1",
+       "x": 85,
+       "y": 582,
+       "selfDepth": 0,
+       "top": {
+        "tag": "p",
+        "id": "",
+        "cls": "",
+        "text": "Bei Lieferungen nach Liechtens",
+        "pos": "static",
+        "z": "auto",
+        "bg": "rgba(0, 0, 0, 0)",
+        "op": "1",
+        "rect": {
+         "x": 57,
+         "y": 552,
+         "width": 280,
+         "height": 80
+        }
+       }
+      },
+      {
+       "at": "r1c0.5",
+       "x": 197,
+       "y": 582,
+       "selfDepth": 0,
+       "top": {
+        "tag": "p",
+        "id": "",
+        "cls": "",
+        "text": "Bei Lieferungen nach Liechtens",
+        "pos": "static",
+        "z": "auto",
+        "bg": "rgba(0, 0, 0, 0)",
+        "op": "1",
+        "rect": {
+         "x": 57,
+         "y": 552,
+         "width": 280,
+         "height": 80
+        }
+       }
+      },
+      {
+       "at": "r1c0.9",
+       "x": 309,
+       "y": 582,
+       "selfDepth": 0,
+       "top": {
+        "tag": "p",
+        "id": "",
+        "cls": "",
+        "text": "Bei Lieferungen nach Liechtens",
+        "pos": "static",
+        "z": "auto",
+        "bg": "rgba(0, 0, 0, 0)",
+        "op": "1",
+        "rect": {
+         "x": 57,
+         "y": 552,
+         "width": 280,
+         "height": 80
+        }
+       }
+      },
+      {
+       "at": "r2c0.1",
+       "x": 85,
+       "y": 602,
+       "selfDepth": 0,
+       "top": {
+        "tag": "p",
+        "id": "",
+        "cls": "",
+        "text": "Bei Lieferungen nach Liechtens",
+        "pos": "static",
+        "z": "auto",
+        "bg": "rgba(0, 0, 0, 0)",
+        "op": "1",
+        "rect": {
+         "x": 57,
+         "y": 552,
+         "width": 280,
+         "height": 80
+        }
+       }
+      },
+      {
+       "at": "r2c0.5",
+       "x": 197,
+       "y": 602,
+       "selfDepth": 0,
+       "top": {
+        "tag": "p",
+        "id": "",
+        "cls": "",
+        "text": "Bei Lieferungen nach Liechtens",
+        "pos": "static",
+        "z": "auto",
+        "bg": "rgba(0, 0, 0, 0)",
+        "op": "1",
+        "rect": {
+         "x": 57,
+         "y": 552,
+         "width": 280,
+         "height": 80
+        }
+       }
+      },
+      {
+       "at": "r2c0.9",
+       "x": 309,
+       "y": 602,
+       "selfDepth": 0,
+       "top": {
+        "tag": "p",
+        "id": "",
+        "cls": "",
+        "text": "Bei Lieferungen nach Liechtens",
+        "pos": "static",
+        "z": "auto",
+        "bg": "rgba(0, 0, 0, 0)",
+        "op": "1",
+        "rect": {
+         "x": 57,
+         "y": 552,
+         "width": 280,
+         "height": 80
+        }
+       }
+      },
+      {
+       "at": "r3c0.1",
+       "x": 85,
+       "y": 622,
+       "selfDepth": 0,
+       "top": {
+        "tag": "p",
+        "id": "",
+        "cls": "",
+        "text": "Bei Lieferungen nach Liechtens",
+        "pos": "static",
+        "z": "auto",
+        "bg": "rgba(0, 0, 0, 0)",
+        "op": "1",
+        "rect": {
+         "x": 57,
+         "y": 552,
+         "width": 280,
+         "height": 80
+        }
+       }
+      },
+      {
+       "at": "r3c0.5",
+       "x": 197,
+       "y": 622,
+       "selfDepth": 0,
+       "top": {
+        "tag": "p",
+        "id": "",
+        "cls": "",
+        "text": "Bei Lieferungen nach Liechtens",
+        "pos": "static",
+        "z": "auto",
+        "bg": "rgba(0, 0, 0, 0)",
+        "op": "1",
+        "rect": {
+         "x": 57,
+         "y": 552,
+         "width": 280,
+         "height": 80
+        }
+       }
+      },
+      {
+       "at": "r3c0.9",
+       "x": 309,
+       "y": 622,
+       "selfDepth": 0,
+       "top": {
+        "tag": "p",
+        "id": "",
+        "cls": "",
+        "text": "Bei Lieferungen nach Liechtens",
+        "pos": "static",
+        "z": "auto",
+        "bg": "rgba(0, 0, 0, 0)",
+        "op": "1",
+        "rect": {
+         "x": 57,
+         "y": 552,
+         "width": 280,
+         "height": 80
+        }
+       }
+      },
+      {
+       "at": "below0.25",
+       "x": 127,
+       "y": 644,
+       "selfDepth": -1,
+       "top": {
+        "tag": "section",
+        "id": "shipping",
+        "cls": "card",
+        "text": "Versandart\n    \n       Post Ec",
+        "pos": "static",
+        "z": "auto",
+        "bg": "rgb(255, 255, 255)",
+        "op": "1",
+        "rect": {
+         "x": 16,
+         "y": 365,
+         "width": 358,
+         "height": 350
+        }
+       }
+      },
+      {
+       "at": "below0.75",
+       "x": 267,
+       "y": 644,
+       "selfDepth": -1,
+       "top": {
+        "tag": "section",
+        "id": "shipping",
+        "cls": "card",
+        "text": "Versandart\n    \n       Post Ec",
+        "pos": "static",
+        "z": "auto",
+        "bg": "rgb(255, 255, 255)",
+        "op": "1",
+        "rect": {
+         "x": 16,
+         "y": 365,
+         "width": 358,
+         "height": 350
+        }
+       }
+      }
+     ],
+     "ancestors": [
+      {
+       "tag": "div",
+       "id": "shipping-info",
+       "cls": "notice",
+       "text": "Bei Lieferungen nach Liechtens",
+       "pos": "static",
+       "z": "auto",
+       "bg": "rgb(255, 248, 225)",
+       "op": "1",
+       "rect": {
+        "x": 41,
+        "y": 542,
+        "width": 308,
+        "height": 100
+       },
+       "clipsBottom": false,
+       "endsAboveRect": false,
+       "clipsRight": false
+      },
+      {
+       "tag": "section",
+       "id": "shipping",
+       "cls": "card",
+       "text": "Versandart\n    \n       Post Ec",
+       "pos": "static",
+       "z": "auto",
+       "bg": "rgb(255, 255, 255)",
+       "op": "1",
+       "rect": {
+        "x": 16,
+        "y": 365,
+        "width": 358,
+        "height": 350
+       },
+       "clipsBottom": false,
+       "endsAboveRect": false,
+       "clipsRight": false
+      },
+      {
+       "tag": "main",
+       "id": "",
+       "cls": "checkout",
+       "text": "Kasse\n  \n    Ihr Warenkorb\n   ",
+       "pos": "static",
+       "z": "auto",
+       "bg": "rgba(0, 0, 0, 0)",
+       "op": "1",
+       "rect": {
+        "x": 0,
+        "y": 87,
+        "width": 390,
+        "height": 628
+       },
+       "clipsBottom": false,
+       "endsAboveRect": false,
+       "clipsRight": false
+      },
+      {
+       "tag": "body",
+       "id": "",
+       "cls": "",
+       "text": "Velowerkstatt an der Aare\n\n  K",
+       "pos": "static",
+       "z": "auto",
+       "bg": "rgb(242, 241, 237)",
+       "op": "1",
+       "rect": {
+        "x": 0,
+        "y": 0,
+        "width": 390,
+        "height": 715
+       },
+       "clipsBottom": false,
+       "endsAboveRect": false,
+       "clipsRight": false
+      },
+      {
+       "tag": "html",
+       "id": "",
+       "cls": "",
+       "text": "Kasse – Velowerkstatt an der A",
+       "pos": "static",
+       "z": "auto",
+       "bg": "rgb(242, 241, 237)",
+       "op": "1",
+       "rect": {
+        "x": 0,
+        "y": 0,
+        "width": 390,
+        "height": 747
+       },
+       "clipsBottom": false,
+       "endsAboveRect": false,
+       "clipsRight": false
+      }
+     ],
+     "cells": [
+      {
+       "row": 0,
+       "col": 0,
+       "clip": {
+        "x": 57,
+        "y": 552,
+        "width": 93,
+        "height": 20
+       },
+       "n": 1860,
+       "dark150": 285,
+       "ink": 0.153,
+       "min": 52,
+       "p05": 57,
+       "p50": 248,
+       "art": "d1-second-b-1440x900-53-clip.png"
+      },
+      {
+       "row": 0,
+       "col": 1,
+       "clip": {
+        "x": 150,
+        "y": 552,
+        "width": 93,
+        "height": 20
+       },
+       "n": 1860,
+       "dark150": 252,
+       "ink": 0.135,
+       "min": 52,
+       "p05": 66,
+       "p50": 248,
+       "art": "d1-second-b-1440x900-54-clip.png"
+      },
+      {
+       "row": 0,
+       "col": 2,
+       "clip": {
+        "x": 244,
+        "y": 552,
+        "width": 93,
+        "height": 20
+       },
+       "n": 1860,
+       "dark150": 254,
+       "ink": 0.137,
+       "min": 52,
+       "p05": 68,
+       "p50": 248,
+       "art": "d1-second-b-1440x900-55-clip.png"
+      },
+      {
+       "row": 1,
+       "col": 0,
+       "clip": {
+        "x": 57,
+        "y": 572,
+        "width": 93,
+        "height": 20
+       },
+       "n": 1860,
+       "dark150": 286,
+       "ink": 0.154,
+       "min": 52,
+       "p05": 64,
+       "p50": 248,
+       "art": "d1-second-b-1440x900-56-clip.png"
+      },
+      {
+       "row": 1,
+       "col": 1,
+       "clip": {
+        "x": 150,
+        "y": 572,
+        "width": 93,
+        "height": 20
+       },
+       "n": 1860,
+       "dark150": 254,
+       "ink": 0.137,
+       "min": 52,
+       "p05": 60,
+       "p50": 248,
+       "art": "d1-second-b-1440x900-57-clip.png"
+      },
+      {
+       "row": 1,
+       "col": 2,
+       "clip": {
+        "x": 244,
+        "y": 572,
+        "width": 93,
+        "height": 20
+       },
+       "n": 1860,
+       "dark150": 246,
+       "ink": 0.132,
+       "min": 52,
+       "p05": 71,
+       "p50": 248,
+       "art": "d1-second-b-1440x900-58-clip.png"
+      },
+      {
+       "row": 2,
+       "col": 0,
+       "clip": {
+        "x": 57,
+        "y": 592,
+        "width": 93,
+        "height": 20
+       },
+       "n": 1860,
+       "dark150": 300,
+       "ink": 0.161,
+       "min": 52,
+       "p05": 72,
+       "p50": 248,
+       "art": "d1-second-b-1440x900-59-clip.png"
+      },
+      {
+       "row": 2,
+       "col": 1,
+       "clip": {
+        "x": 150,
+        "y": 592,
+        "width": 93,
+        "height": 20
+       },
+       "n": 1860,
+       "dark150": 272,
+       "ink": 0.146,
+       "min": 52,
+       "p05": 59,
+       "p50": 248,
+       "art": "d1-second-b-1440x900-60-clip.png"
+      },
+      {
+       "row": 2,
+       "col": 2,
+       "clip": {
+        "x": 244,
+        "y": 592,
+        "width": 93,
+        "height": 20
+       },
+       "n": 1860,
+       "dark150": 164,
+       "ink": 0.088,
+       "min": 52,
+       "p05": 96,
+       "p50": 248,
+       "art": "d1-second-b-1440x900-61-clip.png"
+      },
+      {
+       "row": 3,
+       "col": 0,
+       "clip": {
+        "x": 57,
+        "y": 612,
+        "width": 93,
+        "height": 20
+       },
+       "n": 1860,
+       "dark150": 277,
+       "ink": 0.149,
+       "min": 52,
+       "p05": 59,
+       "p50": 248,
+       "art": "d1-second-b-1440x900-62-clip.png"
+      },
+      {
+       "row": 3,
+       "col": 1,
+       "clip": {
+        "x": 150,
+        "y": 612,
+        "width": 93,
+        "height": 20
+       },
+       "n": 1860,
+       "dark150": 227,
+       "ink": 0.122,
+       "min": 52,
+       "p05": 78,
+       "p50": 248,
+       "art": "d1-second-b-1440x900-63-clip.png"
+      },
+      {
+       "row": 3,
+       "col": 2,
+       "clip": {
+        "x": 244,
+        "y": 612,
+        "width": 93,
+        "height": 20
+       },
+       "n": 1860,
+       "dark150": 0,
+       "ink": 0,
+       "min": 248,
+       "p05": 248,
+       "p50": 248,
+       "art": "d1-second-b-1440x900-64-clip.png"
+      }
+     ],
+     "belowStrip": {
+      "clip": {
+       "x": 57,
+       "y": 633,
+       "width": 280,
+       "height": 40
+      },
+      "n": 11200,
+      "dark150": 3412,
+      "ink": 0.305,
+      "min": 81,
+      "p05": 81,
+      "p50": 248,
+      "art": "d1-second-b-1440x900-65-clip.png"
+     }
+    }
+   ]
+  },
+  "error": null,
+  "calls": [
+   {
+    "op": "open",
+    "ok": true
+   },
+   {
+    "op": "findText",
+    "ok": true
+   },
+   {
+    "op": "findText",
+    "ok": true
+   },
+   {
+    "op": "findText",
+    "ok": true
+   },
+   {
+    "op": "findText",
+    "ok": true
+   },
+   {
+    "op": "findText",
+    "ok": true
+   },
+   {
+    "op": "viewport",
+    "ok": true
+   },
+   {
+    "op": "scrollTo",
+    "ok": true
+   },
+   {
+    "op": "findText",
+    "ok": true
+   },
+   {
+    "op": "viewport",
+    "ok": true
+   },
+   {
+    "op": "elementsFromPoint",
+    "ok": true
+   },
+   {
+    "op": "pixels",
+    "ok": true
+   },
+   {
+    "op": "pixels",
+    "ok": true
+   },
+   {
+    "op": "pixels",
+    "ok": true
+   },
+   {
+    "op": "pixels",
+    "ok": true
+   },
+   {
+    "op": "pixels",
+    "ok": true
+   },
+   {
+    "op": "pixels",
+    "ok": true
+   },
+   {
+    "op": "pixels",
+    "ok": true
+   },
+   {
+    "op": "screenshot",
+    "ok": true
+   },
+   {
+    "op": "open",
+    "ok": true
+   },
+   {
+    "op": "findText",
+    "ok": true
+   },
+   {
+    "op": "findText",
+    "ok": true
+   },
+   {
+    "op": "findText",
+    "ok": true
+   },
+   {
+    "op": "findText",
+    "ok": true
+   },
+   {
+    "op": "findText",
+    "ok": true
+   },
+   {
+    "op": "viewport",
+    "ok": true
+   },
+   {
+    "op": "scrollTo",
+    "ok": true
+   },
+   {
+    "op": "findText",
+    "ok": true
+   },
+   {
+    "op": "viewport",
+    "ok": true
+   },
+   {
+    "op": "elementsFromPoint",
+    "ok": true
+   },
+   {
+    "op": "pixels",
+    "ok": true
+   },
+   {
+    "op": "pixels",
+    "ok": true
+   },
+   {
+    "op": "pixels",
+    "ok": true
+   },
+   {
+    "op": "pixels",
+    "ok": true
+   },
+   {
+    "op": "pixels",
+    "ok": true
+   },
+   {
+    "op": "pixels",
+    "ok": true
+   },
+   {
+    "op": "pixels",
+    "ok": true
+   },
+   {
+    "op": "pixels",
+    "ok": true
+   },
+   {
+    "op": "pixels",
+    "ok": true
+   },
+   {
+    "op": "pixels",
+    "ok": true
+   },
+   {
+    "op": "pixels",
+    "ok": true
+   },
+   {
+    "op": "pixels",
+    "ok": true
+   },
+   {
+    "op": "pixels",
+    "ok": true
+   },
+   {
+    "op": "screenshot",
+    "ok": true
+   }
+  ],
+  "violations": [],
+  "durationMs": 2032,
+  "target": "second-b",
+  "viewport": "1440x900",
+  "broker": "ail-broker/v1"
+ },
+ "second-b@390x844": {
+  "sandbox": "ail-sandbox/v1",
+  "codeSha256": "d74bd1284064e3339e577517bfedea5bfc534f1728849af7d7734b5ff22880b9",
+  "state": "completed",
+  "result": {
+   "target": "second-b",
+   "runs": [
+    {
+     "viewport": "1440x900",
+     "errors": [],
+     "fragCounts": {
+      "Bei Lieferungen nach Lie": 1,
+      "nach Liechtenstein": 1,
+      "Zollgebühren": 1,
+      "dem Zusteller": 1,
+      "steller zu bezahlen sind": 1
+     },
+     "found": true,
+     "anchorFrag": "Bei Lieferungen nach Lie",
+     "el": {
+      "tag": "p",
+      "cls": "",
+      "text": 80,
+      "display": "block",
+      "position": "static",
+      "color": "rgb(61, 52, 32)",
+      "bg": "rgba(0, 0, 0, 0)",
+      "fontSize": "14px",
+      "visibility": "visible",
+      "effOp": 1,
+      "nda": [],
+      "rect": {
+       "x": 441,
+       "y": 528,
+       "width": 562,
+       "height": 40
+      }
+     },
+     "geom": {
+      "vp": {
+       "W": 1440,
+       "H": 900,
+       "dpr": 1,
+       "scrollY": 0,
+       "docHeight": 900
+      },
+      "rightOverflow": -437,
+      "leftOverflow": -441,
+      "lh": 20,
+      "rectLines": 2,
+      "estLines": 2,
+      "heightRatio": 1
+     },
+     "points": [
+      {
+       "at": "r0c0.1",
+       "x": 497,
+       "y": 538,
+       "selfDepth": 0,
+       "top": {
+        "tag": "p",
+        "id": "",
+        "cls": "",
+        "text": "Bei Lieferungen nach Liechtens",
+        "pos": "static",
+        "z": "auto",
+        "bg": "rgba(0, 0, 0, 0)",
+        "op": "1",
+        "rect": {
+         "x": 441,
+         "y": 528,
+         "width": 562,
+         "height": 40
+        }
+       }
+      },
+      {
+       "at": "r0c0.5",
+       "x": 722,
+       "y": 538,
+       "selfDepth": 0,
+       "top": {
+        "tag": "p",
+        "id": "",
+        "cls": "",
+        "text": "Bei Lieferungen nach Liechtens",
+        "pos": "static",
+        "z": "auto",
+        "bg": "rgba(0, 0, 0, 0)",
+        "op": "1",
+        "rect": {
+         "x": 441,
+         "y": 528,
+         "width": 562,
+         "height": 40
+        }
+       }
+      },
+      {
+       "at": "r0c0.9",
+       "x": 947,
+       "y": 538,
+       "selfDepth": 0,
+       "top": {
+        "tag": "p",
+        "id": "",
+        "cls": "",
+        "text": "Bei Lieferungen nach Liechtens",
+        "pos": "static",
+        "z": "auto",
+        "bg": "rgba(0, 0, 0, 0)",
+        "op": "1",
+        "rect": {
+         "x": 441,
+         "y": 528,
+         "width": 562,
+         "height": 40
+        }
+       }
+      },
+      {
+       "at": "r1c0.1",
+       "x": 497,
+       "y": 558,
+       "selfDepth": 0,
+       "top": {
+        "tag": "p",
+        "id": "",
+        "cls": "",
+        "text": "Bei Lieferungen nach Liechtens",
+        "pos": "static",
+        "z": "auto",
+        "bg": "rgba(0, 0, 0, 0)",
+        "op": "1",
+        "rect": {
+         "x": 441,
+         "y": 528,
+         "width": 562,
+         "height": 40
+        }
+       }
+      },
+      {
+       "at": "r1c0.5",
+       "x": 722,
+       "y": 558,
+       "selfDepth": 0,
+       "top": {
+        "tag": "p",
+        "id": "",
+        "cls": "",
+        "text": "Bei Lieferungen nach Liechtens",
+        "pos": "static",
+        "z": "auto",
+        "bg": "rgba(0, 0, 0, 0)",
+        "op": "1",
+        "rect": {
+         "x": 441,
+         "y": 528,
+         "width": 562,
+         "height": 40
+        }
+       }
+      },
+      {
+       "at": "r1c0.9",
+       "x": 947,
+       "y": 558,
+       "selfDepth": 0,
+       "top": {
+        "tag": "p",
+        "id": "",
+        "cls": "",
+        "text": "Bei Lieferungen nach Liechtens",
+        "pos": "static",
+        "z": "auto",
+        "bg": "rgba(0, 0, 0, 0)",
+        "op": "1",
+        "rect": {
+         "x": 441,
+         "y": 528,
+         "width": 562,
+         "height": 40
+        }
+       }
+      },
+      {
+       "at": "below0.25",
+       "x": 582,
+       "y": 580,
+       "selfDepth": -1,
+       "top": {
+        "tag": "section",
+        "id": "shipping",
+        "cls": "card",
+        "text": "Versandart\n    \n       Post Ec",
+        "pos": "static",
+        "z": "auto",
+        "bg": "rgb(255, 255, 255)",
+        "op": "1",
+        "rect": {
+         "x": 400,
+         "y": 341,
+         "width": 640,
+         "height": 310
+        }
+       }
+      },
+      {
+       "at": "below0.75",
+       "x": 863,
+       "y": 580,
+       "selfDepth": -1,
+       "top": {
+        "tag": "section",
+        "id": "shipping",
+        "cls": "card",
+        "text": "Versandart\n    \n       Post Ec",
+        "pos": "static",
+        "z": "auto",
+        "bg": "rgb(255, 255, 255)",
+        "op": "1",
+        "rect": {
+         "x": 400,
+         "y": 341,
+         "width": 640,
+         "height": 310
+        }
+       }
+      }
+     ],
+     "ancestors": [
+      {
+       "tag": "div",
+       "id": "shipping-info",
+       "cls": "notice",
+       "text": "Bei Lieferungen nach Liechtens",
+       "pos": "static",
+       "z": "auto",
+       "bg": "rgb(255, 248, 225)",
+       "op": "1",
+       "rect": {
+        "x": 425,
+        "y": 518,
+        "width": 590,
+        "height": 60
+       },
+       "clipsBottom": false,
+       "endsAboveRect": false,
+       "clipsRight": false
+      },
+      {
+       "tag": "section",
+       "id": "shipping",
+       "cls": "card",
+       "text": "Versandart\n    \n       Post Ec",
+       "pos": "static",
+       "z": "auto",
+       "bg": "rgb(255, 255, 255)",
+       "op": "1",
+       "rect": {
+        "x": 400,
+        "y": 341,
+        "width": 640,
+        "height": 310
+       },
+       "clipsBottom": false,
+       "endsAboveRect": false,
+       "clipsRight": false
+      },
+      {
+       "tag": "main",
+       "id": "",
+       "cls": "checkout",
+       "text": "Kasse\n  \n    Ihr Warenkorb\n   ",
+       "pos": "static",
+       "z": "auto",
+       "bg": "rgba(0, 0, 0, 0)",
+       "op": "1",
+       "rect": {
+        "x": 384,
+        "y": 87,
+        "width": 672,
+        "height": 564
+       },
+       "clipsBottom": false,
+       "endsAboveRect": false,
+       "clipsRight": false
+      },
+      {
+       "tag": "body",
+       "id": "",
+       "cls": "",
+       "text": "Velowerkstatt an der Aare\n\n  K",
+       "pos": "static",
+       "z": "auto",
+       "bg": "rgb(242, 241, 237)",
+       "op": "1",
+       "rect": {
+        "x": 0,
+        "y": 0,
+        "width": 1440,
+        "height": 651
+       },
+       "clipsBottom": false,
+       "endsAboveRect": false,
+       "clipsRight": false
+      },
+      {
+       "tag": "html",
+       "id": "",
+       "cls": "",
+       "text": "Kasse – Velowerkstatt an der A",
+       "pos": "static",
+       "z": "auto",
+       "bg": "rgb(242, 241, 237)",
+       "op": "1",
+       "rect": {
+        "x": 0,
+        "y": 0,
+        "width": 1440,
+        "height": 683
+       },
+       "clipsBottom": false,
+       "endsAboveRect": false,
+       "clipsRight": false
+      }
+     ],
+     "cells": [
+      {
+       "row": 0,
+       "col": 0,
+       "clip": {
+        "x": 441,
+        "y": 528,
+        "width": 187,
+        "height": 20
+       },
+       "n": 3740,
+       "dark150": 538,
+       "ink": 0.144,
+       "min": 52,
+       "p05": 61,
+       "p50": 248,
+       "art": "d1-second-b-390x844-67-clip.png"
+      },
+      {
+       "row": 0,
+       "col": 1,
+       "clip": {
+        "x": 628,
+        "y": 528,
+        "width": 187,
+        "height": 20
+       },
+       "n": 3740,
+       "dark150": 559,
+       "ink": 0.149,
+       "min": 52,
+       "p05": 67,
+       "p50": 248,
+       "art": "d1-second-b-390x844-68-clip.png"
+      },
+      {
+       "row": 0,
+       "col": 2,
+       "clip": {
+        "x": 816,
+        "y": 528,
+        "width": 187,
+        "height": 20
+       },
+       "n": 3740,
+       "dark150": 512,
+       "ink": 0.137,
+       "min": 52,
+       "p05": 73,
+       "p50": 248,
+       "art": "d1-second-b-390x844-69-clip.png"
+      },
+      {
+       "row": 1,
+       "col": 0,
+       "clip": {
+        "x": 441,
+        "y": 548,
+        "width": 187,
+        "height": 20
+       },
+       "n": 3740,
+       "dark150": 580,
+       "ink": 0.155,
+       "min": 52,
+       "p05": 64,
+       "p50": 248,
+       "art": "d1-second-b-390x844-70-clip.png"
+      },
+      {
+       "row": 1,
+       "col": 1,
+       "clip": {
+        "x": 628,
+        "y": 548,
+        "width": 187,
+        "height": 20
+       },
+       "n": 3740,
+       "dark150": 554,
+       "ink": 0.148,
+       "min": 52,
+       "p05": 60,
+       "p50": 248,
+       "art": "d1-second-b-390x844-71-clip.png"
+      },
+      {
+       "row": 1,
+       "col": 2,
+       "clip": {
+        "x": 816,
+        "y": 548,
+        "width": 187,
+        "height": 20
+       },
+       "n": 3740,
+       "dark150": 95,
+       "ink": 0.025,
+       "min": 52,
+       "p05": 248,
+       "p50": 248,
+       "art": "d1-second-b-390x844-72-clip.png"
+      }
+     ],
+     "belowStrip": {
+      "clip": {
+       "x": 441,
+       "y": 569,
+       "width": 562,
+       "height": 40
+      },
+      "n": 22480,
+      "dark150": 3412,
+      "ink": 0.152,
+      "min": 81,
+      "p05": 81,
+      "p50": 255,
+      "art": "d1-second-b-390x844-73-clip.png"
+     }
+    },
+    {
+     "viewport": "390x844",
+     "errors": [],
+     "fragCounts": {
+      "Bei Lieferungen nach Lie": 1,
+      "nach Liechtenstein": 1,
+      "Zollgebühren": 1,
+      "dem Zusteller": 1,
+      "steller zu bezahlen sind": 1
+     },
+     "found": true,
+     "anchorFrag": "Bei Lieferungen nach Lie",
+     "el": {
+      "tag": "p",
+      "cls": "",
+      "text": 80,
+      "display": "block",
+      "position": "static",
+      "color": "rgb(61, 52, 32)",
+      "bg": "rgba(0, 0, 0, 0)",
+      "fontSize": "14px",
+      "visibility": "visible",
+      "effOp": 1,
+      "nda": [],
+      "rect": {
+       "x": 57,
+       "y": 552,
+       "width": 280,
+       "height": 80
+      }
+     },
+     "geom": {
+      "vp": {
+       "W": 390,
+       "H": 844,
+       "dpr": 1,
+       "scrollY": 0,
+       "docHeight": 844
+      },
+      "rightOverflow": -53,
+      "leftOverflow": -57,
+      "lh": 20,
+      "rectLines": 4,
+      "estLines": 4,
+      "heightRatio": 1
+     },
+     "points": [
+      {
+       "at": "r0c0.1",
+       "x": 85,
+       "y": 562,
+       "selfDepth": 0,
+       "top": {
+        "tag": "p",
+        "id": "",
+        "cls": "",
+        "text": "Bei Lieferungen nach Liechtens",
+        "pos": "static",
+        "z": "auto",
+        "bg": "rgba(0, 0, 0, 0)",
+        "op": "1",
+        "rect": {
+         "x": 57,
+         "y": 552,
+         "width": 280,
+         "height": 80
+        }
+       }
+      },
+      {
+       "at": "r0c0.5",
+       "x": 197,
+       "y": 562,
+       "selfDepth": 0,
+       "top": {
+        "tag": "p",
+        "id": "",
+        "cls": "",
+        "text": "Bei Lieferungen nach Liechtens",
+        "pos": "static",
+        "z": "auto",
+        "bg": "rgba(0, 0, 0, 0)",
+        "op": "1",
+        "rect": {
+         "x": 57,
+         "y": 552,
+         "width": 280,
+         "height": 80
+        }
+       }
+      },
+      {
+       "at": "r0c0.9",
+       "x": 309,
+       "y": 562,
+       "selfDepth": 0,
+       "top": {
+        "tag": "p",
+        "id": "",
+        "cls": "",
+        "text": "Bei Lieferungen nach Liechtens",
+        "pos": "static",
+        "z": "auto",
+        "bg": "rgba(0, 0, 0, 0)",
+        "op": "1",
+        "rect": {
+         "x": 57,
+         "y": 552,
+         "width": 280,
+         "height": 80
+        }
+       }
+      },
+      {
+       "at": "r1c0.1",
+       "x": 85,
+       "y": 582,
+       "selfDepth": 0,
+       "top": {
+        "tag": "p",
+        "id": "",
+        "cls": "",
+        "text": "Bei Lieferungen nach Liechtens",
+        "pos": "static",
+        "z": "auto",
+        "bg": "rgba(0, 0, 0, 0)",
+        "op": "1",
+        "rect": {
+         "x": 57,
+         "y": 552,
+         "width": 280,
+         "height": 80
+        }
+       }
+      },
+      {
+       "at": "r1c0.5",
+       "x": 197,
+       "y": 582,
+       "selfDepth": 0,
+       "top": {
+        "tag": "p",
+        "id": "",
+        "cls": "",
+        "text": "Bei Lieferungen nach Liechtens",
+        "pos": "static",
+        "z": "auto",
+        "bg": "rgba(0, 0, 0, 0)",
+        "op": "1",
+        "rect": {
+         "x": 57,
+         "y": 552,
+         "width": 280,
+         "height": 80
+        }
+       }
+      },
+      {
+       "at": "r1c0.9",
+       "x": 309,
+       "y": 582,
+       "selfDepth": 0,
+       "top": {
+        "tag": "p",
+        "id": "",
+        "cls": "",
+        "text": "Bei Lieferungen nach Liechtens",
+        "pos": "static",
+        "z": "auto",
+        "bg": "rgba(0, 0, 0, 0)",
+        "op": "1",
+        "rect": {
+         "x": 57,
+         "y": 552,
+         "width": 280,
+         "height": 80
+        }
+       }
+      },
+      {
+       "at": "r2c0.1",
+       "x": 85,
+       "y": 602,
+       "selfDepth": 0,
+       "top": {
+        "tag": "p",
+        "id": "",
+        "cls": "",
+        "text": "Bei Lieferungen nach Liechtens",
+        "pos": "static",
+        "z": "auto",
+        "bg": "rgba(0, 0, 0, 0)",
+        "op": "1",
+        "rect": {
+         "x": 57,
+         "y": 552,
+         "width": 280,
+         "height": 80
+        }
+       }
+      },
+      {
+       "at": "r2c0.5",
+       "x": 197,
+       "y": 602,
+       "selfDepth": 0,
+       "top": {
+        "tag": "p",
+        "id": "",
+        "cls": "",
+        "text": "Bei Lieferungen nach Liechtens",
+        "pos": "static",
+        "z": "auto",
+        "bg": "rgba(0, 0, 0, 0)",
+        "op": "1",
+        "rect": {
+         "x": 57,
+         "y": 552,
+         "width": 280,
+         "height": 80
+        }
+       }
+      },
+      {
+       "at": "r2c0.9",
+       "x": 309,
+       "y": 602,
+       "selfDepth": 0,
+       "top": {
+        "tag": "p",
+        "id": "",
+        "cls": "",
+        "text": "Bei Lieferungen nach Liechtens",
+        "pos": "static",
+        "z": "auto",
+        "bg": "rgba(0, 0, 0, 0)",
+        "op": "1",
+        "rect": {
+         "x": 57,
+         "y": 552,
+         "width": 280,
+         "height": 80
+        }
+       }
+      },
+      {
+       "at": "r3c0.1",
+       "x": 85,
+       "y": 622,
+       "selfDepth": 0,
+       "top": {
+        "tag": "p",
+        "id": "",
+        "cls": "",
+        "text": "Bei Lieferungen nach Liechtens",
+        "pos": "static",
+        "z": "auto",
+        "bg": "rgba(0, 0, 0, 0)",
+        "op": "1",
+        "rect": {
+         "x": 57,
+         "y": 552,
+         "width": 280,
+         "height": 80
+        }
+       }
+      },
+      {
+       "at": "r3c0.5",
+       "x": 197,
+       "y": 622,
+       "selfDepth": 0,
+       "top": {
+        "tag": "p",
+        "id": "",
+        "cls": "",
+        "text": "Bei Lieferungen nach Liechtens",
+        "pos": "static",
+        "z": "auto",
+        "bg": "rgba(0, 0, 0, 0)",
+        "op": "1",
+        "rect": {
+         "x": 57,
+         "y": 552,
+         "width": 280,
+         "height": 80
+        }
+       }
+      },
+      {
+       "at": "r3c0.9",
+       "x": 309,
+       "y": 622,
+       "selfDepth": 0,
+       "top": {
+        "tag": "p",
+        "id": "",
+        "cls": "",
+        "text": "Bei Lieferungen nach Liechtens",
+        "pos": "static",
+        "z": "auto",
+        "bg": "rgba(0, 0, 0, 0)",
+        "op": "1",
+        "rect": {
+         "x": 57,
+         "y": 552,
+         "width": 280,
+         "height": 80
+        }
+       }
+      },
+      {
+       "at": "below0.25",
+       "x": 127,
+       "y": 644,
+       "selfDepth": -1,
+       "top": {
+        "tag": "section",
+        "id": "shipping",
+        "cls": "card",
+        "text": "Versandart\n    \n       Post Ec",
+        "pos": "static",
+        "z": "auto",
+        "bg": "rgb(255, 255, 255)",
+        "op": "1",
+        "rect": {
+         "x": 16,
+         "y": 365,
+         "width": 358,
+         "height": 350
+        }
+       }
+      },
+      {
+       "at": "below0.75",
+       "x": 267,
+       "y": 644,
+       "selfDepth": -1,
+       "top": {
+        "tag": "section",
+        "id": "shipping",
+        "cls": "card",
+        "text": "Versandart\n    \n       Post Ec",
+        "pos": "static",
+        "z": "auto",
+        "bg": "rgb(255, 255, 255)",
+        "op": "1",
+        "rect": {
+         "x": 16,
+         "y": 365,
+         "width": 358,
+         "height": 350
+        }
+       }
+      }
+     ],
+     "ancestors": [
+      {
+       "tag": "div",
+       "id": "shipping-info",
+       "cls": "notice",
+       "text": "Bei Lieferungen nach Liechtens",
+       "pos": "static",
+       "z": "auto",
+       "bg": "rgb(255, 248, 225)",
+       "op": "1",
+       "rect": {
+        "x": 41,
+        "y": 542,
+        "width": 308,
+        "height": 100
+       },
+       "clipsBottom": false,
+       "endsAboveRect": false,
+       "clipsRight": false
+      },
+      {
+       "tag": "section",
+       "id": "shipping",
+       "cls": "card",
+       "text": "Versandart\n    \n       Post Ec",
+       "pos": "static",
+       "z": "auto",
+       "bg": "rgb(255, 255, 255)",
+       "op": "1",
+       "rect": {
+        "x": 16,
+        "y": 365,
+        "width": 358,
+        "height": 350
+       },
+       "clipsBottom": false,
+       "endsAboveRect": false,
+       "clipsRight": false
+      },
+      {
+       "tag": "main",
+       "id": "",
+       "cls": "checkout",
+       "text": "Kasse\n  \n    Ihr Warenkorb\n   ",
+       "pos": "static",
+       "z": "auto",
+       "bg": "rgba(0, 0, 0, 0)",
+       "op": "1",
+       "rect": {
+        "x": 0,
+        "y": 87,
+        "width": 390,
+        "height": 628
+       },
+       "clipsBottom": false,
+       "endsAboveRect": false,
+       "clipsRight": false
+      },
+      {
+       "tag": "body",
+       "id": "",
+       "cls": "",
+       "text": "Velowerkstatt an der Aare\n\n  K",
+       "pos": "static",
+       "z": "auto",
+       "bg": "rgb(242, 241, 237)",
+       "op": "1",
+       "rect": {
+        "x": 0,
+        "y": 0,
+        "width": 390,
+        "height": 715
+       },
+       "clipsBottom": false,
+       "endsAboveRect": false,
+       "clipsRight": false
+      },
+      {
+       "tag": "html",
+       "id": "",
+       "cls": "",
+       "text": "Kasse – Velowerkstatt an der A",
+       "pos": "static",
+       "z": "auto",
+       "bg": "rgb(242, 241, 237)",
+       "op": "1",
+       "rect": {
+        "x": 0,
+        "y": 0,
+        "width": 390,
+        "height": 747
+       },
+       "clipsBottom": false,
+       "endsAboveRect": false,
+       "clipsRight": false
+      }
+     ],
+     "cells": [
+      {
+       "row": 0,
+       "col": 0,
+       "clip": {
+        "x": 57,
+        "y": 552,
+        "width": 93,
+        "height": 20
+       },
+       "n": 1860,
+       "dark150": 285,
+       "ink": 0.153,
+       "min": 52,
+       "p05": 57,
+       "p50": 248,
+       "art": "d1-second-b-390x844-75-clip.png"
+      },
+      {
+       "row": 0,
+       "col": 1,
+       "clip": {
+        "x": 150,
+        "y": 552,
+        "width": 93,
+        "height": 20
+       },
+       "n": 1860,
+       "dark150": 252,
+       "ink": 0.135,
+       "min": 52,
+       "p05": 66,
+       "p50": 248,
+       "art": "d1-second-b-390x844-76-clip.png"
+      },
+      {
+       "row": 0,
+       "col": 2,
+       "clip": {
+        "x": 244,
+        "y": 552,
+        "width": 93,
+        "height": 20
+       },
+       "n": 1860,
+       "dark150": 254,
+       "ink": 0.137,
+       "min": 52,
+       "p05": 68,
+       "p50": 248,
+       "art": "d1-second-b-390x844-77-clip.png"
+      },
+      {
+       "row": 1,
+       "col": 0,
+       "clip": {
+        "x": 57,
+        "y": 572,
+        "width": 93,
+        "height": 20
+       },
+       "n": 1860,
+       "dark150": 286,
+       "ink": 0.154,
+       "min": 52,
+       "p05": 64,
+       "p50": 248,
+       "art": "d1-second-b-390x844-78-clip.png"
+      },
+      {
+       "row": 1,
+       "col": 1,
+       "clip": {
+        "x": 150,
+        "y": 572,
+        "width": 93,
+        "height": 20
+       },
+       "n": 1860,
+       "dark150": 254,
+       "ink": 0.137,
+       "min": 52,
+       "p05": 60,
+       "p50": 248,
+       "art": "d1-second-b-390x844-79-clip.png"
+      },
+      {
+       "row": 1,
+       "col": 2,
+       "clip": {
+        "x": 244,
+        "y": 572,
+        "width": 93,
+        "height": 20
+       },
+       "n": 1860,
+       "dark150": 246,
+       "ink": 0.132,
+       "min": 52,
+       "p05": 71,
+       "p50": 248,
+       "art": "d1-second-b-390x844-80-clip.png"
+      },
+      {
+       "row": 2,
+       "col": 0,
+       "clip": {
+        "x": 57,
+        "y": 592,
+        "width": 93,
+        "height": 20
+       },
+       "n": 1860,
+       "dark150": 300,
+       "ink": 0.161,
+       "min": 52,
+       "p05": 72,
+       "p50": 248,
+       "art": "d1-second-b-390x844-81-clip.png"
+      },
+      {
+       "row": 2,
+       "col": 1,
+       "clip": {
+        "x": 150,
+        "y": 592,
+        "width": 93,
+        "height": 20
+       },
+       "n": 1860,
+       "dark150": 272,
+       "ink": 0.146,
+       "min": 52,
+       "p05": 59,
+       "p50": 248,
+       "art": "d1-second-b-390x844-82-clip.png"
+      },
+      {
+       "row": 2,
+       "col": 2,
+       "clip": {
+        "x": 244,
+        "y": 592,
+        "width": 93,
+        "height": 20
+       },
+       "n": 1860,
+       "dark150": 164,
+       "ink": 0.088,
+       "min": 52,
+       "p05": 96,
+       "p50": 248,
+       "art": "d1-second-b-390x844-83-clip.png"
+      },
+      {
+       "row": 3,
+       "col": 0,
+       "clip": {
+        "x": 57,
+        "y": 612,
+        "width": 93,
+        "height": 20
+       },
+       "n": 1860,
+       "dark150": 277,
+       "ink": 0.149,
+       "min": 52,
+       "p05": 59,
+       "p50": 248,
+       "art": "d1-second-b-390x844-84-clip.png"
+      },
+      {
+       "row": 3,
+       "col": 1,
+       "clip": {
+        "x": 150,
+        "y": 612,
+        "width": 93,
+        "height": 20
+       },
+       "n": 1860,
+       "dark150": 227,
+       "ink": 0.122,
+       "min": 52,
+       "p05": 78,
+       "p50": 248,
+       "art": "d1-second-b-390x844-85-clip.png"
+      },
+      {
+       "row": 3,
+       "col": 2,
+       "clip": {
+        "x": 244,
+        "y": 612,
+        "width": 93,
+        "height": 20
+       },
+       "n": 1860,
+       "dark150": 0,
+       "ink": 0,
+       "min": 248,
+       "p05": 248,
+       "p50": 248,
+       "art": "d1-second-b-390x844-86-clip.png"
+      }
+     ],
+     "belowStrip": {
+      "clip": {
+       "x": 57,
+       "y": 633,
+       "width": 280,
+       "height": 40
+      },
+      "n": 11200,
+      "dark150": 3412,
+      "ink": 0.305,
+      "min": 81,
+      "p05": 81,
+      "p50": 248,
+      "art": "d1-second-b-390x844-87-clip.png"
+     }
+    }
+   ]
+  },
+  "error": null,
+  "calls": [
+   {
+    "op": "open",
+    "ok": true
+   },
+   {
+    "op": "findText",
+    "ok": true
+   },
+   {
+    "op": "findText",
+    "ok": true
+   },
+   {
+    "op": "findText",
+    "ok": true
+   },
+   {
+    "op": "findText",
+    "ok": true
+   },
+   {
+    "op": "findText",
+    "ok": true
+   },
+   {
+    "op": "viewport",
+    "ok": true
+   },
+   {
+    "op": "scrollTo",
+    "ok": true
+   },
+   {
+    "op": "findText",
+    "ok": true
+   },
+   {
+    "op": "viewport",
+    "ok": true
+   },
+   {
+    "op": "elementsFromPoint",
+    "ok": true
+   },
+   {
+    "op": "pixels",
+    "ok": true
+   },
+   {
+    "op": "pixels",
+    "ok": true
+   },
+   {
+    "op": "pixels",
+    "ok": true
+   },
+   {
+    "op": "pixels",
+    "ok": true
+   },
+   {
+    "op": "pixels",
+    "ok": true
+   },
+   {
+    "op": "pixels",
+    "ok": true
+   },
+   {
+    "op": "pixels",
+    "ok": true
+   },
+   {
+    "op": "screenshot",
+    "ok": true
+   },
+   {
+    "op": "open",
+    "ok": true
+   },
+   {
+    "op": "findText",
+    "ok": true
+   },
+   {
+    "op": "findText",
+    "ok": true
+   },
+   {
+    "op": "findText",
+    "ok": true
+   },
+   {
+    "op": "findText",
+    "ok": true
+   },
+   {
+    "op": "findText",
+    "ok": true
+   },
+   {
+    "op": "viewport",
+    "ok": true
+   },
+   {
+    "op": "scrollTo",
+    "ok": true
+   },
+   {
+    "op": "findText",
+    "ok": true
+   },
+   {
+    "op": "viewport",
+    "ok": true
+   },
+   {
+    "op": "elementsFromPoint",
+    "ok": true
+   },
+   {
+    "op": "pixels",
+    "ok": true
+   },
+   {
+    "op": "pixels",
+    "ok": true
+   },
+   {
+    "op": "pixels",
+    "ok": true
+   },
+   {
+    "op": "pixels",
+    "ok": true
+   },
+   {
+    "op": "pixels",
+    "ok": true
+   },
+   {
+    "op": "pixels",
+    "ok": true
+   },
+   {
+    "op": "pixels",
+    "ok": true
+   },
+   {
+    "op": "pixels",
+    "ok": true
+   },
+   {
+    "op": "pixels",
+    "ok": true
+   },
+   {
+    "op": "pixels",
+    "ok": true
+   },
+   {
+    "op": "pixels",
+    "ok": true
+   },
+   {
+    "op": "pixels",
+    "ok": true
+   },
+   {
+    "op": "pixels",
+    "ok": true
+   },
+   {
+    "op": "screenshot",
+    "ok": true
+   }
+  ],
+  "violations": [],
+  "durationMs": 2016,
+  "target": "second-b",
+  "viewport": "390x844",
+  "broker": "ail-broker/v1"
+ }
+}

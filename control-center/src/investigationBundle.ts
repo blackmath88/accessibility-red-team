@@ -13,7 +13,11 @@ export type Criticism = { attempt: string; path: string; criticModel?: string; c
 export type Revision = { attempt: string; respondsTo: string; claimedChanges: string[]; actuallyPresent: string; source: string };
 export type Replay = { original: string; replay: string; artifactSha256: string[]; identical: boolean };
 export type ProvenanceLink = { label: string; path: string; sha256: string };
-export type Transfer = { status: "pending"; note: string } | { status: "completed" | "failed"; note: string; summary?: string; sourceRevision?: string; facts?: Array<{ label: string; value: string }>; provenance?: ProvenanceLink[] };
+export type Fact = { label: string; value: string };
+export type Screenshot = { label: string; path: string; sha256: string; alt: string };
+// One transfer case or replay. kind keeps a blind discovery result apart from a post-reveal reasoning replay.
+export type TransferCase = { id: string; kind: "blind" | "post-reveal replay"; title: string; verdict: string; measured: string[]; inferredCorrectly: string[]; inferredIncorrectly: string[]; uncertainty: string[]; nextAction: string; facts?: Fact[]; screenshots?: Screenshot[]; provenance?: ProvenanceLink[] };
+export type Transfer = { status: "pending"; note: string } | { status: "completed" | "failed"; note: string; summary?: string; sourceRevision?: string; facts?: Fact[]; provenance?: ProvenanceLink[]; cases?: TransferCase[] };
 export type InvestigationBundle = {
   schema: typeof BUNDLE_SCHEMA;
   bundleId: string;
@@ -118,7 +122,14 @@ export function validateBundle(x: unknown): BundleResult {
   const t = obj(b.transfer, "bundle.transfer");
   if (t) {
     oneOf(t, "status", ["pending", "completed", "failed"], "bundle.transfer"); str(t, "note", "bundle.transfer");
-    if (t.status !== "pending") { str(t, "summary", "bundle.transfer", true); match(t, "sourceRevision", COMMIT, "bundle.transfer", true); if (t.facts !== undefined) list(t, "facts", "bundle.transfer", (f, p) => { str(f, "label", p); str(f, "value", p); }, false); if (t.provenance !== undefined) list(t, "provenance", "bundle.transfer", provenance, false); }
+    if (t.status !== "pending") { str(t, "summary", "bundle.transfer", true); match(t, "sourceRevision", COMMIT, "bundle.transfer", true); if (t.facts !== undefined) list(t, "facts", "bundle.transfer", (f, p) => { str(f, "label", p); str(f, "value", p); }, false); if (t.provenance !== undefined) list(t, "provenance", "bundle.transfer", provenance, false);
+      if (t.cases !== undefined) list(t, "cases", "bundle.transfer", (k, p) => {
+        str(k, "id", p); oneOf(k, "kind", ["blind", "post-reveal replay"], p); str(k, "title", p); str(k, "verdict", p); str(k, "nextAction", p);
+        for (const f of ["measured", "inferredCorrectly", "inferredIncorrectly", "uncertainty"]) strings(k, f, p);
+        if (k.facts !== undefined) list(k, "facts", p, (f, q) => { str(f, "label", q); str(f, "value", q); }, false);
+        if (k.screenshots !== undefined) list(k, "screenshots", p, (f, q) => { provenance(f, q); str(f, "alt", q); if (typeof f.path === "string" && !f.path.endsWith(".png")) fail(`${q}.path`, "expected a .png"); }, false);
+        if (k.provenance !== undefined) list(k, "provenance", p, provenance, false);
+      }, false); }
   }
   return errors.length ? { ok: false, errors } : { ok: true, bundle: x as InvestigationBundle };
 }
