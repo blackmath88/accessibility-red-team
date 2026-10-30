@@ -3,7 +3,7 @@ import { join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { defineConfig, type Connect, type Plugin } from "vite";
 import react from "@vitejs/plugin-react";
-import { publicView } from "../src/experimental/campaign/projection";
+import { publicView } from "./src/campaignProjection";
 
 // Local read-only adapter for the experimental campaign (runs/campaign/<id>, gitignored). GET only; it serves the
 // validated public projection, never files, prompts or paths, and offers no controls. Dev and preview servers only.

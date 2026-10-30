@@ -1,10 +1,10 @@
 import assert from "node:assert/strict";
-import { readFile, rm } from "node:fs/promises";
+import { appendFile, readFile, rm } from "node:fs/promises";
 import { join } from "node:path";
 import { describe, it } from "node:test";
-import { ConfigSchema, amendLimits, countEvents, createCampaign, dirOf, invocationGate, type Limits, type State } from "../src/experimental/campaign/campaign.js";
+import { ConfigSchema, amendLimits, countEvents, createCampaign, dirOf, invocationGate, repairLog, type Limits, type State } from "../src/experimental/campaign/campaign.js";
 import { resolveControl, signals } from "../src/experimental/campaign/controller.js";
-import { milestones } from "../src/experimental/campaign/projection.js";
+import { milestones, publicView } from "../control-center/src/campaignProjection.js";
 
 const limits: Limits = { claudeInvocations: 5, wallMinutes: 10, concurrency: 2, reportingReserveFraction: 0.2, tokenTarget: { input: 500_000, output: 60_000 } };
 const usage = (used: number, inFlight = 0): State["usage"] => ({ claudeInvocations: used, claudeInFlight: inFlight, claudeFailed: 0, wallMs: 60_000, tokens: { input: 0, cacheCreation: 0, cacheRead: 0, output: 0, thinking: 0 }, tokenCallsWithUsage: 0, tokenCallsWithoutUsage: 0 });
@@ -70,6 +70,21 @@ describe("experimental campaign controller rules", () => {
       assert.ok(lines.every((l) => l.kind === "op"));
       assert.equal((await countEvents(id)).lastSeq, store.state.lastEventSeq);
       await assert.rejects(createCampaign(config)); // an id cannot be reused
+    } finally { await rm(dirOf(id), { recursive: true, force: true }); }
+  });
+  it("repairs a half-written last event line instead of fencing the campaign", async () => {
+    const id = `test-r${process.pid}`;
+    const config = ConfigSchema.parse({ schema: "art/campaign-config/v1", campaignId: id, configVersion: 1, scopeVersion: 1, model: "claude-opus-5-5", limits,
+      scope: { description: "d", viewports: ["390x844"], liveTargets: [], tasks: [{ id: "t", userReport: "r", keyText: "some key text", pages: ["second-a"] }] } });
+    try {
+      const store = await createCampaign(config);
+      await appendFile(join(dirOf(id), "events.jsonl"), '{"id":"x","seq":2,"kind":"op","ty');
+      assert.deepEqual(await repairLog(id), { lastSeq: 1, dropped: true });
+      assert.deepEqual(await repairLog(id), { lastSeq: 1, dropped: false });
+      // The adapter projection never carries local absolute paths from tool errors.
+      store.state.failures.push({ at: "t", taskId: "inv-1", error: "transfer execute failed: ENOENT /home/someone/Work/x/runs/a.json", recovery: "branch closed" });
+      const v = publicView(store.state, limits);
+      assert.equal(v.failures[0]!.error, "transfer execute failed: ENOENT <path>");
     } finally { await rm(dirOf(id), { recursive: true, force: true }); }
   });
 });

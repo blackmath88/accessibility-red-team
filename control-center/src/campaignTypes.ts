@@ -1,4 +1,5 @@
-// Campaign state types, free of node imports so the control center can type-check its projection.
+// State types of the experimental campaign (src/experimental/campaign), free of node imports; owned here so the
+// control center never imports the experimental tree.
 export type TaskKind = "scope" | "strategy" | "baseline" | "triage" | "investigate" | "replay" | "report";
 export type TaskStatus = "queued" | "running" | "done" | "failed" | "skipped" | "paused";
 export type Task = {

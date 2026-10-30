@@ -1,15 +1,15 @@
 // Operator path for the experimental campaign. Local fixtures only.
-//   npm run campaign -- start <config.json> [--foreground]   create and launch (detached unless --foreground)
-//   npm run campaign -- status <id>
-//   npm run campaign -- stop <id>                            controller settles workers and checkpoints
-//   npm run campaign -- extend <id> --reason "<why>" [--invocations N] [--wall-minutes M]
-//   npm run campaign -- resume <id> [--foreground]           same campaign, same usage, completed work kept
+//   npm run campaign:cli -- start <config.json> [--foreground]   create and launch (detached unless --foreground)
+//   npm run campaign:cli -- status <id>
+//   npm run campaign:cli -- stop <id>                            controller settles workers and checkpoints
+//   npm run campaign:cli -- extend <id> --reason "<why>" [--invocations N] [--wall-minutes M]
+//   npm run campaign:cli -- resume <id> [--foreground]           same campaign, same usage, completed work kept
 import { spawn } from "node:child_process";
 import { appendFile, mkdir, open, readFile, writeFile } from "node:fs/promises";
 import { join } from "node:path";
 import { ConfigSchema, Store, amendLimits, countEvents, createCampaign, dirOf, loadConfig, loadState, now, writeAtomic } from "./campaign.js";
 import { pidAlive, runController } from "./controller.js";
-import { milestones } from "./projection.js";
+import { milestones } from "../../../control-center/src/campaignProjection.js";
 import { REPO_ROOT } from "../investigation/spend.js";
 
 const [cmd, arg, ...rest] = process.argv.slice(2);

@@ -1,6 +1,6 @@
-// Read-only projection of campaign state for the report and the control-center adapter. No fs, no zod: importable from
-// both the controller and the Vite dev adapter. Counts are against the current plan revision, never percentages.
-import type { State, Task } from "./types.js";
+// Read-only projection of the experimental campaign state (src/experimental/campaign) for its report and the control-
+// center adapter. No fs, no zod; lives here so the control center never imports the experimental tree. Counts are against the current plan revision, never percentages.
+import type { State, Task } from "./campaignTypes.js";
 
 export const MILESTONES = ["Understand scope", "Set strategy", "Discover and assess", "Investigate signals", "Reproduce and consolidate", "Deliver dossier"] as const;
 export type MilestoneState = "planned" | "active" | "complete" | "partial" | "blocked";
@@ -23,15 +23,18 @@ export function milestones(s: Pick<State, "tasks" | "status" | "planRevision">):
   });
 }
 
+// Error strings can carry tool output; local absolute paths are replaced before they leave the machine's state folder.
+const scrub = (s: string | null | undefined) => (s ?? "").replace(/(?:\/(?:home|tmp|Users|root|var)\/|[A-Za-z]:\\)[^\s"'`,;)]*/g, "<path>");
+
 // What the control center may see: no filesystem paths beyond artifact ids, no prompts, no model controls.
 export function publicView(s: State, limits: unknown, heartbeatStaleMs = 10_000) {
   const alive = s.heartbeatAt !== null && Date.now() - Date.parse(s.heartbeatAt) < heartbeatStaleMs;
   return {
-    schema: "art/campaign-view/v1", campaignId: s.campaignId, status: s.status, statusReason: s.statusReason, configVersion: s.configVersion, scopeVersion: s.scopeVersion,
+    schema: "art/campaign-view/v1", campaignId: s.campaignId, status: s.status, statusReason: scrub(s.statusReason), configVersion: s.configVersion, scopeVersion: s.scopeVersion,
     planRevision: s.planRevision, updatedAt: s.updatedAt, heartbeatAt: s.heartbeatAt, controllerAlive: alive, sessions: s.sessions, limits, usage: s.usage,
     milestones: milestones(s),
-    tasks: s.tasks.map((t) => ({ id: t.id, kind: t.kind, milestone: t.milestone, label: t.label, status: t.status, attempts: t.attempts, step: t.step ?? null, error: t.error ?? null, startedAt: t.startedAt ?? null, settledAt: t.settledAt ?? null })),
-    decisions: s.decisions.slice(-12), failures: s.failures.slice(-12), cases: s.cases, evidenceCount: s.evidence.length, nextAction: s.nextAction, report: s.report ? { partial: s.report.partial, at: s.report.at } : null,
+    tasks: s.tasks.map((t) => ({ id: t.id, kind: t.kind, milestone: t.milestone, label: t.label, status: t.status, attempts: t.attempts, step: t.step ?? null, error: t.error ? scrub(t.error) : null, startedAt: t.startedAt ?? null, settledAt: t.settledAt ?? null })),
+    decisions: s.decisions.slice(-12).map((d) => ({ ...d, reason: scrub(d.reason) })), failures: s.failures.slice(-12).map((f) => ({ ...f, error: scrub(f.error) })), cases: s.cases, evidenceCount: s.evidence.length, nextAction: s.nextAction, report: s.report ? { partial: s.report.partial, at: s.report.at } : null,
   };
 }
 export type CampaignView = ReturnType<typeof publicView>;

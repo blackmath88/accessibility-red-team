@@ -1,5 +1,5 @@
 import React,{useEffect,useRef,useState} from "react";
-import type {CampaignView} from "../../src/experimental/campaign/projection";
+import type {CampaignView} from "./campaignProjection";
 
 // Live view of the local experimental campaign, read by polling the dev adapter (/campaign-api). Read-only: no controls.
 // A failed poll keeps the last state on screen, marked as disconnected; the campaign itself keeps running.
@@ -26,7 +26,7 @@ export default function CampaignPanel(){
   return()=>{stop=true;clearInterval(t);clearInterval(c);};
  },[]);
 
- if(!view)return <section className="panel investigation-section" aria-labelledby="campaign-title"><div className="eyebrow">Experimental · local fixtures only</div><h2 id="campaign-title">Live campaign</h2><p role="status">{conn.error?`Campaign adapter unavailable (${conn.error}). This view needs the control-center dev or preview server; the campaign itself is unaffected.`:ids.length===0&&conn.ok?"No local campaign found. Start one with npm run campaign -- start <config>.":"Loading campaign state…"}</p></section>;
+ if(!view)return <section className="panel investigation-section" aria-labelledby="campaign-title"><div className="eyebrow">Experimental · local fixtures only</div><h2 id="campaign-title">Live campaign</h2><p role="status">{conn.error?`Campaign adapter unavailable (${conn.error}). This view needs the control-center dev or preview server; the campaign itself is unaffected.`:ids.length===0&&conn.ok?"No local campaign found. Start one with npm run campaign:cli -- start <config>.":"Loading campaign state…"}</p></section>;
  const v=view,L=v.limits as {claudeInvocations:number;wallMinutes:number;concurrency:number;reportingReserveFraction:number;tokenTarget:{input:number;output:number}},u=v.usage,tk=u.tokens;
  const running=v.tasks.filter(t=>t.status==="running"),paused=v.tasks.filter(t=>t.status==="paused"),failed=v.tasks.filter(t=>t.status==="failed");
  const tokensKnown=u.tokenCallsWithUsage>0;

@@ -9,9 +9,9 @@ import { promisify } from "node:util";
 import { MeasurementBroker } from "../investigation/broker.js";
 import { runInSandbox, sandboxAvailable } from "../investigation/sandbox.js";
 import { REPO_ROOT } from "../investigation/spend.js";
-import { type Config, type State, type Task, Store, countEvents, dirOf, invocationGate, loadConfig, loadState, now, writeAtomic, MAX_CONCURRENCY } from "./campaign.js";
+import { type Config, type State, type Task, Store, repairLog, dirOf, invocationGate, loadConfig, loadState, now, writeAtomic, MAX_CONCURRENCY } from "./campaign.js";
 import { active, callClaude, extractJson } from "./claude.js";
-import { milestones } from "./projection.js";
+import { milestones } from "../../../control-center/src/campaignProjection.js";
 
 const run = promisify(execFile);
 const sha = (b: string | Buffer) => createHash("sha256").update(b).digest("hex");
@@ -19,7 +19,7 @@ const exists = (p: string) => access(p).then(() => true, () => false);
 const FIXTURES = join(REPO_ROOT, "test/fixtures/investigation");
 const MAX_INVESTIGATIONS = 2;
 
-class BudgetPause extends Error {}
+class BudgetPause extends Error { constructor(msg: string, readonly hard: boolean) { super(msg); } }
 class Fence extends Error {}
 
 export const pidAlive = (pid: number) => { try { process.kill(pid, 0); return true; } catch (e) { return (e as NodeJS.ErrnoException).code === "EPERM"; } };
@@ -29,25 +29,29 @@ export async function runController(id: string) {
   // One live controller per campaign. A lock whose pid is gone is claimed; a live one is refused (no double dispatch).
   const prior = await readFile(lockPath, "utf8").then((t) => JSON.parse(t) as { pid: number }, () => null);
   if (prior && pidAlive(prior.pid)) throw new Error(`campaign ${id} already has a live controller (pid ${prior.pid})`);
-  if (prior) await rm(lockPath);
+  // Remove the stale lock only if it is still the same dead one, so a concurrent claimant's fresh lock survives.
+  if (prior) { const again = await readFile(lockPath, "utf8").catch(() => ""); if (again && (JSON.parse(again) as { pid: number }).pid === prior.pid) await rm(lockPath); }
   const h = await open(lockPath, "wx"); await h.writeFile(JSON.stringify({ pid: process.pid, at: now() })); await h.close();
 
   const config = await loadConfig(id);
   const state = await loadState(id);
   const store = new Store(id, state);
   // Checkpoint provenance: the projection must match the append-only log it was built from.
-  const ev = await countEvents(id);
-  if (ev.lastSeq !== state.lastEventSeq) {
-    state.status = "fenced"; state.statusReason = `checkpoint seq ${state.lastEventSeq} does not match events.jsonl seq ${ev.lastSeq}`;
-    await store.save(); await rm(lockPath); throw new Fence(state.statusReason);
+  // A crash can leave the snapshot behind or ahead of the log (or a half-written last line). The log is authoritative:
+  // its sequence is adopted, running work is requeued below and every sub-step is idempotent, so nothing is lost.
+  const ev = await repairLog(id);
+  if (ev.lastSeq !== state.lastEventSeq || ev.dropped) {
+    const stateSeq = state.lastEventSeq; state.lastEventSeq = ev.lastSeq;
+    await store.event("op", "checkpoint_reconciled", { stateSeq, logSeq: ev.lastSeq, droppedPartialLine: ev.dropped });
   }
   if (config.configVersion !== state.configVersion) { state.configVersion = config.configVersion; }
-  if (!sandboxAvailable().ok) { state.status = "fenced"; state.statusReason = "no verified sandbox"; await store.save(); await rm(lockPath); throw new Fence(state.statusReason); }
+  if (!sandboxAvailable().ok) { state.status = "stopped"; state.statusReason = "no verified sandbox; nothing executed; resume once it is available"; await store.save(); await rm(lockPath); throw new Error(state.statusReason); }
 
   state.sessions += 1; state.controller = { pid: process.pid, startedAt: now() }; state.status = "running"; state.statusReason = state.sessions > 1 ? "resumed" : "started";
   for (const t of state.tasks) if (t.status === "running") { t.status = "queued"; await store.event("op", "task_interrupted_requeued", { taskId: t.id, step: t.step ?? null }); }
   for (const t of state.tasks) if (t.status === "paused") { t.status = "queued"; t.error = undefined; await store.event("op", "task_unpaused", { taskId: t.id, step: t.step ?? null }); }
-  state.usage.claudeInFlight = 0; // reservations of a dead session were already counted as consumed when made
+  // Calls in flight when a session died were reserved but never settled: count them as consumed, never as returned.
+  if (state.usage.claudeInFlight) { await store.event("op", "inflight_counted_consumed", { calls: state.usage.claudeInFlight }); state.usage.claudeInvocations += state.usage.claudeInFlight; state.usage.claudeInFlight = 0; }
   await store.event("op", state.sessions > 1 ? "controller_resumed" : "controller_started", { pid: process.pid, session: state.sessions, limits: config.limits });
   await store.save();
 
@@ -61,7 +65,7 @@ export async function runController(id: string) {
   }, 2000);
   const settleWorkers = (why: string) => { for (const c of active) c.kill("SIGTERM"); void store.event("op", "workers_settling", { reason: why, active: active.size }); };
 
-  const ctx: Ctx = { config, state, store, dir, budget: () => budgetStop, setBudget: (r) => { budgetStop ??= r; } };
+  const ctx: Ctx = { config, state, store, dir, budget: () => budgetStop, setBudget: (r) => { budgetStop ??= r; }, stopping: () => stopRequested };
   const running = new Map<string, Promise<void>>();
   try {
     for (;;) {
@@ -101,7 +105,7 @@ export async function runController(id: string) {
   return state;
 }
 
-type Ctx = { config: Config; state: State; store: Store; dir: string; budget: () => string | null; setBudget: (r: string) => void };
+type Ctx = { config: Config; state: State; store: Store; dir: string; budget: () => string | null; setBudget: (r: string) => void; stopping: () => boolean };
 
 async function settle(ctx: Ctx, t: Task, status: Task["status"], output?: Record<string, unknown>, error?: string) {
   t.status = status; t.settledAt = now(); if (output) t.output = output; t.error = error;
@@ -127,9 +131,11 @@ function enqueue(ctx: Ctx, t: Omit<Task, "status" | "attempts">) {
 
 // A Claude decision: reserved before the call, consumed whatever the outcome, measured usage recorded or marked unknown.
 async function claude(ctx: Ctx, t: Task, purpose: "open" | "finish", prompt: string, label: string) {
-  if (ctx.budget()) throw new BudgetPause(ctx.budget()!);
+  if (ctx.budget()) throw new BudgetPause(ctx.budget()!, true);
+  if (ctx.stopping()) throw new BudgetPause("stop requested", true);
   const gate = invocationGate(ctx.config.limits, ctx.state.usage, purpose);
-  if (!gate.ok) throw new BudgetPause(gate.reason);
+  // The soft threshold pauses only this task (finishing work may still use the reserve); the ceiling stops admission.
+  if (!gate.ok) throw new BudgetPause(gate.reason, /ceiling reached/.test(gate.reason));
   ctx.state.usage.claudeInFlight += 1;
   await ctx.store.event("op", "claude_reserved", { taskId: t.id, label, purpose, promptSha256: sha(prompt), promptChars: prompt.length });
   const r = await callClaude(ctx.dir, ctx.config.model, prompt);
@@ -153,13 +159,18 @@ async function execute(ctx: Ctx, t: Task) {
   } catch (e) {
     const msg = String((e as Error).message ?? e).slice(0, 300);
     if (e instanceof Fence) { await settle(ctx, t, "failed", undefined, msg); throw e; }
-    if (e instanceof BudgetPause) { ctx.setBudget(msg); await settle(ctx, t, "paused", undefined, msg); return; }
-    if (ctx.budget()) { await settle(ctx, t, "paused", undefined, `interrupted: ${ctx.budget()}`); return; }
+    if (e instanceof BudgetPause) { if (e.hard && !ctx.stopping()) ctx.setBudget(msg); await settle(ctx, t, "paused", undefined, msg); return; }
+    if (ctx.budget() || ctx.stopping()) { await settle(ctx, t, "paused", undefined, `interrupted: ${ctx.budget() ?? "stop requested"}`); return; }
     // Ordinary failure: one bounded retry, then close this branch; independent work continues.
     const retry = t.attempts < 2 && t.kind !== "investigate";
     ctx.state.failures.push({ at: now(), taskId: t.id, error: msg, recovery: retry ? "retry once" : "branch closed" });
     if (retry) { t.status = "queued"; await ctx.store.event("op", "task_failed_retrying", { taskId: t.id, error: msg }); await ctx.store.save(); }
-    else await settle(ctx, t, "failed", undefined, msg);
+    else {
+      // A closed investigation leaves its case inconclusive, never silently open.
+      const caseId = (t.input as { caseId?: string } | undefined)?.caseId;
+      if (t.kind === "investigate" && caseId) { setCase(ctx, caseId, "inconclusive", `investigation branch closed: ${msg.slice(0, 200)}`); await decide(ctx, t.id, "investigation_closed", caseId, msg); }
+      await settle(ctx, t, "failed", undefined, msg);
+    }
   }
 }
 
@@ -242,7 +253,8 @@ async function triage(ctx: Ctx, t: Task) {
     const inp = u.input as { task: string; page: string; viewport: string };
     const task = ctx.config.scope.tasks.find((x) => x.id === inp.task)!;
     const control = resolveControl(d.control, task.pages, inp.page);
-    const caseId = `case-${inp.page}-${inp.viewport}`;
+    const caseId = `case-${inp.task}-${inp.page}-${inp.viewport}`;
+    if (ctx.state.cases.some((c) => c.id === caseId)) continue; // a re-run triage never duplicates a case
     if (d.action === "investigate" && control && opened < MAX_INVESTIGATIONS) {
       opened++;
       const id = `inv-${opened}`;
@@ -266,38 +278,48 @@ async function triage(ctx: Ctx, t: Task) {
 // ---- investigation through the transfer gate ----
 
 async function transferCli(env: Record<string, string>, args: string[]) {
-  const r = await run("npx", ["tsx", "src/experimental/investigation/transfer.ts", ...args], { cwd: REPO_ROOT, env: { ...process.env, ...env }, maxBuffer: 20 * 1024 * 1024, timeout: 600_000 }).catch((e: { stdout?: string; stderr?: string; message: string }) => { throw new Error(`transfer ${args[1]} failed: ${(e.stderr || e.message).slice(0, 300)}`); });
-  return r.stdout;
+  const p = run("npx", ["tsx", "src/experimental/investigation/transfer.ts", ...args], { cwd: REPO_ROOT, env: { ...process.env, ...env }, maxBuffer: 20 * 1024 * 1024, timeout: 600_000 }).catch((e: { stdout?: string; stderr?: string; message: string }) => { throw new Error(`transfer ${args[1]} failed: ${(e.stderr || e.message).slice(0, 300)}`); });
+  // Settled with the Claude children on stop or wall-time exhaustion.
+  const child = (p as unknown as { child?: import("node:child_process").ChildProcess }).child;
+  if (child) { active.add(child); child.on("close", () => active.delete(child)); }
+  return (await p).stdout;
 }
 
 async function investigate(ctx: Ctx, t: Task) {
   const inp = t.input as { task: string; page: string; viewport: string; control: string; question: string; alternatives: string[]; baseline: string; caseId: string };
   const task = ctx.config.scope.tasks.find((x) => x.id === inp.task)!;
-  const runName = `${ctx.config.campaignId}-${t.id}`;
+  const runName = `${ctx.config.campaignId}-${t.id}`, runDir = join(REPO_ROOT, "runs/ail-transfer", runName);
   const symptomPath = join(ctx.dir, `symptom-${t.id}.json`);
   if (!(await exists(symptomPath))) await writeFile(symptomPath, JSON.stringify({ symptom: task.userReport, affectedText: task.keyText, pages: [inp.page, inp.control], viewports: [inp.viewport] }));
   const env = { AIL_TRANSFER_TARGETS: `${inp.page},${inp.control}`, AIL_TRANSFER_SYMPTOM: symptomPath, AIL_EXTERNAL_MODEL: ctx.config.model };
   const base = ctx.state.tasks.find((x) => x.id === inp.baseline)!.output;
   const step = async (s: string) => { t.step = s; await ctx.store.event("op", "investigation_step", { taskId: t.id, step: s }); await ctx.store.save(); };
-  const proposalFile = (a: string) => join(ctx.dir, `proposal-${t.id}-${a}.json`);
+  const saved = (name: string) => join(ctx.dir, `${name}-${t.id}.json`);
+  // Every sub-step is idempotent: a saved Claude reply is reused instead of paying for the call again, and a side
+  // effect already present in the transfer run (proposal, results, frozen conclusion) is not repeated after a crash.
+  const once = async (name: string, purpose: "open" | "finish", prompt: () => Promise<string>) => {
+    if (await exists(saved(name))) return JSON.parse(await readFile(saved(name), "utf8")) as Record<string, unknown>;
+    const r = await claude(ctx, t, purpose, await prompt(), name);
+    await writeFile(saved(name), JSON.stringify(r));
+    return r;
+  };
+  const importProposal = async (a: string, from?: string) => {
+    if (!(await exists(join(runDir, "attempts", a, "proposal.json")))) await transferCli(env, [runName, "import", a, saved(`proposal-${a}`), ...(from ? [from] : [])]);
+  };
   let attempt = (t.output?.["attempt"] as string | undefined) ?? "d1";
   const evidencePacket = `CAMPAIGN EVIDENCE THAT TRIGGERED THIS INVESTIGATION (algorithmic baseline on ${inp.page} @ ${inp.viewport}): ${JSON.stringify(base)}\nQUESTION: ${inp.question}\nALTERNATIVES TO SEPARATE: ${JSON.stringify(inp.alternatives)}\nCONTROL PAGE: ${inp.control}`;
 
   if (!t.step) {
-    const brief = await transferCli(env, [runName, "brief", "initial"]);
-    const p = await claude(ctx, t, "open", `${brief}\n\n${evidencePacket}\n\nReply with ONE JSON object only.`, "design");
-    await writeFile(proposalFile("d1"), JSON.stringify(p));
-    await transferCli(env, [runName, "import", "d1", proposalFile("d1")]);
+    await once("proposal-d1", "open", async () => `${await transferCli(env, [runName, "brief", "initial"])}\n\n${evidencePacket}\n\nReply with ONE JSON object only.`);
+    await importProposal("d1");
     await step("designed");
   }
   if (t.step === "designed" || t.step === "revised") {
     const v = JSON.parse(await transferCli(env, [runName, "validate", attempt])) as { passed: boolean; failures: string[] };
     await ctx.store.event("op", "gate_result", { taskId: t.id, attempt, passed: v.passed, failures: v.failures });
     if (!v.passed && attempt === "d1") {
-      const brief = await transferCli(env, [runName, "brief", "initial"]);
-      const p = await claude(ctx, t, "open", `${brief}\n\n${evidencePacket}\n\nYOUR PREVIOUS PROPOSAL FAILED THE PRE-EXECUTION GATE: ${JSON.stringify(v.failures)}\nPrevious code:\n${await readFile(join(REPO_ROOT, "runs/ail-transfer", runName, "attempts/d1/probe.mjs"), "utf8")}\nSubmit one revised proposal (this is the only revision). Reply with ONE JSON object only.`, "revise");
-      await writeFile(proposalFile("d2"), JSON.stringify(p));
-      await transferCli(env, [runName, "import", "d2", proposalFile("d2"), "d1"]);
+      await once("proposal-d2", "open", async () => `${await transferCli(env, [runName, "brief", "initial"])}\n\n${evidencePacket}\n\nYOUR PREVIOUS PROPOSAL FAILED THE PRE-EXECUTION GATE: ${JSON.stringify(v.failures)}\nPrevious code:\n${await readFile(join(runDir, "attempts/d1/probe.mjs"), "utf8")}\nSubmit one revised proposal (this is the only revision). Reply with ONE JSON object only.`);
+      await importProposal("d2", "d1");
       attempt = "d2"; t.output = { attempt }; await step("revised");
       return investigate(ctx, t);
     }
@@ -305,17 +327,27 @@ async function investigate(ctx: Ctx, t: Task) {
     t.output = { attempt }; await step("validated");
   }
   if (t.step === "validated") {
-    await transferCli(env, [runName, "execute", attempt]);
+    if (!(await exists(join(runDir, "attempts", attempt, "results.json")))) await transferCli(env, [runName, "execute", attempt]);
     t.output = { attempt }; await step("executed");
   }
   if (t.step === "executed") {
-    const results = await readFile(join(REPO_ROOT, "runs/ail-transfer", runName, "attempts", attempt, "results.json"), "utf8");
+    const results = await readFile(join(runDir, "attempts", attempt, "results.json"), "utf8");
     const compact = Object.entries(JSON.parse(results) as Record<string, { state?: string; error?: string; result?: unknown }>).map(([k, v]) => `${k}: ${JSON.stringify({ state: v.state, error: v.error, result: v.result }).slice(0, 12_000)}`).join("\n");
-    const proposal = await readFile(join(REPO_ROOT, "runs/ail-transfer", runName, "attempts", attempt, "proposal.json"), "utf8");
-    const c = await claude(ctx, t, "finish", `You concluded a bounded accessibility investigation. From the recorded measurements only, state which page shows the reported problem and why. Cite measurements ("page@viewport: field = value") for every causal claim; report contradicting evidence; separate observation, explanation and uncertainty (including what the broker cannot observe). Say "undetermined" if the evidence does not establish it.\nSYMPTOM: ${JSON.stringify({ report: task.userReport, text: task.keyText })}\n${evidencePacket}\nPROPOSAL:\n${proposal}\nMEASUREMENTS (each page/viewport capped at 12,000 characters):\n${compact}\nReply with ONE JSON object: {"defectivePage":"${inp.page}"|"${inp.control}"|"undetermined","explanation","supportingMeasurements":[...],"unsupportedOrUntested":[...],"contradictions":[...],"confidence":"low"|"medium"|"high"}`, "conclude");
-    await writeFile(join(ctx.dir, `conclusion-input-${t.id}.json`), JSON.stringify(c));
-    await transferCli(env, [runName, "import-conclusion", attempt, join(ctx.dir, `conclusion-input-${t.id}.json`)]);
-    const body = await readFile(join(REPO_ROOT, "runs/ail-transfer", runName, "conclusion.json"), "utf8");
+    const proposal = await readFile(join(runDir, "attempts", attempt, "proposal.json"), "utf8");
+    const conclusion = await once("conclusion", "finish", async () => `You concluded a bounded accessibility investigation. From the recorded measurements only, state which page shows the reported problem and why. Cite measurements ("page@viewport: field = value") for every causal claim; report contradicting evidence; separate observation, explanation and uncertainty (including what the broker cannot observe). Say "undetermined" if the evidence does not establish it.\nSYMPTOM: ${JSON.stringify({ report: task.userReport, text: task.keyText })}\n${evidencePacket}\nPROPOSAL:\n${proposal}\nMEASUREMENTS (each page/viewport capped at 12,000 characters):\n${compact}\nReply with ONE JSON object: {"defectivePage":"${inp.page}"|"${inp.control}"|"undetermined","explanation":"<at most 1,500 characters>","supportingMeasurements":[at most 10 items],"unsupportedOrUntested":[at most 10 items],"contradictions":[...],"confidence":"low"|"medium"|"high"}`);
+    let c = conclusion;
+    if (!(await exists(join(runDir, "conclusion.json")))) {
+      try { await transferCli(env, [runName, "import-conclusion", attempt, saved("conclusion")]); }
+      catch (e) {
+        // Bounded recovery: one corrective call with the schema rejection; the rejected reply stays in claude/.
+        const err = String((e as Error).message).slice(0, 600);
+        await ctx.store.event("op", "conclusion_rejected_by_schema", { taskId: t.id, error: err.slice(0, 300) });
+        c = await once("conclusion-fix", "finish", async () => `Your conclusion was rejected by the storage schema: ${err}\nShorten it to fit (explanation at most 1,500 characters, at most 10 items per list) without changing its content or verdict. Reply with ONE JSON object only.\nYOUR CONCLUSION:\n${JSON.stringify(conclusion)}`);
+        await transferCli(env, [runName, "import-conclusion", attempt, saved("conclusion-fix")]);
+      }
+    }
+    const body = await readFile(join(runDir, "conclusion.json"), "utf8");
+    c = JSON.parse(body) as Record<string, unknown>; // the frozen conclusion is authoritative
     const ev = await evidence(ctx, t, "conclusion", `${t.id}-conclusion.json`, body);
     const page = String(c["defectivePage"]);
     const outcome = page === inp.page ? "supported" : page === "undetermined" ? "inconclusive" : "rejected";

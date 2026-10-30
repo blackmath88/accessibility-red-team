@@ -44,8 +44,8 @@ export const ConfigSchema = z.object({
 });
 export type Config = z.infer<typeof ConfigSchema>;
 
-export type { TaskKind, TaskStatus, Task, Usage, Decision, CampaignStatus, State } from "./types.js";
-import type { State } from "./types.js";
+export type { TaskKind, TaskStatus, Task, Usage, Decision, CampaignStatus, State } from "../../../control-center/src/campaignTypes.js";
+import type { State } from "../../../control-center/src/campaignTypes.js";
 
 export const dirOf = (id: string) => { if (!CAMPAIGN_ID.test(id)) throw new Error("invalid campaign id"); return join(CAMPAIGNS, id); };
 export const now = () => new Date().toISOString();
@@ -78,6 +78,18 @@ export async function countEvents(id: string) {
   const text = await readFile(join(dirOf(id), "events.jsonl"), "utf8").catch(() => "");
   const lines = text.split("\n").filter(Boolean);
   return { count: lines.length, lastSeq: lines.length ? (JSON.parse(lines[lines.length - 1]!) as { seq: number }).seq : 0 };
+}
+
+// Drops a half-written trailing line (crash mid-append) and returns the last complete sequence number.
+export async function repairLog(id: string) {
+  const path = join(dirOf(id), "events.jsonl");
+  const text = await readFile(path, "utf8").catch(() => "");
+  const lines = text.split("\n").filter(Boolean);
+  const good: string[] = [];
+  for (const l of lines) { try { JSON.parse(l); good.push(l); } catch { break; } }
+  const dropped = good.length !== lines.length;
+  if (dropped) await writeAtomic(path, good.map((l) => l + "\n").join(""));
+  return { lastSeq: good.length ? (JSON.parse(good[good.length - 1]!) as { seq: number }).seq : 0, dropped };
 }
 
 export async function createCampaign(config: Config) {
