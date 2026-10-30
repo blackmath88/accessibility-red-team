@@ -38,8 +38,9 @@ const CritiqueSchema = z.object({ requiredChanges: z.array(z.string()).min(1).ma
 const ConclusionSchema = z.object({
   defectivePage: z.enum(["transfer-a", "transfer-b", "undetermined"]),
   explanation: z.string().min(1).max(2000),
-  supportingMeasurements: z.array(z.string().max(500)).max(12),
-  unsupportedOrUntested: z.array(z.string().max(500)).max(12),
+  // Items may be strings or small objects (relaxed after the first conclusion call returned objects; recorded).
+  supportingMeasurements: z.array(z.union([z.string().max(1000), z.record(z.string(), z.unknown())])).max(12),
+  unsupportedOrUntested: z.array(z.union([z.string().max(1000), z.record(z.string(), z.unknown())])).max(12),
   confidence: z.enum(["low", "medium", "high"]),
 });
 
@@ -169,16 +170,27 @@ async function execute(run: string, attempt: string) {
   }
 }
 
+// Every page/viewport gets its own capped share; a single overall cut once hid transfer-b entirely (conclusion.json).
+function measurementsForConclusion(json: string, cap = 9_000): string {
+  return Object.entries(JSON.parse(json) as Record<string, { state?: string; error?: string | null; result?: unknown }>)
+    .map(([k, v]) => `${k}: ${JSON.stringify({ state: v.state, error: v.error, result: v.result }).slice(0, cap)}`).join("\n");
+}
+
 async function conclude(run: string, attempt: string) {
   const dir = join(RUNS, run), adir = join(dir, "attempts", attempt);
-  if (await exists(join(dir, "conclusion.json"))) throw new Error("a conclusion is already frozen for this run");
+  // One conclusion file per call, never overwritten; none at all once the answer key has been revealed for this run.
+  if (await exists(join(dir, "revealed.json"))) throw new Error("the answer key was revealed: no further conclusions");
+  const suffix = process.env["AIL_CONCLUDE_SUFFIX"] ?? "";
+  const conclusionFile = join(dir, suffix ? `conclusion-${suffix}.json` : "conclusion.json");
   const s = await symptom();
   const system = `You concluded an accessibility investigation. From the symptom, your hypotheses and the RECORDED measurements only, state which page version shows the reported problem and why. Say "undetermined" if the measurements do not establish it. Separate what the measurements support from what is untested. Reply with ONE JSON object: {"defectivePage":"transfer-a"|"transfer-b"|"undetermined","explanation","supportingMeasurements":[...],"unsupportedOrUntested":[...],"confidence":"low"|"medium"|"high"}`;
-  const user = `SYMPTOM: ${JSON.stringify(s)}\n\nPROPOSAL:\n${await readFile(join(adir, "proposal.json"), "utf8")}\n\nMEASUREMENTS:\n${(await readFile(join(adir, "results.json"), "utf8")).slice(0, 20_000)}`;
-  const out = await callDesigner(dir, `${attempt}-conclude`, system, user);
+  const user = `SYMPTOM: ${JSON.stringify(s)}\n\nPROPOSAL:\n${await readFile(join(adir, "proposal.json"), "utf8")}\n\nMEASUREMENTS (per page and viewport, each capped):\n${measurementsForConclusion(await readFile(join(adir, "results.json"), "utf8"))}`;
+  const name = `${attempt}-conclude${suffix}`;
+  const out = await callDesigner(dir, name, system, user);
+  await writeFile(join(adir, `${name}-raw.json`), JSON.stringify({ model: MODEL, ...out }, null, 1)); // kept even if parsing fails
   const parsed = ConclusionSchema.parse(JSON.parse(out.text));
   const body = JSON.stringify({ ...parsed, fromAttempt: attempt, model: MODEL, returnedModel: out.returnedModel, inputSha256: out.inputSha256, frozenAt: new Date().toISOString() }, null, 1);
-  await writeFile(join(dir, "conclusion.json"), body, { flag: "wx" });
+  await writeFile(conclusionFile, body, { flag: "wx" });
   console.log(body, "\nconclusionSha256", sha(body));
 }
 
