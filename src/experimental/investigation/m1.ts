@@ -27,12 +27,8 @@ const RUNS = join(ROOT, "runs/ail-m1");
 const FIXTURES = ["overlay", "no-overlay", "clean-control", "opacity-control", "fixed-banner"];
 const sha = (s: string | Buffer) => createHash("sha256").update(s).digest("hex");
 
-export const HypothesisSchema = z.object({ id: z.string().min(1).max(80), statement: z.string().min(1).max(1500), prediction: z.string().min(1).max(1500), falsifier: z.string().min(1).max(1500) });
-export const ProposalSchema = z.object({
-  hypotheses: z.array(HypothesisSchema).min(3).max(3),
-  probe: z.object({ question: z.string().min(1).max(1500), falsifier: z.string().min(1).max(2000), controls: z.array(z.string()).max(10), limitations: z.array(z.string()).max(12), code: z.string().min(50).max(12_000) }),
-  revisionNote: z.string().max(4000).optional(),
-});
+export { HypothesisSchema, ProposalSchema } from "./proposal.js";
+import { ProposalSchema } from "./proposal.js";
 
 const API_DOC = `You write ONE JavaScript ES module: export default async function (broker, packet) { ... return <JSON-serialisable measurements>; }
 It runs in an isolated sandbox with NO network, NO filesystem, NO DOM. The only capability is: await broker.call(op, args). Allowed ops:

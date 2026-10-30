@@ -13,6 +13,7 @@ import { constants } from "node:fs";
 import { access } from "node:fs/promises";
 import { chromium, type Browser, type BrowserContext, type ElementHandle, type Page } from "playwright";
 import sharp from "sharp";
+import { checkArgs } from "./broker-contract.js";
 
 export const BROKER_VERSION = "ail-broker/v1";
 export const LIVE_URL = "https://www.bs.ch/apps/zonensuche";
@@ -92,6 +93,8 @@ export class MeasurementBroker {
   }
 
   private async dispatch(op: string, a: Record<string, unknown>, signal?: AbortSignal): Promise<Reply> {
+    const denied = checkArgs(op, a); // the published contract's rules; the cases below re-parse their own arguments
+    if (denied) return { ok: false, reason: denied };
     switch (op) {
       case "open": return this.open(a, signal);
       case "viewport": return this.withPage((p) => p.evaluate(() => ({ innerWidth, innerHeight, devicePixelRatio, scrollX: Math.round(scrollX), scrollY: Math.round(scrollY), docHeight: document.documentElement.scrollHeight })));
