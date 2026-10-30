@@ -13,7 +13,7 @@ export type Criticism = { attempt: string; path: string; criticModel?: string; c
 export type Revision = { attempt: string; respondsTo: string; claimedChanges: string[]; actuallyPresent: string; source: string };
 export type Replay = { original: string; replay: string; artifactSha256: string[]; identical: boolean };
 export type ProvenanceLink = { label: string; path: string; sha256: string };
-export type Transfer = { status: "pending"; note: string } | { status: "completed" | "failed"; note: string; summary?: string; sourceRevision?: string; provenance?: ProvenanceLink[] };
+export type Transfer = { status: "pending"; note: string } | { status: "completed" | "failed"; note: string; summary?: string; sourceRevision?: string; facts?: Array<{ label: string; value: string }>; provenance?: ProvenanceLink[] };
 export type InvestigationBundle = {
   schema: typeof BUNDLE_SCHEMA;
   bundleId: string;
@@ -118,7 +118,7 @@ export function validateBundle(x: unknown): BundleResult {
   const t = obj(b.transfer, "bundle.transfer");
   if (t) {
     oneOf(t, "status", ["pending", "completed", "failed"], "bundle.transfer"); str(t, "note", "bundle.transfer");
-    if (t.status !== "pending") { str(t, "summary", "bundle.transfer", true); match(t, "sourceRevision", COMMIT, "bundle.transfer", true); if (t.provenance !== undefined) list(t, "provenance", "bundle.transfer", provenance, false); }
+    if (t.status !== "pending") { str(t, "summary", "bundle.transfer", true); match(t, "sourceRevision", COMMIT, "bundle.transfer", true); if (t.facts !== undefined) list(t, "facts", "bundle.transfer", (f, p) => { str(f, "label", p); str(f, "value", p); }, false); if (t.provenance !== undefined) list(t, "provenance", "bundle.transfer", provenance, false); }
   }
   return errors.length ? { ok: false, errors } : { ok: true, bundle: x as InvestigationBundle };
 }

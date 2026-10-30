@@ -1,0 +1,35 @@
+{
+ "judgeModel": "claude-opus-5-5",
+ "context": "fresh Claude subagent, read-only, after reveal",
+ "hashesVerified": true,
+ "verdict": "partially correct",
+ "correctClaims": [
+  "conclusion-3.json defectivePage=transfer-a matches key.json defective=transfer-a.",
+  "transfer-a text-rect pixels uniform 239 (min=p05=p50=max=239, histogram16 all in bin 14) at both viewports; reference clip p05=239: d3/results.json textPixels/referencePixels, identical to key's measured values.",
+  "transfer-b shows dark ink: p05=147 (1440) / 111 (390), min 85, below150=615: d3/results.json; matches key.",
+  "Hit-test stack in transfer-a has section#delivery above p#price-info (bgAlphaTimesOpacity=1) at all 15 text points; transfer-b has p#price-info on top (aboveTarget=0): d3/results.json stacks.",
+  "Listing 'whether the overlay is a pseudo-element' as untested is accurate (broker cannot see ::before)."
+ ],
+ "unsupportedOrWrongClaims": [
+  "conclusion-3: 'white card section (id=delivery) ... covering the text' implies #delivery's own white box covers the note. Recorded data contradict this: #delivery rect starts at y=345 (text 304-324) and the covering paint is 239, not 255. Key lists this reading as unsupported; the geometry mismatch (the decisive clue to a pseudo-element/paint outside the box) was not noticed.",
+  "conclusion-3 lists font-size/display as untested, but d3 recorded fontSize 13px, display block, color rgb(85,85,85) (minor over-hedging).",
+  "conclusion.json (first freeze): 'not covered by any overlay (no entries with non-trivial alpha above the target)' is wrong; d3 recorded delivery above target with alpha 1 in transfer-a. 'text pixels distinct from background' is wrong; text p05 239 = reference p05 239. Its verdict 'undetermined' came from truncated input without transfer-b data."
+ ],
+ "distinguishesControl": {
+  "answer": true,
+  "evidence": "Same rect, colour rgb(85,85,85), effectiveOpacity 1 and no nonDefaultAncestors on both pages, but transfer-a text pixels are uniform 239 (below150=0) vs transfer-b min 85 / p05 147|111 / below150=615, and stack aboveTarget=1 (section#delivery) on a vs 0 on b, at both 1440x900 and 390x844 (d3/results.json)."
+ },
+ "attribution": {
+  "mistral": "d1 (mistral-small-2603) designed a valid probe on its own and returned coverage.isCovered true on transfer-a, false on transfer-b at both viewports (d1/results.json), with identical rects/opacity/visibility, which falsified its h1/h3. It never wrote a conclusion from d1. d2 failed the gate. Mistral's only contributions after that were the two conclude calls over d3 data: the first wrong/undetermined, the second (conclusion-3) correct on the page but loose on the mechanism.",
+  "claudeCritic": "d1/critic.json (claude-opus-5-5, blind) required pixels on the text rect plus a reference clip, all stack entries above the target, own colours/ancestors, all findText matches and a screenshot, and supplied the check scenarios. Every discriminating measurement in conclusion-3 (pixel stats, aboveTarget stacks) comes from these requirements.",
+  "claudeEscalation": "d3 probe/proposal (author claude-escalation, claude-opus-5-5) produced every measurement the final conclusion rests on (d3/results.json). It passed all 5 critic checks. Minor defect: result.screenshot.artifact is null in all four results, even though the viewport PNGs exist in artifacts/.",
+  "coordinator": "Fixed the conclude-input truncation, which had dropped the transfer-b data and caused conclusion.json to be undetermined, and relaxed the schema after the first d3-conclude parse failure. conclusion-3 (input 94b149...) depends on both fixes. Its change from 'undetermined' to 'transfer-a' came from the more complete input, not from new measurement."
+ },
+ "d2RevisionNoteCheck": "d2's note claims pixels+reference, full stacks, own styles, max 5 matches, screenshot and no booleans. The code does contain all of these calls, so nothing claimed is absent. But the dry run crashed before screenshot (coverageResult[i].stack undefined: it sampled 9 points while the scenario returned 1), and its alpha parse gives 0 for opaque rgb(...), which is contrary to the critic's 'parse rgb()/rgba() alpha correctly'. The note overstates working behaviour, not code content.",
+ "d1Alone": "Partly. isCovered true/false split a vs b consistently at both viewports with identical element styles, so it points to transfer-a. But it is a single boolean from stack[0].backgroundColor (rgb(255,255,255) of #delivery parsed as alpha 1). There were no pixels, no stacks returned, and nothing to tell the cause apart. It would support a low-confidence page identification only, not the mechanism or confirmation that the text is actually not painted.",
+ "blindnessConcerns": [
+  "None found: d1-d3 probes contain no fixture ids/selectors (delivery, price-info, summary, transfer-a/b, ::before), no branch on packet.target. Designer input contains only the generic broker spec. d2/d3 hypotheses mention transfer-a only after d1 results existed.",
+  "Key hash 67bbc20d... matches revealed.json and the fixture author's report; conclusions frozen before reveal (hashes match)."
+ ],
+ "oneLine": "Final conclusion (conclusion-3) correctly names transfer-a with discriminating pixel+stack measurements vs control, but misattributes occlusion to #delivery's white box (its rect starts below the text, and the covering paint is 239); success depended on the Claude critic, the Claude d3 probe and coordinator input fixes, while Mistral alone produced only d1's boolean split."
+}

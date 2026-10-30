@@ -1,0 +1,2334 @@
+{
+ "d1:transfer-a@1440x900": {
+  "state": "completed",
+  "error": null,
+  "codeSha256": "55d843dbb9b1ae7b87da2cd7c26013b05a6998734b91416366503cd6a9ee4429",
+  "calls": 4,
+  "result": {
+   "target": "transfer-a",
+   "viewport": "1440x900",
+   "textElement": {
+    "handle": "t1",
+    "rect": {
+     "x": 425,
+     "y": 304,
+     "width": 590,
+     "height": 20
+    },
+    "effectiveOpacity": 1,
+    "visibility": "visible",
+    "withinViewportBounds": true
+   },
+   "coverage": {
+    "pointsSampled": 9,
+    "isCovered": true
+   },
+   "visibilityStatus": false
+  }
+ },
+ "d1:transfer-a@390x844": {
+  "state": "completed",
+  "error": null,
+  "codeSha256": "55d843dbb9b1ae7b87da2cd7c26013b05a6998734b91416366503cd6a9ee4429",
+  "calls": 4,
+  "result": {
+   "target": "transfer-a",
+   "viewport": "390x844",
+   "textElement": {
+    "handle": "t1",
+    "rect": {
+     "x": 41,
+     "y": 304,
+     "width": 308,
+     "height": 20
+    },
+    "effectiveOpacity": 1,
+    "visibility": "visible",
+    "withinViewportBounds": true
+   },
+   "coverage": {
+    "pointsSampled": 9,
+    "isCovered": true
+   },
+   "visibilityStatus": false
+  }
+ },
+ "d1:transfer-b@1440x900": {
+  "state": "completed",
+  "error": null,
+  "codeSha256": "55d843dbb9b1ae7b87da2cd7c26013b05a6998734b91416366503cd6a9ee4429",
+  "calls": 4,
+  "result": {
+   "target": "transfer-b",
+   "viewport": "1440x900",
+   "textElement": {
+    "handle": "t1",
+    "rect": {
+     "x": 425,
+     "y": 304,
+     "width": 590,
+     "height": 20
+    },
+    "effectiveOpacity": 1,
+    "visibility": "visible",
+    "withinViewportBounds": true
+   },
+   "coverage": {
+    "pointsSampled": 9,
+    "isCovered": false
+   },
+   "visibilityStatus": true
+  }
+ },
+ "d1:transfer-b@390x844": {
+  "state": "completed",
+  "error": null,
+  "codeSha256": "55d843dbb9b1ae7b87da2cd7c26013b05a6998734b91416366503cd6a9ee4429",
+  "calls": 4,
+  "result": {
+   "target": "transfer-b",
+   "viewport": "390x844",
+   "textElement": {
+    "handle": "t1",
+    "rect": {
+     "x": 41,
+     "y": 304,
+     "width": 308,
+     "height": 20
+    },
+    "effectiveOpacity": 1,
+    "visibility": "visible",
+    "withinViewportBounds": true
+   },
+   "coverage": {
+    "pointsSampled": 9,
+    "isCovered": false
+   },
+   "visibilityStatus": true
+  }
+ },
+ "d3:transfer-a@1440x900": {
+  "state": "completed",
+  "error": null,
+  "codeSha256": "920b70e72774c535afd4b5791b6eef0b409b8e1c910e6e420d2f075470c4e5d3",
+  "calls": 7,
+  "result": {
+   "target": "transfer-a",
+   "viewport": "1440x900",
+   "errors": [],
+   "open": {
+    "target": "transfer-a",
+    "url": "fixture:transfer-a",
+    "viewport": "1440x900",
+    "status": null,
+    "resourcePolicy": "file-only"
+   },
+   "viewportInfo": {
+    "innerWidth": 1440,
+    "innerHeight": 900,
+    "devicePixelRatio": 1,
+    "scrollX": 0,
+    "scrollY": 0,
+    "docHeight": 900,
+    "usedW": 1440,
+    "usedH": 900
+   },
+   "findText": {
+    "text": "Preise inkl. 8,1 % MWST, zzgl. Versand CHF 9.00",
+    "count": 1,
+    "returned": 1,
+    "handles": [
+     "t1"
+    ]
+   },
+   "matches": [
+    {
+     "index": 0,
+     "handle": "t1",
+     "tag": "p",
+     "id": "price-info",
+     "cls": "small",
+     "text": "Preise inkl. 8,1 % MWST, zzgl. Versand C",
+     "rect": {
+      "x": 425,
+      "y": 304,
+      "width": 590,
+      "height": 20
+     },
+     "style": {
+      "color": "rgb(85, 85, 85)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "opacity": "1",
+      "position": "static",
+      "zIndex": "auto",
+      "visibility": "visible",
+      "display": "block",
+      "fontSize": "13px",
+      "fontWeight": "400",
+      "top": "auto"
+     },
+     "colorParsed": {
+      "r": 85,
+      "g": 85,
+      "b": 85,
+      "a": 1
+     },
+     "backgroundParsed": {
+      "r": 0,
+      "g": 0,
+      "b": 0,
+      "a": 0
+     },
+     "effectiveOpacity": 1,
+     "nonDefaultAncestors": [],
+     "inViewport": true,
+     "referencePlacement": "below",
+     "pointsRequested": [
+      {
+       "x": 484,
+       "y": 310,
+       "role": "text"
+      },
+      {
+       "x": 602,
+       "y": 310,
+       "role": "text"
+      },
+      {
+       "x": 720,
+       "y": 310,
+       "role": "text"
+      },
+      {
+       "x": 837,
+       "y": 310,
+       "role": "text"
+      },
+      {
+       "x": 955,
+       "y": 310,
+       "role": "text"
+      },
+      {
+       "x": 484,
+       "y": 314,
+       "role": "text"
+      },
+      {
+       "x": 602,
+       "y": 314,
+       "role": "text"
+      },
+      {
+       "x": 720,
+       "y": 314,
+       "role": "text"
+      },
+      {
+       "x": 837,
+       "y": 314,
+       "role": "text"
+      },
+      {
+       "x": 955,
+       "y": 314,
+       "role": "text"
+      },
+      {
+       "x": 484,
+       "y": 317,
+       "role": "text"
+      },
+      {
+       "x": 602,
+       "y": 317,
+       "role": "text"
+      },
+      {
+       "x": 720,
+       "y": 317,
+       "role": "text"
+      },
+      {
+       "x": 837,
+       "y": 317,
+       "role": "text"
+      },
+      {
+       "x": 955,
+       "y": 317,
+       "role": "text"
+      },
+      {
+       "x": 720,
+       "y": 338,
+       "role": "reference"
+      }
+     ],
+     "pointsReturned": 16,
+     "points": [
+      {
+       "point": {
+        "x": 484,
+        "y": 310
+       },
+       "role": "text",
+       "stackDepth": 6,
+       "targetIndex": 1,
+       "aboveTarget": 1,
+       "stackRef": 0
+      },
+      {
+       "point": {
+        "x": 602,
+        "y": 310
+       },
+       "role": "text",
+       "stackDepth": 6,
+       "targetIndex": 1,
+       "aboveTarget": 1,
+       "stackRef": 0
+      },
+      {
+       "point": {
+        "x": 720,
+        "y": 310
+       },
+       "role": "text",
+       "stackDepth": 6,
+       "targetIndex": 1,
+       "aboveTarget": 1,
+       "stackRef": 0
+      },
+      {
+       "point": {
+        "x": 837,
+        "y": 310
+       },
+       "role": "text",
+       "stackDepth": 6,
+       "targetIndex": 1,
+       "aboveTarget": 1,
+       "stackRef": 0
+      },
+      {
+       "point": {
+        "x": 955,
+        "y": 310
+       },
+       "role": "text",
+       "stackDepth": 6,
+       "targetIndex": 1,
+       "aboveTarget": 1,
+       "stackRef": 0
+      },
+      {
+       "point": {
+        "x": 484,
+        "y": 314
+       },
+       "role": "text",
+       "stackDepth": 6,
+       "targetIndex": 1,
+       "aboveTarget": 1,
+       "stackRef": 0
+      },
+      {
+       "point": {
+        "x": 602,
+        "y": 314
+       },
+       "role": "text",
+       "stackDepth": 6,
+       "targetIndex": 1,
+       "aboveTarget": 1,
+       "stackRef": 0
+      },
+      {
+       "point": {
+        "x": 720,
+        "y": 314
+       },
+       "role": "text",
+       "stackDepth": 6,
+       "targetIndex": 1,
+       "aboveTarget": 1,
+       "stackRef": 0
+      },
+      {
+       "point": {
+        "x": 837,
+        "y": 314
+       },
+       "role": "text",
+       "stackDepth": 6,
+       "targetIndex": 1,
+       "aboveTarget": 1,
+       "stackRef": 0
+      },
+      {
+       "point": {
+        "x": 955,
+        "y": 314
+       },
+       "role": "text",
+       "stackDepth": 6,
+       "targetIndex": 1,
+       "aboveTarget": 1,
+       "stackRef": 0
+      },
+      {
+       "point": {
+        "x": 484,
+        "y": 317
+       },
+       "role": "text",
+       "stackDepth": 6,
+       "targetIndex": 1,
+       "aboveTarget": 1,
+       "stackRef": 0
+      },
+      {
+       "point": {
+        "x": 602,
+        "y": 317
+       },
+       "role": "text",
+       "stackDepth": 6,
+       "targetIndex": 1,
+       "aboveTarget": 1,
+       "stackRef": 0
+      },
+      {
+       "point": {
+        "x": 720,
+        "y": 317
+       },
+       "role": "text",
+       "stackDepth": 6,
+       "targetIndex": 1,
+       "aboveTarget": 1,
+       "stackRef": 0
+      },
+      {
+       "point": {
+        "x": 837,
+        "y": 317
+       },
+       "role": "text",
+       "stackDepth": 6,
+       "targetIndex": 1,
+       "aboveTarget": 1,
+       "stackRef": 0
+      },
+      {
+       "point": {
+        "x": 955,
+        "y": 317
+       },
+       "role": "text",
+       "stackDepth": 6,
+       "targetIndex": 1,
+       "aboveTarget": 1,
+       "stackRef": 0
+      },
+      {
+       "point": {
+        "x": 720,
+        "y": 338
+       },
+       "role": "reference",
+       "stackDepth": 5,
+       "targetIndex": -1,
+       "aboveTarget": null,
+       "stackRef": 1
+      }
+     ],
+     "stacks": [
+      [
+       {
+        "tag": "section",
+        "id": "delivery",
+        "cls": "card",
+        "text": "Lieferadresse\n    Name\n    Strasse und N",
+        "position": "relative",
+        "zIndex": "auto",
+        "backgroundColor": "rgb(255, 255, 255)",
+        "opacity": "1",
+        "rect": {
+         "x": 400,
+         "y": 345,
+         "width": 640,
+         "height": 374
+        },
+        "bgAlpha": 1,
+        "bgAlphaTimesOpacity": 1
+       },
+       {
+        "tag": "p",
+        "id": "price-info",
+        "cls": "small",
+        "text": "Preise inkl. 8,1 % MWST, zzgl. Versand C",
+        "position": "static",
+        "zIndex": "auto",
+        "backgroundColor": "rgba(0, 0, 0, 0)",
+        "opacity": "1",
+        "rect": {
+         "x": 425,
+         "y": 304,
+         "width": 590,
+         "height": 20
+        },
+        "bgAlpha": 0,
+        "bgAlphaTimesOpacity": 0
+       }
+      ],
+      [
+       {
+        "tag": "section",
+        "id": "delivery",
+        "cls": "card",
+        "text": "Lieferadresse\n    Name\n    Strasse und N",
+        "position": "relative",
+        "zIndex": "auto",
+        "backgroundColor": "rgb(255, 255, 255)",
+        "opacity": "1",
+        "rect": {
+         "x": 400,
+         "y": 345,
+         "width": 640,
+         "height": 374
+        },
+        "bgAlpha": 1,
+        "bgAlphaTimesOpacity": 1
+       },
+       {
+        "tag": "section",
+        "id": "summary",
+        "cls": "card",
+        "text": "Ihr Warenkorb\n    \n      Stadtgeschichte",
+        "position": "static",
+        "zIndex": "auto",
+        "backgroundColor": "rgb(255, 255, 255)",
+        "opacity": "1",
+        "rect": {
+         "x": 400,
+         "y": 135,
+         "width": 640,
+         "height": 210
+        },
+        "bgAlpha": 1,
+        "bgAlphaTimesOpacity": 1
+       },
+       {
+        "tag": "main",
+        "id": "",
+        "cls": "checkout",
+        "text": "Bestellung prüfen\n  \n    Ihr Warenkorb\n ",
+        "position": "static",
+        "zIndex": "auto",
+        "backgroundColor": "rgba(0, 0, 0, 0)",
+        "opacity": "1",
+        "rect": {
+         "x": 384,
+         "y": 87,
+         "width": 672,
+         "height": 632
+        },
+        "bgAlpha": 0,
+        "bgAlphaTimesOpacity": 0
+       },
+       {
+        "tag": "body",
+        "id": "",
+        "cls": "",
+        "text": "Bücherstube am Rhein\n\n  Bestellung prüfe",
+        "position": "static",
+        "zIndex": "auto",
+        "backgroundColor": "rgb(238, 240, 236)",
+        "opacity": "1",
+        "rect": {
+         "x": 0,
+         "y": 0,
+         "width": 1440,
+         "height": 719
+        },
+        "bgAlpha": 1,
+        "bgAlphaTimesOpacity": 1
+       },
+       {
+        "tag": "html",
+        "id": "",
+        "cls": "",
+        "text": "Bestellung – Bücherstube am Rhein\n\nhtml,",
+        "position": "static",
+        "zIndex": "auto",
+        "backgroundColor": "rgb(238, 240, 236)",
+        "opacity": "1",
+        "rect": {
+         "x": 0,
+         "y": 0,
+         "width": 1440,
+         "height": 751
+        },
+        "bgAlpha": 1,
+        "bgAlphaTimesOpacity": 1
+       }
+      ]
+     ],
+     "textPixels": {
+      "label": "text",
+      "requestedClip": {
+       "x": 425,
+       "y": 304,
+       "width": 590,
+       "height": 20
+      },
+      "clip": {
+       "x": 425,
+       "y": 304,
+       "width": 590,
+       "height": 20
+      },
+      "artifact": {
+       "id": "d3-transfer-a-1440x900-01-clip.png",
+       "sha256": "72ec83ee1a34b97ae18b4c5bac81bc5c4e7b626d93ca9d1d8746c9c9b0699999"
+      },
+      "pixels": 11800,
+      "min": 239,
+      "p01": 239,
+      "p05": 239,
+      "p50": 239,
+      "max": 239,
+      "below": {
+       "100": 0,
+       "150": 0,
+       "200": 0,
+       "230": 0
+      },
+      "histogram16": [
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       11800,
+       0
+      ]
+     },
+     "referencePixels": {
+      "label": "reference",
+      "requestedClip": {
+       "x": 425,
+       "y": 328,
+       "width": 590,
+       "height": 20
+      },
+      "clip": {
+       "x": 425,
+       "y": 328,
+       "width": 590,
+       "height": 20
+      },
+      "artifact": {
+       "id": "d3-transfer-a-1440x900-02-clip.png",
+       "sha256": "79a154e876bfb6bf0ed02c939579b8f5cf15f37d81120ab7b5d3df3fec3a7078"
+      },
+      "pixels": 11800,
+      "min": 218,
+      "p01": 218,
+      "p05": 239,
+      "p50": 239,
+      "max": 255,
+      "below": {
+       "100": 0,
+       "150": 0,
+       "200": 0,
+       "230": 590
+      },
+      "histogram16": [
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       590,
+       10030,
+       1180
+      ]
+     }
+    }
+   ],
+   "screenshot": {
+    "artifact": null
+   }
+  }
+ },
+ "d3:transfer-a@390x844": {
+  "state": "completed",
+  "error": null,
+  "codeSha256": "920b70e72774c535afd4b5791b6eef0b409b8e1c910e6e420d2f075470c4e5d3",
+  "calls": 7,
+  "result": {
+   "target": "transfer-a",
+   "viewport": "390x844",
+   "errors": [],
+   "open": {
+    "target": "transfer-a",
+    "url": "fixture:transfer-a",
+    "viewport": "390x844",
+    "status": null,
+    "resourcePolicy": "file-only"
+   },
+   "viewportInfo": {
+    "innerWidth": 390,
+    "innerHeight": 844,
+    "devicePixelRatio": 1,
+    "scrollX": 0,
+    "scrollY": 0,
+    "docHeight": 844,
+    "usedW": 390,
+    "usedH": 844
+   },
+   "findText": {
+    "text": "Preise inkl. 8,1 % MWST, zzgl. Versand CHF 9.00",
+    "count": 1,
+    "returned": 1,
+    "handles": [
+     "t1"
+    ]
+   },
+   "matches": [
+    {
+     "index": 0,
+     "handle": "t1",
+     "tag": "p",
+     "id": "price-info",
+     "cls": "small",
+     "text": "Preise inkl. 8,1 % MWST, zzgl. Versand C",
+     "rect": {
+      "x": 41,
+      "y": 304,
+      "width": 308,
+      "height": 20
+     },
+     "style": {
+      "color": "rgb(85, 85, 85)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "opacity": "1",
+      "position": "static",
+      "zIndex": "auto",
+      "visibility": "visible",
+      "display": "block",
+      "fontSize": "13px",
+      "fontWeight": "400",
+      "top": "auto"
+     },
+     "colorParsed": {
+      "r": 85,
+      "g": 85,
+      "b": 85,
+      "a": 1
+     },
+     "backgroundParsed": {
+      "r": 0,
+      "g": 0,
+      "b": 0,
+      "a": 0
+     },
+     "effectiveOpacity": 1,
+     "nonDefaultAncestors": [],
+     "inViewport": true,
+     "referencePlacement": "below",
+     "pointsRequested": [
+      {
+       "x": 72,
+       "y": 310,
+       "role": "text"
+      },
+      {
+       "x": 133,
+       "y": 310,
+       "role": "text"
+      },
+      {
+       "x": 195,
+       "y": 310,
+       "role": "text"
+      },
+      {
+       "x": 256,
+       "y": 310,
+       "role": "text"
+      },
+      {
+       "x": 317,
+       "y": 310,
+       "role": "text"
+      },
+      {
+       "x": 72,
+       "y": 314,
+       "role": "text"
+      },
+      {
+       "x": 133,
+       "y": 314,
+       "role": "text"
+      },
+      {
+       "x": 195,
+       "y": 314,
+       "role": "text"
+      },
+      {
+       "x": 256,
+       "y": 314,
+       "role": "text"
+      },
+      {
+       "x": 317,
+       "y": 314,
+       "role": "text"
+      },
+      {
+       "x": 72,
+       "y": 317,
+       "role": "text"
+      },
+      {
+       "x": 133,
+       "y": 317,
+       "role": "text"
+      },
+      {
+       "x": 195,
+       "y": 317,
+       "role": "text"
+      },
+      {
+       "x": 256,
+       "y": 317,
+       "role": "text"
+      },
+      {
+       "x": 317,
+       "y": 317,
+       "role": "text"
+      },
+      {
+       "x": 195,
+       "y": 338,
+       "role": "reference"
+      }
+     ],
+     "pointsReturned": 16,
+     "points": [
+      {
+       "point": {
+        "x": 72,
+        "y": 310
+       },
+       "role": "text",
+       "stackDepth": 6,
+       "targetIndex": 1,
+       "aboveTarget": 1,
+       "stackRef": 0
+      },
+      {
+       "point": {
+        "x": 133,
+        "y": 310
+       },
+       "role": "text",
+       "stackDepth": 6,
+       "targetIndex": 1,
+       "aboveTarget": 1,
+       "stackRef": 0
+      },
+      {
+       "point": {
+        "x": 195,
+        "y": 310
+       },
+       "role": "text",
+       "stackDepth": 6,
+       "targetIndex": 1,
+       "aboveTarget": 1,
+       "stackRef": 0
+      },
+      {
+       "point": {
+        "x": 256,
+        "y": 310
+       },
+       "role": "text",
+       "stackDepth": 6,
+       "targetIndex": 1,
+       "aboveTarget": 1,
+       "stackRef": 0
+      },
+      {
+       "point": {
+        "x": 317,
+        "y": 310
+       },
+       "role": "text",
+       "stackDepth": 6,
+       "targetIndex": 1,
+       "aboveTarget": 1,
+       "stackRef": 0
+      },
+      {
+       "point": {
+        "x": 72,
+        "y": 314
+       },
+       "role": "text",
+       "stackDepth": 6,
+       "targetIndex": 1,
+       "aboveTarget": 1,
+       "stackRef": 0
+      },
+      {
+       "point": {
+        "x": 133,
+        "y": 314
+       },
+       "role": "text",
+       "stackDepth": 6,
+       "targetIndex": 1,
+       "aboveTarget": 1,
+       "stackRef": 0
+      },
+      {
+       "point": {
+        "x": 195,
+        "y": 314
+       },
+       "role": "text",
+       "stackDepth": 6,
+       "targetIndex": 1,
+       "aboveTarget": 1,
+       "stackRef": 0
+      },
+      {
+       "point": {
+        "x": 256,
+        "y": 314
+       },
+       "role": "text",
+       "stackDepth": 6,
+       "targetIndex": 1,
+       "aboveTarget": 1,
+       "stackRef": 0
+      },
+      {
+       "point": {
+        "x": 317,
+        "y": 314
+       },
+       "role": "text",
+       "stackDepth": 6,
+       "targetIndex": 1,
+       "aboveTarget": 1,
+       "stackRef": 0
+      },
+      {
+       "point": {
+        "x": 72,
+        "y": 317
+       },
+       "role": "text",
+       "stackDepth": 6,
+       "targetIndex": 1,
+       "aboveTarget": 1,
+       "stackRef": 0
+      },
+      {
+       "point": {
+        "x": 133,
+        "y": 317
+       },
+       "role": "text",
+       "stackDepth": 6,
+       "targetIndex": 1,
+       "aboveTarget": 1,
+       "stackRef": 0
+      },
+      {
+       "point": {
+        "x": 195,
+        "y": 317
+       },
+       "role": "text",
+       "stackDepth": 6,
+       "targetIndex": 1,
+       "aboveTarget": 1,
+       "stackRef": 0
+      },
+      {
+       "point": {
+        "x": 256,
+        "y": 317
+       },
+       "role": "text",
+       "stackDepth": 6,
+       "targetIndex": 1,
+       "aboveTarget": 1,
+       "stackRef": 0
+      },
+      {
+       "point": {
+        "x": 317,
+        "y": 317
+       },
+       "role": "text",
+       "stackDepth": 6,
+       "targetIndex": 1,
+       "aboveTarget": 1,
+       "stackRef": 0
+      },
+      {
+       "point": {
+        "x": 195,
+        "y": 338
+       },
+       "role": "reference",
+       "stackDepth": 5,
+       "targetIndex": -1,
+       "aboveTarget": null,
+       "stackRef": 1
+      }
+     ],
+     "stacks": [
+      [
+       {
+        "tag": "section",
+        "id": "delivery",
+        "cls": "card",
+        "text": "Lieferadresse\n    Name\n    Strasse und N",
+        "position": "relative",
+        "zIndex": "auto",
+        "backgroundColor": "rgb(255, 255, 255)",
+        "opacity": "1",
+        "rect": {
+         "x": 16,
+         "y": 345,
+         "width": 358,
+         "height": 374
+        },
+        "bgAlpha": 1,
+        "bgAlphaTimesOpacity": 1
+       },
+       {
+        "tag": "p",
+        "id": "price-info",
+        "cls": "small",
+        "text": "Preise inkl. 8,1 % MWST, zzgl. Versand C",
+        "position": "static",
+        "zIndex": "auto",
+        "backgroundColor": "rgba(0, 0, 0, 0)",
+        "opacity": "1",
+        "rect": {
+         "x": 41,
+         "y": 304,
+         "width": 308,
+         "height": 20
+        },
+        "bgAlpha": 0,
+        "bgAlphaTimesOpacity": 0
+       }
+      ],
+      [
+       {
+        "tag": "section",
+        "id": "delivery",
+        "cls": "card",
+        "text": "Lieferadresse\n    Name\n    Strasse und N",
+        "position": "relative",
+        "zIndex": "auto",
+        "backgroundColor": "rgb(255, 255, 255)",
+        "opacity": "1",
+        "rect": {
+         "x": 16,
+         "y": 345,
+         "width": 358,
+         "height": 374
+        },
+        "bgAlpha": 1,
+        "bgAlphaTimesOpacity": 1
+       },
+       {
+        "tag": "section",
+        "id": "summary",
+        "cls": "card",
+        "text": "Ihr Warenkorb\n    \n      Stadtgeschichte",
+        "position": "static",
+        "zIndex": "auto",
+        "backgroundColor": "rgb(255, 255, 255)",
+        "opacity": "1",
+        "rect": {
+         "x": 16,
+         "y": 135,
+         "width": 358,
+         "height": 210
+        },
+        "bgAlpha": 1,
+        "bgAlphaTimesOpacity": 1
+       },
+       {
+        "tag": "main",
+        "id": "",
+        "cls": "checkout",
+        "text": "Bestellung prüfen\n  \n    Ihr Warenkorb\n ",
+        "position": "static",
+        "zIndex": "auto",
+        "backgroundColor": "rgba(0, 0, 0, 0)",
+        "opacity": "1",
+        "rect": {
+         "x": 0,
+         "y": 87,
+         "width": 390,
+         "height": 632
+        },
+        "bgAlpha": 0,
+        "bgAlphaTimesOpacity": 0
+       },
+       {
+        "tag": "body",
+        "id": "",
+        "cls": "",
+        "text": "Bücherstube am Rhein\n\n  Bestellung prüfe",
+        "position": "static",
+        "zIndex": "auto",
+        "backgroundColor": "rgb(238, 240, 236)",
+        "opacity": "1",
+        "rect": {
+         "x": 0,
+         "y": 0,
+         "width": 390,
+         "height": 719
+        },
+        "bgAlpha": 1,
+        "bgAlphaTimesOpacity": 1
+       },
+       {
+        "tag": "html",
+        "id": "",
+        "cls": "",
+        "text": "Bestellung – Bücherstube am Rhein\n\nhtml,",
+        "position": "static",
+        "zIndex": "auto",
+        "backgroundColor": "rgb(238, 240, 236)",
+        "opacity": "1",
+        "rect": {
+         "x": 0,
+         "y": 0,
+         "width": 390,
+         "height": 751
+        },
+        "bgAlpha": 1,
+        "bgAlphaTimesOpacity": 1
+       }
+      ]
+     ],
+     "textPixels": {
+      "label": "text",
+      "requestedClip": {
+       "x": 41,
+       "y": 304,
+       "width": 308,
+       "height": 20
+      },
+      "clip": {
+       "x": 41,
+       "y": 304,
+       "width": 308,
+       "height": 20
+      },
+      "artifact": {
+       "id": "d3-transfer-a-390x844-04-clip.png",
+       "sha256": "ce56e7dbd9934b6e2aab285d540a0852f2c99f8d2ba6d3e40f55e3bc6d7f7be5"
+      },
+      "pixels": 6160,
+      "min": 239,
+      "p01": 239,
+      "p05": 239,
+      "p50": 239,
+      "max": 239,
+      "below": {
+       "100": 0,
+       "150": 0,
+       "200": 0,
+       "230": 0
+      },
+      "histogram16": [
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       6160,
+       0
+      ]
+     },
+     "referencePixels": {
+      "label": "reference",
+      "requestedClip": {
+       "x": 41,
+       "y": 328,
+       "width": 308,
+       "height": 20
+      },
+      "clip": {
+       "x": 41,
+       "y": 328,
+       "width": 308,
+       "height": 20
+      },
+      "artifact": {
+       "id": "d3-transfer-a-390x844-05-clip.png",
+       "sha256": "a3c6310a05caf039145f9eef431163235b093b169d9f2756a0427f0a293af0ba"
+      },
+      "pixels": 6160,
+      "min": 218,
+      "p01": 218,
+      "p05": 239,
+      "p50": 239,
+      "max": 255,
+      "below": {
+       "100": 0,
+       "150": 0,
+       "200": 0,
+       "230": 308
+      },
+      "histogram16": [
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       308,
+       5236,
+       616
+      ]
+     }
+    }
+   ],
+   "screenshot": {
+    "artifact": null
+   }
+  }
+ },
+ "d3:transfer-b@1440x900": {
+  "state": "completed",
+  "error": null,
+  "codeSha256": "920b70e72774c535afd4b5791b6eef0b409b8e1c910e6e420d2f075470c4e5d3",
+  "calls": 7,
+  "result": {
+   "target": "transfer-b",
+   "viewport": "1440x900",
+   "errors": [],
+   "open": {
+    "target": "transfer-b",
+    "url": "fixture:transfer-b",
+    "viewport": "1440x900",
+    "status": null,
+    "resourcePolicy": "file-only"
+   },
+   "viewportInfo": {
+    "innerWidth": 1440,
+    "innerHeight": 900,
+    "devicePixelRatio": 1,
+    "scrollX": 0,
+    "scrollY": 0,
+    "docHeight": 900,
+    "usedW": 1440,
+    "usedH": 900
+   },
+   "findText": {
+    "text": "Preise inkl. 8,1 % MWST, zzgl. Versand CHF 9.00",
+    "count": 1,
+    "returned": 1,
+    "handles": [
+     "t1"
+    ]
+   },
+   "matches": [
+    {
+     "index": 0,
+     "handle": "t1",
+     "tag": "p",
+     "id": "price-info",
+     "cls": "small",
+     "text": "Preise inkl. 8,1 % MWST, zzgl. Versand C",
+     "rect": {
+      "x": 425,
+      "y": 304,
+      "width": 590,
+      "height": 20
+     },
+     "style": {
+      "color": "rgb(85, 85, 85)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "opacity": "1",
+      "position": "static",
+      "zIndex": "auto",
+      "visibility": "visible",
+      "display": "block",
+      "fontSize": "13px",
+      "fontWeight": "400",
+      "top": "auto"
+     },
+     "colorParsed": {
+      "r": 85,
+      "g": 85,
+      "b": 85,
+      "a": 1
+     },
+     "backgroundParsed": {
+      "r": 0,
+      "g": 0,
+      "b": 0,
+      "a": 0
+     },
+     "effectiveOpacity": 1,
+     "nonDefaultAncestors": [],
+     "inViewport": true,
+     "referencePlacement": "below",
+     "pointsRequested": [
+      {
+       "x": 484,
+       "y": 310,
+       "role": "text"
+      },
+      {
+       "x": 602,
+       "y": 310,
+       "role": "text"
+      },
+      {
+       "x": 720,
+       "y": 310,
+       "role": "text"
+      },
+      {
+       "x": 837,
+       "y": 310,
+       "role": "text"
+      },
+      {
+       "x": 955,
+       "y": 310,
+       "role": "text"
+      },
+      {
+       "x": 484,
+       "y": 314,
+       "role": "text"
+      },
+      {
+       "x": 602,
+       "y": 314,
+       "role": "text"
+      },
+      {
+       "x": 720,
+       "y": 314,
+       "role": "text"
+      },
+      {
+       "x": 837,
+       "y": 314,
+       "role": "text"
+      },
+      {
+       "x": 955,
+       "y": 314,
+       "role": "text"
+      },
+      {
+       "x": 484,
+       "y": 317,
+       "role": "text"
+      },
+      {
+       "x": 602,
+       "y": 317,
+       "role": "text"
+      },
+      {
+       "x": 720,
+       "y": 317,
+       "role": "text"
+      },
+      {
+       "x": 837,
+       "y": 317,
+       "role": "text"
+      },
+      {
+       "x": 955,
+       "y": 317,
+       "role": "text"
+      },
+      {
+       "x": 720,
+       "y": 338,
+       "role": "reference"
+      }
+     ],
+     "pointsReturned": 16,
+     "points": [
+      {
+       "point": {
+        "x": 484,
+        "y": 310
+       },
+       "role": "text",
+       "stackDepth": 5,
+       "targetIndex": 0,
+       "aboveTarget": 0,
+       "stackRef": 0
+      },
+      {
+       "point": {
+        "x": 602,
+        "y": 310
+       },
+       "role": "text",
+       "stackDepth": 5,
+       "targetIndex": 0,
+       "aboveTarget": 0,
+       "stackRef": 0
+      },
+      {
+       "point": {
+        "x": 720,
+        "y": 310
+       },
+       "role": "text",
+       "stackDepth": 5,
+       "targetIndex": 0,
+       "aboveTarget": 0,
+       "stackRef": 0
+      },
+      {
+       "point": {
+        "x": 837,
+        "y": 310
+       },
+       "role": "text",
+       "stackDepth": 5,
+       "targetIndex": 0,
+       "aboveTarget": 0,
+       "stackRef": 0
+      },
+      {
+       "point": {
+        "x": 955,
+        "y": 310
+       },
+       "role": "text",
+       "stackDepth": 5,
+       "targetIndex": 0,
+       "aboveTarget": 0,
+       "stackRef": 0
+      },
+      {
+       "point": {
+        "x": 484,
+        "y": 314
+       },
+       "role": "text",
+       "stackDepth": 5,
+       "targetIndex": 0,
+       "aboveTarget": 0,
+       "stackRef": 0
+      },
+      {
+       "point": {
+        "x": 602,
+        "y": 314
+       },
+       "role": "text",
+       "stackDepth": 5,
+       "targetIndex": 0,
+       "aboveTarget": 0,
+       "stackRef": 0
+      },
+      {
+       "point": {
+        "x": 720,
+        "y": 314
+       },
+       "role": "text",
+       "stackDepth": 5,
+       "targetIndex": 0,
+       "aboveTarget": 0,
+       "stackRef": 0
+      },
+      {
+       "point": {
+        "x": 837,
+        "y": 314
+       },
+       "role": "text",
+       "stackDepth": 5,
+       "targetIndex": 0,
+       "aboveTarget": 0,
+       "stackRef": 0
+      },
+      {
+       "point": {
+        "x": 955,
+        "y": 314
+       },
+       "role": "text",
+       "stackDepth": 5,
+       "targetIndex": 0,
+       "aboveTarget": 0,
+       "stackRef": 0
+      },
+      {
+       "point": {
+        "x": 484,
+        "y": 317
+       },
+       "role": "text",
+       "stackDepth": 5,
+       "targetIndex": 0,
+       "aboveTarget": 0,
+       "stackRef": 0
+      },
+      {
+       "point": {
+        "x": 602,
+        "y": 317
+       },
+       "role": "text",
+       "stackDepth": 5,
+       "targetIndex": 0,
+       "aboveTarget": 0,
+       "stackRef": 0
+      },
+      {
+       "point": {
+        "x": 720,
+        "y": 317
+       },
+       "role": "text",
+       "stackDepth": 5,
+       "targetIndex": 0,
+       "aboveTarget": 0,
+       "stackRef": 0
+      },
+      {
+       "point": {
+        "x": 837,
+        "y": 317
+       },
+       "role": "text",
+       "stackDepth": 5,
+       "targetIndex": 0,
+       "aboveTarget": 0,
+       "stackRef": 0
+      },
+      {
+       "point": {
+        "x": 955,
+        "y": 317
+       },
+       "role": "text",
+       "stackDepth": 5,
+       "targetIndex": 0,
+       "aboveTarget": 0,
+       "stackRef": 0
+      },
+      {
+       "point": {
+        "x": 720,
+        "y": 338
+       },
+       "role": "reference",
+       "stackDepth": 4,
+       "targetIndex": -1,
+       "aboveTarget": null,
+       "stackRef": 1
+      }
+     ],
+     "stacks": [
+      [
+       {
+        "tag": "p",
+        "id": "price-info",
+        "cls": "small",
+        "text": "Preise inkl. 8,1 % MWST, zzgl. Versand C",
+        "position": "static",
+        "zIndex": "auto",
+        "backgroundColor": "rgba(0, 0, 0, 0)",
+        "opacity": "1",
+        "rect": {
+         "x": 425,
+         "y": 304,
+         "width": 590,
+         "height": 20
+        },
+        "bgAlpha": 0,
+        "bgAlphaTimesOpacity": 0
+       }
+      ],
+      [
+       {
+        "tag": "section",
+        "id": "summary",
+        "cls": "card",
+        "text": "Ihr Warenkorb\n    \n      Stadtgeschichte",
+        "position": "static",
+        "zIndex": "auto",
+        "backgroundColor": "rgb(255, 255, 255)",
+        "opacity": "1",
+        "rect": {
+         "x": 400,
+         "y": 135,
+         "width": 640,
+         "height": 210
+        },
+        "bgAlpha": 1,
+        "bgAlphaTimesOpacity": 1
+       },
+       {
+        "tag": "main",
+        "id": "",
+        "cls": "checkout",
+        "text": "Bestellung prüfen\n  \n    Ihr Warenkorb\n ",
+        "position": "static",
+        "zIndex": "auto",
+        "backgroundColor": "rgba(0, 0, 0, 0)",
+        "opacity": "1",
+        "rect": {
+         "x": 384,
+         "y": 87,
+         "width": 672,
+         "height": 648
+        },
+        "bgAlpha": 0,
+        "bgAlphaTimesOpacity": 0
+       },
+       {
+        "tag": "body",
+        "id": "",
+        "cls": "",
+        "text": "Bücherstube am Rhein\n\n  Bestellung prüfe",
+        "position": "static",
+        "zIndex": "auto",
+        "backgroundColor": "rgb(238, 240, 236)",
+        "opacity": "1",
+        "rect": {
+         "x": 0,
+         "y": 0,
+         "width": 1440,
+         "height": 735
+        },
+        "bgAlpha": 1,
+        "bgAlphaTimesOpacity": 1
+       },
+       {
+        "tag": "html",
+        "id": "",
+        "cls": "",
+        "text": "Bestellung – Bücherstube am Rhein\n\nhtml,",
+        "position": "static",
+        "zIndex": "auto",
+        "backgroundColor": "rgb(238, 240, 236)",
+        "opacity": "1",
+        "rect": {
+         "x": 0,
+         "y": 0,
+         "width": 1440,
+         "height": 767
+        },
+        "bgAlpha": 1,
+        "bgAlphaTimesOpacity": 1
+       }
+      ]
+     ],
+     "textPixels": {
+      "label": "text",
+      "requestedClip": {
+       "x": 425,
+       "y": 304,
+       "width": 590,
+       "height": 20
+      },
+      "clip": {
+       "x": 425,
+       "y": 304,
+       "width": 590,
+       "height": 20
+      },
+      "artifact": {
+       "id": "d3-transfer-b-1440x900-07-clip.png",
+       "sha256": "5a5e5dbcfdc3b195abd1d23dd5b0765a829471cbbf1e91cadc4b74853a1c0763"
+      },
+      "pixels": 11800,
+      "min": 85,
+      "p01": 90,
+      "p05": 147,
+      "p50": 255,
+      "max": 255,
+      "below": {
+       "100": 209,
+       "150": 615,
+       "200": 900,
+       "230": 1070
+      },
+      "histogram16": [
+       0,
+       0,
+       0,
+       0,
+       0,
+       189,
+       125,
+       146,
+       98,
+       112,
+       73,
+       111,
+       107,
+       69,
+       111,
+       10659
+      ]
+     },
+     "referencePixels": {
+      "label": "reference",
+      "requestedClip": {
+       "x": 425,
+       "y": 328,
+       "width": 590,
+       "height": 20
+      },
+      "clip": {
+       "x": 425,
+       "y": 328,
+       "width": 590,
+       "height": 20
+      },
+      "artifact": {
+       "id": "d3-transfer-b-1440x900-08-clip.png",
+       "sha256": "532d2ae1c2c97e0817bec83b56c7e10250f708085af4f76a2df0771ebaaf56c5"
+      },
+      "pixels": 11800,
+      "min": 218,
+      "p01": 218,
+      "p05": 239,
+      "p50": 255,
+      "max": 255,
+      "below": {
+       "100": 0,
+       "150": 0,
+       "200": 0,
+       "230": 590
+      },
+      "histogram16": [
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       590,
+       1770,
+       9440
+      ]
+     }
+    }
+   ],
+   "screenshot": {
+    "artifact": null
+   }
+  }
+ },
+ "d3:transfer-b@390x844": {
+  "state": "completed",
+  "error": null,
+  "codeSha256": "920b70e72774c535afd4b5791b6eef0b409b8e1c910e6e420d2f075470c4e5d3",
+  "calls": 7,
+  "result": {
+   "target": "transfer-b",
+   "viewport": "390x844",
+   "errors": [],
+   "open": {
+    "target": "transfer-b",
+    "url": "fixture:transfer-b",
+    "viewport": "390x844",
+    "status": null,
+    "resourcePolicy": "file-only"
+   },
+   "viewportInfo": {
+    "innerWidth": 390,
+    "innerHeight": 844,
+    "devicePixelRatio": 1,
+    "scrollX": 0,
+    "scrollY": 0,
+    "docHeight": 844,
+    "usedW": 390,
+    "usedH": 844
+   },
+   "findText": {
+    "text": "Preise inkl. 8,1 % MWST, zzgl. Versand CHF 9.00",
+    "count": 1,
+    "returned": 1,
+    "handles": [
+     "t1"
+    ]
+   },
+   "matches": [
+    {
+     "index": 0,
+     "handle": "t1",
+     "tag": "p",
+     "id": "price-info",
+     "cls": "small",
+     "text": "Preise inkl. 8,1 % MWST, zzgl. Versand C",
+     "rect": {
+      "x": 41,
+      "y": 304,
+      "width": 308,
+      "height": 20
+     },
+     "style": {
+      "color": "rgb(85, 85, 85)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "opacity": "1",
+      "position": "static",
+      "zIndex": "auto",
+      "visibility": "visible",
+      "display": "block",
+      "fontSize": "13px",
+      "fontWeight": "400",
+      "top": "auto"
+     },
+     "colorParsed": {
+      "r": 85,
+      "g": 85,
+      "b": 85,
+      "a": 1
+     },
+     "backgroundParsed": {
+      "r": 0,
+      "g": 0,
+      "b": 0,
+      "a": 0
+     },
+     "effectiveOpacity": 1,
+     "nonDefaultAncestors": [],
+     "inViewport": true,
+     "referencePlacement": "below",
+     "pointsRequested": [
+      {
+       "x": 72,
+       "y": 310,
+       "role": "text"
+      },
+      {
+       "x": 133,
+       "y": 310,
+       "role": "text"
+      },
+      {
+       "x": 195,
+       "y": 310,
+       "role": "text"
+      },
+      {
+       "x": 256,
+       "y": 310,
+       "role": "text"
+      },
+      {
+       "x": 317,
+       "y": 310,
+       "role": "text"
+      },
+      {
+       "x": 72,
+       "y": 314,
+       "role": "text"
+      },
+      {
+       "x": 133,
+       "y": 314,
+       "role": "text"
+      },
+      {
+       "x": 195,
+       "y": 314,
+       "role": "text"
+      },
+      {
+       "x": 256,
+       "y": 314,
+       "role": "text"
+      },
+      {
+       "x": 317,
+       "y": 314,
+       "role": "text"
+      },
+      {
+       "x": 72,
+       "y": 317,
+       "role": "text"
+      },
+      {
+       "x": 133,
+       "y": 317,
+       "role": "text"
+      },
+      {
+       "x": 195,
+       "y": 317,
+       "role": "text"
+      },
+      {
+       "x": 256,
+       "y": 317,
+       "role": "text"
+      },
+      {
+       "x": 317,
+       "y": 317,
+       "role": "text"
+      },
+      {
+       "x": 195,
+       "y": 338,
+       "role": "reference"
+      }
+     ],
+     "pointsReturned": 16,
+     "points": [
+      {
+       "point": {
+        "x": 72,
+        "y": 310
+       },
+       "role": "text",
+       "stackDepth": 5,
+       "targetIndex": 0,
+       "aboveTarget": 0,
+       "stackRef": 0
+      },
+      {
+       "point": {
+        "x": 133,
+        "y": 310
+       },
+       "role": "text",
+       "stackDepth": 5,
+       "targetIndex": 0,
+       "aboveTarget": 0,
+       "stackRef": 0
+      },
+      {
+       "point": {
+        "x": 195,
+        "y": 310
+       },
+       "role": "text",
+       "stackDepth": 5,
+       "targetIndex": 0,
+       "aboveTarget": 0,
+       "stackRef": 0
+      },
+      {
+       "point": {
+        "x": 256,
+        "y": 310
+       },
+       "role": "text",
+       "stackDepth": 5,
+       "targetIndex": 0,
+       "aboveTarget": 0,
+       "stackRef": 0
+      },
+      {
+       "point": {
+        "x": 317,
+        "y": 310
+       },
+       "role": "text",
+       "stackDepth": 5,
+       "targetIndex": 0,
+       "aboveTarget": 0,
+       "stackRef": 0
+      },
+      {
+       "point": {
+        "x": 72,
+        "y": 314
+       },
+       "role": "text",
+       "stackDepth": 5,
+       "targetIndex": 0,
+       "aboveTarget": 0,
+       "stackRef": 0
+      },
+      {
+       "point": {
+        "x": 133,
+        "y": 314
+       },
+       "role": "text",
+       "stackDepth": 5,
+       "targetIndex": 0,
+       "aboveTarget": 0,
+       "stackRef": 0
+      },
+      {
+       "point": {
+        "x": 195,
+        "y": 314
+       },
+       "role": "text",
+       "stackDepth": 5,
+       "targetIndex": 0,
+       "aboveTarget": 0,
+       "stackRef": 0
+      },
+      {
+       "point": {
+        "x": 256,
+        "y": 314
+       },
+       "role": "text",
+       "stackDepth": 5,
+       "targetIndex": 0,
+       "aboveTarget": 0,
+       "stackRef": 0
+      },
+      {
+       "point": {
+        "x": 317,
+        "y": 314
+       },
+       "role": "text",
+       "stackDepth": 5,
+       "targetIndex": 0,
+       "aboveTarget": 0,
+       "stackRef": 0
+      },
+      {
+       "point": {
+        "x": 72,
+        "y": 317
+       },
+       "role": "text",
+       "stackDepth": 5,
+       "targetIndex": 0,
+       "aboveTarget": 0,
+       "stackRef": 0
+      },
+      {
+       "point": {
+        "x": 133,
+        "y": 317
+       },
+       "role": "text",
+       "stackDepth": 5,
+       "targetIndex": 0,
+       "aboveTarget": 0,
+       "stackRef": 0
+      },
+      {
+       "point": {
+        "x": 195,
+        "y": 317
+       },
+       "role": "text",
+       "stackDepth": 5,
+       "targetIndex": 0,
+       "aboveTarget": 0,
+       "stackRef": 0
+      },
+      {
+       "point": {
+        "x": 256,
+        "y": 317
+       },
+       "role": "text",
+       "stackDepth": 5,
+       "targetIndex": 0,
+       "aboveTarget": 0,
+       "stackRef": 0
+      },
+      {
+       "point": {
+        "x": 317,
+        "y": 317
+       },
+       "role": "text",
+       "stackDepth": 5,
+       "targetIndex": 0,
+       "aboveTarget": 0,
+       "stackRef": 0
+      },
+      {
+       "point": {
+        "x": 195,
+        "y": 338
+       },
+       "role": "reference",
+       "stackDepth": 4,
+       "targetIndex": -1,
+       "aboveTarget": null,
+       "stackRef": 1
+      }
+     ],
+     "stacks": [
+      [
+       {
+        "tag": "p",
+        "id": "price-info",
+        "cls": "small",
+        "text": "Preise inkl. 8,1 % MWST, zzgl. Versand C",
+        "position": "static",
+        "zIndex": "auto",
+        "backgroundColor": "rgba(0, 0, 0, 0)",
+        "opacity": "1",
+        "rect": {
+         "x": 41,
+         "y": 304,
+         "width": 308,
+         "height": 20
+        },
+        "bgAlpha": 0,
+        "bgAlphaTimesOpacity": 0
+       }
+      ],
+      [
+       {
+        "tag": "section",
+        "id": "summary",
+        "cls": "card",
+        "text": "Ihr Warenkorb\n    \n      Stadtgeschichte",
+        "position": "static",
+        "zIndex": "auto",
+        "backgroundColor": "rgb(255, 255, 255)",
+        "opacity": "1",
+        "rect": {
+         "x": 16,
+         "y": 135,
+         "width": 358,
+         "height": 210
+        },
+        "bgAlpha": 1,
+        "bgAlphaTimesOpacity": 1
+       },
+       {
+        "tag": "main",
+        "id": "",
+        "cls": "checkout",
+        "text": "Bestellung prüfen\n  \n    Ihr Warenkorb\n ",
+        "position": "static",
+        "zIndex": "auto",
+        "backgroundColor": "rgba(0, 0, 0, 0)",
+        "opacity": "1",
+        "rect": {
+         "x": 0,
+         "y": 87,
+         "width": 390,
+         "height": 648
+        },
+        "bgAlpha": 0,
+        "bgAlphaTimesOpacity": 0
+       },
+       {
+        "tag": "body",
+        "id": "",
+        "cls": "",
+        "text": "Bücherstube am Rhein\n\n  Bestellung prüfe",
+        "position": "static",
+        "zIndex": "auto",
+        "backgroundColor": "rgb(238, 240, 236)",
+        "opacity": "1",
+        "rect": {
+         "x": 0,
+         "y": 0,
+         "width": 390,
+         "height": 735
+        },
+        "bgAlpha": 1,
+        "bgAlphaTimesOpacity": 1
+       },
+       {
+        "tag": "html",
+        "id": "",
+        "cls": "",
+        "text": "Bestellung – Bücherstube am Rhein\n\nhtml,",
+        "position": "static",
+        "zIndex": "auto",
+        "backgroundColor": "rgb(238, 240, 236)",
+        "opacity": "1",
+        "rect": {
+         "x": 0,
+         "y": 0,
+         "width": 390,
+         "height": 767
+        },
+        "bgAlpha": 1,
+        "bgAlphaTimesOpacity": 1
+       }
+      ]
+     ],
+     "textPixels": {
+      "label": "text",
+      "requestedClip": {
+       "x": 41,
+       "y": 304,
+       "width": 308,
+       "height": 20
+      },
+      "clip": {
+       "x": 41,
+       "y": 304,
+       "width": 308,
+       "height": 20
+      },
+      "artifact": {
+       "id": "d3-transfer-b-390x844-10-clip.png",
+       "sha256": "aa346fb5e357e933a19ba208fcbb0a3c18583a2d755909a27b20099446370f54"
+      },
+      "pixels": 6160,
+      "min": 85,
+      "p01": 85,
+      "p05": 111,
+      "p50": 255,
+      "max": 255,
+      "below": {
+       "100": 209,
+       "150": 615,
+       "200": 900,
+       "230": 1070
+      },
+      "histogram16": [
+       0,
+       0,
+       0,
+       0,
+       0,
+       189,
+       125,
+       146,
+       98,
+       112,
+       73,
+       111,
+       107,
+       69,
+       111,
+       5019
+      ]
+     },
+     "referencePixels": {
+      "label": "reference",
+      "requestedClip": {
+       "x": 41,
+       "y": 328,
+       "width": 308,
+       "height": 20
+      },
+      "clip": {
+       "x": 41,
+       "y": 328,
+       "width": 308,
+       "height": 20
+      },
+      "artifact": {
+       "id": "d3-transfer-b-390x844-11-clip.png",
+       "sha256": "17fc5a52917e7e2bf390b00f9d965f2b62ecb80d9dada1ae9017b0f53a4c7d97"
+      },
+      "pixels": 6160,
+      "min": 218,
+      "p01": 218,
+      "p05": 239,
+      "p50": 255,
+      "max": 255,
+      "below": {
+       "100": 0,
+       "150": 0,
+       "200": 0,
+       "230": 308
+      },
+      "histogram16": [
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       308,
+       924,
+       4928
+      ]
+     }
+    }
+   ],
+   "screenshot": {
+    "artifact": null
+   }
+  }
+ }
+}

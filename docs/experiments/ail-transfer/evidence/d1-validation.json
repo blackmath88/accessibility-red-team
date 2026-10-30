@@ -1,0 +1,24 @@
+{
+ "attempt": "d1",
+ "codeSha256": "55d843dbb9b1ae7b87da2cd7c26013b05a6998734b91416366503cd6a9ee4429",
+ "duplicateOf": [],
+ "ops": {
+  "literal": [
+   "open",
+   "findText",
+   "viewport",
+   "elementsFromPoint"
+  ],
+  "unknown": [],
+  "dynamicCallSites": 0
+ },
+ "dryRun": {
+  "state": "completed",
+  "error": null,
+  "calls": 4,
+  "denied": []
+ },
+ "passed": true,
+ "failures": [],
+ "at": "2026-10-30T07:13:51.456Z"
+}

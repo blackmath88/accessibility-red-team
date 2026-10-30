@@ -1,0 +1,6 @@
+{
+ "symptom": "On the order review page («Bestellung prüfen») of the local test shop, users report that the price note «Preise inkl. 8,1 % MWST, zzgl. Versand CHF 9.00» below the cart total cannot be seen; they only learn about VAT and shipping costs later.",
+ "affectedText": "Preise inkl. 8,1 % MWST, zzgl. Versand CHF 9.00",
+ "pages": ["transfer-a", "transfer-b"],
+ "viewports": ["1440x900", "390x844"]
+}

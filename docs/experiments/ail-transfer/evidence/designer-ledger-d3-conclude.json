@@ -1,0 +1,11 @@
+{
+ "calls": 1,
+ "refused": 0,
+ "inputTokens": 11999,
+ "outputTokens": 346,
+ "estimatedCalls": 0,
+ "spend": 0.00200745,
+ "startedAtMs": 1793344780007,
+ "stopReason": null,
+ "priorSpendAtCall": 0.09450175
+}

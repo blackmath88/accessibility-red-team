@@ -1,0 +1,28 @@
+{
+ "defectivePage": "transfer-a",
+ "explanation": "The measurements show that transfer-a has a white card section (id='delivery') positioned above the price note at both viewports, with bgAlphaTimesOpacity=1, effectively covering the text. In contrast, transfer-b has no such covering element above the price note, and its text pixels show visible dark ink (p05=147/111 vs reference p05=239), while transfer-a's text pixels are uniformly light (p05=239) matching the background. This directly supports the 'h-overlay' hypothesis for transfer-a.",
+ "supportingMeasurements": [
+  {
+   "page": "transfer-a",
+   "viewport": "1440x900",
+   "evidence": "Stack above target includes a white section (id='delivery') with bgAlphaTimesOpacity=1 covering the text rect; textPixels p05=239 (uniform light) vs reference p05=239 (background match)"
+  },
+  {
+   "page": "transfer-a",
+   "viewport": "390x844",
+   "evidence": "Stack above target includes a white section (id='delivery') with bgAlphaTimesOpacity=1 covering the text rect; textPixels p05=239 (uniform light) vs reference p05=239 (background match)"
+  }
+ ],
+ "unsupportedOrUntested": [
+  "Whether the issue persists in other viewports or page states",
+  "Whether the text is present in the DOM but invisible due to other CSS properties (e.g., font-size, display) in transfer-a",
+  "Whether the overlay is a pseudo-element (not captured in elementsFromPoint stacks)",
+  "Exact user interaction or timing that triggers the symptom"
+ ],
+ "confidence": "high",
+ "fromAttempt": "d3",
+ "model": "mistral-small-2603",
+ "returnedModel": "mistral-small-2603",
+ "inputSha256": "94b14941d4845e7d0579312d7fa25734e1cb1f0597d961ba1528791e696dbb24",
+ "frozenAt": "2026-10-30T07:20:44.630Z"
+}

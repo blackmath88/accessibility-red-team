@@ -1,0 +1,239 @@
+{
+ "criticModel": "claude-opus-5-5",
+ "context": "fresh Claude subagent, read-only, blind to fixtures and key",
+ "summary": "d1 separates the versions only via one boolean: coverage.isCovered is true on transfer-a, false on transfer-b at both viewports. Rect, effectiveOpacity 1 and visibility match in both, so h1 and h3 are falsified as stated. What made isCovered true is unknown: only stack[0].backgroundColor (alpha>0.5) is checked; stacks/points are not returned; the text's own background is not told apart from an overlay; deeper layers, veils, ancestor filter/blend, colour contrast and rendered pixels are unmeasured; only one findText match is used.",
+ "requiredChanges": [
+  "Call pixels with a clip equal to the found text rect (rounded, width capped at 800, height at 300) on every version and return min, p01, p05, p50, max, below and histogram16 plus the artifact id.",
+  "Also call pixels on a same-size reference clip just beside or below the text rect (background only) and return it, so ink contrast can be compared with plain background.",
+  "Return the raw elementsFromPoint result in compact form: for each sampled point, the point and every stack entry (tag, id, cls, position, zIndex, backgroundColor, opacity, rect) up to and including the target element.",
+  "For each point, find the index of the target element in the stack (match by text/cls/rect) and evaluate ALL entries above it (not only stack[0]); report targetIndex, each overlying entry, and parse rgb()/rgba() alpha correctly, also combining with entry opacity.",
+  "Report the target's own computed style.color, style.backgroundColor, fontSize, fontWeight, position, zIndex and nonDefaultAncestors (filter, blend, opacity) instead of only effectiveOpacity and visibility.",
+  "Request findText with max 5 and measure every returned match (rect, style, effectiveOpacity, stack at its points, pixels), returning count and all handles.",
+  "Take a screenshot and return its artifact id so the rendered state can be audited.",
+  "Keep returning raw measurements; do not collapse them into visibilityStatus/isCovered booleans without the underlying values."
+ ],
+ "checks": [
+  {
+   "id": "pixels-of-text-rect-measured",
+   "description": "The probe must measure rendered pixels inside the affected text's rect and return the greyscale statistics. d1 never calls pixels, so it cannot tell whether ink is actually drawn.",
+   "scenario": {},
+   "expectCalls": [
+    "pixels"
+   ],
+   "resultIncludes": [
+    "\"p05\"",
+    "\"histogram16\"",
+    "a-01-clip.png"
+   ]
+  },
+  {
+   "id": "all-stack-entries-above-text-reported",
+   "description": "stack[0] is a semi-transparent veil (alpha 0.4), stack[1] an opaque white block, stack[2] the text. d1 only looks at stack[0], reports isCovered false and drops the stack. The probe must return the entries above the target, not just stack[0].",
+   "scenario": {
+    "elementsFromPoint": [
+     {
+      "point": {
+       "x": 988,
+       "y": 388
+      },
+      "stack": [
+       {
+        "tag": "div",
+        "id": "",
+        "cls": "ovl-veil",
+        "text": "",
+        "position": "absolute",
+        "zIndex": "5",
+        "backgroundColor": "rgba(255, 255, 255, 0.4)",
+        "opacity": "1",
+        "rect": {
+         "x": 900,
+         "y": 360,
+         "width": 300,
+         "height": 60
+        }
+       },
+       {
+        "tag": "div",
+        "id": "",
+        "cls": "ovl-solid",
+        "text": "",
+        "position": "absolute",
+        "zIndex": "4",
+        "backgroundColor": "rgb(255, 255, 255)",
+        "opacity": "1",
+        "rect": {
+         "x": 900,
+         "y": 360,
+         "width": 300,
+         "height": 60
+        }
+       },
+       {
+        "tag": "span",
+        "id": "",
+        "cls": "hint",
+        "text": "example text",
+        "position": "static",
+        "zIndex": "auto",
+        "backgroundColor": "rgba(0, 0, 0, 0)",
+        "opacity": "1",
+        "rect": {
+         "x": 951,
+         "y": 383,
+         "width": 149,
+         "height": 18
+        }
+       }
+      ]
+     }
+    ]
+   },
+   "expectCalls": [
+    "elementsFromPoint"
+   ],
+   "resultIncludes": [
+    "ovl-veil",
+    "ovl-solid"
+   ]
+  },
+  {
+   "id": "target-own-colors-and-ancestor-filter-reported",
+   "description": "Computed styles say opacity 1 / visible, but the text colour is near-white on white and an ancestor applies filter opacity(0.05). d1 returns only effectiveOpacity and visibility, so contrast and filter hypotheses stay untested.",
+   "scenario": {
+    "findText": {
+     "count": 1,
+     "returned": 1,
+     "elements": [
+      {
+       "handle": "t1",
+       "tag": "span",
+       "id": "",
+       "cls": "hint",
+       "text": "example text",
+       "rect": {
+        "x": 951,
+        "y": 383,
+        "width": 149,
+        "height": 18
+       },
+       "style": {
+        "color": "rgb(250, 250, 250)",
+        "backgroundColor": "rgb(255, 255, 255)",
+        "opacity": "1",
+        "position": "static",
+        "zIndex": "auto",
+        "visibility": "visible",
+        "display": "inline",
+        "fontSize": "12px",
+        "fontWeight": "400",
+        "top": "auto"
+       },
+       "effectiveOpacity": 1,
+       "nonDefaultAncestors": [
+        {
+         "tag": "div",
+         "cls": "dimmer",
+         "opacity": "1",
+         "filter": "opacity(0.05)",
+         "blend": "normal"
+        }
+       ]
+      }
+     ]
+    }
+   },
+   "expectCalls": [
+    "findText"
+   ],
+   "resultIncludes": [
+    "rgb(250, 250, 250)",
+    "opacity(0.05)"
+   ]
+  },
+  {
+   "id": "every-text-match-measured",
+   "description": "findText returns two matches; the second (handle dup2) may be the one users see or the hidden one. d1 asks max 1 and reads only elements[0]. The probe must report all matches.",
+   "scenario": {
+    "findText": {
+     "count": 2,
+     "returned": 2,
+     "elements": [
+      {
+       "handle": "t1",
+       "tag": "span",
+       "id": "",
+       "cls": "hint",
+       "text": "example text",
+       "rect": {
+        "x": 951,
+        "y": 383,
+        "width": 149,
+        "height": 18
+       },
+       "style": {
+        "color": "rgb(119, 119, 119)",
+        "backgroundColor": "rgba(0, 0, 0, 0)",
+        "opacity": "1",
+        "position": "static",
+        "zIndex": "auto",
+        "visibility": "visible",
+        "display": "inline",
+        "fontSize": "12px",
+        "fontWeight": "400",
+        "top": "auto"
+       },
+       "effectiveOpacity": 1,
+       "nonDefaultAncestors": []
+      },
+      {
+       "handle": "dup2",
+       "tag": "p",
+       "id": "",
+       "cls": "hint-copy",
+       "text": "example text",
+       "rect": {
+        "x": 40,
+        "y": 600,
+        "width": 300,
+        "height": 20
+       },
+       "style": {
+        "color": "rgb(119, 119, 119)",
+        "backgroundColor": "rgba(0, 0, 0, 0)",
+        "opacity": "1",
+        "position": "static",
+        "zIndex": "auto",
+        "visibility": "visible",
+        "display": "block",
+        "fontSize": "12px",
+        "fontWeight": "400",
+        "top": "auto"
+       },
+       "effectiveOpacity": 1,
+       "nonDefaultAncestors": []
+      }
+     ]
+    }
+   },
+   "expectCalls": [
+    "findText"
+   ],
+   "resultIncludes": [
+    "dup2",
+    "hint-copy"
+   ]
+  },
+  {
+   "id": "screenshot-artifact-recorded",
+   "description": "The probe must take a viewport screenshot and return its artifact id so the rendered state behind the numbers is auditable. d1 never calls screenshot.",
+   "scenario": {},
+   "expectCalls": [
+    "screenshot"
+   ],
+   "resultIncludes": [
+    "a-02-viewport.png"
+   ]
+  }
+ ]
+}

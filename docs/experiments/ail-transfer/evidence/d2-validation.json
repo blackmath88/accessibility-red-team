@@ -1,0 +1,92 @@
+{
+ "attempt": "d2",
+ "codeSha256": "ab9e1970aa8dbb77ad18f5d2aacd3f23fbeb1b536ecc077b51cc7b1c320d5236",
+ "duplicateOf": [],
+ "ops": {
+  "literal": [
+   "open",
+   "findText",
+   "viewport",
+   "pixels",
+   "elementsFromPoint",
+   "screenshot"
+  ],
+  "unknown": [],
+  "dynamicCallSites": 0
+ },
+ "dryRun": {
+  "state": "error",
+  "error": "Cannot read properties of undefined (reading 'stack')",
+  "calls": 6,
+  "denied": []
+ },
+ "requiredChecks": [
+  {
+   "id": "pixels-of-text-rect-measured",
+   "pass": false,
+   "state": "error",
+   "error": "Cannot read properties of undefined (reading 'stack')",
+   "missingCalls": [],
+   "missingText": [
+    "\"p05\"",
+    "\"histogram16\"",
+    "a-01-clip.png"
+   ]
+  },
+  {
+   "id": "all-stack-entries-above-text-reported",
+   "pass": false,
+   "state": "error",
+   "error": "Cannot read properties of undefined (reading 'stack')",
+   "missingCalls": [],
+   "missingText": [
+    "ovl-veil",
+    "ovl-solid"
+   ]
+  },
+  {
+   "id": "target-own-colors-and-ancestor-filter-reported",
+   "pass": false,
+   "state": "error",
+   "error": "Cannot read properties of undefined (reading 'stack')",
+   "missingCalls": [],
+   "missingText": [
+    "rgb(250, 250, 250)",
+    "opacity(0.05)"
+   ]
+  },
+  {
+   "id": "every-text-match-measured",
+   "pass": false,
+   "state": "error",
+   "error": "Cannot read properties of undefined (reading 'stack')",
+   "missingCalls": [],
+   "missingText": [
+    "dup2",
+    "hint-copy"
+   ]
+  },
+  {
+   "id": "screenshot-artifact-recorded",
+   "pass": false,
+   "state": "error",
+   "error": "Cannot read properties of undefined (reading 'stack')",
+   "missingCalls": [
+    "screenshot"
+   ],
+   "missingText": [
+    "a-02-viewport.png"
+   ]
+  }
+ ],
+ "passed": false,
+ "failures": [
+  "dry run error: Cannot read properties of undefined (reading 'stack')",
+  "required check pixels-of-text-rect-measured failed",
+  "required check all-stack-entries-above-text-reported failed",
+  "required check target-own-colors-and-ancestor-filter-reported failed",
+  "required check every-text-match-measured failed",
+  "required check screenshot-artifact-recorded failed"
+ ],
+ "at": "2026-10-30T07:15:51.945Z"
+}

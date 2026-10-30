@@ -1,0 +1,35 @@
+{
+ "defective": "transfer-a",
+ "coin": {"rule": "Math.random()<0.5 true => transfer-a defective, false => transfer-b defective (rule stated before the flip)", "value": 0.03844065294011567, "result": true, "note": "An earlier unrecorded flip (false) was run before the mapping rule was fixed and was discarded; the recorded flip is the first one made after stating the rule."},
+ "mechanism": "In transfer-a, the second card section#delivery (position:relative) has a ::before pseudo-element (content:'', position:absolute, left:-1px, right:-1px, top:-43px, height:42px, background #eef0ec = the page background). It sticks out above its originating box and paints opaque page-grey over the bottom 42px of the preceding card section#summary, i.e. over the whole line box of p#price-info (and the summary card's bottom padding/border). The text is fully hidden (not just faint). Because the positioned element comes later in the DOM, its positioned-layer paint goes above the summary card's in-flow text. transfer-b (control) has no ::before rule and puts 16px margin-top on the second card instead; everything else is byte-identical.",
+ "affectedText": "Preise inkl. 8,1 % MWST, zzgl. Versand CHF 9.00",
+ "observableWith": [
+  "findText('Preise inkl. 8,1 % MWST') -> p#price-info in BOTH files; rect at 1440x900 {x:425,y:304,width:590,height:20}, at 390x844 {x:41,y:304,width:308,height:20}; style.color rgb(85, 85, 85), visibility visible, display block, opacity 1, effectiveOpacity 1, no nonDefaultAncestors in both files. Element styles alone do not explain the defect.",
+  "pixels over the p#price-info rect: transfer-a (defective) uniform grey 239 (min=p01=p50=max=239, below150=0, below200=0) at both viewports; transfer-b (control) min 85, p01 85-90, p50 255, max 255, below150=615, below200=900 at both viewports.",
+  "elementsFromPoint at the note's line (e.g. 1440: (445,314) and (720,314); 390: (61,314) and (195,314)): transfer-a stack = [section#delivery, p#price-info, section#summary, main, body]; transfer-b stack = [p#price-info, section#summary, main, body, html].",
+  "Geometry: in transfer-a section#delivery's own rect starts at y=345 (height 374), i.e. BELOW the probed point y=314, yet it is top of the hit-test stack there. That mismatch (element reported on top at a point outside its own border box) is the decisive clue to something drawn outside the element's box (pseudo-element/overflowing descendant-less paint). In transfer-b section#delivery starts at y=361.",
+  "query('#delivery') style: position relative, backgroundColor rgb(255, 255, 255), zIndex auto, in both files. The covering color 239 equals the page background rgb(238,240,236) luminance, not the card white.",
+  "screenshot: transfer-a shows the summary card cut off below the Total row with a page-coloured band, note line absent; transfer-b shows the note under Total.",
+  "Viewport independent: same result at 1440x900 and 390x844; no scrolling needed (docHeight equals viewport height)."
+ ],
+ "notObservable": [
+  "The ::before pseudo-element itself: elementsFromPoint returns its originating element section#delivery, not a separate entry; query cannot select ::before; the broker's style fields (and DESCRIBE) report the host element, not pseudo content/top/height/background.",
+  "The CSS source text and the exact rule (top:-43px, height:42px) — only inferable from geometry and pixels (band ~42px tall directly above section#delivery: y 303..345 at both viewports).",
+  "overflow/clip/transform properties are not in the broker's style fields."
+ ],
+ "acceptableConclusions": [
+  "transfer-a is defective: the price note p#price-info is fully covered by an opaque, page-background-coloured layer attributed by hit testing to section#delivery (the following card), which paints outside its own box (most likely a pseudo-element or other overflowing decoration); transfer-b is the clean control.",
+  "transfer-a: the note text is present, dark (rgb 85,85,85), opaque and visible by its own styles, but occluded by something belonging to/attributed to #delivery stacked above it; pixels over its rect are uniform 239.",
+  "Saying 'an element/layer from #delivery extending above its box covers the note' without naming ::before is acceptable; naming a ::before/::after pseudo-element is the most precise acceptable answer."
+ ],
+ "unsupportedConclusions": [
+  "Translucent sticky heading, fixed banner, or ancestor opacity as cause (none present; effectiveOpacity 1, no sticky/fixed elements).",
+  "Low colour contrast / text colour equals background (computed colour is rgb(85,85,85) in both files).",
+  "Text missing from the DOM, display:none or visibility:hidden (findText returns it with display block, visibility visible).",
+  "Clipping via overflow:hidden on #summary or a height restriction on the card (not present; and the broker cannot show overflow anyway).",
+  "#delivery's own box/background overlaps the note via negative margin (its rect starts at y=345, below the note at 304-324).",
+  "transfer-b is defective, or the defect is viewport-specific."
+ ],
+ "measuredBy": "<sealed directory outside git>/check.cjs (Playwright chromium, file://), output measured.json, full-page screenshots transfer-{a,b}-{1440,390}.png",
+ "measuredAt": "2026-10-30"
+}

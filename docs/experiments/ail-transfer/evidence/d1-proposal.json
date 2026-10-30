@@ -1,0 +1,42 @@
+{
+ "hypotheses": [
+  {
+   "id": "h1",
+   "statement": "The text is rendered but fully transparent (opacity 0) or hidden via visibility:hidden.",
+   "prediction": "Both versions will show the text element with effectiveOpacity 0 or style.visibility 'hidden' at the reported viewport.",
+   "falsifier": "At least one version shows effectiveOpacity > 0 and style.visibility 'visible' for the text element."
+  },
+  {
+   "id": "h2",
+   "statement": "The text is rendered but covered by an opaque overlay (e.g., a modal or banner) at the same rect.",
+   "prediction": "Both versions will have an element covering the entire rect of the text with backgroundColor not fully transparent.",
+   "falsifier": "No element covers the text rect in either version, or all covering elements have fully transparent backgrounds."
+  },
+  {
+   "id": "h3",
+   "statement": "The text is rendered but outside the viewport due to incorrect layout (e.g., negative margin, transform, or overflow).",
+   "prediction": "Both versions will show the text element with rect.x or rect.y outside the viewport bounds (x < 0 or y < 0 or x+width > viewport width or y+height > viewport height).",
+   "falsifier": "The text element rect is fully within viewport bounds in at least one version."
+  }
+ ],
+ "probe": {
+  "question": "Is the text element visible, uncovered, and within the viewport in both versions?",
+  "falsifier": "Any version fails to meet the visibility, coverage, or bounds criteria.",
+  "controls": [
+   "Use the same viewport for both versions to ensure comparability.",
+   "Measure the rendered text element's rect, effectiveOpacity, visibility, and covering elements at the exact reported viewport."
+  ],
+  "limitations": [
+   "Does not account for dynamic content changes after initial render.",
+   "Assumes the text element is uniquely identifiable by its content; if multiple matches exist, behavior is undefined."
+  ],
+  "code": "export default async function (broker, packet) {\n  const { target, viewport, affectedText } = packet;\n  \n  // Open the target page\n  await broker.call('open', { target, viewport });\n  \n  // Find the text element\n  const findResult = await broker.call('findText', { text: affectedText, max: 1 });\n  if (findResult.count === 0) {\n    return { error: 'Text not found', target, viewport };\n  }\n  const textElement = findResult.elements[0];\n  \n  // Get viewport dimensions\n  const viewportInfo = await broker.call('viewport', {});\n  \n  // Check if text rect is within viewport bounds\n  const withinBounds = \n    textElement.rect.x >= 0 &&\n    textElement.rect.y >= 0 &&\n    textElement.rect.x + textElement.rect.width <= viewportInfo.innerWidth &&\n    textElement.rect.y + textElement.rect.height <= viewportInfo.innerHeight;\n  \n  // Check effective opacity and visibility\n  const visible = textElement.effectiveOpacity > 0 && textElement.style.visibility === 'visible';\n  \n  // Sample points inside the text rect to check for covering elements\n  const points = [];\n  const stepX = Math.max(1, Math.floor(textElement.rect.width / 3));\n  const stepY = Math.max(1, Math.floor(textElement.rect.height / 3));\n  for (let x = textElement.rect.x + stepX; x < textElement.rect.x + textElement.rect.width; x += stepX) {\n    for (let y = textElement.rect.y + stepY; y < textElement.rect.y + textElement.rect.height; y += stepY) {\n      points.push({ x: Math.round(x), y: Math.round(y) });\n    }\n  }\n  \n  const coverageResult = await broker.call('elementsFromPoint', { points });\n  \n  // Determine if any covering element is opaque\n  let covered = false;\n  for (const entry of coverageResult) {\n    const topElement = entry.stack[0];\n    if (topElement) {\n      const bg = topElement.backgroundColor || 'rgba(0,0,0,0)';\n      const isOpaque = bg !== 'rgba(0, 0, 0, 0)' && parseFloat(bg.split(',')[3] || '1') > 0.5;\n      if (isOpaque) {\n        covered = true;\n        break;\n      }\n    }\n  }\n  \n  return {\n    target,\n    viewport,\n    textElement: {\n      handle: textElement.handle,\n      rect: textElement.rect,\n      effectiveOpacity: textElement.effectiveOpacity,\n      visibility: textElement.style.visibility,\n      withinViewportBounds: withinBounds\n    },\n    coverage: {\n      pointsSampled: points.length,\n      isCovered: covered\n    },\n    visibilityStatus: visible && !covered\n  };\n}"
+ },
+ "attempt": "d1",
+ "from": null,
+ "model": "mistral-small-2603",
+ "returnedModel": "mistral-small-2603",
+ "codeSha256": "55d843dbb9b1ae7b87da2cd7c26013b05a6998734b91416366503cd6a9ee4429",
+ "inputSha256": "cb38bd2f61e80b382fc944488ee5cc3b93d41ff0741e8e2cd44b185dda5df4ce",
+ "createdAt": "2026-10-30T07:13:43.952Z"
+}
