@@ -1,5 +1,9 @@
 # Basel adaptive accessibility pilot — scope to evidence
 
+Latest operating agreement: [Autonomous campaign build handoff](AUTONOMOUS_CAMPAIGN_BUILD_HANDOFF.md).
+One launch, autonomous in-scope adaptation, live milestones/logs and checkpointed resource extension;
+no approval at every stage. Build a working local rehearsal first.
+
 Date: 2026-10-30
 Status: proposed pilot plan; no new run, dispatch, merge, deployment or outreach authorized by this document.
 Companion: [Apertus use-case and adaptation roadmap](APERTUS_ACCESSIBILITY_ROADMAP.md).
