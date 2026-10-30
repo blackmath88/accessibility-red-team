@@ -74,7 +74,7 @@ The same recorded d3 measurements for both pages (complete, about 26 KB, nothing
 | Replay: claude-opus-5-5 (tool-less `claude -p`, subscription) | correct | yes | yes | yes |
 | Replay: mistral-small-2603, identical prompt (USD 0.0033) | **wrong** (the control) | no | vacuous | partly |
 
-With prompt and measurements held fixed, the model is the difference. Caveats: the prompt was written after the reveal, and the four criteria were scored by the coordinator. Evidence is in `evidence/replay/`.
+In one sample each, with the same user prompt, the small model failed where Claude succeeded; Claude ran under Claude Code's own system prompt, Mistral under a one-line system prompt at temperature 0 with JSON mode. Model capacity is a hypothesis, not an established finding. Caveats: the prompt was written after the reveal, and the four criteria were scored by the coordinator. The replay prompt listed pseudo-elements, paint order and compositing among the broker's blind spots (the broker contract states the pseudo-element limit for elementsFromPoint, and the original designer saw that contract), so criterion 4 and the pseudo-element inference were partly prompted; both models received the same text. Evidence is in `evidence/replay/`.
 
 ## t2: second blind case, Claude as lead investigator
 

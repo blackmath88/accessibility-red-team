@@ -1519,7 +1519,7 @@
    {
     "label": "Transfer README",
     "path": "docs/experiments/ail-transfer/README.md",
-    "sha256": "a4bc7d141e8e444da4c427d4afe4e0a6bed1db2bd677668fe02440a04172b5dc"
+    "sha256": "28ca9212897ea4ba4989a7ec0f91fc504a802ddb6a4856feca7141cf5a44c07a"
    },
    {
     "label": "Answer key (path-sanitised copy)",
@@ -1567,7 +1567,7 @@
     "id": "t1-replay",
     "kind": "post-reveal replay",
     "title": "t1 again: same recorded measurements, fresh context, citation rule",
-    "verdict": "Claude replay: correct on all four criteria. Mistral replay with the identical prompt: wrong page (the control), high confidence. The original frozen t1 conclusion is unchanged.",
+    "verdict": "Claude replay: correct on all four criteria (criterion 4 partly prompted). Mistral replay with the identical user prompt: wrong page (the control), high confidence. One sample each. The original frozen t1 conclusion is unchanged.",
     "measured": [
      "Nothing new: the replay reads d3's recorded results for both pages and viewports, complete and untruncated (about 26 KB), plus the probe source so field meanings are clear."
     ],
@@ -1581,11 +1581,12 @@
      "Paint order is asserted from position:relative and DOM order, which the broker does not observe (correct per the key, but unmeasured)."
     ],
     "uncertainty": [
-     "Model and prompt both changed relative to the original; the Mistral replay holds the prompt fixed and fails, so the difference is the model.",
+     "In one sample each, with the same user prompt, the small model failed where Claude succeeded; Claude ran under Claude Code's own system prompt, Mistral under a one-line system prompt at temperature 0 with JSON mode. Model capacity is a hypothesis, not an established finding.",
+     "The replay prompt listed pseudo-elements, paint order and compositing among the broker's blind spots (the broker contract states the pseudo-element limit for elementsFromPoint, and the original designer saw that contract), so criterion 4 and the pseudo-element inference were partly prompted; both models received the same text.",
      "The prompt was written after the reveal by a coordinator who knew the key; it does not name the contradiction.",
      "Coordinator-scored rubric (four yes/no criteria), not an independent judge."
     ],
-    "nextAction": "Use the stronger model for the conclusion step (the cheap model for design is optional) and keep the citation/contradiction format for every conclusion.",
+    "nextAction": "Repeat the replay a few times per model, with matched system prompts, before choosing a conclusion model; keep the citation/contradiction format.",
     "facts": [
      {
       "label": "Original t1 conclusion (blind, frozen)",
@@ -1628,7 +1629,7 @@
      {
       "label": "Replay evaluation",
       "path": "docs/experiments/ail-transfer/evidence/replay/evaluation.json",
-      "sha256": "3dbc767803f886da89a85612e4633c9503806cc641b24168cf5dd738cb241ebd"
+      "sha256": "041eb67dd22072eb70b7523d51c75407ef3184da1c0b6b38c55bc0256fee0379"
      }
     ]
    },
@@ -1655,7 +1656,8 @@
     "uncertainty": [
      "overflow, height and max-height are not exposed by the broker, so the CSS is inferred from geometry and hit-testing; the investigator said so.",
      "The probe ignored packet.viewport and opened both viewports itself, so each record holds duplicate runs and artifact names carry the wrong viewport label; the investigator noticed this.",
-     "It did not look at the screenshots; the screenshot field in its results is empty."
+     "It did not look at the screenshots; the screenshot field in its results is empty.",
+     "The symptom (phone only, cut off mid-line, laptop fine) pointed strongly at clipping; the investigator listed it as H1 before measuring. Its contribution was confirming it with geometry and hit tests and rejecting the alternatives: attribution on an easy case, not open discovery."
     ],
     "nextAction": "Add overflow/height/scrollHeight to the broker's style fields in a reviewed change, then run a third blind case whose mechanism needs them before claiming more.",
     "facts": [
