@@ -1,0 +1,20 @@
+{
+ "attempt": "d1",
+ "codeSha256": "d74bd1284064e3339e577517bfedea5bfc534f1728849af7d7734b5ff22880b9",
+ "proposalCodeSha256": "d74bd1284064e3339e577517bfedea5bfc534f1728849af7d7734b5ff22880b9",
+ "duplicateOf": [],
+ "ops": {
+  "literal": [],
+  "unknown": [],
+  "dynamicCallSites": 1
+ },
+ "dryRun": {
+  "state": "completed",
+  "error": null,
+  "calls": 32,
+  "denied": []
+ },
+ "passed": true,
+ "failures": [],
+ "at": "2026-10-30T09:32:24.669Z"
+}

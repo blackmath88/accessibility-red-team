@@ -1,0 +1,21 @@
+{
+ "label": "post-reveal reasoning replays of t1 with one identical prompt (sha fac4b1f6...); scored by the coordinator against the sealed key after each response was frozen",
+ "claude-opus-5-5": {
+  "route": "claude -p --tools '' from an empty directory (subscription)",
+  "responseSha256": "6c9b1df899460107ff2dfceb7998c78d6954d85c26437f4bf05016ad025d2409",
+  "identifiesDefectivePage": true,
+  "noticesGeometryPaintMismatch": true,
+  "avoidsOwnWhiteBoxClaim": true,
+  "expressesUncertaintyOnUnobservableMechanism": true
+ },
+ "mistral-small-2603": {
+  "route": "Mistral API via transfer.ts replay stage, USD 0.0033066 (ledger designer-ledger-r1.replay.json)",
+  "identifiesDefectivePage": false,
+  "noticesGeometryPaintMismatch": false,
+  "avoidsOwnWhiteBoxClaim": true,
+  "expressesUncertaintyOnUnobservableMechanism": "partly",
+  "notes": "Names transfer-b (the control) with high confidence, treating its visible dark ink (min 85, equal to the declared colour) as an anomaly; never mentions #delivery or the 239 band. It does say the broker cannot see paint order or compositing, but uses that to protect a wrong explanation. Avoiding the white-box claim is vacuous here."
+ },
+ "reading": "In one sample each, with the same user prompt, the small model failed where Claude succeeded; Claude ran under Claude Code's own system prompt, Mistral under a one-line system prompt at temperature 0 with JSON mode. Model capacity is a hypothesis, not an established finding. The original wrong t1 conclusion (unchanged) is consistent with a model-capacity limit, but one replay per model does not establish it.",
+ "promptPriming": "The replay prompt listed pseudo-elements, paint order and compositing among the broker's blind spots (the broker contract states the pseudo-element limit for elementsFromPoint, and the original designer saw that contract), so criterion 4 and the pseudo-element inference were partly prompted; both models received the same text."
+}

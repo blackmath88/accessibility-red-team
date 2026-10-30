@@ -1,0 +1,1461 @@
+{
+ "a1:overlay@1440x900": {
+  "state": "error",
+  "codeSha256": "2c506e052a70336fadc406c1dd9a10f260a5bff34508d9a2a4246756570fa960",
+  "calls": 4,
+  "denied": [
+   "points need integer x,y in 0..4000"
+  ],
+  "measurements": []
+ },
+ "a1:no-overlay@1440x900": {
+  "state": "error",
+  "codeSha256": "2c506e052a70336fadc406c1dd9a10f260a5bff34508d9a2a4246756570fa960",
+  "calls": 4,
+  "denied": [
+   "points need integer x,y in 0..4000"
+  ],
+  "measurements": []
+ },
+ "a1:clean-control@1440x900": {
+  "state": "error",
+  "codeSha256": "2c506e052a70336fadc406c1dd9a10f260a5bff34508d9a2a4246756570fa960",
+  "calls": 4,
+  "denied": [
+   "points need integer x,y in 0..4000"
+  ],
+  "measurements": []
+ },
+ "a1:opacity-control@1440x900": {
+  "state": "error",
+  "codeSha256": "2c506e052a70336fadc406c1dd9a10f260a5bff34508d9a2a4246756570fa960",
+  "calls": 4,
+  "denied": [
+   "points need integer x,y in 0..4000"
+  ],
+  "measurements": []
+ },
+ "a2:overlay@1440x900": {
+  "state": "completed",
+  "codeSha256": "242c3c1aeda8f1f65f80992565cc7c881ebb50dbcefd071a61d94550ac7af483",
+  "calls": 26,
+  "denied": [
+   "scrollTo needs integer y 0..20000"
+  ],
+  "measurements": [
+   {
+    "scrollY": 0,
+    "hintRect": {
+     "x": 985,
+     "y": 382,
+     "width": 134,
+     "height": 14
+    },
+    "topmost": {
+     "tag": "h3",
+     "position": "sticky",
+     "zIndex": "8",
+     "backgroundColor": "rgba(255, 255, 255, 0.9)"
+    },
+    "occluderReportedByProbe": null,
+    "pixels": {
+     "min": 242,
+     "p05": 243,
+     "p50": 255,
+     "max": 255
+    },
+    "artifactSha256": "3bad8c02e38353a1ca6703bccda4600c3564a09703db1a99ff3ac1e08f69856f"
+   },
+   {
+    "scrollY": 8,
+    "hintRect": {
+     "x": 985,
+     "y": 382,
+     "width": 134,
+     "height": 14
+    },
+    "topmost": {
+     "tag": "h3",
+     "position": "sticky",
+     "zIndex": "8",
+     "backgroundColor": "rgba(255, 255, 255, 0.9)"
+    },
+    "occluderReportedByProbe": null,
+    "pixels": {
+     "min": 242,
+     "p05": 243,
+     "p50": 255,
+     "max": 255
+    },
+    "artifactSha256": "3bad8c02e38353a1ca6703bccda4600c3564a09703db1a99ff3ac1e08f69856f"
+   },
+   {
+    "scrollY": 24,
+    "hintRect": {
+     "x": 985,
+     "y": 382,
+     "width": 134,
+     "height": 14
+    },
+    "topmost": {
+     "tag": "h3",
+     "position": "sticky",
+     "zIndex": "8",
+     "backgroundColor": "rgba(255, 255, 255, 0.9)"
+    },
+    "occluderReportedByProbe": null,
+    "pixels": {
+     "min": 242,
+     "p05": 243,
+     "p50": 255,
+     "max": 255
+    },
+    "artifactSha256": "3bad8c02e38353a1ca6703bccda4600c3564a09703db1a99ff3ac1e08f69856f"
+   },
+   {
+    "scrollY": 48,
+    "hintRect": {
+     "x": 985,
+     "y": 382,
+     "width": 134,
+     "height": 14
+    },
+    "topmost": {
+     "tag": "h3",
+     "position": "sticky",
+     "zIndex": "8",
+     "backgroundColor": "rgba(255, 255, 255, 0.9)"
+    },
+    "occluderReportedByProbe": null,
+    "pixels": {
+     "min": 242,
+     "p05": 243,
+     "p50": 255,
+     "max": 255
+    },
+    "artifactSha256": "3bad8c02e38353a1ca6703bccda4600c3564a09703db1a99ff3ac1e08f69856f"
+   },
+   {
+    "error": "broker denied: scrollTo needs integer y 0..20000"
+   }
+  ]
+ },
+ "a2:no-overlay@1440x900": {
+  "state": "completed",
+  "codeSha256": "242c3c1aeda8f1f65f80992565cc7c881ebb50dbcefd071a61d94550ac7af483",
+  "calls": 26,
+  "denied": [
+   "scrollTo needs integer y 0..20000"
+  ],
+  "measurements": [
+   {
+    "scrollY": 0,
+    "hintRect": {
+     "x": 985,
+     "y": 382,
+     "width": 134,
+     "height": 14
+    },
+    "topmost": {
+     "tag": "h3",
+     "position": "sticky",
+     "zIndex": "8",
+     "backgroundColor": "rgba(0, 0, 0, 0)"
+    },
+    "occluderReportedByProbe": null,
+    "pixels": {
+     "min": 119,
+     "p05": 132,
+     "p50": 255,
+     "max": 255
+    },
+    "artifactSha256": "96a47f99883d2c8d46009de527b002ce9c7a5a5f8b8f41f17d1bc1c43b315dc9"
+   },
+   {
+    "scrollY": 8,
+    "hintRect": {
+     "x": 985,
+     "y": 382,
+     "width": 134,
+     "height": 14
+    },
+    "topmost": {
+     "tag": "h3",
+     "position": "sticky",
+     "zIndex": "8",
+     "backgroundColor": "rgba(0, 0, 0, 0)"
+    },
+    "occluderReportedByProbe": null,
+    "pixels": {
+     "min": 119,
+     "p05": 132,
+     "p50": 255,
+     "max": 255
+    },
+    "artifactSha256": "96a47f99883d2c8d46009de527b002ce9c7a5a5f8b8f41f17d1bc1c43b315dc9"
+   },
+   {
+    "scrollY": 24,
+    "hintRect": {
+     "x": 985,
+     "y": 382,
+     "width": 134,
+     "height": 14
+    },
+    "topmost": {
+     "tag": "h3",
+     "position": "sticky",
+     "zIndex": "8",
+     "backgroundColor": "rgba(0, 0, 0, 0)"
+    },
+    "occluderReportedByProbe": null,
+    "pixels": {
+     "min": 119,
+     "p05": 132,
+     "p50": 255,
+     "max": 255
+    },
+    "artifactSha256": "96a47f99883d2c8d46009de527b002ce9c7a5a5f8b8f41f17d1bc1c43b315dc9"
+   },
+   {
+    "scrollY": 48,
+    "hintRect": {
+     "x": 985,
+     "y": 382,
+     "width": 134,
+     "height": 14
+    },
+    "topmost": {
+     "tag": "h3",
+     "position": "sticky",
+     "zIndex": "8",
+     "backgroundColor": "rgba(0, 0, 0, 0)"
+    },
+    "occluderReportedByProbe": null,
+    "pixels": {
+     "min": 119,
+     "p05": 132,
+     "p50": 255,
+     "max": 255
+    },
+    "artifactSha256": "96a47f99883d2c8d46009de527b002ce9c7a5a5f8b8f41f17d1bc1c43b315dc9"
+   },
+   {
+    "error": "broker denied: scrollTo needs integer y 0..20000"
+   }
+  ]
+ },
+ "a2:clean-control@1440x900": {
+  "state": "completed",
+  "codeSha256": "242c3c1aeda8f1f65f80992565cc7c881ebb50dbcefd071a61d94550ac7af483",
+  "calls": 26,
+  "denied": [
+   "scrollTo needs integer y 0..20000"
+  ],
+  "measurements": [
+   {
+    "scrollY": 0,
+    "hintRect": {
+     "x": 985,
+     "y": 382,
+     "width": 134,
+     "height": 14
+    },
+    "topmost": {
+     "tag": "span",
+     "position": "static",
+     "zIndex": "auto",
+     "backgroundColor": "rgba(0, 0, 0, 0)"
+    },
+    "occluderReportedByProbe": null,
+    "pixels": {
+     "min": 119,
+     "p05": 132,
+     "p50": 255,
+     "max": 255
+    },
+    "artifactSha256": "96a47f99883d2c8d46009de527b002ce9c7a5a5f8b8f41f17d1bc1c43b315dc9"
+   },
+   {
+    "scrollY": 8,
+    "hintRect": {
+     "x": 985,
+     "y": 382,
+     "width": 134,
+     "height": 14
+    },
+    "topmost": {
+     "tag": "span",
+     "position": "static",
+     "zIndex": "auto",
+     "backgroundColor": "rgba(0, 0, 0, 0)"
+    },
+    "occluderReportedByProbe": null,
+    "pixels": {
+     "min": 119,
+     "p05": 132,
+     "p50": 255,
+     "max": 255
+    },
+    "artifactSha256": "96a47f99883d2c8d46009de527b002ce9c7a5a5f8b8f41f17d1bc1c43b315dc9"
+   },
+   {
+    "scrollY": 24,
+    "hintRect": {
+     "x": 985,
+     "y": 382,
+     "width": 134,
+     "height": 14
+    },
+    "topmost": {
+     "tag": "span",
+     "position": "static",
+     "zIndex": "auto",
+     "backgroundColor": "rgba(0, 0, 0, 0)"
+    },
+    "occluderReportedByProbe": null,
+    "pixels": {
+     "min": 119,
+     "p05": 132,
+     "p50": 255,
+     "max": 255
+    },
+    "artifactSha256": "96a47f99883d2c8d46009de527b002ce9c7a5a5f8b8f41f17d1bc1c43b315dc9"
+   },
+   {
+    "scrollY": 48,
+    "hintRect": {
+     "x": 985,
+     "y": 382,
+     "width": 134,
+     "height": 14
+    },
+    "topmost": {
+     "tag": "span",
+     "position": "static",
+     "zIndex": "auto",
+     "backgroundColor": "rgba(0, 0, 0, 0)"
+    },
+    "occluderReportedByProbe": null,
+    "pixels": {
+     "min": 119,
+     "p05": 132,
+     "p50": 255,
+     "max": 255
+    },
+    "artifactSha256": "96a47f99883d2c8d46009de527b002ce9c7a5a5f8b8f41f17d1bc1c43b315dc9"
+   },
+   {
+    "error": "broker denied: scrollTo needs integer y 0..20000"
+   }
+  ]
+ },
+ "a2:opacity-control@1440x900": {
+  "state": "completed",
+  "codeSha256": "242c3c1aeda8f1f65f80992565cc7c881ebb50dbcefd071a61d94550ac7af483",
+  "calls": 26,
+  "denied": [
+   "scrollTo needs integer y 0..20000"
+  ],
+  "measurements": [
+   {
+    "scrollY": 0,
+    "hintRect": {
+     "x": 985,
+     "y": 416,
+     "width": 134,
+     "height": 14
+    },
+    "topmost": {
+     "tag": "span",
+     "position": "static",
+     "zIndex": "auto",
+     "backgroundColor": "rgba(0, 0, 0, 0)"
+    },
+    "occluderReportedByProbe": null,
+    "pixels": {
+     "min": 238,
+     "p05": 239,
+     "p50": 255,
+     "max": 255
+    },
+    "artifactSha256": "5e80f356f7c3ce583d44384ff7a5528b598a0f4da99d65e36c568d68b7da7c47"
+   },
+   {
+    "scrollY": 8,
+    "hintRect": {
+     "x": 985,
+     "y": 416,
+     "width": 134,
+     "height": 14
+    },
+    "topmost": {
+     "tag": "span",
+     "position": "static",
+     "zIndex": "auto",
+     "backgroundColor": "rgba(0, 0, 0, 0)"
+    },
+    "occluderReportedByProbe": null,
+    "pixels": {
+     "min": 238,
+     "p05": 239,
+     "p50": 255,
+     "max": 255
+    },
+    "artifactSha256": "5e80f356f7c3ce583d44384ff7a5528b598a0f4da99d65e36c568d68b7da7c47"
+   },
+   {
+    "scrollY": 24,
+    "hintRect": {
+     "x": 985,
+     "y": 416,
+     "width": 134,
+     "height": 14
+    },
+    "topmost": {
+     "tag": "span",
+     "position": "static",
+     "zIndex": "auto",
+     "backgroundColor": "rgba(0, 0, 0, 0)"
+    },
+    "occluderReportedByProbe": null,
+    "pixels": {
+     "min": 238,
+     "p05": 239,
+     "p50": 255,
+     "max": 255
+    },
+    "artifactSha256": "5e80f356f7c3ce583d44384ff7a5528b598a0f4da99d65e36c568d68b7da7c47"
+   },
+   {
+    "scrollY": 48,
+    "hintRect": {
+     "x": 985,
+     "y": 416,
+     "width": 134,
+     "height": 14
+    },
+    "topmost": {
+     "tag": "span",
+     "position": "static",
+     "zIndex": "auto",
+     "backgroundColor": "rgba(0, 0, 0, 0)"
+    },
+    "occluderReportedByProbe": null,
+    "pixels": {
+     "min": 238,
+     "p05": 239,
+     "p50": 255,
+     "max": 255
+    },
+    "artifactSha256": "5e80f356f7c3ce583d44384ff7a5528b598a0f4da99d65e36c568d68b7da7c47"
+   },
+   {
+    "error": "broker denied: scrollTo needs integer y 0..20000"
+   }
+  ]
+ },
+ "a2:live@1440x900": {
+  "state": "completed",
+  "codeSha256": "242c3c1aeda8f1f65f80992565cc7c881ebb50dbcefd071a61d94550ac7af483",
+  "calls": 26,
+  "denied": [
+   "scrollTo needs integer y 0..20000"
+  ],
+  "measurements": [
+   {
+    "scrollY": 0,
+    "hintRect": {
+     "x": 951,
+     "y": 383,
+     "width": 149,
+     "height": 18
+    },
+    "topmost": {
+     "tag": "h3",
+     "position": "sticky",
+     "zIndex": "8",
+     "backgroundColor": "oklab(1 0 5.96046e-8 / 0.9)"
+    },
+    "occluderReportedByProbe": null,
+    "pixels": {
+     "min": 242,
+     "p05": 242,
+     "p50": 255,
+     "max": 255
+    },
+    "artifactSha256": "dbc66754d46f86901412b389002a00edd81d0829612e522c5a4b30d5f67f7d92"
+   },
+   {
+    "scrollY": 8,
+    "hintRect": {
+     "x": 951,
+     "y": 375,
+     "width": 149,
+     "height": 18
+    },
+    "topmost": {
+     "tag": "h3",
+     "position": "sticky",
+     "zIndex": "8",
+     "backgroundColor": "oklab(1 0 5.96046e-8 / 0.9)"
+    },
+    "occluderReportedByProbe": null,
+    "pixels": {
+     "min": 242,
+     "p05": 242,
+     "p50": 255,
+     "max": 255
+    },
+    "artifactSha256": "dbc66754d46f86901412b389002a00edd81d0829612e522c5a4b30d5f67f7d92"
+   },
+   {
+    "scrollY": 24,
+    "hintRect": {
+     "x": 951,
+     "y": 359,
+     "width": 149,
+     "height": 18
+    },
+    "topmost": {
+     "tag": "h3",
+     "position": "sticky",
+     "zIndex": "8",
+     "backgroundColor": "oklab(1 0 5.96046e-8 / 0.9)"
+    },
+    "occluderReportedByProbe": null,
+    "pixels": {
+     "min": 242,
+     "p05": 242,
+     "p50": 255,
+     "max": 255
+    },
+    "artifactSha256": "dbc66754d46f86901412b389002a00edd81d0829612e522c5a4b30d5f67f7d92"
+   },
+   {
+    "scrollY": 48,
+    "hintRect": {
+     "x": 951,
+     "y": 335,
+     "width": 149,
+     "height": 18
+    },
+    "topmost": {
+     "tag": "h3",
+     "position": "sticky",
+     "zIndex": "8",
+     "backgroundColor": "oklab(1 0 5.96046e-8 / 0.9)"
+    },
+    "occluderReportedByProbe": null,
+    "pixels": {
+     "min": 242,
+     "p05": 242,
+     "p50": 255,
+     "max": 255
+    },
+    "artifactSha256": "dbc66754d46f86901412b389002a00edd81d0829612e522c5a4b30d5f67f7d92"
+   },
+   {
+    "error": "broker denied: scrollTo needs integer y 0..20000"
+   }
+  ]
+ },
+ "a2:live@1280x800": {
+  "state": "completed",
+  "codeSha256": "242c3c1aeda8f1f65f80992565cc7c881ebb50dbcefd071a61d94550ac7af483",
+  "calls": 26,
+  "denied": [
+   "scrollTo needs integer y 0..20000"
+  ],
+  "measurements": [
+   {
+    "scrollY": 0,
+    "hintRect": {
+     "x": 871,
+     "y": 383,
+     "width": 149,
+     "height": 18
+    },
+    "topmost": {
+     "tag": "h3",
+     "position": "sticky",
+     "zIndex": "8",
+     "backgroundColor": "oklab(1 0 5.96046e-8 / 0.9)"
+    },
+    "occluderReportedByProbe": null,
+    "pixels": {
+     "min": 242,
+     "p05": 242,
+     "p50": 255,
+     "max": 255
+    },
+    "artifactSha256": "dbc66754d46f86901412b389002a00edd81d0829612e522c5a4b30d5f67f7d92"
+   },
+   {
+    "scrollY": 8,
+    "hintRect": {
+     "x": 871,
+     "y": 375,
+     "width": 149,
+     "height": 18
+    },
+    "topmost": {
+     "tag": "h3",
+     "position": "sticky",
+     "zIndex": "8",
+     "backgroundColor": "oklab(1 0 5.96046e-8 / 0.9)"
+    },
+    "occluderReportedByProbe": null,
+    "pixels": {
+     "min": 242,
+     "p05": 242,
+     "p50": 255,
+     "max": 255
+    },
+    "artifactSha256": "dbc66754d46f86901412b389002a00edd81d0829612e522c5a4b30d5f67f7d92"
+   },
+   {
+    "scrollY": 24,
+    "hintRect": {
+     "x": 871,
+     "y": 359,
+     "width": 149,
+     "height": 18
+    },
+    "topmost": {
+     "tag": "h3",
+     "position": "sticky",
+     "zIndex": "8",
+     "backgroundColor": "oklab(1 0 5.96046e-8 / 0.9)"
+    },
+    "occluderReportedByProbe": null,
+    "pixels": {
+     "min": 242,
+     "p05": 242,
+     "p50": 255,
+     "max": 255
+    },
+    "artifactSha256": "dbc66754d46f86901412b389002a00edd81d0829612e522c5a4b30d5f67f7d92"
+   },
+   {
+    "scrollY": 48,
+    "hintRect": {
+     "x": 871,
+     "y": 335,
+     "width": 149,
+     "height": 18
+    },
+    "topmost": {
+     "tag": "h3",
+     "position": "sticky",
+     "zIndex": "8",
+     "backgroundColor": "oklab(1 0 5.96046e-8 / 0.9)"
+    },
+    "occluderReportedByProbe": null,
+    "pixels": {
+     "min": 242,
+     "p05": 242,
+     "p50": 255,
+     "max": 255
+    },
+    "artifactSha256": "dbc66754d46f86901412b389002a00edd81d0829612e522c5a4b30d5f67f7d92"
+   },
+   {
+    "error": "broker denied: scrollTo needs integer y 0..20000"
+   }
+  ]
+ },
+ "a2-replay:live@1440x900": {
+  "state": "completed",
+  "codeSha256": "242c3c1aeda8f1f65f80992565cc7c881ebb50dbcefd071a61d94550ac7af483",
+  "calls": 26,
+  "denied": [
+   "scrollTo needs integer y 0..20000"
+  ],
+  "measurements": [
+   {
+    "scrollY": 0,
+    "hintRect": {
+     "x": 951,
+     "y": 383,
+     "width": 149,
+     "height": 18
+    },
+    "topmost": {
+     "tag": "h3",
+     "position": "sticky",
+     "zIndex": "8",
+     "backgroundColor": "oklab(1 0 5.96046e-8 / 0.9)"
+    },
+    "occluderReportedByProbe": null,
+    "pixels": {
+     "min": 242,
+     "p05": 242,
+     "p50": 255,
+     "max": 255
+    },
+    "artifactSha256": "dbc66754d46f86901412b389002a00edd81d0829612e522c5a4b30d5f67f7d92"
+   },
+   {
+    "scrollY": 8,
+    "hintRect": {
+     "x": 951,
+     "y": 375,
+     "width": 149,
+     "height": 18
+    },
+    "topmost": {
+     "tag": "h3",
+     "position": "sticky",
+     "zIndex": "8",
+     "backgroundColor": "oklab(1 0 5.96046e-8 / 0.9)"
+    },
+    "occluderReportedByProbe": null,
+    "pixels": {
+     "min": 242,
+     "p05": 242,
+     "p50": 255,
+     "max": 255
+    },
+    "artifactSha256": "dbc66754d46f86901412b389002a00edd81d0829612e522c5a4b30d5f67f7d92"
+   },
+   {
+    "scrollY": 24,
+    "hintRect": {
+     "x": 951,
+     "y": 359,
+     "width": 149,
+     "height": 18
+    },
+    "topmost": {
+     "tag": "h3",
+     "position": "sticky",
+     "zIndex": "8",
+     "backgroundColor": "oklab(1 0 5.96046e-8 / 0.9)"
+    },
+    "occluderReportedByProbe": null,
+    "pixels": {
+     "min": 242,
+     "p05": 242,
+     "p50": 255,
+     "max": 255
+    },
+    "artifactSha256": "dbc66754d46f86901412b389002a00edd81d0829612e522c5a4b30d5f67f7d92"
+   },
+   {
+    "scrollY": 48,
+    "hintRect": {
+     "x": 951,
+     "y": 335,
+     "width": 149,
+     "height": 18
+    },
+    "topmost": {
+     "tag": "h3",
+     "position": "sticky",
+     "zIndex": "8",
+     "backgroundColor": "oklab(1 0 5.96046e-8 / 0.9)"
+    },
+    "occluderReportedByProbe": null,
+    "pixels": {
+     "min": 242,
+     "p05": 242,
+     "p50": 255,
+     "max": 255
+    },
+    "artifactSha256": "dbc66754d46f86901412b389002a00edd81d0829612e522c5a4b30d5f67f7d92"
+   },
+   {
+    "error": "broker denied: scrollTo needs integer y 0..20000"
+   }
+  ]
+ },
+ "a2-replay:live@390x844": {
+  "state": "completed",
+  "codeSha256": "242c3c1aeda8f1f65f80992565cc7c881ebb50dbcefd071a61d94550ac7af483",
+  "calls": 26,
+  "denied": [
+   "scrollTo needs integer y 0..20000"
+  ],
+  "measurements": [
+   {
+    "scrollY": 0,
+    "hintRect": {
+     "x": 37,
+     "y": 409,
+     "width": 149,
+     "height": 15
+    },
+    "topmost": {
+     "tag": "p",
+     "position": "static",
+     "zIndex": "auto",
+     "backgroundColor": "rgba(0, 0, 0, 0)"
+    },
+    "occluderReportedByProbe": null,
+    "pixels": {
+     "min": 51,
+     "p05": 51,
+     "p50": 232,
+     "max": 232
+    },
+    "artifactSha256": "17445b0b5c11042c77e19443e0f151a0b8ccff82b231c240f68df234a3f952f0"
+   },
+   {
+    "scrollY": 8,
+    "hintRect": {
+     "x": 37,
+     "y": 401,
+     "width": 149,
+     "height": 15
+    },
+    "topmost": {
+     "tag": "p",
+     "position": "static",
+     "zIndex": "auto",
+     "backgroundColor": "rgba(0, 0, 0, 0)"
+    },
+    "occluderReportedByProbe": null,
+    "pixels": {
+     "min": 51,
+     "p05": 76,
+     "p50": 232,
+     "max": 232
+    },
+    "artifactSha256": "e8e7e0a2a16e491d5c9c6d287901508c3af1acb9aea9007199dbf5a6c7efb7a5"
+   },
+   {
+    "scrollY": 24,
+    "hintRect": {
+     "x": 37,
+     "y": 385,
+     "width": 149,
+     "height": 15
+    },
+    "topmost": {
+     "tag": "p",
+     "position": "static",
+     "zIndex": "auto",
+     "backgroundColor": "rgba(0, 0, 0, 0)"
+    },
+    "occluderReportedByProbe": null,
+    "pixels": {
+     "min": 51,
+     "p05": 51,
+     "p50": 232,
+     "max": 232
+    },
+    "artifactSha256": "8d43a2fd3d12ea6fb9afe8c82de60167fce6b29e0922e65a3552af7511f5b9c5"
+   },
+   {
+    "scrollY": 48,
+    "hintRect": {
+     "x": 37,
+     "y": 361,
+     "width": 149,
+     "height": 15
+    },
+    "topmost": {
+     "tag": "p",
+     "position": "static",
+     "zIndex": "auto",
+     "backgroundColor": "rgba(0, 0, 0, 0)"
+    },
+    "occluderReportedByProbe": null,
+    "pixels": {
+     "min": 51,
+     "p05": 51,
+     "p50": 232,
+     "max": 232
+    },
+    "artifactSha256": "b4041d424e98807493fc39c7b715d94475af669888feb0c4856a6d064c1ccdc9"
+   },
+   {
+    "error": "broker denied: scrollTo needs integer y 0..20000"
+   }
+  ]
+ },
+ "c1:overlay@1440x900": {
+  "state": "completed",
+  "codeSha256": "8669afea8c3ca715c15a0bd8f209d1021c482f93fc0fd9041b7339cd9fb6bfa5",
+  "calls": 6,
+  "denied": [],
+  "measurements": [
+   {
+    "scrollY": 0,
+    "hintRect": {
+     "x": 985,
+     "y": 382,
+     "width": 134,
+     "height": 14
+    },
+    "topmost": {
+     "tag": "h3",
+     "position": "sticky",
+     "zIndex": "8",
+     "bg": "rgba(255, 255, 255, 0.9)"
+    },
+    "occluderReportedByProbe": null,
+    "pixels": {
+     "min": 242,
+     "p05": 243,
+     "p50": 255,
+     "max": 255
+    },
+    "artifactSha256": "3bad8c02e38353a1ca6703bccda4600c3564a09703db1a99ff3ac1e08f69856f"
+   }
+  ]
+ },
+ "c1:overlay@390x844": {
+  "state": "error",
+  "codeSha256": "8669afea8c3ca715c15a0bd8f209d1021c482f93fc0fd9041b7339cd9fb6bfa5",
+  "calls": 4,
+  "denied": [],
+  "measurements": []
+ },
+ "c1:no-overlay@1440x900": {
+  "state": "completed",
+  "codeSha256": "8669afea8c3ca715c15a0bd8f209d1021c482f93fc0fd9041b7339cd9fb6bfa5",
+  "calls": 6,
+  "denied": [],
+  "measurements": [
+   {
+    "scrollY": 0,
+    "hintRect": {
+     "x": 985,
+     "y": 382,
+     "width": 134,
+     "height": 14
+    },
+    "topmost": {
+     "tag": "h3",
+     "position": "sticky",
+     "zIndex": "8",
+     "bg": "rgba(0, 0, 0, 0)"
+    },
+    "occluderReportedByProbe": null,
+    "pixels": {
+     "min": 119,
+     "p05": 132,
+     "p50": 255,
+     "max": 255
+    },
+    "artifactSha256": "96a47f99883d2c8d46009de527b002ce9c7a5a5f8b8f41f17d1bc1c43b315dc9"
+   }
+  ]
+ },
+ "c1:no-overlay@390x844": {
+  "state": "error",
+  "codeSha256": "8669afea8c3ca715c15a0bd8f209d1021c482f93fc0fd9041b7339cd9fb6bfa5",
+  "calls": 4,
+  "denied": [],
+  "measurements": []
+ },
+ "c1:opacity-control@1440x900": {
+  "state": "completed",
+  "codeSha256": "8669afea8c3ca715c15a0bd8f209d1021c482f93fc0fd9041b7339cd9fb6bfa5",
+  "calls": 6,
+  "denied": [],
+  "measurements": [
+   {
+    "scrollY": 0,
+    "hintRect": {
+     "x": 985,
+     "y": 416,
+     "width": 134,
+     "height": 14
+    },
+    "topmost": {
+     "tag": "span",
+     "position": "static",
+     "zIndex": "auto",
+     "bg": "rgba(0, 0, 0, 0)"
+    },
+    "occluderReportedByProbe": null,
+    "pixels": {
+     "min": 238,
+     "p05": 239,
+     "p50": 255,
+     "max": 255
+    },
+    "artifactSha256": "5e80f356f7c3ce583d44384ff7a5528b598a0f4da99d65e36c568d68b7da7c47"
+   }
+  ]
+ },
+ "c1:opacity-control@390x844": {
+  "state": "error",
+  "codeSha256": "8669afea8c3ca715c15a0bd8f209d1021c482f93fc0fd9041b7339cd9fb6bfa5",
+  "calls": 4,
+  "denied": [],
+  "measurements": []
+ },
+ "c1:live@1440x900": {
+  "state": "completed",
+  "codeSha256": "8669afea8c3ca715c15a0bd8f209d1021c482f93fc0fd9041b7339cd9fb6bfa5",
+  "calls": 6,
+  "denied": [],
+  "measurements": [
+   {
+    "scrollY": 0,
+    "hintRect": {
+     "x": 951,
+     "y": 383,
+     "width": 149,
+     "height": 18
+    },
+    "topmost": {
+     "tag": "h3",
+     "position": "sticky",
+     "zIndex": "8",
+     "bg": "oklab(1 0 5.96046e-8 / 0.9)"
+    },
+    "occluderReportedByProbe": null,
+    "pixels": {
+     "min": 242,
+     "p05": 242,
+     "p50": 255,
+     "max": 255
+    },
+    "artifactSha256": "dbc66754d46f86901412b389002a00edd81d0829612e522c5a4b30d5f67f7d92"
+   }
+  ]
+ },
+ "c1:live@390x844": {
+  "state": "completed",
+  "codeSha256": "8669afea8c3ca715c15a0bd8f209d1021c482f93fc0fd9041b7339cd9fb6bfa5",
+  "calls": 10,
+  "denied": [],
+  "measurements": [
+   {
+    "scrollY": 0,
+    "hintRect": {
+     "x": 37,
+     "y": 409,
+     "width": 149,
+     "height": 15
+    },
+    "topmost": {
+     "tag": "p",
+     "position": "static",
+     "zIndex": "auto",
+     "bg": "rgba(0, 0, 0, 0)"
+    },
+    "occluderReportedByProbe": {
+     "cls": "py-40 px-20 md:px-50 fixed bottom-0 w-full z-[9999",
+     "rect": {
+      "x": 0,
+      "y": 317,
+      "width": 390,
+      "height": 527
+     },
+     "bg": "rgb(221, 236, 222)"
+    },
+    "pixels": {},
+    "artifactSha256": null
+   },
+   {
+    "scrollY": 258,
+    "hintRect": {
+     "x": 37,
+     "y": 151,
+     "width": 149,
+     "height": 15
+    },
+    "topmost": {
+     "tag": "span",
+     "position": "static",
+     "zIndex": "auto",
+     "bg": "rgba(0, 0, 0, 0)"
+    },
+    "occluderReportedByProbe": null,
+    "pixels": {
+     "min": 119,
+     "p05": 126,
+     "p50": 255,
+     "max": 255
+    },
+    "artifactSha256": "153e0a9ab3f3b7c9624bb8fe29f10d600b6a4e8973c6ec0e2997439183f20474"
+   }
+  ]
+ },
+ "c1-replay:live@1440x900": {
+  "state": "completed",
+  "codeSha256": "8669afea8c3ca715c15a0bd8f209d1021c482f93fc0fd9041b7339cd9fb6bfa5",
+  "calls": 6,
+  "denied": [],
+  "measurements": [
+   {
+    "scrollY": 0,
+    "hintRect": {
+     "x": 951,
+     "y": 383,
+     "width": 149,
+     "height": 18
+    },
+    "topmost": {
+     "tag": "h3",
+     "position": "sticky",
+     "zIndex": "8",
+     "bg": "oklab(1 0 5.96046e-8 / 0.9)"
+    },
+    "occluderReportedByProbe": null,
+    "pixels": {
+     "min": 242,
+     "p05": 242,
+     "p50": 255,
+     "max": 255
+    },
+    "artifactSha256": "dbc66754d46f86901412b389002a00edd81d0829612e522c5a4b30d5f67f7d92"
+   }
+  ]
+ },
+ "c1-replay:live@390x844": {
+  "state": "completed",
+  "codeSha256": "8669afea8c3ca715c15a0bd8f209d1021c482f93fc0fd9041b7339cd9fb6bfa5",
+  "calls": 10,
+  "denied": [],
+  "measurements": [
+   {
+    "scrollY": 0,
+    "hintRect": {
+     "x": 37,
+     "y": 409,
+     "width": 149,
+     "height": 15
+    },
+    "topmost": {
+     "tag": "p",
+     "position": "static",
+     "zIndex": "auto",
+     "bg": "rgba(0, 0, 0, 0)"
+    },
+    "occluderReportedByProbe": {
+     "cls": "py-40 px-20 md:px-50 fixed bottom-0 w-full z-[9999",
+     "rect": {
+      "x": 0,
+      "y": 317,
+      "width": 390,
+      "height": 527
+     },
+     "bg": "rgb(221, 236, 222)"
+    },
+    "pixels": {},
+    "artifactSha256": null
+   },
+   {
+    "scrollY": 258,
+    "hintRect": {
+     "x": 37,
+     "y": 151,
+     "width": 149,
+     "height": 15
+    },
+    "topmost": {
+     "tag": "span",
+     "position": "static",
+     "zIndex": "auto",
+     "bg": "rgba(0, 0, 0, 0)"
+    },
+    "occluderReportedByProbe": null,
+    "pixels": {
+     "min": 119,
+     "p05": 126,
+     "p50": 255,
+     "max": 255
+    },
+    "artifactSha256": "153e0a9ab3f3b7c9624bb8fe29f10d600b6a4e8973c6ec0e2997439183f20474"
+   }
+  ]
+ },
+ "c1-banner:fixed-banner@390x844": {
+  "state": "completed",
+  "codeSha256": "8669afea8c3ca715c15a0bd8f209d1021c482f93fc0fd9041b7339cd9fb6bfa5",
+  "calls": 10,
+  "denied": [],
+  "measurements": [
+   {
+    "scrollY": 0,
+    "hintRect": {
+     "x": 36,
+     "y": 419,
+     "width": 134,
+     "height": 14
+    },
+    "topmost": {
+     "tag": "div",
+     "position": "fixed",
+     "zIndex": "99999",
+     "bg": "rgb(221, 236, 222)"
+    },
+    "occluderReportedByProbe": {
+     "cls": "fixture-consent",
+     "rect": {
+      "x": 0,
+      "y": 321,
+      "width": 390,
+      "height": 523
+     },
+     "bg": "rgb(221, 236, 222)"
+    },
+    "pixels": {},
+    "artifactSha256": null
+   },
+   {
+    "scrollY": 266,
+    "hintRect": {
+     "x": 36,
+     "y": 153,
+     "width": 134,
+     "height": 14
+    },
+    "topmost": {
+     "tag": "span",
+     "position": "static",
+     "zIndex": "auto",
+     "bg": "rgba(0, 0, 0, 0)"
+    },
+    "occluderReportedByProbe": null,
+    "pixels": {
+     "min": 119,
+     "p05": 136,
+     "p50": 255,
+     "max": 255
+    },
+    "artifactSha256": "531c6160890faef21b88b4ee8ae459730702484dd403cb0e48d1068962c04837"
+   }
+  ]
+ },
+ "a6:fixed-banner@390x844": {
+  "state": "completed",
+  "codeSha256": "1b9e6d14428a450688c3feab2ad4c7da74c7589de07668c13dd50addfa5f6cce",
+  "calls": 6,
+  "denied": [],
+  "measurements": [
+   {
+    "scrollY": 0,
+    "hintRect": {
+     "x": 36,
+     "y": 419,
+     "width": 134,
+     "height": 14
+    },
+    "topmost": {
+     "tag": "div",
+     "position": "fixed",
+     "zIndex": "99999",
+     "backgroundColor": "rgb(221, 236, 222)"
+    },
+    "occluderReportedByProbe": null,
+    "pixels": {
+     "min": 232,
+     "p05": 232,
+     "p50": 232,
+     "max": 232
+    },
+    "artifactSha256": "576f373ef95764926144247751d8452dc103a0f775cc8c31e670d35785bbe06f"
+   }
+  ]
+ },
+ "a6:fixed-banner@1440x900": {
+  "state": "completed",
+  "codeSha256": "1b9e6d14428a450688c3feab2ad4c7da74c7589de07668c13dd50addfa5f6cce",
+  "calls": 6,
+  "denied": [],
+  "measurements": [
+   {
+    "scrollY": 0,
+    "hintRect": {
+     "x": 36,
+     "y": 395,
+     "width": 134,
+     "height": 14
+    },
+    "topmost": {
+     "tag": "p",
+     "position": "static",
+     "zIndex": "auto",
+     "backgroundColor": "rgba(0, 0, 0, 0)"
+    },
+    "occluderReportedByProbe": null,
+    "pixels": {
+     "min": 29,
+     "p05": 49,
+     "p50": 232,
+     "max": 232
+    },
+    "artifactSha256": "65ec4df083ad1c5175db5d1be1dce4a5f4b30a5a501abadfff0af3ef945e8059"
+   }
+  ]
+ },
+ "a6:overlay@390x844": {
+  "state": "completed",
+  "codeSha256": "1b9e6d14428a450688c3feab2ad4c7da74c7589de07668c13dd50addfa5f6cce",
+  "calls": 5,
+  "denied": [],
+  "measurements": [
+   {
+    "scrollY": 0,
+    "hintRect": {
+     "x": 985,
+     "y": 382,
+     "width": 134,
+     "height": 14
+    },
+    "topmost": null,
+    "occluderReportedByProbe": null,
+    "pixels": {
+     "min": null,
+     "p05": null,
+     "p50": null,
+     "max": null
+    },
+    "artifactSha256": null
+   }
+  ]
+ },
+ "a6:overlay@1440x900": {
+  "state": "completed",
+  "codeSha256": "1b9e6d14428a450688c3feab2ad4c7da74c7589de07668c13dd50addfa5f6cce",
+  "calls": 6,
+  "denied": [],
+  "measurements": [
+   {
+    "scrollY": 0,
+    "hintRect": {
+     "x": 985,
+     "y": 382,
+     "width": 134,
+     "height": 14
+    },
+    "topmost": {
+     "tag": "h3",
+     "position": "sticky",
+     "zIndex": "8",
+     "backgroundColor": "rgba(255, 255, 255, 0.9)"
+    },
+    "occluderReportedByProbe": null,
+    "pixels": {
+     "min": 242,
+     "p05": 243,
+     "p50": 255,
+     "max": 255
+    },
+    "artifactSha256": "3bad8c02e38353a1ca6703bccda4600c3564a09703db1a99ff3ac1e08f69856f"
+   }
+  ]
+ },
+ "a6:no-overlay@390x844": {
+  "state": "completed",
+  "codeSha256": "1b9e6d14428a450688c3feab2ad4c7da74c7589de07668c13dd50addfa5f6cce",
+  "calls": 5,
+  "denied": [],
+  "measurements": [
+   {
+    "scrollY": 0,
+    "hintRect": {
+     "x": 985,
+     "y": 382,
+     "width": 134,
+     "height": 14
+    },
+    "topmost": null,
+    "occluderReportedByProbe": null,
+    "pixels": {
+     "min": null,
+     "p05": null,
+     "p50": null,
+     "max": null
+    },
+    "artifactSha256": null
+   }
+  ]
+ },
+ "a6:no-overlay@1440x900": {
+  "state": "completed",
+  "codeSha256": "1b9e6d14428a450688c3feab2ad4c7da74c7589de07668c13dd50addfa5f6cce",
+  "calls": 6,
+  "denied": [],
+  "measurements": [
+   {
+    "scrollY": 0,
+    "hintRect": {
+     "x": 985,
+     "y": 382,
+     "width": 134,
+     "height": 14
+    },
+    "topmost": {
+     "tag": "h3",
+     "position": "sticky",
+     "zIndex": "8",
+     "backgroundColor": "rgba(0, 0, 0, 0)"
+    },
+    "occluderReportedByProbe": null,
+    "pixels": {
+     "min": 119,
+     "p05": 132,
+     "p50": 255,
+     "max": 255
+    },
+    "artifactSha256": "96a47f99883d2c8d46009de527b002ce9c7a5a5f8b8f41f17d1bc1c43b315dc9"
+   }
+  ]
+ },
+ "a6:opacity-control@390x844": {
+  "state": "completed",
+  "codeSha256": "1b9e6d14428a450688c3feab2ad4c7da74c7589de07668c13dd50addfa5f6cce",
+  "calls": 5,
+  "denied": [],
+  "measurements": [
+   {
+    "scrollY": 0,
+    "hintRect": {
+     "x": 985,
+     "y": 416,
+     "width": 134,
+     "height": 14
+    },
+    "topmost": null,
+    "occluderReportedByProbe": null,
+    "pixels": {
+     "min": null,
+     "p05": null,
+     "p50": null,
+     "max": null
+    },
+    "artifactSha256": null
+   }
+  ]
+ },
+ "a6:opacity-control@1440x900": {
+  "state": "completed",
+  "codeSha256": "1b9e6d14428a450688c3feab2ad4c7da74c7589de07668c13dd50addfa5f6cce",
+  "calls": 6,
+  "denied": [],
+  "measurements": [
+   {
+    "scrollY": 0,
+    "hintRect": {
+     "x": 985,
+     "y": 416,
+     "width": 134,
+     "height": 14
+    },
+    "topmost": {
+     "tag": "span",
+     "position": "static",
+     "zIndex": "auto",
+     "backgroundColor": "rgba(0, 0, 0, 0)"
+    },
+    "occluderReportedByProbe": null,
+    "pixels": {
+     "min": 238,
+     "p05": 239,
+     "p50": 255,
+     "max": 255
+    },
+    "artifactSha256": "5e80f356f7c3ce583d44384ff7a5528b598a0f4da99d65e36c568d68b7da7c47"
+   }
+  ]
+ }
+}

@@ -1,0 +1,61 @@
+{
+ "loads": [
+  {
+   "at": "2026-10-29T21:41:52.908Z",
+   "url": "https://www.bs.ch/apps/zonensuche",
+   "viewport": "1440x900",
+   "status": 200,
+   "attempt": "a2-live-1440x900"
+  },
+  {
+   "at": "2026-10-29T21:42:02.940Z",
+   "url": "https://www.bs.ch/apps/zonensuche",
+   "viewport": "1280x800",
+   "status": 200,
+   "attempt": "a2-live-1280x800"
+  },
+  {
+   "at": "2026-10-29T21:42:29.889Z",
+   "url": "https://www.bs.ch/apps/zonensuche",
+   "viewport": "1440x900",
+   "status": 200,
+   "attempt": "a2-replay-live-1440x900"
+  },
+  {
+   "at": "2026-10-29T21:42:39.920Z",
+   "url": "https://www.bs.ch/apps/zonensuche",
+   "viewport": "390x844",
+   "status": 200,
+   "attempt": "a2-replay-live-390x844"
+  },
+  {
+   "at": "2026-10-29T21:50:09.932Z",
+   "url": "https://www.bs.ch/apps/zonensuche",
+   "viewport": "1440x900",
+   "status": 200,
+   "attempt": "c1-live-1440x900"
+  },
+  {
+   "at": "2026-10-29T21:50:19.965Z",
+   "url": "https://www.bs.ch/apps/zonensuche",
+   "viewport": "390x844",
+   "status": 200,
+   "attempt": "c1-live-390x844"
+  },
+  {
+   "at": "2026-10-29T21:50:33.876Z",
+   "url": "https://www.bs.ch/apps/zonensuche",
+   "viewport": "1440x900",
+   "status": 200,
+   "attempt": "c1-replay-live-1440x900"
+  },
+  {
+   "at": "2026-10-29T21:50:43.909Z",
+   "url": "https://www.bs.ch/apps/zonensuche",
+   "viewport": "390x844",
+   "status": 200,
+   "attempt": "c1-replay-live-390x844"
+  }
+ ],
+ "lastAt": 1793310643909
+}

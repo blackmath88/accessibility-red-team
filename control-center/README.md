@@ -1,25 +1,30 @@
 # Accessibility Control Center
 
-First operational UI slice for accessibility-red-team.
+The existing React operator surface for organizations, deterministic assessments, evidence and run theatre now includes a **Basel investigation workspace**.
 
-## Product boundary
+## Run locally
 
-The durable subject is an **Organization**. Municipality is the first supported organization type and current UI vocabulary.
+```sh
+cd control-center
+npm ci
+npm run dev
+# production build:
+npm run build
+```
 
-Organizations own digital properties. Accessibility assessment/remediation cycles are cases. The control center is the operator surface; accessibility-red-team remains the assessment engine.
+Open the URL printed by Vite. Serving this source directory with plain Python does not compile the TSX application.
 
-## Current slice
+## Basel workspace
 
-Working: organization-general schema, municipality seed portfolio, searchable/filterable portfolio, organization/case detail, probe catalogue, workflow/outreach placeholders.
+Investigations is the default view. It contains:
 
-Intentionally not faked: durable run queue, scan execution API, artifact ingestion, email sending, authentication. Buttons requiring those capabilities remain disabled.
+- Overview: recorded scope, the next Adaptive Investigation Loop milestone, and the algorithmic/Mistral fixture comparison with its limits.
+- Scope: the 25-service sample, search by service/office, and the 11 linked hosts that have not been assessed.
+- Investigations: the faint hint, focus-tool false alarm and search-widget concern, with competing explanations, evidence links and pending work.
+- Evidence: document-load accounting, pinned source/code revisions and the boundary between observations, judgments and publication approval.
 
-## Local
+The workspace imports the committed discovery and field-result JSON at build time. It remains usable if the operational API is unavailable. It is a read-only research snapshot, not a live feed, mission dispatcher or publication exporter. No generated probe or AI incremental-value result is fabricated.
 
-Serve the repository root and open /control-center/.
+Organizations, Runs, Review, Reports, Outreach and the existing theatre remain available. Existing operational actions retain their existing authenticated API boundary; this change does not invoke those actions.
 
-    python3 -m http.server 8080
-
-## Next
-
-Define Run + Artifact contracts, ingest real field-summary artifacts, add durable job adapter, wire assessment actions, then generate report/outreach drafts with human approval before sending.
+See [the upgrade note](../docs/experiments/BASEL_INVESTIGATION_WORKSPACE.md) for provenance, checks and the next implementation seam.

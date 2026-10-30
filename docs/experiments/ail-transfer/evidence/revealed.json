@@ -1,0 +1,10 @@
+{
+ "revealedAt": "2026-10-30T07:20:55.035089+00:00",
+ "by": "coordinator",
+ "frozenBeforeReveal": {
+  "conclusion.json": "cc7f6d5e8a4085b6a26600878a3f7b1d50aad7a197d6a1ad30ae0463e0f5ddf1",
+  "conclusion-3.json": "6284afd8642587f4e8c7c50a4e034f36f8cebe58f09c4f2a316370ae9ccdf244"
+ },
+ "keySha256": "67bbc20d6c45a5b5e55c8b8ed4d8ca5f90dc56bd93d7aa1dbdb590df09ac33a2",
+ "keySha256ReportedByFixtureAuthor": "67bbc20d6c45a5b5e55c8b8ed4d8ca5f90dc56bd93d7aa1dbdb590df09ac33a2"
+}

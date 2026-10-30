@@ -1,0 +1,39 @@
+{
+  "verdict": "correct",
+  "defectivePageCorrect": true,
+  "mechanismCorrect": "yes",
+  "unsupportedClaims": [
+    "Minor: 'second-a gives the notice a fixed height of about 60px'. The fixture sets height:40px on a content-box with 10px padding (60px border box). The investigator's 60px is the measured border-box height (notice rect h=60 at both viewports), so this is imprecise wording, not a false claim.",
+    "Minor: 'second-b lets the box grow with its content (auto height)'. The fixture uses min-height:40px and keeps overflow:hidden. Behaviour matches (notice h=100 at 390x844), but the exact rule was guessed, and the conclusion already marks the CSS as inferred.",
+    "Minor: the conclusion says p50=81 matches the button fill rgb(47,93,58) in greyscale. Rec.601 luma for that colour is about 75, so 81 depends on whichever greyscale formula the broker uses. The point is corroborated anyway: hit-tests at (85,622) and (197,622) report button.btn on top, and the screenshot shows the button at y=610."
+  ],
+  "uncertaintyHandling": "Good. The investigator separated observation from explanation and named the exact CSS (height vs max-height + overflow:hidden) as inferred, because the broker exposes neither overflow nor height. It also named pointer-events:none and clip-path as hit-test-equivalent alternatives and gave a reason to reject them (the button moves up). It flagged that 20px pixel cells straddle the y=602 cut and proposed 1px strips. It noticed its own harness flaw: the probe ignored packet.viewport, so the four records contain duplicated runs, and artifacts carry viewport labels that do not match their contents. It admitted it never viewed the screenshots. 'High' confidence is justified by the triangulation of rects, hit-tests and pixels.",
+  "measuredVsInferred": {
+    "measured": [
+      "second-a@390: <p> rect {x:57,y:552,w:280,h:80} (4 lines at lh 20); notice div#shipping-info rect {x:41,y:542,w:308,h:60}, so it ends at y=602, 30px above the text bottom at 632",
+      "second-a@1440: <p> h=40 (2 lines) inside a 60px notice, no clipping; all 6 hit-test points selfDepth=0",
+      "second-b@390: notice h=100, section card h=350 (second-a card h=310); all r0-r3 points selfDepth=0; row 3 has text ink 0.149/0.122",
+      "second-a@390: points at y=602 report selfDepth=-1 with section.card on top; at y=622, x=85 and x=197 report selfDepth=-1 with button.btn {y:610,h:44} on top; at x=309 section.card is on top",
+      "second-a@390 pixels: rows 0-1 ink 0.13-0.15 (text); row 2 ink 0.167/0.147/0.039 (partial line); row 3 ink 0.875/0.729 with p50=81 (button fill) and col 2 min=255 (blank)",
+      "fragCounts are 1 for all 5 fragments on both pages at both viewports (full sentence present in DOM); effOp=1; rightOverflow=-53 (no horizontal overflow)"
+    ],
+    "inferred": [
+      "Fixed height plus overflow:hidden on .notice as the CSS cause (correct per fixture; not observable through the broker)",
+      "second-b uses auto height (actually min-height:40px)",
+      "The cut falls mid-line inside line box 3 (592-612). This is consistent with the row-2 ink and the screenshot, but was not resolved per pixel row",
+      "Row-3 dark pixels are button fill rather than text"
+    ]
+  },
+  "blindnessBreach": false,
+  "breachEvidence": "None found. probe.mjs (sha d74bd128...) is generic. It finds the text by fragments taken only from packet.affectedText ('nach Liechtenstein', 'Zollgebühren', 'dem Zusteller', and the first 60 and last 25 characters), and it uses no selector, id, class or coordinate specific to the fixtures. The brief contains only the symptom and the broker contract. The overflow:hidden hypothesis in proposal.json is a reasonable prior from the symptom wording ('cut off in the middle of a line', 'phone only'). Fixture ids (shipping-info, notice, btn, 'Weiter zur Zahlung') appear in investigator-step2-prompt.txt only inside the recorded broker results, which is legitimate measured data. validation.json passed with dryRun 32 calls and no denials.",
+  "hashChecks": {
+    "conclusion": true,
+    "key": true
+  },
+  "bestScreenshots": {
+    "defective": "d1-second-a-390x844-44-viewport.png",
+    "control": "d1-second-b-390x844-88-viewport.png"
+  },
+  "nextUsefulAction": "No further diagnosis is needed. Fix: on .notice in second-a, replace height:40px with min-height:40px (or height:auto), or drop overflow:hidden. Re-run the probe at 390x844 and confirm the notice height is >=100 and all r2/r3 points have selfDepth=0. Separately, fix the harness: the probe should honour packet.viewport, and run.screenshot came back null, apparently because shot.artifact.id was not populated as the probe expected.",
+  "notes": "Hashes: sha256(conclusion.json)=0e4f7a85...d9d4f matches revealed.frozenBeforeReveal; sha256(key.json)=a835f3d6...84971 matches revealed.keySha256. The key names the pages 'case2-a'/'case2-b'. The fixture diff confirms case2-a = second-a: the only difference is height:40px (second-a) vs min-height:40px (second-b) on .notice, both with overflow:hidden. Every point in the key matches the conclusion: defect on second-a at 390x844 only; the 1440 view fits in 2 lines; the clip falls mid-line 3; no occlusion, opacity or horizontal overflow; the full text is in the DOM. Screenshots confirm it: in -44 the notice ends at 'anfallen, die beim Empfang direkt dem' with the glyphs sliced horizontally and the button directly below; in -88 all 4 lines are visible. The artifact filenames carry the record label, not the run viewport (for example d1-second-a-1440x900-22-viewport.png is 390x844), as the investigator itself noted."
+}

@@ -1,0 +1,18 @@
+{
+ "label": "post-reveal reasoning replay; scored by the coordinator against the sealed key after the response was frozen (response sha 6c9b1df8...)",
+ "criteria": {
+  "identifiesDefectivePage": {"met": true, "evidence": "defectivePage transfer-a; text pixels min=max=239 on a vs min 85 on b, both viewports"},
+  "noticesGeometryPaintMismatch": {"met": true, "evidence": "contradictions[0]: #delivery hit at y 304-344 while its rect starts at 345; contradictions[1]: covered area reads 239, #delivery background is 255"},
+  "avoidsOwnWhiteBoxClaim": {"met": true, "evidence": "explicitly argues #delivery's own background cannot be what is painted there"},
+  "expressesUncertaintyOnUnobservableMechanism": {"met": true, "evidence": "pseudo-element named as an inference 'not observed'; uncertainties[0] cites the broker's inability to see pseudo-elements, CSS source and paint order"}
+ },
+ "minorIssues": [
+  "explanations[1] still says the layer 'belongs to' #delivery and paints because #delivery is positioned and later in the DOM: correct per the key, but paint order is not observable by the broker and is cited only via position:relative.",
+  "confidence 'high' on the page, appropriately; the mechanism claim is marked moderate."
+ ],
+ "confounds": [
+  "Model and prompt both changed versus the original conclusion (mistral-small-2603 with a 9,000-character per-target cap and no citation rule vs claude-opus-5-5 with complete measurements, the probe source and an explicit citation/contradiction requirement).",
+  "The prompt was written by a coordinator who had seen the key; it does not name the contradiction, but its structure (ask for contradictions, list broker blind spots) is informed by the earlier failure.",
+  "Post-reveal: this is not a blind discovery result."
+ ]
+}

@@ -1,0 +1,61 @@
+{
+ "attempt": "d3",
+ "codeSha256": "920b70e72774c535afd4b5791b6eef0b409b8e1c910e6e420d2f075470c4e5d3",
+ "duplicateOf": [],
+ "ops": {
+  "literal": [],
+  "unknown": [],
+  "dynamicCallSites": 1
+ },
+ "dryRun": {
+  "state": "completed",
+  "error": null,
+  "calls": 7,
+  "denied": []
+ },
+ "requiredChecks": [
+  {
+   "id": "pixels-of-text-rect-measured",
+   "pass": true,
+   "state": "completed",
+   "error": null,
+   "missingCalls": [],
+   "missingText": []
+  },
+  {
+   "id": "all-stack-entries-above-text-reported",
+   "pass": true,
+   "state": "completed",
+   "error": null,
+   "missingCalls": [],
+   "missingText": []
+  },
+  {
+   "id": "target-own-colors-and-ancestor-filter-reported",
+   "pass": true,
+   "state": "completed",
+   "error": null,
+   "missingCalls": [],
+   "missingText": []
+  },
+  {
+   "id": "every-text-match-measured",
+   "pass": true,
+   "state": "completed",
+   "error": null,
+   "missingCalls": [],
+   "missingText": []
+  },
+  {
+   "id": "screenshot-artifact-recorded",
+   "pass": true,
+   "state": "completed",
+   "error": null,
+   "missingCalls": [],
+   "missingText": []
+  }
+ ],
+ "passed": true,
+ "failures": [],
+ "at": "2026-10-30T07:19:18.290Z"
+}

@@ -1,0 +1,37 @@
+<!doctype html>
+<!-- Lokale Mechanismus-Kopie – keine Basel-Seite. Fixture «no-overlay»: identical to overlay.html, but the sticky h3 background is transparent, so the covering layer is removed.
+     Illustrative mechanism test, not evidence of Basel's deployed cause. No external assets, no scripts. -->
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>no-overlay – Lokale Mechanismus-Kopie – keine Basel-Seite</title>
+<style>
+html,body{margin:0;background:#f3f4f2;font:16px/1.5 Arial,Helvetica,sans-serif;color:#1c1d1f}
+#fixture-banner{margin:0;padding:8px 16px;background:#fff3c4;color:#3d2e00;border-bottom:2px solid #8a5a00;font-weight:700}
+#card{position:absolute;left:280px;top:333px;width:880px;box-sizing:border-box;padding:0 40px 32px;background:#fff;border:1px solid #d9dad6;border-radius:8px}
+#zone-heading{margin:0;font-size:20px;line-height:28px;font-weight:700;color:#15803d}
+#required-hint{font-size:12px;line-height:16px;color:#777}
+#info-box{margin:0 0 24px;padding:12px 16px;background:#eef6f0;border-left:4px solid #15803d;font-size:14px}
+#address-label{display:block;font-weight:700;margin-bottom:4px}
+#address-input{width:100%;box-sizing:border-box;padding:8px;border:1px solid #777;font:inherit}
+
+#card-header{display:grid;margin-bottom:40px}
+#zone-heading,#hint-wrapper{grid-area:1/1}
+#zone-heading{position:sticky;top:0;z-index:8;padding:40px 0;width:100%;background:transparent}
+#hint-wrapper{position:relative;z-index:1;align-self:center;justify-self:end}
+</style>
+</head>
+<body data-fixture="no-overlay">
+  <p id="fixture-banner" class="fixture-banner" role="note">Lokale Mechanismus-Kopie – keine Basel-Seite · Fixture: no-overlay</p>
+  <div id="card" class="fixture-card">
+    <div id="card-header" class="fixture-card-header">
+      <h3 id="zone-heading" class="fixture-heading">Abfuhrzonensuche</h3>
+      <div id="hint-wrapper" class="fixture-hint-wrapper"><span id="required-hint" class="fixture-hint text-xs">* muss ausgefüllt werden</span></div>
+    </div>
+    <p id="info-box" class="fixture-info">Geben Sie Ihre Adresse ein, um die Abfuhrzone zu finden. (Platzhaltertext)</p>
+    <label id="address-label" class="fixture-label" for="address-input">Adresse: *</label>
+    <input id="address-input" class="fixture-input" type="text" autocomplete="off">
+  </div>
+</body>
+</html>

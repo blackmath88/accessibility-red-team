@@ -1,0 +1,22 @@
+{
+ "defectivePage": "undetermined",
+ "explanation": "The measurements for transfer-a show the text element is present, not covered by any overlay (stacks show no entries with non-trivial alpha above the target), and the text pixels are uniform and distinct from the background (p05 = p50 = 239, histogram16 mass at bin 14). The same measurements for transfer-b are not provided in the recorded data, so no comparison can be made. Therefore, the measurements do not establish which page version shows the reported problem.",
+ "supportingMeasurements": [
+  "transfer-a: text element present with color rgb(85,85,85), opacity 1, visibility visible, no non-default ancestors",
+  "transfer-a: no entries above the target with non-trivial alpha (bgAlphaTimesOpacity) in the stack at any sampled point",
+  "transfer-a: text-rect pixels uniform (p05 = p50 = 239) and distinct from background reference (p05 218, histogram16 mass at bin 14 vs bins 13-15)",
+  "transfer-a: inViewport true for the text element"
+ ],
+ "unsupportedOrUntested": [
+  "transfer-b: presence, visibility, or coverage of the text element",
+  "transfer-b: stack entries above the target with non-trivial alpha",
+  "transfer-b: text-rect pixel statistics vs background reference",
+  "transfer-b: non-default ancestors affecting the text element"
+ ],
+ "confidence": "low",
+ "fromAttempt": "d3",
+ "model": "mistral-small-2603",
+ "returnedModel": "mistral-small-2603",
+ "inputSha256": "d058fa46f379e3b9abe0f611e38a4d794ea1ff46cb662a00ccebe691634a08f7",
+ "frozenAt": "2026-10-30T07:20:04.957Z"
+}

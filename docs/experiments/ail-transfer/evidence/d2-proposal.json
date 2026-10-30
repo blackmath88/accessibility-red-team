@@ -1,0 +1,47 @@
+{
+ "hypotheses": [
+  {
+   "id": "h1",
+   "statement": "The text is rendered but has insufficient ink contrast against its background (e.g., near-white text on white or low-opacity filter applied).",
+   "prediction": "Both versions will show the text element with style.color and style.backgroundColor having low luminance contrast (e.g., ΔL < 0.5) or an ancestor applying a filter reducing opacity.",
+   "falsifier": "At least one version shows high luminance contrast (ΔL ≥ 0.5) between text color and background, with no opacity-reducing filters in ancestors."
+  },
+  {
+   "id": "h2",
+   "statement": "The text is rendered but fully covered by one or more opaque overlays stacked above it.",
+   "prediction": "Both versions will have at least one element covering the text rect with backgroundColor not fully transparent and opacity ≥ 0.5.",
+   "falsifier": "No element covers the text rect in either version, or all covering elements have fully transparent backgrounds or opacity < 0.5."
+  },
+  {
+   "id": "h3",
+   "statement": "The text is rendered but outside the viewport due to incorrect layout (e.g., negative margin, transform, or overflow) in transfer-a.",
+   "prediction": "transfer-a will show the text element with rect.x < 0 or rect.y < 0 or rect.x + rect.width > viewport width or rect.y + rect.height > viewport height.",
+   "falsifier": "The text element rect is fully within viewport bounds in transfer-a."
+  }
+ ],
+ "probe": {
+  "question": "What are the rendered pixels, covering elements, and computed styles for every match of the affected text in both versions?",
+  "falsifier": "Any version fails to provide the required measurements for all matches.",
+  "controls": [
+   "Use the same viewport for both versions to ensure comparability.",
+   "Measure every match of the affected text, not just the first.",
+   "Sample points inside each text rect to detect all covering elements, not only the topmost.",
+   "Capture rendered pixels for the text rect and a reference background area.",
+   "Record computed styles and ancestor filters for each match."
+  ],
+  "limitations": [
+   "Does not account for dynamic content changes after initial render.",
+   "Assumes the text element is uniquely identifiable by its content; if multiple matches exist, all are measured.",
+   "Reference background clip may not perfectly match the text's background in all cases."
+  ],
+  "code": "export default async function (broker, packet) {\n  const { target, viewport, affectedText } = packet;\n\n  // Open the target page\n  await broker.call('open', { target, viewport });\n\n  // Find all matches of the affected text\n  const findResult = await broker.call('findText', { text: affectedText, max: 5 });\n  if (findResult.count === 0) {\n    return { error: 'Text not found', target, viewport };\n  }\n\n  // Get viewport dimensions\n  const viewportInfo = await broker.call('viewport', {});\n\n  // Prepare results for all matches\n  const matches = [];\n  for (const elem of findResult.elements) {\n    const match = {\n      handle: elem.handle,\n      rect: elem.rect,\n      style: {\n        color: elem.style.color,\n        backgroundColor: elem.style.backgroundColor,\n        opacity: elem.style.opacity,\n        position: elem.style.position,\n        zIndex: elem.style.zIndex,\n        visibility: elem.style.visibility,\n        display: elem.style.display,\n        fontSize: elem.style.fontSize,\n        fontWeight: elem.style.fontWeight,\n        top: elem.style.top\n      },\n      effectiveOpacity: elem.effectiveOpacity,\n      nonDefaultAncestors: elem.nonDefaultAncestors\n    };\n\n    // Measure pixels inside the text rect\n    const clip = {\n      x: Math.round(elem.rect.x),\n      y: Math.round(elem.rect.y),\n      width: Math.min(800, Math.round(elem.rect.width)),\n      height: Math.min(300, Math.round(elem.rect.height))\n    };\n    const pixelsResult = await broker.call('pixels', { clip });\n\n    // Measure pixels in a reference background area (beside the text rect)\n    const refClip = {\n      x: Math.max(0, Math.round(elem.rect.x + elem.rect.width + 10)),\n      y: Math.round(elem.rect.y),\n      width: Math.min(800, Math.round(elem.rect.width)),\n      height: Math.min(300, Math.round(elem.rect.height))\n    };\n    const refPixelsResult = await broker.call('pixels', { clip: refClip });\n\n    // Sample points inside the text rect to detect covering elements\n    const points = [];\n    const stepX = Math.max(1, Math.floor(elem.rect.width / 3));\n    const stepY = Math.max(1, Math.floor(elem.rect.height / 3));\n    for (let x = elem.rect.x + stepX; x < elem.rect.x + elem.rect.width; x += stepX) {\n      for (let y = elem.rect.y + stepY; y < elem.rect.y + elem.rect.height; y += stepY) {\n        points.push({ x: Math.round(x), y: Math.round(y) });\n      }\n    }\n\n    const coverageResult = await broker.call('elementsFromPoint', { points });\n\n    // For each point, find the target element in the stack and report all overlying entries\n    const pointCoverage = [];\n    for (let i = 0; i < points.length; i++) {\n      const point = points[i];\n      const stack = coverageResult[i].stack;\n      const targetIndex = stack.findIndex((entry) => \n        entry.text === affectedText || \n        (entry.cls && elem.cls && entry.cls.includes(elem.cls))\n      );\n\n      const overlying = [];\n      if (targetIndex !== -1) {\n        for (let j = 0; j < targetIndex; j++) {\n          const entry = stack[j];\n          const opacity = parseFloat(entry.opacity || '1');\n          const bg = entry.backgroundColor || 'rgba(0,0,0,0)';\n          const bgAlpha = parseFloat(bg.split(',')[3]?.replace(')', '') || '0');\n          const combinedAlpha = opacity * bgAlpha;\n          overlying.push({\n            tag: entry.tag,\n            id: entry.id,\n            cls: entry.cls,\n            position: entry.position,\n            zIndex: entry.zIndex,\n            backgroundColor: bg,\n            opacity: entry.opacity,\n            rect: entry.rect,\n            effectiveOpacity: combinedAlpha\n          });\n        }\n      }\n\n      pointCoverage.push({\n        point,\n        targetIndex,\n        overlying\n      });\n    }\n\n    match.pixels = pixelsResult;\n    match.refPixels = refPixelsResult;\n    match.coverage = {\n      pointsSampled: points.length,\n      pointCoverage\n    };\n\n    matches.push(match);\n  }\n\n  // Take a screenshot of the viewport\n  const screenshotResult = await broker.call('screenshot', {});\n\n  return {\n    target,\n    viewport,\n    matches,\n    screenshot: screenshotResult.artifact,\n    viewportInfo\n  };\n}"
+ },
+ "revisionNote": "1. Added pixels measurement for each text rect and a reference background clip. 2. Added pixels measurement for reference background. 3. Returned raw elementsFromPoint stack for each sampled point, including all overlying entries above the target element. 4. Reported target's own computed styles (color, backgroundColor, fontSize, fontWeight, position, zIndex) and nonDefaultAncestors. 5. Measured every match of the affected text (up to 5). 6. Added screenshot artifact recording. 7. Removed boolean simplifications (visibilityStatus, isCovered) in favor of raw measurements.",
+ "attempt": "d2",
+ "from": "d1",
+ "model": "mistral-small-2603",
+ "returnedModel": "mistral-small-2603",
+ "codeSha256": "ab9e1970aa8dbb77ad18f5d2aacd3f23fbeb1b536ecc077b51cc7b1c320d5236",
+ "inputSha256": "187d1f54341990f7a1fb15ba76fa2ec366174105e9bbdd09534e33f22f50066e",
+ "createdAt": "2026-10-30T07:15:50.777Z"
+}

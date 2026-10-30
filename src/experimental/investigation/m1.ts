@@ -1,0 +1,152 @@
+// Experimental investigation slice (ADR-0015): Basel M1, the faint required-field hint on www.bs.ch/apps/zonensuche.
+// Nothing outside src/experimental/ imports this module. Stages (all recorded under runs/ail-m1/<run>/):
+//   design   designer model (Mistral, pinned) proposes competing hypotheses + an executable probe from the baseline packet
+//   execute  run a recorded probe in the bwrap sandbox against local fixtures and/or the one approved live URL
+//   revise   designer revises the probe from the recorded results (new attempt, new code hash)
+// Critic/judge are fresh Claude contexts run by the coordinator over the recorded packets (not part of this script).
+//   npx tsx src/experimental/investigation/m1.ts <run> design|revise <attempt> [from] | execute <attempt> <target[,target]> <viewport[,viewport]> [--live]
+import { createHash } from "node:crypto";
+import { mkdir, readFile, readdir, writeFile } from "node:fs/promises";
+import { access } from "node:fs/promises";
+import { dirname, join, resolve } from "node:path";
+import { fileURLToPath } from "node:url";
+import { z } from "zod";
+import { BudgetedProvider, type Pricing, type TrialBudget } from "../adaptive/budget.js";
+import { MistralProvider } from "../adaptive/providers/mistral.js";
+import { BROKER_VERSION, LIVE_URL, MeasurementBroker, VIEWPORTS } from "./broker.js";
+import { OWNER_CAP_USD, REPO_ROOT, ownerSpend } from "./spend.js";
+import { SANDBOX_VERSION, runInSandbox, sandboxAvailable } from "./sandbox.js";
+
+const MODEL = "mistral-small-2603";
+const PRICING: Pricing = { currency: "USD", inputPerMillion: 0.15, outputPerMillion: 0.6 };
+const BUDGET: TrialBudget = { maxCalls: 4, maxInputTokens: 60_000, maxOutputTokens: 12_000, maxSpend: 0.05, maxWallMs: 600_000, minCallIntervalMs: 1100 };
+// Paths are anchored at the repository root, not the current directory, so the caps cannot be reset by running elsewhere.
+// Earlier experiments' ledgers (A/B/C/M) live in another checkout: AIL_PRIOR_LEDGERS is required (see spend.ts).
+const ROOT = REPO_ROOT;
+const RUNS = join(ROOT, "runs/ail-m1");
+const FIXTURES = ["overlay", "no-overlay", "clean-control", "opacity-control", "fixed-banner"];
+const sha = (s: string | Buffer) => createHash("sha256").update(s).digest("hex");
+
+export { HypothesisSchema, ProposalSchema } from "./proposal.js";
+import { ProposalSchema } from "./proposal.js";
+
+const API_DOC = `You write ONE JavaScript ES module: export default async function (broker, packet) { ... return <JSON-serialisable measurements>; }
+It runs in an isolated sandbox with NO network, NO filesystem, NO DOM. The only capability is: await broker.call(op, args). Allowed ops:
+- open {target: packet.target, viewport: packet.viewport}  (always call first; target and viewport are given in packet)
+- viewport {} -> {innerWidth, innerHeight, devicePixelRatio, scrollX, scrollY, docHeight}
+- findText {text (<=80 chars), max (1-5)} -> {count, elements:[{handle, tag, id, cls, text, rect{x,y,width,height} (viewport coords), style{color, backgroundColor, opacity, position, zIndex, visibility, display, fontSize, fontWeight, top}, effectiveOpacity, nonDefaultAncestors[{tag,cls,opacity,filter,blend}]}]}
+- query {selector (CSS, <=200 chars), max (1-10)} -> same shape as findText
+- elementsFromPoint {points:[{x,y}] (1-20 integer viewport points)} -> [{point, stack:[{tag,id,cls,text,position,zIndex,backgroundColor,opacity,rect}] (topmost first, <=8)}]
+- scrollTo {y (0..20000)} -> {scrollY}
+- pixels {clip:{x,y,width<=800,height<=300}} (viewport coords) -> {min, p01, p05, p50, max, below{100,150,200,230} pixel counts, histogram16, pixels, artifact}  greyscale 0..255 of the RENDERED screenshot
+- screenshot {} -> {artifact}
+Errors throw "broker denied: <reason>"; catch them and record. Return a compact object (no images). No loops over more than 30 calls.`;
+
+function baselinePacket() {
+  return {
+    observation: "Required-field hint «* muss ausgefüllt werden» on https://www.bs.ch/apps/zonensuche looked almost invisible in screenshots.",
+    knownFacts: [
+      "Computed style of span.text-xs with that text: color rgb(119,119,119), background resolved to rgb(255,255,255), 12px, weight 400 → computed contrast 4.48:1 (axe 4.47:1).",
+      "Screenshots (1440x900 viewport, DPR 1) taken AFTER element.scrollIntoView({block:'center'}) at 1 s and at 5 s: darkest grey 242 on 255 inside a 160x20 crop at x 950-1110, y 382-402 → ~1.12:1. The crop region was located by eye.",
+      "Ancestor opacity chain of the hint after 5 s: effective opacity 1, no transitions found.",
+      "Saved DOM (scanner run) shows in the same card: <h3 class=\"text-xl font-bold text-green-700 mb-10 py-10 sticky print:static z-8 transition-all duration-250 ease-in-out bg-white/90\" style=\"top: var(--base-sticky-top);\">Abfuhrzonensuche</h3>.",
+      "A cookie banner covers the lower part of the viewport on first load (no choice was made).",
+    ],
+    unknowns: ["whether the sampled pixels are the glyphs at all (crop placement)", "whether something overlaps the hint and in which scroll state", "whether the faintness exists without scrolling"],
+    candidateExplanations: ["crop/antialiasing artefact", "inherited opacity", "translucent sticky overlap", "offscreen/clipped/scroll-state dependence"],
+    fixtures: { "overlay": "local copy: sticky translucent white heading overlapping the hint", "no-overlay": "same, overlay removed", "clean-control": "plain hint, nothing faint", "opacity-control": "hint faint because parent opacity 0.12, no overlap" },
+  };
+}
+
+async function priorSpend() { return (await ownerSpend()).total; }
+
+async function designer(run: string, attempt: string, mode: "design" | "revise", from?: string) {
+  const dir = join(RUNS, run);
+  await mkdir(join(dir, "attempts", attempt), { recursive: true });
+  const spent = await priorSpend();
+  if (spent + BUDGET.maxSpend > OWNER_CAP_USD) throw new Error(`owner cap: ${spent} spent`);
+  if (!process.env["ADAPTIVE_MISTRAL_API_KEY"]) throw new Error("ADAPTIVE_MISTRAL_API_KEY not set");
+  const ledgerFile = join(dir, `designer-ledger-${attempt}.json`);
+  if (await access(ledgerFile).then(() => true, () => false)) throw new Error(`attempt ${attempt} already has a designer ledger; use a new attempt name`);
+  // Worst-case reservation on disk BEFORE the call, so a failed or interrupted call still counts toward the owner cap.
+  await writeFile(ledgerFile, JSON.stringify({ reservation: true, spend: BUDGET.maxSpend }, null, 1));
+  const provider = new BudgetedProvider(new MistralProvider({ apiKeyEnv: "ADAPTIVE_MISTRAL_API_KEY", model: MODEL }), PRICING, BUDGET);
+  const packet = baselinePacket();
+  let context = `BASELINE EVIDENCE (frozen):\n${JSON.stringify(packet, null, 1)}`;
+  if (mode === "revise") {
+    // Previous designed attempt (replays are not designs); its fresh-replay results are added when present.
+    const prev = from ?? (await readdir(join(dir, "attempts"))).filter((a) => a !== attempt && !a.endsWith("-replay")).sort().at(-1)!;
+    const prevProposal = await readFile(join(dir, "attempts", prev, "proposal.json"), "utf8");
+    // An unexecuted attempt (e.g. one stopped at critique) is revised against the latest executed attempt's measurements.
+    const executed = (await readdir(join(dir, "attempts"))).filter((a) => !a.endsWith("-replay") && /^a\d+$/.test(a) && a <= prev).sort().reverse();
+    let measuredIn = prev, results = "";
+    for (const a of executed) { results = await readFile(join(dir, "attempts", a, "results.json"), "utf8").catch(() => ""); if (results) { measuredIn = a; break; } }
+    if (!results) throw new Error("no executed attempt to revise against");
+    const replay = await readFile(join(dir, "attempts", `${measuredIn}-replay`, "results.json"), "utf8").catch(() => "");
+    const critic = await readFile(join(dir, "attempts", prev, "critic.json"), "utf8").catch(() => "{}");
+    context += `\n\nPREVIOUS ATTEMPT ${prev} (proposal):\n${prevProposal}\n\nRESULTS (fixtures and live) of ${measuredIn}${measuredIn === prev ? "" : ` (${prev} itself was not executed)`}:\n${perTarget(results, 3_000)}`;
+    if (replay) context += `\n\nFRESH REPLAY of ${measuredIn} (new process and browser, same code; includes the 390x844 viewport):\n${perTarget(replay, 6_000)}`;
+    context += `\n\nCRITIC REVIEW of the previous attempt:\n${critic.slice(0, 3000)}`;
+    // The critic's single most important change is passed as a required item (the designer ignored it when it was only context, see a3/a4).
+    const required = (JSON.parse(critic) as { mostImportantChange?: string; probeDefects?: string[] });
+    if (required.mostImportantChange) context += `\n\nREQUIRED CHANGES (implement each in the probe code and name it in revisionNote):\n1. ${required.mostImportantChange}\n${(required.probeDefects ?? []).map((d, i) => `${i + 2}. ${d}`).join("\n")}`;
+  }
+  const system = `You are the experiment designer in a bounded accessibility investigation. Propose exactly 3 competing, falsifiable hypotheses for WHY the hint looks faint, and ONE executable probe that measures facts able to support or reject them. The probe will be run on each local fixture and on the live page (packet.target), at the viewports given in packet.viewport. Measure geometry, overlap (elementsFromPoint at points inside the hint's own rect), computed styles and RENDERED pixels inside the hint's own rect (do not rely on the old hand-placed crop). Compare the page as loaded (no scrolling) with the scrolled state that put the hint in the vertical centre (scrollTo so the hint's centre is at innerHeight/2). Never claim a cause from one measurement; say what would falsify it.
+${mode === "revise" ? "This is a REVISION: change the probe in response to what the results and critic showed (fix errors, add the measurement that would discriminate between the remaining hypotheses), and explain the change in revisionNote." : ""}
+${API_DOC}
+Reply with ONE JSON object: {"hypotheses":[{"id","statement","prediction","falsifier"} x3],"probe":{"question","falsifier","controls":[...],"limitations":[...],"code":"<the ES module as a string>"}${mode === "revise" ? ',"revisionNote":"..."' : ""}}`;
+  const response = await provider.complete({ messages: [{ role: "system", content: system }, { role: "user", content: context }], maxOutputTokens: 5000, temperature: 0, responseFormat: "json_object", timeoutMs: 120_000 });
+  await writeFile(ledgerFile, JSON.stringify({ ...provider.ledger }, null, 1)); // one per attempt; all are summed
+  await writeFile(join(dir, "attempts", attempt, "designer-raw.json"), JSON.stringify({ model: MODEL, returnedModel: response.returnedModel, usage: response.usage, text: response.text }, null, 1));
+  await writeFile(join(dir, "attempts", attempt, "designer-input.txt"), `${system}\n\n---\n${context}`);
+  await accept(run, attempt, mode, sha(context));
+}
+
+// Compact JSON per target, each capped, so a late target (e.g. the mobile viewport) is not truncated away.
+function perTarget(json: string, cap: number): string {
+  return Object.entries(JSON.parse(json) as Record<string, unknown>).map(([k, v]) => `${k}: ${JSON.stringify(v).slice(0, cap)}`).join("\n");
+}
+
+// Validates the saved designer output (also used to re-validate after a schema correction without a new paid call).
+async function accept(run: string, attempt: string, mode: string, inputSha256?: string) {
+  const dir = join(RUNS, run);
+  const raw = JSON.parse(await readFile(join(dir, "attempts", attempt, "designer-raw.json"), "utf8")) as { returnedModel: string | null; text: string };
+  const parsed = ProposalSchema.safeParse(JSON.parse(raw.text));
+  if (!parsed.success) throw new Error(`proposal invalid: ${parsed.error.issues[0]?.path.join(".")} ${parsed.error.issues[0]?.message}`);
+  const proposal = { ...parsed.data, attempt, mode, model: MODEL, returnedModel: raw.returnedModel ?? null, codeSha256: sha(parsed.data.probe.code), inputSha256: inputSha256 ?? null, createdAt: new Date().toISOString() };
+  await writeFile(join(dir, "attempts", attempt, "proposal.json"), JSON.stringify(proposal, null, 1));
+  await writeFile(join(dir, "attempts", attempt, "probe.mjs"), parsed.data.probe.code);
+  console.log(JSON.stringify({ attempt, hypotheses: proposal.hypotheses.map((h) => h.id + ": " + h.statement.slice(0, 110)), codeSha256: proposal.codeSha256 }, null, 1));
+}
+
+async function execute(run: string, attempt: string, targets: string[], viewports: string[], live: boolean) {
+  if (!sandboxAvailable().ok) throw new Error("LIVE DYNAMIC EXECUTION BLOCKED: no verified sandbox");
+  const dir = join(RUNS, run);
+  const code = await readFile(join(dir, "attempts", attempt, "probe.mjs"), "utf8");
+  const broker = new MeasurementBroker({ runDir: dir, ledgerPath: join(RUNS, "live-ledger.json"), fixtureDir: join(ROOT, "test/fixtures/investigation"), liveAllowed: live, maxLiveLoads: 16, minGapMs: 10_000, resourcePolicy: "cross-origin-get" });
+  const resultsPath = join(dir, "attempts", attempt, "results.json");
+  const results: Record<string, unknown> = JSON.parse(await readFile(resultsPath, "utf8").catch(() => "{}"));
+  try {
+    for (const target of targets) {
+      if (target !== "live" && !FIXTURES.includes(target)) throw new Error(`unknown target ${target}`);
+      for (const viewport of viewports) {
+        if (!VIEWPORTS[viewport]) throw new Error(`viewport ${viewport}`);
+        const key = `${target}@${viewport}`;
+        const out = await runInSandbox(code, { target, viewport }, broker.forAttempt(`${attempt}-${target}-${viewport}`, { live: target === "live" }));
+        if (results[key]) results[`${key}#superseded-${Date.now()}`] = results[key]; // earlier runs are kept, not overwritten
+        results[key] = { ...out, target, viewport, url: target === "live" ? LIVE_URL : `fixture:${target}`, broker: BROKER_VERSION };
+        console.log(key, out.state, out.error ?? "", JSON.stringify(out.result).slice(0, 300));
+      }
+    }
+  } finally {
+    await broker.close();
+    await writeFile(resultsPath, JSON.stringify(results, null, 1));
+    await writeFile(join(dir, "attempts", attempt, `broker-log-${Date.now()}.json`), JSON.stringify(broker.log, null, 1));
+    await writeFile(join(dir, "provenance.json"), JSON.stringify({ sandbox: SANDBOX_VERSION, broker: BROKER_VERSION, model: MODEL, node: process.version }, null, 1));
+  }
+}
+
+const [run, stage, attempt, t, v] = process.argv.slice(2);
+if (!run || !stage || !attempt) { console.error("usage: m1.ts <run> design|revise <attempt> [from] | execute <attempt> <targets> <viewports> [--live]"); process.exit(2); }
+(stage === "accept" ? accept(run, attempt, t ?? "design") : stage === "execute" ? execute(run, attempt, t!.split(","), (v ?? "1440x900").split(","), process.argv.includes("--live")) : designer(run, attempt, stage as "design" | "revise", t))
+  .catch((e) => { console.error(String(e?.message ?? e)); process.exit(1); });

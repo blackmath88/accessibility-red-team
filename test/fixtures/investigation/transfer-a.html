@@ -1,0 +1,49 @@
+<!doctype html>
+<!-- Lokale Testseite – keine echte Website -->
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Bestellung – Bücherstube am Rhein</title>
+<style>
+html,body{margin:0;background:#eef0ec;font:16px/1.5 Arial,Helvetica,sans-serif;color:#1f2124}
+.site-header{background:#24476b;color:#fff;padding:14px 24px;font-weight:700;font-size:18px}
+.checkout{max-width:640px;margin:32px auto;padding:0 16px}
+.checkout h1{font-size:24px;line-height:32px;margin:0 0 16px}
+.card{background:#fff;border-radius:8px;padding:20px 24px;border:1px solid #d8dbd4}
+.card h2{font-size:18px;line-height:24px;margin:0 0 12px}
+.items{list-style:none;margin:0;padding:0}
+.items li{display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid #eceee9}
+.total{display:flex;justify-content:space-between;font-weight:700;padding:10px 0 4px}
+.small{font-size:13px;line-height:20px;color:#555;margin:0}
+.card + .card{position:relative}
+.card + .card::before{content:"";position:absolute;left:-1px;right:-1px;top:-43px;height:42px;background:#eef0ec}
+.field{margin-bottom:14px}
+.field label{display:block;font-weight:700;margin-bottom:4px}
+.field input{width:100%;box-sizing:border-box;padding:8px;border:1px solid #767676;border-radius:4px;font:inherit}
+.btn{background:#24476b;color:#fff;border:0;border-radius:4px;padding:10px 20px;font:inherit;font-weight:700}
+</style>
+</head>
+<body>
+<header class="site-header">Bücherstube am Rhein</header>
+<main class="checkout">
+  <h1>Bestellung prüfen</h1>
+  <section class="card" id="summary">
+    <h2>Ihr Warenkorb</h2>
+    <ul class="items">
+      <li><span>Stadtgeschichte Basel, Band 2</span><span>CHF 38.00</span></li>
+      <li><span>Notizbuch A5, liniert</span><span>CHF 12.50</span></li>
+    </ul>
+    <div class="total"><span>Total</span><span>CHF 50.50</span></div>
+    <p class="small" id="price-info">Preise inkl. 8,1 % MWST, zzgl. Versand CHF 9.00</p>
+  </section>
+  <section class="card" id="delivery">
+    <h2>Lieferadresse</h2>
+    <div class="field"><label for="name">Name</label><input id="name" type="text" autocomplete="off"></div>
+    <div class="field"><label for="street">Strasse und Nr.</label><input id="street" type="text" autocomplete="off"></div>
+    <div class="field"><label for="city">PLZ und Ort</label><input id="city" type="text" autocomplete="off"></div>
+    <button class="btn" type="button">Weiter zur Zahlung</button>
+  </section>
+</main>
+</body>
+</html>

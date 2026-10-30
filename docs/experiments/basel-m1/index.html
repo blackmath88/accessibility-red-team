@@ -1,0 +1,183 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Basel M1 Untersuchung</title>
+<style>
+:root{--bg:#fbfbf9;--fg:#1c1d1f;--muted:#5d6168;--line:#d9dad6;--card:#fff;--ok:#1d6b3a;--bad:#a1261e;--warn:#8a5a00;--accent:#2b4fa3;--todo:#8a5a00}
+@media (prefers-color-scheme:dark){:root:not([data-theme=light]){--bg:#141517;--fg:#e8e8e6;--muted:#a3a7ad;--line:#33363b;--card:#1c1e21;--ok:#6fcf8e;--bad:#f08a80;--warn:#e3b45a;--accent:#8fb0ff;--todo:#e3b45a}}
+:root[data-theme=dark]{--bg:#141517;--fg:#e8e8e6;--muted:#a3a7ad;--line:#33363b;--card:#1c1e21;--ok:#6fcf8e;--bad:#f08a80;--warn:#e3b45a;--accent:#8fb0ff;--todo:#e3b45a}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--fg);font:15px/1.5 system-ui,-apple-system,"Segoe UI",sans-serif}
+main{max-width:1080px;margin:0 auto;padding:24px 16px 64px}h1{font-size:1.6rem;margin:0 0 4px}h2{font-size:1.2rem;margin:36px 0 8px;border-top:1px solid var(--line);padding-top:20px}h3{font-size:1rem;margin:18px 0 6px}
+.lead,.small{color:var(--muted)}.small{font-size:.82rem}.tag{display:inline-block;border:1px solid var(--line);border-radius:4px;padding:0 6px;font-size:.8rem;color:var(--muted);margin:0 4px 4px 0}
+.todo{color:var(--todo);font-weight:600}.todo::before{content:"TODO · "}
+.case{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:14px 16px;margin:16px 0}
+.case dl{margin:0}.case dt{font-weight:700;margin-top:12px}.case dd{margin:2px 0 0}
+.tw{overflow-x:auto;border:1px solid var(--line);border-radius:6px;background:var(--card)}table{border-collapse:collapse;width:100%;font-size:.85rem}th,td{padding:6px 8px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}
+figure{margin:10px 0}figcaption{font-size:.8rem;color:var(--muted)}
+.diagram{display:block;width:100%;max-width:420px;height:auto}
+.st rect{fill:var(--card);stroke-width:2}.st .lbl{fill:var(--fg);font:600 14px system-ui,sans-serif}.st .sub{fill:var(--muted);font:12px system-ui,sans-serif}
+.st-todo rect{stroke:var(--todo);stroke-dasharray:2 4}.st-impl rect{stroke:var(--ok)}.st-prop rect{stroke:var(--muted);stroke-dasharray:7 5}
+.arr{stroke:var(--muted);stroke-width:1.5;fill:none}#ah path{fill:var(--muted)}
+.legend{list-style:none;padding:0;display:flex;flex-wrap:wrap;gap:8px 18px;font-size:.85rem}.legend span{display:inline-block;width:22px;height:12px;border:2px solid;border-radius:3px;margin-right:6px;vertical-align:-1px}
+.legend .lg-impl{border-color:var(--ok)}.legend .lg-prop{border-color:var(--muted);border-style:dashed!important}
+a{color:var(--accent)}a:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+.shots{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:12px;margin:12px 0}
+.shots figure{background:var(--card);border:1px solid var(--line);border-radius:6px;padding:8px;margin:0}
+.shots img{display:block;max-width:100%;height:auto;image-rendering:pixelated;border:1px solid var(--line);background:#fff}
+.st-ok,.st-bad,.st-open{display:inline-block;font-size:.78rem;font-weight:700;border-radius:4px;padding:0 6px;border:1px solid}
+.st-ok{color:var(--ok);border-color:var(--ok)}.st-bad{color:var(--bad);border-color:var(--bad)}.st-open{color:var(--warn);border-color:var(--warn)}
+code{font-size:.85em;overflow-wrap:anywhere}
+</style>
+</head>
+<body><main>
+<h1>Basel M1: adaptive Untersuchung des Pflichtfeld-Hinweises</h1>
+<p class="lead">Privater Arbeitsbericht zu Draft-PR #55 (Meilenstein M1). Keine Konformitätsaussage, keine Freigabe, keine Kontaktaufnahme.</p>
+<p><span class="tag">Code-Commit a45a2d0</span><span class="tag">Chromium headless, DPR 1</span><span class="tag">8 von 16 Live-Ladevorgängen</span><span class="tag">Mistral M1: USD 0.0188</span><span class="tag">lokale Mechanismus-Kopien sind kein Basel-Beleg</span></p>
+
+<h2 id="ueberblick">Überblick</h2>
+<p><strong>Frage:</strong> Warum wirkt der Pflichtfeld-Hinweis «* muss ausgefüllt werden» auf <code>www.bs.ch/apps/zonensuche</code> fast unsichtbar (gerendert ≈1,12:1), obwohl die berechnete Farbe #777 auf Weiss 4,48:1 ergibt?</p>
+<p><strong>Antwort:</strong> Bei 1440 und 1280 px Breite liegt die Überschrift «Abfuhrzonensuche» (<code>h3</code>, <code>sticky</code>, <code>z-8</code>, Hintergrund Weiss mit 90 % Deckung) im statischen Layout <em>über</em> dem Hinweis. Rechnerisch ergibt das 0,9·255 + 0,1·119 ≈ 241, gemessen wurde 242 – auf allen Scrollpositionen, im ursprünglichen Lauf, in der frischen Wiederholung und in der handgeschriebenen Gegenprobe. Bei 390 px gibt es diese Überlagerung nicht: frei gemessen erreicht der Hinweis seine volle Farbe (119). Dort verdeckt beim Laden aber der Cookie-Banner den Hinweis vollständig.</p>
+<p class="small">Die Vermutung aus PR #53 («Scroll-Zustand») war falsch: Der Hinweis ist schon im geladenen Zustand blass.</p>
+
+<h2 id="loop">Loop: implementiert vs. vorgeschlagen</h2>
+<figure>
+<svg class="diagram" viewBox="0 0 360 586" role="img" aria-labelledby="loop-title loop-desc">
+  <title id="loop-title">Loop: implementiert vs. vorgeschlagen</title>
+  <desc id="loop-desc">Neun Schritte von Entdecken bis Synthese; acht Schritte implementiert, Entdecken nur vorgeschlagen.</desc>
+  <defs><marker id="ah" viewBox="0 0 10 10" refX="5" refY="8" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0 0 L10 0 L5 10 z" transform="rotate(-90 5 5)"/></marker></defs>
+  <g id="step-discover" class="st st-prop" data-step="discover">
+    <rect x="20" y="10" width="320" height="46" rx="6"/>
+    <text x="36" y="30" class="lbl">1. Entdecken</text>
+    <text x="36" y="47" class="sub">vorgeschlagen · Scope aus PR #54, nicht automatisiert</text>
+  </g>
+  <path class="arr" d="M180 58 V70" marker-end="url(#ah)"/>
+  <g id="step-capture" class="st st-impl" data-step="capture">
+    <rect x="20" y="74" width="320" height="46" rx="6"/>
+    <text x="36" y="94" class="lbl">2. Erfassen (Baseline)</text>
+    <text x="36" y="111" class="sub">implementiert · Baseline aus PR #53, eingefroren</text>
+  </g>
+  <path class="arr" d="M180 122 V134" marker-end="url(#ah)"/>
+  <g id="step-hypothesize" class="st st-impl" data-step="hypothesize">
+    <rect x="20" y="138" width="320" height="46" rx="6"/>
+    <text x="36" y="158" class="lbl">3. Hypothesen bilden</text>
+    <text x="36" y="175" class="sub">implementiert · Mistral, 3 Hypothesen je Versuch</text>
+  </g>
+  <path class="arr" d="M180 186 V198" marker-end="url(#ah)"/>
+  <g id="step-generate" class="st st-impl" data-step="generate">
+    <rect x="20" y="202" width="320" height="46" rx="6"/>
+    <text x="36" y="222" class="lbl">4. Probe generieren</text>
+    <text x="36" y="239" class="sub">implementiert · 6 Entwürfe, 5 verschiedene Codes</text>
+  </g>
+  <path class="arr" d="M180 250 V262" marker-end="url(#ah)"/>
+  <g id="step-critic" class="st st-impl" data-step="critic">
+    <rect x="20" y="266" width="320" height="46" rx="6"/>
+    <text x="36" y="286" class="lbl">5. Kritiker prüft Probe</text>
+    <text x="36" y="303" class="sub">implementiert · frische Claude-Kontexte (a1, a2, a5)</text>
+  </g>
+  <path class="arr" d="M180 314 V326" marker-end="url(#ah)"/>
+  <g id="step-execute" class="st st-impl" data-step="execute">
+    <rect x="20" y="330" width="320" height="46" rx="6"/>
+    <text x="36" y="350" class="lbl">6. Sandbox-Ausführung via Broker</text>
+    <text x="36" y="367" class="sub">implementiert · bwrap-Sandbox + Lese-Broker</text>
+  </g>
+  <path class="arr" d="M180 378 V390" marker-end="url(#ah)"/>
+  <g id="step-reproduce" class="st st-impl" data-step="reproduce">
+    <rect x="20" y="394" width="320" height="46" rx="6"/>
+    <text x="36" y="414" class="lbl">7. Frisch reproduzieren</text>
+    <text x="36" y="431" class="sub">implementiert · neuer Prozess und Browser</text>
+  </g>
+  <path class="arr" d="M180 442 V454" marker-end="url(#ah)"/>
+  <g id="step-judge" class="st st-impl" data-step="judge">
+    <rect x="20" y="458" width="320" height="46" rx="6"/>
+    <text x="36" y="478" class="lbl">8. Beurteilen</text>
+    <text x="36" y="495" class="sub">implementiert · frischer Claude-Kontext</text>
+  </g>
+  <path class="arr" d="M180 506 V518" marker-end="url(#ah)"/>
+  <g id="step-synthesis" class="st st-impl" data-step="synthesis">
+    <rect x="20" y="522" width="320" height="46" rx="6"/>
+    <text x="36" y="542" class="lbl">9. Synthese / Fallkarte</text>
+    <text x="36" y="559" class="sub">implementiert · Koordinator schreibt Bericht</text>
+  </g>
+</svg>
+<figcaption>Durchgezogen: in M1 implementiert und gelaufen. Gestrichelt: vorgeschlagen, nicht Teil dieses Laufs.</figcaption>
+</figure>
+<ul class="legend">
+  <li><span class="lg-impl"></span>implementiert</li>
+  <li><span class="lg-prop"></span>vorgeschlagen / zurückgestellt</li>
+</ul>
+
+<h2 id="fall-hinweis">Fallkarte: Pflichtfeld-Hinweis</h2>
+<article class="case" id="case-hint">
+<h3>«* muss ausgefüllt werden» – www.bs.ch/apps/zonensuche</h3>
+<div class="shots">
+<figure><img src="img/live-1440-hint.png" width="298" height="36" alt="Hinweistext sehr blass, fast weiss auf weiss"><figcaption>Live 1440×900, frische Wiederholung (c1-replay): dunkelstes Pixel 242.</figcaption></figure>
+<figure><img src="img/fixture-overlay-hint.png" width="268" height="28" alt="Lokale Kopie mit Überlagerung: ebenso blass"><figcaption>Lokale Kopie <em>mit</em> 90 %-weisser Überschrift darüber: 242.</figcaption></figure>
+<figure><img src="img/fixture-no-overlay-hint.png" width="268" height="28" alt="Lokale Kopie ohne Überlagerung: gut lesbares Grau"><figcaption>Gleiche Kopie, Überschrift transparent: 119 (volles #777).</figcaption></figure>
+<figure><img src="img/fixture-opacity-hint.png" width="268" height="28" alt="Lokale Kontrolle mit Deckkraft 0,12: ebenfalls blass"><figcaption>Gegenkontrolle: blass aus anderem Grund (Eltern-Deckkraft 0,12): 238, kein Überlagerer im Stapel – die Probe unterscheidet die Ursachen.</figcaption></figure>
+<figure><img src="img/live-390-banner-over-hint.png" width="298" height="30" alt="An der Stelle des Hinweises ist Bannertext auf grünem Grund zu sehen"><figcaption>Live 390×844 beim Laden: an der Hinweisposition liegt der fixierte Cookie-Banner (z 99999). Diese Messung von a2 war deshalb ungültig.</figcaption></figure>
+<figure><img src="img/live-390-unoccluded-hint.png" width="298" height="30" alt="Hinweistext in normalem Grau, gut lesbar"><figcaption>Live 390×844 nach Scrollen über den Banner (Gegenprobe c1): Hinweis zuoberst, dunkelstes Pixel 119.</figcaption></figure>
+</div>
+<p class="small">Ausschnitte 2× vergrössert (Pixel unverändert, ohne Glättung).</p>
+<dl>
+  <dt>Vorher</dt><dd>PR #53 fand den Widerspruch (berechnet 4,48:1, Augenschein-Ausschnitt ≈1,12:1) und eine klebende Überschrift mit <code>bg-white/90</code> in derselben Zeile; Ursache offen, vermutet wurde ein Scroll-Zustand.</dd>
+  <dt>KI-Beitrag</dt><dd>
+    <p>Mistral (<code>mistral-small-2603</code>, Temperatur 0) entwarf in jedem Versuch drei konkurrierende Hypothesen und ein ausführbares Probe-Modul; Claude prüfte als frischer Kritiker und Richter.</p>
+    <div class="tw"><table>
+    <thead><tr><th>Versuch</th><th>Code (SHA-256)</th><th>Was geschah</th></tr></thead>
+    <tbody>
+    <tr><td>a1 Entwurf</td><td><code>2c506e05…</code></td><td>Lief auf keiner Kopie: Broker lehnte gebrochene Koordinaten ab. Kritiker: falsche Messposition, Hintergrund-Alpha statt Deckkraft prüfen.</td></tr>
+    <tr><td>a2 Revision</td><td><code>242c3c1a…</code></td><td>Entscheidend für Desktop: Stapel unter dem Hinweis, Pixel auf 4 Kopien und live 1440/1280; Wiederholung bei 390 stiess zufällig auf den Banner. Kritiker: 390-Werte ungültig, NaN-Scroll, Probe überschreibt Broker-Feld.</td></tr>
+    <tr><td>a3 Revision</td><td><code>242c3c1a…</code></td><td>Code byte-gleich mit a2 (nur Hypothesentext geändert) – Stillstand.</td></tr>
+    <tr><td>a4 Revision</td><td><code>8a784cf8…</code></td><td>Nur die ungültige 5. Scrollposition entfernt; Kernänderung des Kritikers ignoriert.</td></tr>
+    <tr><td>a5 Revision</td><td><code>f3655729…</code></td><td>Kritiker-Änderungen als Pflicht übergeben. Die Begründung behauptet sie umgesetzt, der Code tut es nicht: Banner-Prüfung kann nie greifen (falsche Datenform), Scroll-Funktion wird nie aufgerufen, Überschreiben bleibt. Nicht ausgeführt.</td></tr>
+    <tr><td>a6 Revision</td><td><code>1b9e6d14…</code></td><td>Mit den Befunden des Richters zu a5 als Kritik. Näher dran (prüft <code>fixed</code> über dem Hinweis, rechnet mit aktuellem Scroll, überschreibt nichts mehr), übergibt der Prüfung aber das ganze Punkt-Array statt eines Stapels – die Verdeckung wird wieder nie erkannt. An der neuen lokalen Kopie mit fixiertem Banner gescheitert (misst Bannerpixel 232), daher <strong>nicht live</strong> ausgeführt. Damit ist das Limit von 6 Entwürfen erreicht.</td></tr>
+    <tr><td>c1 Gegenprobe</td><td><code>8669afea…</code></td><td><strong>Vom Koordinator handgeschrieben, nicht KI-generiert</strong>; gleiche Sandbox und gleicher Broker. Lieferte die einzige gültige 390-Messung. Auch hier lief die erste Fassung mit demselben Formfehler wie a5 (<code>.results</code>) auf den lokalen Kopien an und wurde vor dem Live-Lauf korrigiert; die API-Beschreibung für den Designer war in diesem Punkt korrekt.</td></tr>
+    </tbody></table></div>
+    <p class="small">Code und Vorschläge: <a href="evidence/">evidence/</a> (Vorschläge a1–a6, Probes a1/a2/a4/a5/a6, Gegenprobe c1, Kritiken, Urteil, Messübersicht).</p>
+  </dd>
+  <dt>Messung</dt><dd>
+    <p>Generierter Code lief in einer bwrap-Sandbox ohne Netz, Dateisystem, Umgebung und Kindprozesse; einzige Fähigkeit war ein Lese-Broker mit acht festen Operationen (öffnen, Viewport, Text finden, Selektor, Elemente an Punkt, Scrollen, Pixel, Screenshot) – keine Klicks, Eingaben oder DOM-Änderungen. Live nur die eine freigegebene URL, mindestens 10 s Abstand, einzeln, jeder Ladevorgang vorab im Ledger.</p>
+    <ul>
+      <li><strong>Desktop live</strong> (a2, a2-replay, c1, c1-replay): zuoberst an allen Hinweis-Punkten <code>h3 … sticky z-8</code>, Hintergrund <code>oklab(1 0 0 / 0.9)</code>, Rechteck 310,365 819×48 überdeckt den Hinweis 951,383 149×18; Pixel min = p05 = 242 bei Scroll 0/8/24/48; Hintergrund daneben 255.</li>
+      <li><strong>Kontrollen</strong>: Überlagerung 242 · ohne Überlagerung 119 · sauber 119 · Eltern-Deckkraft 0,12 → 238 ohne Überlagerer · fixierter Banner (neu, nach dem Mobil-Befund): c1 erkennt ihn und misst nach Scrollen 119, a6 erkennt ihn nicht.</li>
+      <li><strong>Mobil live</strong> (c1, c1-replay): beim Laden fixierter Banner (0,317 390×527, z 99999) über dem Hinweis; nach Scroll auf 258 ist der Hinweis zuoberst, min 119.</li>
+      <li><strong>Frische Wiederholung</strong>: neuer Prozess und Browser, gleicher Code-Hash; alle Werte reproduziert.</li>
+      <li><strong>Ungültig/verworfen</strong>: a1 (keine Daten), 5. Scrollposition in a2 (abgelehnt), Kopie-«Scrolls» (Seite nicht scrollbar), 390-Pixel aus a2 (Banner), von der Probe überschriebene <code>effectiveOpacity</code>.</li>
+    </ul>
+  </dd>
+  <dt>Ergebnis</dt><dd>
+    <p><span class="st-ok">gestützt</span> Halbtransparente Überschrift überlagert den Hinweis – bei 1440 und 1280 px, statisch (kein «Kleben» nötig).<br>
+    <span class="st-bad">verworfen</span> Kanten-/Ausschnittfehler · Eltern-Deckkraft · Scroll-/Clip-Zustand (als Ursache der Blässe).<br>
+    <span class="st-open">Nebenbefund</span> Bei 390 px verdeckt der Cookie-Banner den Hinweis beim Laden ganz; die Blässe tritt dort nicht auf.</p>
+    <p>Gerenderter Kontrast am Desktop aus den gemessenen Grauwerten: (255 → 242) ≈ <strong>1,12:1</strong> statt 4,48:1. Für die Aufgabe heisst das: Wer am Desktop ein Formular ausfüllt, sieht die Erklärung des Sterns kaum.</p>
+    <p class="small">Unsicherheit: nur Chromium, DPR 1; nicht geprüft sind Firefox/WebKit, hochauflösende Bildschirme, Breiten zwischen 390 und 1280 px, Desktop mit geschlossenem Banner und tiefere Scrollpositionen. Was Menschen mit Sehbehinderung tatsächlich wahrnehmen, wurde nicht untersucht.</p>
+  </dd>
+  <dt>Verantwortung &amp; Standard</dt><dd>Zuständigkeit laut Impressum der Seite: Inhalt bei der Webredaktion des Kantons, Betrieb bei IT BS bzw. dem genannten Dienstleister; welche Stelle die Komponente verantwortet, ist unbestätigt. Als Massstab nennt der Kanton WCAG 2.1 AA bzw. eCH-0059; einschlägig wäre Erfolgskriterium 1.4.3 (Kontrast). Dieser Bericht ist eine technische Messung, kein Prüfurteil.</dd>
+  <dt>Ergebnis vs. Baseline</dt><dd>Neu: ein nachgewiesener Mechanismus mit rechnerischer Übereinstimmung (241,4 vs. 242), Begrenzung auf Desktop-Breiten, ein zusätzlicher Banner-Befund und die widerlegte Scroll-Vermutung. Aufwand: 6 Designer-Aufrufe (USD 0,0188; gesamt mit früheren Versuchen USD 0,0914 von 5), 8 Live-Ladevorgänge, 3 Kritiken, 1 Urteil. Ehrliche Bilanz der KI-Anpassung: Eine Revision (a2) brachte den Durchbruch für Desktop; die vier folgenden stagnierten, behaupteten Änderungen, die der Code nicht enthielt, oder scheiterten an der lokalen Kopie. Die Mobil-Antwort stammt aus der handgeschriebenen Gegenprobe. Ohne Kritiker, Richter, lokale Kontrollen und Gegenprobe wären der ungültige Mobilwert und die falschen Selbstauskünfte durchgerutscht – genau diese Prüfschritte sind der Nutzen des Loops, nicht der Designer allein.</dd>
+  <dt>Nächster Schritt</dt><dd>Mit dem Restbudget (8 Ladevorgänge) prüfen, ob der Effekt in Firefox und WebKit und bei DPR 2 besteht; erst danach einen Befund für die zuständige Redaktion entwerfen – Versand nur nach ausdrücklicher Freigabe.</dd>
+</dl>
+</article>
+
+<h2 id="integritaet">Integritätsmanifest</h2>
+<p class="small">Rohdaten (alle Versuche inkl. Fehlläufe, Broker-Protokolle, Ablehnungen, Ausschnitte, Designer-Ein- und Ausgaben, Ledger) liegen ausserhalb von Git im lokalen Archiv <code>basel-m1-archive.tar.gz</code>.</p>
+<div class="tw"><table>
+<thead><tr><th>Artefakt</th><th>Pfad</th><th>SHA-256 (Anfang)</th></tr></thead>
+<tbody>
+<tr><td>Sandbox</td><td><code>src/experimental/investigation/sandbox.ts</code></td><td><code>538bafd74593cc01</code></td></tr>
+<tr><td>Bootstrap</td><td><code>src/experimental/investigation/bootstrap.mjs</code></td><td><code>dc709ab1d7833ff6</code></td></tr>
+<tr><td>Broker</td><td><code>src/experimental/investigation/broker.ts</code></td><td><code>f2ffd26f48fc2336</code></td></tr>
+<tr><td>Loop-Stufen</td><td><code>src/experimental/investigation/m1.ts</code></td><td><code>65cccc10292f9716</code></td></tr>
+<tr><td>Probe a1 / a2 (=a3) / a4 / a5 / a6</td><td><code>evidence/a*-probe.mjs</code></td><td><code>2c506e05</code> / <code>242c3c1a</code> / <code>8a784cf8</code> / <code>f3655729</code> / <code>1b9e6d14</code></td></tr>
+<tr><td>Gegenprobe c1 (handgeschrieben)</td><td><code>evidence/c1-countertest.mjs</code></td><td><code>8669afea8c3ca715</code></td></tr>
+<tr><td>Kritik a1 / a2 / a5 (aus dem Urteil)</td><td><code>evidence/a1-critic.json</code>, <code>a2-critic.json</code>, <code>a5-critic.json</code></td><td><code>3c3366ae</code> / <code>4650a18a</code> / <code>845f4003</code></td></tr>
+<tr><td>Urteil</td><td><code>evidence/judgment.json</code></td><td><code>1616bd4c376ed9ef</code></td></tr>
+<tr><td>Messübersicht</td><td><code>evidence/measurements.json</code></td><td><code>f8c211b4e56540a8</code></td></tr>
+<tr><td>Live-Ledger (8 Ladevorgänge)</td><td><code>evidence/live-ledger.json</code></td><td><code>dd852eda7d609103</code></td></tr>
+<tr><td>Rohdaten-Archiv</td><td>ausserhalb von Git</td><td><code>f24d404b0bc2cd8d</code> (vollständig im README)</td></tr>
+</tbody></table></div>
+<p class="small">Die Live-Läufe (a2, c1) liefen vor der Härtung nach dem Code-Review (a45a2d0), nacheinander mit je einem Öffnen; nach der Härtung gab es keinen Live-Lauf. Offene Review-Punkte siehe README.</p>
+<p class="small">Modelle: Designer <code>mistral-small-2603</code> (zurückgemeldet wie angefragt), Kritiker, Richter, Prüfer und Fixture-Worker <code>claude-opus-5-5</code> (Fixture-Worker über Orca, Modell aus dem Transkript geprüft). Lokale Kopien: <code>test/fixtures/investigation/</code> – illustrative Mechanismus-Tests, kein Beleg für die tatsächliche Ursache bei Basel.</p>
+</main></body>
+</html>

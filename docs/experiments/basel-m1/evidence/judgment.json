@@ -1,0 +1,37 @@
+{
+ "judgeModel": "claude-opus-5-5",
+ "context": "fresh Claude subagent, read-only",
+ "perExplanation": [
+  {"id": "A_antialiasing_crop_artefact", "status": "rejected", "scope": "live 1440x900, 1280x800, 390x844; Chromium headless, DPR 1",
+   "evidence": "Same 12px #777 text without a cover reaches the full colour: no-overlay/clean-control min 119, p05 132 (a2/results.json); live 390x844 unoccluded (scrollY 258) min 119, p05 126 (c1, c1-replay). Live desktop floor is 242 at every scroll (a2, a2-replay, c1), which matches the composite 0.9*255+0.1*119=241.4, not AA spread. The faintness reproduces in fresh renders, so the earlier crop was not the cause."},
+  {"id": "B_translucent_sticky_heading_overlap", "status": "supported", "scope": "live 1440x900 and 1280x800 only (scrollY 0-48); not at 390x844",
+   "evidence": "At all 3 points and all scrolls, stack[0] is h3.text-xl, position sticky, z 8, bg oklab(1 0 ~0 / 0.9), rect 310,365,819x48. It covers span.text-xs.text-gray-600 at 951,383,149x18 (stack[1]). Pixels: min=p05=242, histogram all bin 15. Fixtures match: overlay 242 vs no-overlay 119 (a2, c1). The h3 rect moves with scroll (y 365->317 for scrollY 0->48), so this is a static layout overlap, not sticking. At 390x844 the span is topmost (hintIndex 0, c1 pass 1) and renders min 119."},
+  {"id": "C_ancestor_opacity", "status": "rejected", "scope": "live 1440x900, 1280x800, 390x844",
+   "evidence": "Broker nonDefaultAncestors is [] for the live hint in all runs (a2, a2-replay). The detector works: opacity-control lists hint-wrapper opacity 0.12 and renders min 238 (expected 238.7). The probe-reported effectiveOpacity is invalid (see invalid), but nonDefaultAncestors comes straight from the broker."},
+  {"id": "D_scroll_or_clipping_state", "status": "rejected", "scope": "live desktop, scrollY 0/8/24/48 (and c1 scrollY 0)",
+   "evidence": "The hint rect stays fully in the viewport (y 383->335, innerHeight 900/800). Pixels are identical (min 242) at every scroll. Scrolling changes nothing at desktop. At 390 the scroll state matters only through banner occlusion (E). Scrolls >48px at desktop, where the h3 could actually stick, were not tested."},
+  {"id": "E_fixed_consent_banner_occlusion_narrow", "status": "rejected", "scope": "as the cause of the faint (~242) rendering; the occlusion itself is confirmed at 390x844, scrollY 0-48",
+   "evidence": "a2-replay/c1 at 390x844: div.fixed.bottom-0 z-[99999] bg rgb(221,236,222), rect 0,317,390x527, sits above the span (span stack index 4). It hides the hint behind opaque green with dark text (clip min 51, max 232). It does not produce light-grey faintness. Unoccluded at scrollY 258, the hint renders min 119. At desktop no fixed element appears in any hint stack. The reported ~242 floor matches the desktop overlay composite, not a banner crop."}
+ ],
+ "aiContribution": "Mistral (designer): a1 yielded no data (unrounded points, e.g. x=985+134/4, failed broker validation; all 4 fixtures errored). a2, after the Claude critic's revision, produced the decisive desktop evidence: covering stacks, overlay/no-overlay/opacity-control contrast, a live scroll sweep at 1440/1280, and the 390 replay that exposed the banner (by accident; its pixels were invalid). a3 code is byte-identical to a2 (sha 242c3c..). a4 only drops the 5th scroll position; its other 'changes' are hypothesis text. a5's revisionNote overclaims. isOccludedByBanner reads elementsFromPoint.results?.[0], but the broker returns an array, so it is always false. It also checks only stack[0], while the banner was at stack[3]. computeSafeScrollY is referenced only in that unreachable branch (it also omits the current scrollY, a latent bug that is probably harmless here). effectiveOpacity is still overwritten, contrary to claim 3. a3-a5 were never executed. Coordinator countertest c1 (hand-written): it replicated the desktop result in a fresh process (identical artifact sha256) and supplied the only valid 390 hint measurement (scrollY 258, span topmost, min 119), which shows the overlap is desktop-only. It also added the background reference (255 above the hint).",
+ "invalid": [
+  "a1 all fixtures: errored, no measurements.",
+  "a2 5th scroll position in every run: scrollTo denied (packet.viewport is a string -> NaN).",
+  "a2 fixture scrolls 8/24/48: docHeight 900 = innerHeight, actual scrollY 0; these are repeats, not a sweep.",
+  "hint.effectiveOpacity in a2/a2-replay (and a5 code): probe overwrote the broker value with style.opacity; opacity-control shows 1 despite a 0.12 ancestor.",
+  "a2-replay live@390x844 pixels at all 4 scrolls: the clip measures the banner (min 51, max 232), not the hint.",
+  "c1 fixtures @390x844: errored (s[0] undefined); likely because the absolutely positioned fixture hint (x~985) lies outside a 390px viewport (inference). Fixtures are illustrative only (README)."
+ ],
+ "uncertainties": [
+  "What users perceive, and the scroll/viewport state of the original screenshot, are unknown.",
+  "Only Playwright Chromium headless at DPR 1 was tested. Firefox/WebKit, DPR>1, zoom and forced-colors were not.",
+  "Banner-dismissed state was not tested at desktop (no clicks). The banner does not cover the desktop hint, but other consent-dependent layout changes were not checked.",
+  "Widths between 390 and 1280 (md/lg breakpoints) were not tested, so the width at which the overlap starts is unknown.",
+  "Desktop scrolls beyond 48px (where the h3 may actually stick and move relative to the hint) were not tested.",
+  "Pixel stats are greyscale. The colour channels of the oklab white/0.9 composite were not checked separately (both colours are neutral, so the impact is small).",
+  "The live site may change after these runs."
+ ],
+ "renderedContrastDesktop": {"value": "1.12:1 (242 vs 255); theoretical composite 241.4 vs 255 = 1.125:1; supports saying ~1.1:1 for Chromium, DPR 1, 1440x900/1280x800",
+   "method": "WCAG relative luminance of the darkest glyph pixel (min=p01=p05=242, c1 and a2 live) against the background measured 8px above the hint (min=max=255, c1 backgroundAbove). Cross-check: unoccluded glyph cores reach exactly 119 (#777 -> 4.48:1), so the minimum is a valid proxy for the text colour."},
+ "oneLineConclusion": "At desktop (1440x900, 1280x800; Chromium, DPR 1) the hint is faint (~1.12:1) because a 90%-white h3 overlaps it in the static layout. The cause is not antialiasing, ancestor opacity or scroll state. At 390x844 there is no overlap: the hint renders at #777 when unoccluded and is only hidden by the opaque cookie banner."
+}

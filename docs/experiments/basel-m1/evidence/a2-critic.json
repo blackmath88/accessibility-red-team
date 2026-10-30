@@ -1,0 +1,37 @@
+{
+ "criticModel": "claude-opus-5-5",
+ "context": "fresh Claude subagent, read-only",
+ "verdict": "h2 supported at desktop (1440/1280); 390x844 invalid (cookie banner); revise for mobile only",
+ "summary": "Desktop: live min 242 equals overlay fixture 242 and the calculated 0.9*255+0.1*119=241.4. Topmost at every hint point is sticky h3 z8 with 90%-alpha white bg. no-overlay min 119, opacity-control 238. h2 supported, h1 rejected, h3 irrelevant. Invalid: all 390x844 values (the clip shows the fixed cookie banner, not the hint), the 5th scroll position (denied, NaN), fixture 'sweep' (docHeight 900, never scrolled). Probe overwrote broker effectiveOpacity 0.12 with 1.",
+ "perHypothesis": [
+  {
+   "id": "h1_antialiasing_artefact",
+   "status": "rejected",
+   "evidence": "Same 12px #777 text without the cover renders darker: a2/results.json no-overlay@1440x900 pixels min 119, p05 132, below[200]=389. Prediction 'max<=245' fails (max 255 everywhere). Live floor 242 equals the alpha-composite value, not an AA spread. Own falsifier (any px<=220) met in no-overlay and clean-control."
+  },
+  {
+   "id": "h2_sticky_overlap_translucent",
+   "status": "supported (desktop); mechanism = static layout overlap, not sticking",
+   "evidence": "live@1440x900 and @1280x800 (a2 + a2-replay identical): elementsFromPoint stack[0]=h3.text-xl sticky z8 bg oklab(1 0 ~0 / 0.9), rect 310,365,819x48 fully covers span 951,383,149x18; pixels min/p05 242, histogram all in bin 15. overlay fixture: same stack, min 242; no-overlay min 119. As written the falsifier asks for 'opacity<1'; alpha is in backgroundColor, opacity is 1. Fix the wording, not the conclusion. The h3 rect moves with scroll (y 365->317 for scrollY 0->48), so it never stuck. The 'under the band' state was never reached, and none is needed."
+  },
+  {
+   "id": "h3_scroll_state_dependent_clipping",
+   "status": "not supported / irrelevant",
+   "evidence": "Desktop hint rect fully inside viewport at all scrolls (y 335..401, innerHeight 900/800) and faint at all of them. At 390x844 the hint is geometrically in the viewport but occluded by an opaque fixed banner. That is occlusion, not clipping, and it hides the hint rather than making it faint. Prediction for the next run: at 390 no h3 is in the stack above the span (row uses -mt-20, not md:-mt-40). Measured above the banner, the hint should then render near plain #777 (min ~119). If so, that confirms the overlap is desktop-only."
+  }
+ ],
+ "invalidMeasurements": [
+  "a2-replay live@390x844 all 4 scrolls: stack[0..3]=p.text-lg/.../div.fixed.bottom-0.z-[99999] bg rgb(221,236,222), rect 0,317,390x527, text 'Zu statistischen Zwecken...' (cookie banner); span is stack[4]. Pixel clip 37,409,149x15 (min 51, max 232, no 255) measures banner text on green, not the hint. Banner rect stays at y317 while scrollY changes, so it is fixed.",
+  "5th scroll position in every run: scrollTo denied 'needs integer y 0..20000'. packet.viewport is the string '1440x900', so viewport.innerHeight is undefined and the value is NaN. Only 6 denials in total (one per run), all this one.",
+  "Fixture scrolls 8/24/48: docHeight 900 = innerHeight, actual scrollY 0. These are 4 repeats of one state, not a sweep. The fixture sticky h3 is confined to its grid cell and cannot stick.",
+  "hint.effectiveOpacity in all runs: probe-computed, not the broker value (see probeDefects)."
+ ],
+ "probeDefects": [
+  "{...hint, effectiveOpacity: parseFloat(hint.style.opacity)} overwrites broker DESCRIBE effectiveOpacity (ancestor product). opacity-control reports 1 although nonDefaultAncestors shows hint-wrapper opacity 0.12. Never overwrite broker fields; use new names.",
+  "Uses packet.viewport as an object (string) -> NaN scroll. Read innerHeight from broker 'viewport'.",
+  "Only stack[0] is meaningful, and the probe does no occluder classification. It never checks whether the span is stack[0], and it ignores fixed elements and banner rects.",
+  "The pixel clip is the span box: glyph pixels are mixed with background and with whatever covers it. No reference clip (unoccluded #777, background-only) and no check that the clip's max pixel is the expected background (255).",
+  "Hypothesis predictions are mis-specified: h1 'max<=245', h2 'opacity<1' instead of background alpha."
+ ],
+ "mostImportantChange": "Make the hint's occluder explicit and avoid it by scrolling, with no clicks. After findText, call elementsFromPoint on the hint points. If stack[0] is not the span, read the covering element's rect from the stack (e.g. the fixed banner at y317). Then scrollTo an integer y that puts the hint in the free band above the banner top, e.g. (scrollY + hint.y) - floor((bannerTop - hint.h)/2), clamped to 0..docHeight-innerHeight. Re-run elementsFromPoint and take pixels only when the span (or an element with bg alpha<1) is stack[0]. Otherwise log 'occluded' and skip pixels."
+}
