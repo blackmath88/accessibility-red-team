@@ -27,6 +27,7 @@ const BUDGET: TrialBudget = { maxCalls: 1, maxInputTokens: 30_000, maxOutputToke
 const RUNS = join(REPO_ROOT, "runs/ail-transfer");
 const TARGETS = ["transfer-a", "transfer-b"];
 const sha = (s: string) => createHash("sha256").update(s).digest("hex");
+const shaBytes = (b: Buffer) => createHash("sha256").update(b).digest("hex");
 const exists = (p: string) => access(p).then(() => true, () => false);
 const frozen = async (dir: string) => (await exists(join(dir, "revealed.json"))) || (await readdir(dir).catch(() => [] as string[])).some((f) => CONCLUSION_FILE.test(f));
 
@@ -220,7 +221,10 @@ async function revealLocked(dir: string, keyPath: string) {
   // Every recorded attempt file is hashed too, so later edits to proposals, results or gate reports are detectable.
   const recorded: Record<string, string> = {};
   for (const a of await readdir(join(dir, "attempts")).catch(() => [] as string[]))
-    for (const f of await readdir(join(dir, "attempts", a))) recorded[`attempts/${a}/${f}`] = sha(await readFile(join(dir, "attempts", a, f), "utf8"));
+    for (const f of await readdir(join(dir, "attempts", a))) recorded[`attempts/${a}/${f}`] = shaBytes(await readFile(join(dir, "attempts", a, f)));
+  // Broker screenshots too, hashed as bytes; subdirectories are skipped.
+  for (const f of await readdir(join(dir, "artifacts"), { withFileTypes: true }).catch(() => []))
+    if (f.isFile()) recorded[`artifacts/${f.name}`] = shaBytes(await readFile(join(dir, "artifacts", f.name)));
   const body = JSON.stringify({ revealedAt: new Date().toISOString(), frozenBeforeReveal, recordedAttemptFiles: recorded, keySha256: sha(await readFile(keyPath, "utf8")) }, null, 1);
   await writeFile(join(dir, "revealed.json"), body, { flag: "wx" });
   console.log(body);
