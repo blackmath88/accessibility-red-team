@@ -1484,7 +1484,7 @@
   "status": "completed",
   "note": "Separate blind local case t1 (two neutral fixture pages, one defective, one clean control; independent fixture author; key sealed until the conclusion was frozen). One case demonstrates transfer only; it is not a benchmark or proof of general reliability. Not M1 evidence; no public site was contacted.",
   "summary": "Partially correct. The frozen final conclusion names the defective page (transfer-a) and separates it from the control with measurements, but misattributes the mechanism. The cheap designer alone produced only a coarse boolean split: its one revision failed the gate, a blind Claude escalation wrote the decisive probe, and a coordinator fix to truncated conclusion input was needed.",
-  "sourceRevision": "516c686cc8c725138699c8cdae9cd752d117e0a3",
+  "sourceRevision": "d78715fd19430eab889cd16e9d637ff8bc883aae",
   "facts": [
    {
     "label": "Correct",
@@ -1512,14 +1512,14 @@
    },
    {
     "label": "Review",
-    "value": "Independent read-only review of e8f611c (fresh Claude subagent): 4 major and 6 minor findings, fixed in 95b1b3d; the fixes were not re-reviewed."
+    "value": "Independent read-only review of e8f611c: 4 major and 6 minor findings, fixed in 95b1b3d. Fresh re-review of 93e0f9e verified those fixes and found 1 major and 4 minor new defects, fixed with tests in the following commit."
    }
   ],
   "provenance": [
    {
     "label": "Transfer README",
     "path": "docs/experiments/ail-transfer/README.md",
-    "sha256": "dfa89de12306eb8a0d2232ee4ab0c11271a91004cb29b8dcba3f4e418660ec27"
+    "sha256": "771b745b2855ee54a5db2f2d88c460211105409394bf958550e6691dbc6f3b38"
    },
    {
     "label": "Answer key (path-sanitised copy)",
