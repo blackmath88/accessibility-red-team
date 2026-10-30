@@ -50,3 +50,9 @@ One unfamiliar local case, used to see whether the checked investigation loop tr
 The committed `answer-key.json` has one local path replaced, so its hash differs from the sealed original. The original's hash is in `revealed.json` (67bbc20d…).
 
 **Open:** d3 records a null screenshot artifact in its result, although the broker saved the PNGs.
+
+## Review and limits
+
+- **Independent read-only review** of `e8f611c`, by a fresh Claude subagent: 4 major and 6 minor findings, fixed in `95b1b3d`. The gate now validates the exact `probe.mjs` file, a `reveal` stage enforces the freeze, the contract's `open` rules match the broker, WebSockets are refused, spend paths must be absolute and the floor strict, names are checked, and duplicate detection ignores comments and whitespace. The final code was not re-reviewed after these fixes.
+- **t1 reveal marker.** t1's `revealed.json` was written by a coordinator script before the `reveal` stage existed. Its hashes were verified by the judge.
+- **Not counted as loads.** A same-origin iframe can load the approved URL again without it being counted as a top-level load. Neither sub-resource policy is complete network containment.
