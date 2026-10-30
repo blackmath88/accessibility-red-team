@@ -1,0 +1,52 @@
+{
+ "schema": "art/campaign-config/v1",
+ "campaignId": "rehearsal-1",
+ "configVersion": 1,
+ "scopeVersion": 1,
+ "model": "claude-opus-5-5",
+ "scope": {
+  "description": "Local rehearsal of a Basel-style campaign on two known checkout fixtures (order review, shipping). Local fixtures only; not a blind result; no live targets.",
+  "tasks": [
+   {
+    "id": "order-review",
+    "userReport": "On the order review page («Bestellung prüfen») of the local test shop, users report that the price note «Preise inkl. 8,1 % MWST, zzgl. Versand CHF 9.00» below the cart total cannot be seen; they only learn about VAT and shipping costs later.",
+    "keyText": "Preise inkl. 8,1 % MWST, zzgl. Versand CHF 9.00",
+    "pages": [
+     "transfer-a",
+     "transfer-b"
+    ]
+   },
+   {
+    "id": "shipping",
+    "userReport": "On my phone the yellow note about delivery costs in the shipping section is cut off in the middle of a line, I can only read the beginning and the rest of the sentence is missing. On the laptop it seems fine.",
+    "keyText": "Bei Lieferungen nach Liechtenstein oder ins Ausland können zusätzliche Zollgebühren anfallen, die beim Empfang direkt dem Zusteller zu bezahlen sind.",
+    "pages": [
+     "second-a",
+     "second-b"
+    ]
+   }
+  ],
+  "viewports": [
+   "1440x900",
+   "390x844"
+  ],
+  "cachedEvidence": [
+   {
+    "id": "t1-judged",
+    "path": "docs/experiments/ail-transfer/evidence/judgment.json",
+    "summary": "Earlier blind investigation t1 of the order-review pages: transfer-a is defective (text-rect pixels uniform 239, an element attributed to #delivery stacked above the note); transfer-b is the clean control. Judged partially correct (mechanism attribution wrong); a post-reveal replay resolved it to a layer drawn outside #delivery's box."
+   }
+  ],
+  "liveTargets": []
+ },
+ "limits": {
+  "claudeInvocations": 3,
+  "wallMinutes": 30,
+  "concurrency": 2,
+  "reportingReserveFraction": 0.2,
+  "tokenTarget": {
+   "input": 500000,
+   "output": 60000
+  }
+ }
+}
