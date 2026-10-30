@@ -7,6 +7,10 @@
 //   ... <run> validate <attempt>           (pre-execution gate; execute refuses without a passing validation.json)
 //   ... <run> execute <attempt>
 //   ... <run> conclude <attempt>           (designer states its conclusion from the recorded results; frozen on write)
+//   ... <run> brief initial|revise          (prints the designer brief for an external investigator; no call)
+//   ... <run> import <attempt> <file> [revisionOf]   (records an external investigator's proposal; AIL_EXTERNAL_MODEL)
+//   ... <run> replay <name> <promptFile>             (post-reveal reasoning replay with the designer model)
+//   ... <run> import-conclusion <attempt> <file>     (records its conclusion under the run lock; frozen on write)
 // Env: ADAPTIVE_MISTRAL_API_KEY, AIL_PRIOR_LEDGERS, AIL_EXTRA_RUN_ROOTS, AIL_MIN_PRIOR_USD (spend.ts), AIL_TRANSFER_SYMPTOM.
 import { createHash } from "node:crypto";
 import { access, mkdir, readFile, readdir, writeFile } from "node:fs/promises";
@@ -25,7 +29,9 @@ const MODEL = "mistral-small-2603";
 const PRICING: Pricing = { currency: "USD", inputPerMillion: 0.15, outputPerMillion: 0.6 };
 const BUDGET: TrialBudget = { maxCalls: 1, maxInputTokens: 30_000, maxOutputTokens: 6_000, maxSpend: 0.02, maxWallMs: 300_000, minCallIntervalMs: 1100 };
 const RUNS = join(REPO_ROOT, "runs/ail-transfer");
-const TARGETS = ["transfer-a", "transfer-b"];
+// Two neutral fixture names per case; the default is the first case (t1).
+const TARGETS = (process.env["AIL_TRANSFER_TARGETS"] ?? "transfer-a,transfer-b").split(",");
+if (TARGETS.length !== 2 || !TARGETS.every((t) => /^[a-z-]{1,30}$/.test(t))) throw new Error("AIL_TRANSFER_TARGETS must be two fixture names");
 const sha = (s: string) => createHash("sha256").update(s).digest("hex");
 const shaBytes = (b: Buffer) => createHash("sha256").update(b).digest("hex");
 const exists = (p: string) => access(p).then(() => true, () => false);
@@ -39,13 +45,13 @@ const CheckSchema = z.object({
 });
 const CritiqueSchema = z.object({ requiredChanges: z.array(z.string()).min(1).max(8), checks: z.array(CheckSchema).min(1).max(6) }).passthrough();
 const ConclusionSchema = z.object({
-  defectivePage: z.enum(["transfer-a", "transfer-b", "undetermined"]),
+  defectivePage: z.string().refine((p) => p === "undetermined" || TARGETS.includes(p), "a target or undetermined"),
   explanation: z.string().min(1).max(2000),
   // Items may be strings or small objects (relaxed after the first conclusion call returned objects; recorded).
   supportingMeasurements: z.array(z.union([z.string().max(1000), z.record(z.string(), z.unknown())])).max(12),
   unsupportedOrUntested: z.array(z.union([z.string().max(1000), z.record(z.string(), z.unknown())])).max(12),
   confidence: z.enum(["low", "medium", "high"]),
-});
+}).passthrough(); // an external investigator may add observations, contradictions and uncertainties
 
 async function symptom() {
   const path = process.env["AIL_TRANSFER_SYMPTOM"];
@@ -69,7 +75,7 @@ async function callDesigner(dir: string, attempt: string, system: string, user: 
 }
 
 function designerSystem(revise: boolean) {
-  return `You are the experiment designer in a bounded accessibility investigation. You get a user-reported symptom on a web page and two versions of that page (packet.target is "transfer-a" or "transfer-b"); you do not know whether either version, both or neither show the problem. Propose exactly 3 competing, falsifiable hypotheses for the cause, and ONE executable probe that measures facts able to support or reject them on BOTH versions. Measure the RENDERED result (pixels inside the affected text's own rect), geometry and what is actually on top at points inside that rect, not only computed styles. Never claim a cause from one measurement.
+  return `You are the experiment designer in a bounded accessibility investigation. You get a user-reported symptom on a web page and two versions of that page (packet.target is "${TARGETS[0]}" or "${TARGETS[1]}"); you do not know whether either version, both or neither show the problem. Propose exactly 3 competing, falsifiable hypotheses for the cause, and ONE executable probe that measures facts able to support or reject them on BOTH versions. Measure the RENDERED result (pixels inside the affected text's own rect), geometry and what is actually on top at points inside that rect, not only computed styles. Never claim a cause from one measurement.
 ${revise ? "This is a REVISION: implement every REQUIRED CHANGE in the code; the revision is checked by executing the code against the listed checks, not by reading your revisionNote." : ""}
 You write ONE JavaScript ES module: export default async function (broker, packet) { ... return <compact JSON-serialisable measurements>; }
 It runs in a sandbox with NO network, filesystem or DOM; the only capability is broker.call. packet = { target, viewport, affectedText }.
@@ -101,6 +107,60 @@ async function design(run: string, attempt: string, from?: string) {
   await writeFile(join(adir, "proposal.json"), JSON.stringify(proposal, null, 1));
   await writeFile(join(adir, "probe.mjs"), parsed.data.probe.code);
   console.log(JSON.stringify({ attempt, codeSha256: proposal.codeSha256, hypotheses: proposal.hypotheses.map((h) => h.id), ms: out.ms }, null, 1));
+}
+
+// An external investigator (a subscription Claude context without tools) writes the proposal; the coordinator only
+// records it here. Same schema, same freeze rule and the same gate as a Mistral design; AIL_EXTERNAL_MODEL names the
+// route. revisionOf is provenance only: there is no critic, so no required checks apply.
+async function importProposal(run: string, attempt: string, file: string, revisionOf?: string) {
+  const dir = join(RUNS, run), adir = join(dir, "attempts", attempt);
+  const model = process.env["AIL_EXTERNAL_MODEL"];
+  if (!model) throw new Error("AIL_EXTERNAL_MODEL not set");
+  if (await exists(join(adir, "proposal.json"))) throw new Error(`${attempt} exists`);
+  if (await frozen(dir)) throw new Error("this run already has a conclusion or a reveal: no further designs");
+  await mkdir(adir, { recursive: true });
+  const raw = await readFile(file, "utf8");
+  await writeFile(join(adir, "designer-raw.txt"), raw);
+  const parsed = ProposalSchema.parse(JSON.parse(raw));
+  const proposal = { ...parsed, attempt, from: null, revisionOf: revisionOf ?? null, model, codeSha256: sha(parsed.probe.code), inputSha256: sha(raw), createdAt: new Date().toISOString() };
+  await writeFile(join(adir, "proposal.json"), JSON.stringify(proposal, null, 1));
+  await writeFile(join(adir, "probe.mjs"), parsed.probe.code);
+  console.log(JSON.stringify({ attempt, codeSha256: proposal.codeSha256, hypotheses: proposal.hypotheses.map((h) => h.id) }, null, 1));
+}
+
+async function importConclusion(run: string, attempt: string, file: string) {
+  const dir = join(RUNS, run);
+  const model = process.env["AIL_EXTERNAL_MODEL"];
+  if (!model) throw new Error("AIL_EXTERNAL_MODEL not set");
+  await withRunLock(dir, "conclude", async () => {
+    if (await exists(join(dir, "revealed.json"))) throw new Error("the answer key was revealed: no further conclusions");
+    const conclusionFile = join(dir, conclusionFileName(process.env["AIL_CONCLUDE_SUFFIX"] ?? ""));
+    const raw = await readFile(file, "utf8");
+    const parsed = ConclusionSchema.parse(JSON.parse(raw));
+    const body = JSON.stringify({ ...parsed, fromAttempt: attempt, model, inputSha256: sha(raw), frozenAt: new Date().toISOString() }, null, 1);
+    await writeFile(conclusionFile, body, { flag: "wx" });
+    console.log(body, "\nconclusionSha256", sha(body));
+  });
+}
+
+// Post-reveal reasoning replay with the designer model: the same recorded prompt another context received, so model
+// and prompt effects can be told apart. Labelled as a replay; never a conclusion of the run.
+async function replay(run: string, name: string, promptFile: string) {
+  const dir = join(RUNS, run);
+  if (!(await exists(join(dir, "revealed.json")))) throw new Error("replays are post-reveal only");
+  const out = join(dir, "replays", `${name}-${MODEL}.json`);
+  if (await exists(out)) throw new Error(`${out} exists`);
+  await mkdir(join(dir, "replays"), { recursive: true });
+  const prompt = await readFile(promptFile, "utf8");
+  const r = await callDesigner(dir, `${name}.replay`, "Reply with ONE JSON object and nothing else.", prompt);
+  await writeFile(out, JSON.stringify({ label: "post-reveal reasoning replay", model: MODEL, promptSha256: sha(prompt), ...r, frozenAt: new Date().toISOString() }, null, 1), { flag: "wx" });
+  console.log(r.text);
+}
+
+// Prints the designer brief (system + user) an external investigator receives; no call is made.
+async function brief(revise: boolean) {
+  const s = await symptom();
+  console.log(`${designerSystem(revise)}\n\n---\nSYMPTOM (as reported): ${JSON.stringify(s)}\nPAGES: ${TARGETS.join(", ")} at viewports ${s.viewports.join(", ")}.`);
 }
 
 // Pre-execution gate. A revisionNote is a claim; only these executed checks count.
@@ -233,8 +293,9 @@ async function revealLocked(dir: string, keyPath: string) {
 const [run, stage, attempt, from] = process.argv.slice(2);
 if (!run || !stage || !attempt) { console.error("usage: transfer.ts <run> design|revise|validate|execute|conclude <attempt> [from] | reveal <key-path>"); process.exit(2); }
 const suffixOk = !process.env["AIL_CONCLUDE_SUFFIX"] || SUFFIX.test(process.env["AIL_CONCLUDE_SUFFIX"]);
-if (!NAME.test(run) || (stage !== "reveal" && !NAME.test(attempt)) || (from !== undefined && !NAME.test(from)) || !suffixOk) { console.error("run, attempt and from must match [a-z0-9-]; AIL_CONCLUDE_SUFFIX must match [a-z0-9]"); process.exit(2); }
+if (!NAME.test(run) || (stage !== "reveal" && !NAME.test(attempt)) || (from !== undefined && !stage.startsWith("import") && stage !== "replay" && !NAME.test(from)) || (process.argv[6] !== undefined && !NAME.test(process.argv[6])) || !suffixOk) { console.error("run, attempt and from must match [a-z0-9-]; AIL_CONCLUDE_SUFFIX must match [a-z0-9]"); process.exit(2); }
 if (stage === "revise" && !from) { console.error("revise needs <from>"); process.exit(2); }
-const go = stage === "reveal" ? reveal(run, attempt) : stage === "design" ? design(run, attempt) : stage === "revise" ? design(run, attempt, from) : stage === "validate" ? validate(run, attempt)
+const go = stage === "replay" ? replay(run, attempt, from ?? "") : stage === "import" ? importProposal(run, attempt, from ?? "", process.argv[6]) : stage === "import-conclusion" ? importConclusion(run, attempt, from ?? "")
+  : stage === "brief" ? brief(attempt === "revise") : stage === "reveal" ? reveal(run, attempt) : stage === "design" ? design(run, attempt) : stage === "revise" ? design(run, attempt, from) : stage === "validate" ? validate(run, attempt)
   : stage === "execute" ? execute(run, attempt) : stage === "conclude" ? conclude(run, attempt) : Promise.reject(new Error(`unknown stage ${stage}`));
 go.catch((e) => { console.error(String(e?.message ?? e)); process.exit(1); });
