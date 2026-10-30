@@ -13,7 +13,7 @@ describe("investigation sandbox (bwrap) and measurement broker boundaries", { sk
   let broker: MeasurementBroker;
   before(async () => {
     dir = await mkdtemp(join(tmpdir(), "ail-test-"));
-    broker = new MeasurementBroker({ runDir: dir, ledgerPath: join(dir, "ledger.json"), fixtureDir: "test/fixtures/investigation-boundary", liveAllowed: false, maxLiveLoads: 0, minGapMs: 10_000 });
+    broker = new MeasurementBroker({ runDir: dir, ledgerPath: join(dir, "ledger.json"), fixtureDir: "test/fixtures/investigation-boundary", liveAllowed: false, maxLiveLoads: 0, minGapMs: 10_000, resourcePolicy: "same-origin" });
   });
   after(async () => { await broker.close(); await rm(dir, { recursive: true, force: true }); });
 
@@ -116,7 +116,7 @@ describe("investigation sandbox (bwrap) and measurement broker boundaries", { sk
 
   it("live access is per attempt: denied for fixture packets and capped before any request", async () => {
     const liveDir = await mkdtemp(join(tmpdir(), "ail-live-"));
-    const b = new MeasurementBroker({ runDir: liveDir, ledgerPath: join(liveDir, "ledger.json"), fixtureDir: "test/fixtures/investigation-boundary", liveAllowed: true, maxLiveLoads: 0, minGapMs: 10_000 });
+    const b = new MeasurementBroker({ runDir: liveDir, ledgerPath: join(liveDir, "ledger.json"), fixtureDir: "test/fixtures/investigation-boundary", liveAllowed: true, maxLiveLoads: 0, minGapMs: 10_000, resourcePolicy: "same-origin" });
     const code = `export default async function (broker) { try { await broker.call("open", { target: "live", viewport: "1440x900" }); return "allowed"; } catch (e) { return e.message; } }`;
     try {
       const fixturePacket = await runInSandbox(code, {}, b.forAttempt("t-fixture", { live: false }));

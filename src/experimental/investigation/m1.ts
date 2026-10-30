@@ -14,17 +14,16 @@ import { z } from "zod";
 import { BudgetedProvider, type Pricing, type TrialBudget } from "../adaptive/budget.js";
 import { MistralProvider } from "../adaptive/providers/mistral.js";
 import { BROKER_VERSION, LIVE_URL, MeasurementBroker, VIEWPORTS } from "./broker.js";
+import { OWNER_CAP_USD, REPO_ROOT, ownerSpend } from "./spend.js";
 import { SANDBOX_VERSION, runInSandbox, sandboxAvailable } from "./sandbox.js";
 
 const MODEL = "mistral-small-2603";
 const PRICING: Pricing = { currency: "USD", inputPerMillion: 0.15, outputPerMillion: 0.6 };
 const BUDGET: TrialBudget = { maxCalls: 4, maxInputTokens: 60_000, maxOutputTokens: 12_000, maxSpend: 0.05, maxWallMs: 600_000, minCallIntervalMs: 1100 };
-const OWNER_CAP_USD = 5;
 // Paths are anchored at the repository root, not the current directory, so the caps cannot be reset by running elsewhere.
-const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), "../../..");
+// Earlier experiments' ledgers (A/B/C/M) live in another checkout: AIL_PRIOR_LEDGERS is required (see spend.ts).
+const ROOT = REPO_ROOT;
 const RUNS = join(ROOT, "runs/ail-m1");
-// Earlier experiments' ledgers (A/B/C/M, USD 0.0726 reported) live in another checkout; the directory is required.
-const PRIOR_LEDGERS = process.env["AIL_PRIOR_LEDGERS"] ?? "";
 const FIXTURES = ["overlay", "no-overlay", "clean-control", "opacity-control", "fixed-banner"];
 const sha = (s: string | Buffer) => createHash("sha256").update(s).digest("hex");
 
@@ -63,22 +62,7 @@ function baselinePacket() {
   };
 }
 
-async function priorSpend() {
-  let total = 0, priorFound = 0;
-  if (!PRIOR_LEDGERS) throw new Error("AIL_PRIOR_LEDGERS not set: the aggregate owner cap needs the earlier ledgers");
-  for (const d of await readdir(PRIOR_LEDGERS)) {
-    const raw = await readFile(join(PRIOR_LEDGERS, d, "ledger.json"), "utf8").catch(() => null);
-    if (raw) { const j = JSON.parse(raw) as { consultant: { spend: number }; direct?: { spend: number } }; total += j.consultant.spend + (j.direct?.spend ?? 0); priorFound++; }
-  }
-  if (priorFound === 0) throw new Error(`no prior ledgers under AIL_PRIOR_LEDGERS: refusing paid calls`);
-  for (const d of await readdir(RUNS).catch(() => [] as string[])) {
-    for (const f of await readdir(join(RUNS, d)).catch(() => [] as string[])) {
-      if (!f.startsWith("designer-ledger")) continue;
-      total += (JSON.parse(await readFile(join("runs/ail-m1", d, f), "utf8")) as { spend: number }).spend;
-    }
-  }
-  return total;
-}
+async function priorSpend() { return (await ownerSpend()).total; }
 
 async function designer(run: string, attempt: string, mode: "design" | "revise", from?: string) {
   const dir = join(RUNS, run);
@@ -143,7 +127,7 @@ async function execute(run: string, attempt: string, targets: string[], viewport
   if (!sandboxAvailable().ok) throw new Error("LIVE DYNAMIC EXECUTION BLOCKED: no verified sandbox");
   const dir = join(RUNS, run);
   const code = await readFile(join(dir, "attempts", attempt, "probe.mjs"), "utf8");
-  const broker = new MeasurementBroker({ runDir: dir, ledgerPath: join(RUNS, "live-ledger.json"), fixtureDir: join(ROOT, "test/fixtures/investigation"), liveAllowed: live, maxLiveLoads: 16, minGapMs: 10_000 });
+  const broker = new MeasurementBroker({ runDir: dir, ledgerPath: join(RUNS, "live-ledger.json"), fixtureDir: join(ROOT, "test/fixtures/investigation"), liveAllowed: live, maxLiveLoads: 16, minGapMs: 10_000, resourcePolicy: "cross-origin-get" });
   const resultsPath = join(dir, "attempts", attempt, "results.json");
   const results: Record<string, unknown> = JSON.parse(await readFile(resultsPath, "utf8").catch(() => "{}"));
   try {

@@ -16,12 +16,19 @@ import sharp from "sharp";
 
 export const BROKER_VERSION = "ail-broker/v1";
 export const LIVE_URL = "https://www.bs.ch/apps/zonensuche";
-const LIVE_ORIGIN = "https://www.bs.ch";
 export const VIEWPORTS: Record<string, { width: number; height: number }> = { "1440x900": { width: 1440, height: 900 }, "1280x800": { width: 1280, height: 800 }, "390x844": { width: 390, height: 844 } };
 const UA = "AccessibilityRedTeam/0.1 (+public accessibility research; read-only measurement)";
 const RENDER_WAIT_MS = 3000;
 
-export type BrokerOptions = { runDir: string; ledgerPath: string; fixtureDir: string; liveAllowed: boolean; maxLiveLoads: number; minGapMs: number };
+// Sub-resource policy for live pages, recorded with every open. "same-origin": only same-origin GETs leave the browser.
+// "cross-origin-get": cross-origin GET sub-resources (fonts, CSS, scripts) are also fetched; this is how the historical
+// M1 live runs were made. Neither policy is full network containment: a page may still leak data in allowed GET URLs.
+export type ResourcePolicy = "same-origin" | "cross-origin-get";
+export type BrokerOptions = {
+  runDir: string; ledgerPath: string; fixtureDir: string; liveAllowed: boolean; maxLiveLoads: number; minGapMs: number;
+  resourcePolicy: ResourcePolicy;
+  liveUrl?: string; // tests only: a local server; defaults to the one approved URL
+};
 type Reply = { ok: true; result: unknown } | { ok: false; reason: string };
 type Ledger = { loads: Array<{ at: string; url: string; viewport: string; status: number | null; attempt: string }>; lastAt: number };
 
@@ -39,8 +46,17 @@ export class MeasurementBroker {
   private liveForAttempt = false;
   private liveOpens = 0;
   private lock: Promise<unknown> = Promise.resolve();
+  // Requests stopped inside the browser: page-initiated top-level navigations (reloads, refreshes, location changes)
+  // and anything a popup or other non-main page tries to fetch.
+  readonly blocked: Array<{ at: string; attempt: string; kind: "navigation" | "popup" | "method" | "origin" | "unattributed"; url: string }> = [];
 
-  constructor(private readonly o: BrokerOptions) {}
+  private readonly liveUrl: string;
+  private readonly liveOrigin: string;
+
+  constructor(private readonly o: BrokerOptions) {
+    this.liveUrl = o.liveUrl ?? LIVE_URL;
+    this.liveOrigin = new URL(this.liveUrl).origin;
+  }
 
   // Live access is granted per attempt and only when that attempt's packet targets live; one live open per attempt.
   forAttempt(attempt: string, opts: { live: boolean } = { live: false }) {
@@ -131,7 +147,7 @@ export class MeasurementBroker {
       if (wait > 0) await new Promise((r) => setTimeout(r, wait));
       if (signal?.aborted) return { ok: false, reason: "attempt settled before the live load" };
       this.liveOpens++;
-      url = LIVE_URL;
+      url = this.liveUrl;
     } else {
       if (!/^[a-z-]{1,30}$/.test(target)) return { ok: false, reason: "unknown fixture" };
       url = pathToFileURL(join(this.o.fixtureDir, `${target}.html`)).href;
@@ -143,16 +159,34 @@ export class MeasurementBroker {
     this.context = await this.browser.newContext({ viewport: vp, userAgent: UA, acceptDownloads: false, serviceWorkers: "block", javaScriptEnabled: true });
     // tsx wraps named functions in the fixed snippets with a __name helper; define it in the page (a global, not a DOM change).
     await this.context.addInitScript("window.__name = (f) => f;");
+    // Exactly one top-level navigation per open: the broker's own goto. Any later main-frame navigation (reload, meta
+    // refresh, location change) and every request from a popup or other page is aborted before it leaves the browser,
+    // so the load ledger and spacing cannot be bypassed by the page. Redirect hops of the approved navigation are not
+    // routed by Playwright and belong to that one counted load.
+    let mainNavigations = 0;
+    const openedAt = new Date().toISOString();
+    const main = await this.context.newPage();
+    const block = (route: import("playwright").Route, kind: MeasurementBroker["blocked"][number]["kind"]) => {
+      this.blocked.push({ at: new Date().toISOString(), attempt: this.attempt, kind, url: route.request().url().slice(0, 200) });
+      return route.abort("blockedbyclient");
+    };
     await this.context.route("**/*", (route) => {
       const req = route.request();
-      if (req.method() !== "GET") return route.abort();
-      if (req.isNavigationRequest() && req.frame() === main.mainFrame() && req.url().split("#")[0] !== url) return route.abort();
-      if (target !== "live" && !req.url().startsWith("file://")) return route.abort();
+      let page: Page | null = null;
+      try { page = req.frame().page(); } catch { return block(route, "unattributed"); } // e.g. a popup's first request, before its Page exists
+      if (page !== main) return block(route, "popup");
+      if (req.method() !== "GET") return block(route, "method");
+      if (req.isNavigationRequest() && req.frame() === main.mainFrame()) {
+        if (mainNavigations > 0 || req.url().split("#")[0] !== url) return block(route, "navigation");
+        mainNavigations++;
+        return route.continue();
+      }
+      if (target !== "live") return req.url().startsWith("file://") ? route.continue() : block(route, "origin");
+      if (this.o.resourcePolicy === "same-origin" && new URL(req.url()).origin !== this.liveOrigin) return block(route, "origin");
       return route.continue();
     });
-    const main = await this.context.newPage();
     this.page = main;
-    this.context.on("page", (p) => { if (p !== main) void p.close(); }); // popups are closed, never followed
+    this.context.on("page", (p) => { if (p !== main) void p.close(); }); // popups: their requests are aborted above; the page is then closed
     let status: number | null = null;
     if (target === "live") {
       const L = await this.ledger();
@@ -167,10 +201,14 @@ export class MeasurementBroker {
       await main.goto(url, { waitUntil: "load", timeout: 10_000 });
     }
     await main.waitForTimeout(target === "live" ? RENDER_WAIT_MS : 200);
+    if (this.blocked.some((b) => b.kind === "navigation" && b.at >= openedAt)) {
+      await main.close().catch(() => undefined); this.page = null; this.handles.clear();
+      return { ok: false, reason: "the page started its own top-level navigation (blocked, not loaded); page closed" };
+    }
     const landed = new URL(main.url());
-    const expected = target === "live" ? landed.origin === LIVE_ORIGIN : landed.protocol === "file:";
+    const expected = target === "live" ? landed.origin === this.liveOrigin : landed.protocol === "file:";
     if (!expected) { await main.close().catch(() => undefined); this.page = null; this.handles.clear(); return { ok: false, reason: "landed off-origin; page closed" }; }
-    return { ok: true, result: { target, url: target === "live" ? url : `fixture:${target}`, viewport: vpName, status } };
+    return { ok: true, result: { target, url: target === "live" ? url : `fixture:${target}`, viewport: vpName, status, resourcePolicy: target === "live" ? this.o.resourcePolicy : "file-only" } };
   }
 
   private async describe(els: ElementHandle[], max: number, prefix: string) {
